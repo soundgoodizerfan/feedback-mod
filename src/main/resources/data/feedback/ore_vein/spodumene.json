@@ -1,0 +1,15 @@
+{
+  "radius": 7,
+  "thickness": 4,
+  "density": 0.85,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:spodumene_loose_rock",
+  "ore": "feedback:spodumene_ore",
+  "deepslate_ore": "feedback:spodumene_deepslate_ore",
+  "weight": 3,
+  "min_y": 16,
+  "max_y": 128
+}

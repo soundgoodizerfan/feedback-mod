@@ -1,0 +1,15 @@
+{
+  "parts": {
+    "feedback:silica_glass": {
+      "min": 0.3,
+      "max": 0.4
+    },
+    "feedback:polypropylene": {
+      "min": 0.6,
+      "max": 0.7
+    }
+  },
+  "result": {
+    "id": "feedback:fibreglass_plate"
+  }
+}

@@ -52,7 +52,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * ({@link Joint}; {@code docs/dev/vehicle.md}).
  * Assembles whole blocks as the Lift does; puts them back home, unturned.
  */
-public class RotaryBearingBlockEntity extends RotationNode {
+public class RotaryBearingBlockEntity extends RotationNode implements io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
 
     @Nullable
     private Joint bearing;
@@ -60,13 +60,56 @@ public class RotaryBearingBlockEntity extends RotationNode {
     /** The facing as last ticked: what a broken bearing's body is put back about, when the block's own state is gone. */
     private Direction lastFacing;
 
+    private final io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings = new io.github.soundgoodizerfan.feedback.fitting.FittingStore();
+
     public RotaryBearingBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.ROTARY_BEARING.get(), pos, state);
     }
 
     @Override
+    public io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings() {
+        return fittings;
+    }
+
+    @Override
+    public boolean canMount(io.github.soundgoodizerfan.feedback.fitting.SidedFitting fitting, net.minecraft.core.Direction side) {
+        return false;
+    }
+
+    /** A rotary bearing honours one levitation sleeve. */
+    @Override
+    public boolean canAdd(io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting upgrade) {
+        return upgrade instanceof io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeveFitting
+                && io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeves.of(this) == null;
+    }
+
+    @Override
+    public boolean addUpgrade(io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting upgrade) {
+        boolean added = fittings.upgrades().add(upgrade);
+        if (added) {
+            setChanged();
+            if (level != null && !level.isClientSide)
+                RotationPropagator.rebuildFrom(level, worldPosition);
+        }
+        return added;
+    }
+
+    @Override
+    public void removeUpgrade(io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting upgrade) {
+        io.github.soundgoodizerfan.feedback.fitting.StoredFittable.super.removeUpgrade(upgrade);
+        setChanged();
+    }
+
+    /** The share of a free hinge's damping a fitted sleeve removes, read each tick by {@link Joint}. */
+    public float sleeveCut() {
+        return io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeves.cut(level, worldPosition, this);
+    }
+
+    @Override
     public Drag getDragSuPerRpm() {
-        return MachineTuning.ROTARY_BEARING_DRAG_SU_PER_RPM;
+        float cut = sleeveCut();
+        Drag drag = MachineTuning.ROTARY_BEARING_DRAG_SU_PER_RPM;
+        return cut <= 0f ? drag : new Drag(drag.suPerRpm() * (1f - cut));
     }
 
     @Override
@@ -216,11 +259,13 @@ public class RotaryBearingBlockEntity extends RotationNode {
         super.saveAdditional(tag, registries);
         if (bearing != null)
             tag.put("Bearing", bearing.save());
+        fittings.save(tag);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         bearing = tag.contains("Bearing") ? Joint.load(tag.getCompound("Bearing")) : null;
+        fittings.load(tag, this);
     }
 }

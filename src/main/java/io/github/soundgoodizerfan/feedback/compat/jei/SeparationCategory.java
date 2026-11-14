@@ -55,7 +55,7 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
     public static List<Card> cards(Map<ResourceLocation, Material> materials) {
         List<Card> out = new ArrayList<>();
         materials.forEach((id, m) -> {
-            if (m.separation().magnetic() || m.separation().reflectivity().isPresent() && !m.items(id).isEmpty())
+            if (m.separation().magnetic() || m.separation().diamagnetism() > 0f || m.separation().reflectivity().isPresent() && !m.items(id).isEmpty())
                 out.add(new Card(id, m));
         });
         return out;
@@ -112,6 +112,10 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
         y += ROW * lastLines;
         if (m.separation().magnetic() && m.separation().curieTemperature().isPresent()) {
             row(graphics, font, y, "feedback.jei.separation.curie", Readout.number(m.separation().curieTemperature().get().value()) + " Tu");
+            y += ROW * lastLines;
+        }
+        if (m.separation().diamagnetism() > 0f) {
+            row(graphics, font, y, "feedback.jei.separation.diamagnetism", Readout.number(m.separation().diamagnetism() * 100f) + " % of bismuth");
             y += ROW * lastLines;
         }
         if (m.separation().reflectivity().isPresent()) {

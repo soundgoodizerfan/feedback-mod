@@ -1,0 +1,20 @@
+{
+  "parts": {
+    "feedback:tin": {
+      "min": 0.89,
+      "max": 0.93
+    },
+    "feedback:antimony": {
+      "min": 0.06,
+      "max": 0.09
+    },
+    "feedback:copper": {
+      "min": 0.005,
+      "max": 0.03
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_pewter",
+    "amount": 144
+  }
+}

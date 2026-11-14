@@ -320,6 +320,12 @@
     },
     "zoom_charge": {
       "kind": "soak"
+    },
+    "shock_lead": {
+      "kind": "soak"
+    },
+    "heat_sink": {
+      "kind": "soak"
     }
   },
   "starter": true,

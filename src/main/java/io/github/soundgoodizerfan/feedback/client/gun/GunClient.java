@@ -224,6 +224,9 @@ public final class GunClient {
                     holding ? 0.6f : 0.4f, holding ? 1f : 0.8f, false);
         drawSlot = slot;
         drawHolding = holding;
+        // A hot core breech in the hand breaks itself open to vent, however the last stroke ended.
+        if (holding && ((GunItem) held.getItem()).mechanism().built(held) && io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.hot(held))
+            io.github.soundgoodizerfan.feedback.client.gun.GunMotion.vent();
         EGunSounds.tick(mc, player, holding ? held : net.minecraft.world.item.ItemStack.EMPTY, aim > 0.5f);
         // The firearm's design (reload, fan, sight read it); an electric gun has none, and is built if its own mechanism says so.
         GunSpec design = holding ? GunSpec.of(held).orElse(null) : null;

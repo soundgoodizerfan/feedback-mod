@@ -97,6 +97,25 @@ public final class CoinShot {
         }
     }
 
+    /** Any of {@code p}'s coins hanging within {@code radius} of {@code point} (a whip's spear passing) is knocked back up from where it is, its arc starting over. */
+    public static void touch(ServerPlayer p, Vec3 point, double radius) {
+        List<Coin> up = COINS.get(p.getUUID());
+        if (up == null)
+            return;
+        long now = p.level().getGameTime();
+        for (int i = 0; i < up.size(); i++) {
+            Coin c = up.get(i);
+            if (c.at(now).distanceTo(point) > radius)
+                continue;
+            up.set(i, new Coin(c.id(), c.rgb(), c.owner(), c.at(now), now, c.hardness(), c.massMu(), c.stack()));
+            ServerLevel level = p.serverLevel();
+            Vec3 at = c.at(now);
+            io.github.soundgoodizerfan.feedback.net.CoinFlipPayload.send(level, c.id(), false, at, now, c.rgb());
+            level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 8, 0.1, 0.1, 0.1, 0.3);
+            cue(level, at, net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL.value(), 1f, 1.8f);
+        }
+    }
+
     /**
      * A flip press: needs the skill and a coin to hand; the rearm is the caller's. One coin is up at a time, or two with
      * Second Mark (the second press, while the first is still in the air).

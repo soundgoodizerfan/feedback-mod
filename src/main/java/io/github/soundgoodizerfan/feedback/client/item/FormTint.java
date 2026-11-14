@@ -144,7 +144,7 @@ public final class FormTint {
         event.register((stack, layer) -> {
             MadeOf made = stack.get(FDataComponents.MADE_OF.get());
             return layer == 0 && made != null ? 0xFF000000 | MaterialColors.of(made.material()) : 0xFFFFFFFF;
-        }, FItems.CABLE.get(), FItems.FENCE.get(), FItems.XP_WIRE.get());
+        }, FItems.CABLE.get(), FItems.FENCE.get(), FItems.XP_WIRE.get(), FItems.LEVITATION_PLATE.get(), FItems.LEVITATION_SLEEVE.get(), FItems.PYRO_PLATE.get());
         // Combat gear: the plate's metal, on the shared plate sprite (placeholder art).
         event.register((stack, layer) -> {
             var gear = stack.get(FDataComponents.GEAR.get());
@@ -178,5 +178,11 @@ public final class FormTint {
         event.register((state, level, pos, tintIndex) -> level != null && pos != null
                 && level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity wire
                 && wire.material() != null ? 0xFF000000 | MaterialColors.of(wire.material()) : 0xFFFFFFFF, FBlocks.XP_WIRE.get());
+        event.register((state, level, pos, tintIndex) -> level != null && pos != null
+                && level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateBlockEntity plate
+                && plate.material() != null ? 0xFF000000 | MaterialColors.of(plate.material()) : 0xFFFFFFFF, FBlocks.LEVITATION_PLATE.get());
+        event.register((state, level, pos, tintIndex) -> level != null && pos != null
+                && level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateBlockEntity plate
+                && plate.material() != null ? 0xFF000000 | MaterialColors.of(plate.material()) : 0xFFFFFFFF, FBlocks.PYRO_PLATE.get());
     }
 }

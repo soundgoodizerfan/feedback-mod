@@ -16,6 +16,10 @@ A [Radiation ward](Brewing_Stand.md) potion lets a little over half of each inte
 
 Creative players take nothing.
 
+## Seeing it
+
+A [Block of Uranium Glass](Materials.md#uranium-glass-block) is a dosimeter you can see: it glows brighter as the dose around it rises, from nothing up to level 8.
+
 ## The reactor
 
 A running [Fission Reactor](Fission_Reactor.md) core gives off radiation in proportion to its power. Every fuel rod in a channel gives off its own, and a [Spent Fuel Rod](Nuclear_Fuel.md#spent-fuel-rod) about ten times a fresh rod's. A burst core leaves **Core Slag**, which is radioactive and stays so for hours of play, falling slowly.

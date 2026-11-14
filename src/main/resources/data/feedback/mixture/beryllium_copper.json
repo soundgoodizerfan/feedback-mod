@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:copper": {
+      "min": 0.97,
+      "max": 0.985
+    },
+    "feedback:beryllium": {
+      "min": 0.015,
+      "max": 0.025
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_beryllium_copper",
+    "amount": 144
+  }
+}

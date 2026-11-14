@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:aluminium": {
+      "min": 0.97,
+      "max": 0.995
+    },
+    "feedback:titanium": {
+      "min": 0.005,
+      "max": 0.03
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_aluminium_foam",
+    "amount": 144
+  }
+}

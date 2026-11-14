@@ -52,6 +52,8 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerEntityDataProvider(VillagerServerData.INSTANCE, net.minecraft.world.entity.npc.Villager.class);
         registration.registerBlockDataProvider(EnderPortServerData.INSTANCE, io.github.soundgoodizerfan.feedback.machine.ender.EnderPortBlockEntity.class);
         registration.registerBlockDataProvider(CounterServerData.INSTANCE, io.github.soundgoodizerfan.feedback.village.CounterBlockEntity.class);
+        registration.registerBlockDataProvider(LevitationServerData.INSTANCE, net.minecraft.world.level.block.entity.BlockEntity.class);
+        registration.registerBlockDataProvider(HydrideServerData.INSTANCE, io.github.soundgoodizerfan.feedback.machine.hydride.HydrideBedBlockEntity.class);
     }
 
     @Override
@@ -68,6 +70,9 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(WearingComponent.INSTANCE, Block.class);
         registration.registerEntityComponent(VillagerComponent.INSTANCE, net.minecraft.world.entity.npc.Villager.class);
         registration.registerBlockComponent(CounterComponent.INSTANCE, io.github.soundgoodizerfan.feedback.village.CounterBlock.class);
+        registration.registerBlockComponent(LevitationComponent.INSTANCE, Block.class);
+        registration.registerBlockComponent(HydrideComponent.INSTANCE, Block.class);
+        registration.registerBlockComponent(GlowGlassComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(ProbeComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(XpComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(AirComponent.INSTANCE, Block.class);

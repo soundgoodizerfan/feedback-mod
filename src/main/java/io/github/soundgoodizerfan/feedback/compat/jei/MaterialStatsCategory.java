@@ -121,6 +121,7 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         add(rows, "boiling_point", t.boilingPoint());
         add(rows, "anneal", t.annealTemperature());
         add(rows, "service", t.serviceTemperature());
+        add(rows, "shock_limit", t.shockLimit());
         add(rows, "oxidation", t.oxidationTemperature());
         add(rows, "thermal_conductivity", t.conductivity());
         add(rows, "cooling_rate", t.coolingRate());

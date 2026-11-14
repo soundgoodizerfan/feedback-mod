@@ -40,6 +40,13 @@
           "id": "feedback:sulfur",
           "count": 1
         }
+      },
+      {
+        "item": {
+          "id": "feedback:bismuth_nugget",
+          "count": 1
+        },
+        "chance": 0.1
       }
     ]
   }

@@ -31,12 +31,14 @@
   },
   "separation": {
     "reflectivity": 0.7,
-    "gangue": "feedback:quartz"
+    "gangue": "feedback:quartz",
+    "diamagnetism": 0.2
   },
   "electrical": {
     "conductivity": 0.7,
     "drop": 0.0714,
-    "electrode_potential": 1.5
+    "electrode_potential": 1.5,
+    "seebeck": 6.5
   },
   "ampacity": 0.76,
   "corrosion_resistance": 1.0,

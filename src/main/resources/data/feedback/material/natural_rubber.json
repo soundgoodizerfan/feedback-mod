@@ -1,0 +1,41 @@
+{
+  "color": "#a0855b",
+  "kind": "polymer",
+  "traits": [
+    "sticky"
+  ],
+  "hardness": 0.3,
+  "density": 0.92,
+  "thermal": {
+    "melting_point": 200,
+    "cooling_rate": 3.03,
+    "conductivity": 3.74e-05,
+    "service_temperature": 70,
+    "boiling_point": 400,
+    "specific_heat": 1.9,
+    "latent_heat_fusion": 100,
+    "latent_heat_vaporisation": 500,
+    "oxidation_temperature": 200
+  },
+  "mechanical": {
+    "toughness": 5,
+    "ductility": 20,
+    "yield_strength": 1,
+    "friction": 1.4,
+    "abrasiveness": 0
+  },
+  "electrical": {
+    "insulation": "hv"
+  },
+  "corrosion_resistance": 1,
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100000.0,
+    "density": 0.85,
+    "shear_thickening": 0
+  },
+  "enchantability": 8
+}

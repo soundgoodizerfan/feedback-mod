@@ -61,6 +61,8 @@ The line also lets go if it parts, if it has been out for ten seconds, or if eit
 
 A [Tether](Combat.md#tethers) holds the body on the line, and a creature held that way takes extra damage as with a barbed spear.
 
+The [Whiplash](Whiplash.md) arm throws a barbed hook of this kind from the wrist.
+
 ## What the hook bites into
 
 A swing's hook holds by the block it bit: its hardness sets the load it takes. Stone, logs and metal hold a player easily; dirt, netherrack, snow, leaves and wool let go under a player's weight, sand and gravel hold half as well as their hardness says, and ice a third. A block that cannot be broken holds anything. Over the figure the hook works loose, gaining strain each tick, and **rips free at full strain** (no wear on the grapple). If the block is broken out from under the hook, the line lets go.

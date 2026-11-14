@@ -23,7 +23,8 @@ public enum MaterialProperty implements StringRepresentable {
     TOUGHNESS("toughness", "toughness", m -> m.mechanical().toughness().map(t -> t.value())),
     YIELD_STRENGTH("yield_strength", "yield strength", m -> m.mechanical().yieldStrength().map(t -> t.value())),
     PIEZO_COUPLING("piezo_coupling", "piezoelectric coupling", m -> m.electrical().piezoCoupling()),
-    RECTIFYING("rectifying", "rectifying spot quality", m -> m.electrical().rectifying());
+    RECTIFYING("rectifying", "rectifying spot quality", m -> m.electrical().rectifying()),
+    PYRO_COUPLING("pyro_coupling", "pyroelectric coupling", m -> m.electrical().pyroCoupling());
 
     public static final Codec<MaterialProperty> CODEC = StringRepresentable.fromEnum(MaterialProperty::values);
 

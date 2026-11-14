@@ -18,7 +18,7 @@ A shaft points along the face you click. To make a long line quickly, **right-cl
 
 ## Friction
 
-Every shaft costs the network **0.1 Su per RPM**: at a steam engine's 16 RPM, 1.6 Su a shaft. On long lines, swap in [Bearings](Bearing.md) (0.04) to cut the loss.
+Every shaft costs the network **0.1 Su per RPM**: at a steam engine's 16 RPM, 1.6 Su a shaft. On long lines, swap in [Bearings](Bearing.md) (0.04) to cut the loss. A [Levitation Sleeve](Levitation_Sleeve.md) fitted to a shaft removes most of its friction while a powered [Electromagnet](Electromagnet.md) touches it.
 
 ## See also
 

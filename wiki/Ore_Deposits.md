@@ -17,7 +17,9 @@ Dig, as before. Each ore sits where it always did.
 - **Diamond** deep, in small flecks, bigger pockets, rare large masses, and buried ones that never show in a cave wall.
 - **Emerald** scattered thin through mountain rock, in the mountain and windswept biomes only.
 - **Chromite** deep in the lower rock, **pentlandite** (nickel) through the middle depths, **cobaltite** deep, **pyrolusite** (manganese) in the upper rock, **bauxite** (aluminum) high up and near the surface, **wolframite** (tungsten) very deep, **monazite** (thorium) in the lower rock. Monazite is [radioactive](Radiation.md).
+- **Spodumene** (lithium) in the upper rock between y 16 and 128, **beryl** (beryllium) between y 32 and 256 in the same mountain and windswept biomes as emerald, **molybdenite** (molybdenum) low, between y -16 and 48, and **dolomite** (magnesium) in broad veins between y 0 and 96.
 - **Osmiridium** in river biomes between y 36 and 64 as placer veins, and in an underground sulfide band between y -32 and 40, with loose rock above. It is the source of [heavy core](Heavy_Core.md#making-it).
+- **Stibnite** (antimony) in the Overworld between y -8 and 64 and **vanadinite** (vanadium) between y -24 and 40, each in veins with a loose rock above. **Cinnabar** (mercury) in the Nether between y 10 and 117, in the netherrack, with a loose rock above.
 - **Cryolite**, rare, in the overworld between y -20 and 60. It melts into the bath for [aluminum](Making_Aluminum.md).
 - **Saltpetre** in cave deposits from Y -16 to 64, with a loose rock on the surface.
 - **Nether ores**: **pentlandite**, **wolframite**, **chromite**, **cobaltite**, **uraninite** and **monazite** grow in the netherrack as common veins all through the Nether, with the same signs as their Overworld kin. Uraninite and monazite are [radioactive](Radiation.md).
@@ -43,16 +45,25 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 | Zinc blende | sphalerite loose rock, or zinc violets |
 | Silver lode | argentite loose rock, or tarnished soil |
 | Uranium lode | uraninite loose rock, or bleached soil |
-| Chromite, pentlandite, cobaltite, pyrolusite, bauxite, wolframite, ilmenite, cryolite | loose rock of that ore |
+| Chromite, pentlandite, cobaltite, pyrolusite, bauxite, wolframite, ilmenite, cryolite, spodumene, beryl, molybdenite, dolomite | loose rock of that ore |
 | Osmiridium (placer, sulfide) | osmiridium loose rock |
 | Monazite | monazite loose rock, or black sand |
 | Coal (upper seam) | coal loose rock, or sooty soil |
 | Coal (lower seam) | coal loose rock |
 | Gold (all three) | gold loose rock, or gossan rubble |
-| Lapis (both), Redstone (both), Emerald | loose rock of that ore |
+| Lapis (both), Redstone (both), Emerald, Ruby, Jade, Garnet, Tourmaline | loose rock of that ore |
 | Diamond (all four) | diamond loose rock; only the shallowest pockets under high ground show |
 | Kaolinite | white tulips on the grass above |
 | Nether gold and quartz | gold or quartz loose rock on a cavern floor in the netherrack above the vein |
+
+## Gems
+
+Four gems grow in veins of their own, each marked by a loose rock. Mined, the ore block drops the raw stone (*Raw Jade*, *Raw Garnet*, *Raw Tourmaline*, *Raw Ruby*) ([Materials](Materials.md#gems)).
+
+- **Jade** in the Overworld between y 32 and 160.
+- **Garnet** in the Overworld between y -32 and 48, the widest of the four veins.
+- **Tourmaline** in the Overworld between y 16 and 128, in the narrowest veins.
+- **Ruby** in the Nether, between y 10 and 117, in the netherrack.
 
 ## Crystals and clay
 

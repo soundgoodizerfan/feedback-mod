@@ -4,6 +4,7 @@
     "polymer",
     "mineral",
     "metalloid",
-    "glass"
+    "glass",
+    "composite"
   ]
 }

@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.dip;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalShock;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
@@ -132,11 +133,26 @@ public class Dipping {
         else
             return false;
 
+        float before = ItemHeat.get(held, level).value();
         ItemHeat.set(held, tu, level);
         scorch(held, tu);
+        shock(held, before - tu.value());
         level.playSound(null, pos, state.is(FluidTags.LAVA) ? SoundEvents.LAVA_POP : SoundEvents.GENERIC_SPLASH,
                 SoundSource.BLOCKS, 0.6f, 1.0f);
         return true;
+    }
+
+    /**
+     * A made part of a brittle stuff (glass, ceramic) dropped into a bath far from its own temperature jumps by the whole difference: past the
+     * material's shock limit it takes a flaw for each time the limit was overshot, up to the flaw cap (thermal shock, {@link ThermalShock}).
+     */
+    private static void shock(ItemStack stack, float jump) {
+        MadeOf made = stack.get(FDataComponents.MADE_OF.get());
+        Material m = made == null ? null : MaterialTable.get().materials().get(made.material());
+        int flaw = Math.min(ForgeRhythm.MAX_FLAW, made == null ? 0 : made.flaw() + (int) Math.ceil(ThermalShock.overshoot(m, jump)));
+        if (made != null && flaw > made.flaw())
+            stack.set(FDataComponents.MADE_OF.get(), new MadeOf(made.material(), made.stock(), made.cells(),
+                    made.variant(), flaw, made.measures()));
     }
 
     /** A made part held past its material's service temperature takes flaws by the overshoot. */

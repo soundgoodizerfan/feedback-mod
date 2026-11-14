@@ -316,6 +316,12 @@
     },
     "zoom_charge": {
       "kind": "mend"
+    },
+    "shock_lead": {
+      "kind": "mend"
+    },
+    "heat_sink": {
+      "kind": "mend"
     }
   },
   "mirror": {
@@ -536,6 +542,12 @@
       "kind": "tithe"
     },
     "zoom_charge": {
+      "kind": "tithe"
+    },
+    "shock_lead": {
+      "kind": "tithe"
+    },
+    "heat_sink": {
       "kind": "tithe"
     }
   },

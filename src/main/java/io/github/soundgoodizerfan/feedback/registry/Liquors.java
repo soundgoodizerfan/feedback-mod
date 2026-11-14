@@ -30,7 +30,7 @@ public final class Liquors {
             "copper_sulfate", "zinc_sulfate", "gold_chloride", "silver_chloride", "nickel_sulfate", "cobalt_sulfate",
             "sodium_aluminate", "titanyl_sulfate", "sodium_tungstate", "uranyl_sulfate", "thorium_hydroxide", "carbon_dioxide",
             // The teleportant chain (ender spec 2) and the heavy-water cascade that damps it.
-            "raw_spatial_slurry", "unstable_spatial_solvent", "damped_spatial_solvent", "alkaline_water", "enriched_water", "heavy_water");
+            "raw_spatial_slurry", "unstable_spatial_solvent", "damped_spatial_solvent", "alkaline_water", "enriched_water", "heavy_water", "phenolic_resin");
 
     private static final DeferredRegister<FluidType> TYPES =
             DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, Feedback.MOD_ID);

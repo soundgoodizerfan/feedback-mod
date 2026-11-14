@@ -30,6 +30,22 @@
         "mb": 270
       }
     ],
-    "heat": 4
+    "heat": 4,
+    "byproducts": [
+      {
+        "item": {
+          "id": "feedback:cadmium_nugget",
+          "count": 1
+        },
+        "chance": 0.1
+      },
+      {
+        "item": {
+          "id": "feedback:indium_nugget",
+          "count": 1
+        },
+        "chance": 0.05
+      }
+    ]
   }
 }

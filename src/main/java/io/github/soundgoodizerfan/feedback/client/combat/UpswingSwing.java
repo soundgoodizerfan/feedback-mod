@@ -346,6 +346,7 @@ public final class UpswingSwing {
      * plays quickly). Its pace is its own, not the window's or the recovery's: the clip is only the look.
      */
     public static void punchParry(AbstractClientPlayer player) {
-        play(player, "bettercombat:one_handed_punch", AnimatedHand.MAIN_HAND, PUNCH_LENGTH, PUNCH_STRIKE / PUNCH_LENGTH);
+        AnimatedHand hand = io.github.soundgoodizerfan.feedback.combat.punch.Punching.hand(player) == InteractionHand.OFF_HAND ? AnimatedHand.OFF_HAND : AnimatedHand.MAIN_HAND;
+        play(player, "bettercombat:one_handed_punch", hand, PUNCH_LENGTH, PUNCH_STRIKE / PUNCH_LENGTH);
     }
 }

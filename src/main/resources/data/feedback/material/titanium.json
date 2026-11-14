@@ -22,7 +22,11 @@
     "work_hardening": 1,
     "yield_strength": 20,
     "friction": 0.5,
-    "abrasiveness": 0.324
+    "abrasiveness": 0.324,
+    "hydrogen": {
+      "uptake": 400,
+      "release_temperature": 450
+    }
   },
   "molten": {
     "viscosity": 5,

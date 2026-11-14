@@ -1,0 +1,16 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:jungle_leaves"
+    }
+  ],
+  "min_temperature": 90,
+  "optimal_temperature": 110,
+  "max_temperature": 150,
+  "required_tpu": 200,
+  "spoil_temperature": 200,
+  "result": {
+    "id": "feedback:natural_rubber_ingot",
+    "count": 1
+  }
+}

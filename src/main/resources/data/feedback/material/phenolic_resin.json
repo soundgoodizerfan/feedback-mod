@@ -1,0 +1,30 @@
+{
+  "color": "#8a4a1c",
+  "kind": "fluid",
+  "traits": [
+    "corrosive"
+  ],
+  "hardness": 1,
+  "density": 1.2,
+  "composition": {
+    "feedback:coal": 1.0
+  },
+  "thermal": {
+    "cooling_rate": 0.7,
+    "conductivity": 3.7e-05,
+    "melting_point": 40,
+    "boiling_point": 182,
+    "specific_heat": 1.9,
+    "latent_heat_fusion": 120,
+    "latent_heat_vaporisation": 500
+  },
+  "molten": {
+    "viscosity": 300,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.8,
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "corrosion_resistance": 1.0
+}

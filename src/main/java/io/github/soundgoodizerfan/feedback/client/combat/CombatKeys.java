@@ -57,6 +57,8 @@ public final class CombatKeys {
     }
 
     private static boolean jumpHeld;
+    /** Ticks the punch key has stayed down since a Knuckleblaster punch, or -1 when no punch is following. */
+    private static int punchHold = -1;
     /** Which cast keys were down last tick, so letting one go can end a held cast. */
     private static final boolean[] castHeld = new boolean[CAST.length];
 
@@ -92,14 +94,36 @@ public final class CombatKeys {
         if (jump && !jumpHeld && !player.isShiftKeyDown() && !player.onGround() && player.horizontalCollision)
             PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.roll.WallKickPayload());
         jumpHeld = jump;
-        while (PARRY.consumeClick()) {
+        // The Knuckleblaster's press is the punch key too: a tap throws the heavy punch, and holding on after it fires the shells.
+        boolean fist = ParryStats.of(player).isEmpty() && !io.github.soundgoodizerfan.feedback.combat.gear.CombatGear
+                .granting(player, io.github.soundgoodizerfan.feedback.combat.punch.PunchTuning.HEAVY_PUNCH).isEmpty();
+        if (fist) {
+            if (punchHold >= 0) {
+                if (!PARRY.isDown())
+                    punchHold = -1;
+                else if (++punchHold == io.github.soundgoodizerfan.feedback.combat.punch.PunchTuning.SHOCK_HOLD_TICKS) {
+                    PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.punch.PunchPayload(true));
+                    punchHold = -1;
+                }
+            }
+            while (PARRY.consumeClick()) {
+                if (CombatState.of(player).ready()) {
+                    PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.combat.punch.PunchPayload(false));
+                    player.swing(io.github.soundgoodizerfan.feedback.combat.punch.Punching.hand(player));
+                    punchHold = 0;
+                } else
+                    deny(player);
+            }
+        } else
+            punchHold = -1;
+        while (!fist && PARRY.consumeClick()) {
             var stats = ParryStats.of(player);
             // A worn Feedbacker parries with nothing in hand, so a weapon is not the only way to press.
             boolean gauntlet = stats.isEmpty() && !io.github.soundgoodizerfan.feedback.combat.gear.CombatGear
                     .granting(player, io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES).isEmpty();
             if (CombatState.of(player).ready() && (stats.isPresent() || gauntlet)) {
                 PacketDistributor.sendToServer(new ParryPayload());
-                player.swing(stats.map(ParryStats::hand).orElse(net.minecraft.world.InteractionHand.MAIN_HAND));
+                player.swing(stats.map(ParryStats::hand).orElse(io.github.soundgoodizerfan.feedback.combat.punch.Punching.hand(player)));
             } else
                 deny(player);
         }

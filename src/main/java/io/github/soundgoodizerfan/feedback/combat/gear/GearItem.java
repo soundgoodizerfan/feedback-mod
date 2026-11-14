@@ -69,7 +69,15 @@ public class GearItem extends Item {
             return;
         tooltip.add(Component.empty());
         for (int i = 1; Language.getInstance().has(base + i); i++)
-            tooltip.add(Component.translatable(base + i).withStyle(ChatFormatting.RED));
+            tooltip.add(flavorLine(Component.translatable(base + i)));
+    }
+
+    /** A flavour line in red; a leading "+ " (the bullet of a stat-style line) stays white. */
+    private static Component flavorLine(Component text) {
+        String raw = text.getString();
+        if (!raw.startsWith("+ "))
+            return text.copy().withStyle(ChatFormatting.RED);
+        return Component.literal("+ ").withStyle(ChatFormatting.WHITE).append(Component.literal(raw.substring(2)).withStyle(ChatFormatting.RED));
     }
 
     private static void line(List<Component> tooltip, String key, float value) {

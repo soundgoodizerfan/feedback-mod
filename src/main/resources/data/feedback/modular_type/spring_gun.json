@@ -132,7 +132,7 @@
   },
   "defaults": {
     "B": "feedback:wrought_iron",
-    "S": "feedback:wood",
+    "S": "feedback:oak",
     "P": "feedback:wrought_iron",
     "W": "feedback:steel"
   },

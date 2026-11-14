@@ -1,0 +1,51 @@
+{
+  "color": "#9fb4d6",
+  "kind": "crystal",
+  "hardness": 140,
+  "density": 3.58,
+  "thermal": {
+    "melting_point": 2135,
+    "cooling_rate": 1.68,
+    "conductivity": 0.00748,
+    "boiling_point": 2977,
+    "specific_heat": 0.88,
+    "latent_heat_fusion": 1070,
+    "latent_heat_vaporisation": 15000,
+    "oxidation_temperature": 2072,
+    "service_temperature": 1243,
+    "shock_limit": 200
+  },
+  "mechanical": {
+    "toughness": 1.5,
+    "friction": 0.4,
+    "abrasiveness": 0.68,
+    "yield_strength": 20
+  },
+  "separation": {
+    "reflectivity": 0.75
+  },
+  "forms": {
+    "raw": "feedback:spinel"
+  },
+  "exclude": [
+    "ingot",
+    "crushed",
+    "concentrate",
+    "tailings"
+  ],
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 3.2,
+    "shear_thickening": 0
+  },
+  "enchantability": 5,
+  "traits": [
+    "transparent"
+  ],
+  "composition": {
+    "feedback:alumina": 0.72,
+    "feedback:magnesium": 0.12
+  }
+}

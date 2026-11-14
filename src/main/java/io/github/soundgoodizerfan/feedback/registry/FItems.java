@@ -160,6 +160,22 @@ public class FItems {
                                     io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES)),
                             io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BRACER),
                     new Item.Properties()),
+            KNUCKLEBLASTER = ITEMS.registerItem("knuckleblaster",
+                    props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props.durability(500)
+                            .component(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
+                                    Feedback.id("tempered_steel"), Feedback.id("leather"), 0f, 0.5f, 0f, 0f, 0f, 0f))
+                            .component(FDataComponents.GRANTS.get(), java.util.List.of(
+                                    io.github.soundgoodizerfan.feedback.combat.punch.PunchTuning.HEAVY_PUNCH)),
+                            io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BRACER),
+                    new Item.Properties()),
+            WHIPLASH = ITEMS.registerItem("whiplash",
+                    props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props.durability(500)
+                            .component(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
+                                    Feedback.id("wrought_iron"), Feedback.id("wrought_iron"), 0f, 0f, 0f, 0f, 0f, 0f))
+                            .component(FDataComponents.GRANTS.get(), java.util.List.of(
+                                    io.github.soundgoodizerfan.feedback.combat.whip.WhipTuning.WHIPLASH)),
+                            io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BRACER),
+                    new Item.Properties()),
             BACK_PIECE = ITEMS.registerItem("back_piece",
                     props -> new io.github.soundgoodizerfan.feedback.combat.gear.GearItem(props, io.github.soundgoodizerfan.feedback.combat.gear.GearKind.BACK),
                     new Item.Properties());
@@ -417,6 +433,13 @@ public class FItems {
     public static final DeferredItem<BlockItem> DATA_SENSOR = ITEMS.registerSimpleBlockItem(FBlocks.DATA_SENSOR);
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem> XP_WIRE = ITEMS.register("xp_wire",
             () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem(FBlocks.XP_WIRE.get(), new Item.Properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateItem> LEVITATION_PLATE = ITEMS.register("levitation_plate",
+            () -> new io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateItem(FBlocks.LEVITATION_PLATE.get(), new Item.Properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.levitation.LevitationSleeveItem> LEVITATION_SLEEVE = ITEMS.register("levitation_sleeve",
+            () -> new io.github.soundgoodizerfan.feedback.machine.levitation.LevitationSleeveItem(new Item.Properties()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateItem> PYRO_PLATE = ITEMS.register("pyro_plate",
+            () -> new io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateItem(FBlocks.PYRO_PLATE.get(), new Item.Properties()));
+    public static final DeferredItem<BlockItem> HYDRIDE_BED = ITEMS.registerSimpleBlockItem(FBlocks.HYDRIDE_BED);
     public static final DeferredItem<BlockItem> DERRICK_BASE = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_BASE);
     public static final DeferredItem<BlockItem> DERRICK_CASING = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_CASING);
     public static final DeferredItem<BlockItem> WELLHEAD = ITEMS.registerSimpleBlockItem(FBlocks.WELLHEAD);

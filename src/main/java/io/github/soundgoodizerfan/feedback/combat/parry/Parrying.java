@@ -73,7 +73,7 @@ public final class Parrying {
         } else if (!CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty()) {
             window = ParryTuning.FEEDBACKER_WINDOW + CombatGear.of(player).windowTicks();
             recovery = ParryTuning.FEEDBACKER_RECOVERY;
-            hand = net.minecraft.world.InteractionHand.MAIN_HAND;
+            hand = io.github.soundgoodizerfan.feedback.combat.punch.Punching.hand(player); // the left arm, where the gauntlet is worn
             io.github.soundgoodizerfan.feedback.weapon.HeatPellets.punch(player); // or the wielder's own slow heat pellets
         } else
             return;
@@ -165,7 +165,7 @@ public final class Parrying {
     }
 
     /** Hand {@code projectile} to {@code defender} and send it along their look at {@code speed}, at the end of the tick. */
-    private static void turn(LivingEntity defender, Projectile projectile, float speed) {
+    public static void turn(LivingEntity defender, Projectile projectile, float speed) {
         Vec3 look = defender.getLookAngle();
         projectile.setOwner(defender);
         // The projectile's own tick runs on after the hit and would overwrite a velocity set now.

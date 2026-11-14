@@ -1,0 +1,57 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "R": {
+      "item": "feedback:wrought_iron_rod"
+    },
+    "W": {
+      "item": "feedback:grapple_winch"
+    },
+    "C": {
+      "item": "minecraft:chain"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "PRP",
+    "CWC",
+    " L "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:whiplash",
+    "components": {
+      "feedback:gear": {
+        "shell": "feedback:wrought_iron",
+        "strap": "feedback:wrought_iron",
+        "window": 0,
+        "joint": 0,
+        "roll_distance": 0,
+        "recovery_shave": 0,
+        "i_frames": 0,
+        "mass": 0
+      },
+      "feedback:grants": [
+        "feedback:whiplash"
+      ]
+    }
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 2,
+    "forms": [
+      "screw"
+    ]
+  }
+}

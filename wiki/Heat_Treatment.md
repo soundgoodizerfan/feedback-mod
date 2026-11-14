@@ -12,6 +12,8 @@ Take a [Steel Ingot](Steel.md) out of the crucible while it's still **very hot**
 
 Hardened steel is extremely hard, too hard for the [Drill Press](Drill_Press.md) or [Lathe](Lathe.md). Only the [Grinding Wheel](Grinding_Wheel.md) can shape it.
 
+[High-speed steel](Materials.md#high-speed-steel) quenches the same way, from 1220 Tu or more, into Hardened High-Speed Steel.
+
 ## Tempering
 
 Hardened steel is hard but brittle. Tempering it gives **Tempered Steel**. JEI's figures:

@@ -8,6 +8,7 @@ A very light, flammable gas. The Electrolyser makes it from water.
 
 - **Fuel.** It burns at a flame temperature of **2200 Tu**, hotter than any fuel in [Fuels](Fuels.md). A [Fluid Burner](Fluid_Burner.md), [Gas Turbine](Gas_Turbine.md), [Engine](Engine.md) or [Thruster](Thruster.md) burns it like any other fluid that reaches it.
 - **Light.** It weighs very little for its volume, so it lifts an [airship](Airship.md) in [Gas Cells](Gas_Cell.md). It burns there too.
+- **Storage.** A [Hydride Bed](Hydride_Bed.md) soaks it up in palladium, magnesium or titanium and gives it back when heated.
 - A flammable gas in a hot line is a [hazard](Hazards.md).
 
 ## Oxygen

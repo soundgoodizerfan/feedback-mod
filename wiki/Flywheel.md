@@ -45,7 +45,7 @@ A flywheel is far heavier than a plain shaft, and the radius, thickness, shape a
 
 ## What it costs
 
-Its bearing drags, more for a bigger disc, and that is the price of the momentum, paid every turn. A bearing addon cuts it. The tooltip shows the drag in Su per RPM.
+Its bearing drags, more for a bigger disc, and that is the price of the momentum, paid every turn. A bearing addon cuts it, and a [Levitation Sleeve](Levitation_Sleeve.md) cuts it by up to 90 percent while a powered [Electromagnet](Electromagnet.md) touches the flywheel. The tooltip shows the drag in Su per RPM.
 
 A flywheel that spins past the **rim speed** its own metal and shape allow strains and loses condition, down to a floor. It never bursts. The tooltip shows the RPM it strains past.
 

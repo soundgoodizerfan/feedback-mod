@@ -11,6 +11,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.gear.GearStats;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
+import io.github.soundgoodizerfan.feedback.combat.punch.PunchTuning;
 import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
@@ -52,7 +53,7 @@ import top.theillusivec4.curios.api.client.ICurioRenderer;
 
 /**
  * Worn combat gear and gloves on the body, placeholder boxes: a bracer on the left forearm, a sash round the waist, the back piece on the back,
- * gloves on both hands. The Feedbacker is not a box: it shows the right arm of a skin ({@link FeedbackerArm},
+ * gloves on both hands. The Feedbacker is not a box: it shows the right arm of a skin, mirrored onto the left arm ({@link FeedbackerArm},
  * and {@link FirstPerson} for the wearer's own view). Each box is one cube riding a limb of the humanoid model, so it follows
  * sneaking and swings, drawn in the shared grey plate sprite and tinted by the gear's shell material
  * ({@link MaterialColors}, as {@link FormTint} does for items). A non-humanoid wearer draws nothing.
@@ -86,6 +87,8 @@ public final class CurioRenderers {
         event.enqueueWork(() -> {
             reg(FItems.BRACER.get(), () -> new Worn(Limb.LEFT_ARM, () -> box(-1.5f, 5f, -2.5f, 5f, 4f, 5f)));
             reg(FItems.FEEDBACKER.get(), FeedbackerArm::new);
+            reg(FItems.KNUCKLEBLASTER.get(), KnuckleblasterArm::new);
+            reg(FItems.WHIPLASH.get(), WhiplashArm::new);
             reg(FItems.SASH.get(), () -> new Worn(Limb.BODY, () -> box(-4.4f, 9f, -2.4f, 8.8f, 2f, 4.8f)));
             reg(FItems.BACK_PIECE.get(), () -> new Worn(Limb.BODY, () -> box(-3f, 1f, 2f, 6f, 7f, 2f)));
             reg(io.github.soundgoodizerfan.feedback.registry.FModular.GLOVE.get(), Gloves::new);
@@ -139,19 +142,37 @@ public final class CurioRenderers {
     }
 
     private static final ResourceLocation SKIN = Feedback.id("textures/entity/feedbacker_skin.png");
-    private static ModelPart skinArm;
+    private static final ResourceLocation LEFT_SKIN = Feedback.id("textures/entity/knuckleblaster_skin.png");
+    private static final ResourceLocation WHIP_SKIN = Feedback.id("textures/entity/whiplash_skin.png");
+    private static ModelPart skinArm, leftSkinArm;
 
     /**
-     * The right arm of the Feedbacker's skin: vanilla's 4x12x4 arm box at the skin's right-arm UVs (base at
-     * 40,16 grown 0.3 (off the player's own 0.25 sleeve, which z-fought at 0.25), outer layer at 40,32 grown 0.55), so it covers the wearer's own arm and sleeve, slim
-     * arms included. Pivot is left at zero: the caller rides it on the humanoid model's right arm.
+     * The left arm of the Knuckleblaster's skin: the same box at the skin's left-arm UVs (base at 32,48, outer layer at 48,48), drawn
+     * over the wearer's own left arm as {@link #skinArm()} is over the right. The left arm's box starts a pixel in from its pivot.
+     */
+    private static ModelPart leftSkinArm() {
+        if (leftSkinArm == null) {
+            MeshDefinition mesh = new MeshDefinition();
+            mesh.getRoot().addOrReplaceChild("p", CubeListBuilder.create()
+                    .texOffs(32, 48).addBox(-1f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.3f))
+                    .texOffs(48, 48).addBox(-1f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.55f)), PartPose.ZERO);
+            leftSkinArm = LayerDefinition.create(mesh, 64, 64).bakeRoot().getChild("p");
+        }
+        return leftSkinArm;
+    }
+
+    /**
+     * The Feedbacker's skin arm: vanilla's 4x12x4 arm box at the skin's right-arm UVs (base at
+     * 40,16 grown 0.3 (off the player's own 0.25 sleeve, which z-fought at 0.25), outer layer at 40,32 grown 0.55), mirrored and
+     * placed as a left arm's box, so it covers the wearer's own left arm and sleeve, slim arms included. Pivot is left at zero: the
+     * caller rides it on the humanoid model's left arm.
      */
     private static ModelPart skinArm() {
         if (skinArm == null) {
             MeshDefinition mesh = new MeshDefinition();
             mesh.getRoot().addOrReplaceChild("p", CubeListBuilder.create()
-                    .texOffs(40, 16).addBox(-3f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.3f))
-                    .texOffs(40, 32).addBox(-3f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.55f)), PartPose.ZERO);
+                    .texOffs(40, 16).mirror().addBox(-1f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.3f))
+                    .texOffs(40, 32).addBox(-1f, -2f, -2f, 4f, 12f, 4f, new CubeDeformation(0.55f)), PartPose.ZERO);
             skinArm = LayerDefinition.create(mesh, 64, 64).bakeRoot().getChild("p");
         }
         return skinArm;
@@ -165,20 +186,54 @@ public final class CurioRenderers {
         pose.popPose();
     }
 
-    /** Third person, self and others: the skin arm riding the right arm. */
+    /** Draws the left skin arm in the current pose space, as {@link #drawSkinArm}. */
+    private static void drawLeftSkinArm(PoseStack pose, MultiBufferSource buffer, ModelPart limb) {
+        drawLeftSkinArm(pose, buffer, limb, LEFT_SKIN);
+    }
+
+    private static void drawLeftSkinArm(PoseStack pose, MultiBufferSource buffer, ModelPart limb, ResourceLocation skin) {
+        pose.pushPose();
+        limb.translateAndRotate(pose);
+        leftSkinArm().render(pose, buffer.getBuffer(RenderType.entityTranslucent(skin)), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+        pose.popPose();
+    }
+
+    /** Third person, self and others: the Knuckleblaster's skin arm riding the left arm. */
+    private static final class KnuckleblasterArm implements ICurioRenderer {
+        @Override
+        public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack stack, SlotContext slot, PoseStack pose,
+                RenderLayerParent<T, M> parent, MultiBufferSource buffer, int light, float limbSwing, float limbSwingAmount,
+                float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+            if (parent.getModel() instanceof HumanoidModel<?> m)
+                drawLeftSkinArm(pose, buffer, m.leftArm);
+        }
+    }
+
+    /** Third person, self and others: the Whiplash's skin arm riding the left arm. */
+    private static final class WhiplashArm implements ICurioRenderer {
+        @Override
+        public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack stack, SlotContext slot, PoseStack pose,
+                RenderLayerParent<T, M> parent, MultiBufferSource buffer, int light, float limbSwing, float limbSwingAmount,
+                float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+            if (parent.getModel() instanceof HumanoidModel<?> m)
+                drawLeftSkinArm(pose, buffer, m.leftArm, WHIP_SKIN);
+        }
+    }
+
+    /** Third person, self and others: the skin arm riding the left arm. */
     private static final class FeedbackerArm implements ICurioRenderer {
         @Override
         public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack stack, SlotContext slot, PoseStack pose,
                 RenderLayerParent<T, M> parent, MultiBufferSource buffer, int light, float limbSwing, float limbSwingAmount,
                 float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
             if (parent.getModel() instanceof HumanoidModel<?> m)
-                drawSkinArm(pose, buffer, m.rightArm);
+                drawSkinArm(pose, buffer, m.leftArm);
         }
     }
 
     /**
-     * First person: the bare-arm draw is cancelled for the local player's right arm while the gauntlet is
-     * worn and the skin arm is drawn in its place, posed as {@code PlayerRenderer.renderRightHand} poses the
+     * First person: the bare-arm draw is cancelled for the local player's left arm while the gauntlet is
+     * worn and the skin arm is drawn in its place, posed as {@code PlayerRenderer.renderLeftHand} poses the
      * vanilla one. The event only fires for the empty-hand arm, so a held item still renders by its own path.
      */
     @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
@@ -186,7 +241,7 @@ public final class CurioRenderers {
         @SubscribeEvent
         public static void onArm(RenderArmEvent event) {
             AbstractClientPlayer player = event.getPlayer();
-            if (event.getArm() != HumanoidArm.RIGHT || player != Minecraft.getInstance().player
+            if (event.getArm() != HumanoidArm.LEFT || player != Minecraft.getInstance().player
                     || CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty())
                 return;
             if (!(Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player) instanceof PlayerRenderer r))
@@ -196,8 +251,31 @@ public final class CurioRenderers {
             model.crouching = false;
             model.swimAmount = 0f;
             model.setupAnim(player, 0f, 0f, 0f, 0f, 0f);
-            model.rightArm.xRot = 0f;
-            drawSkinArm(event.getPoseStack(), event.getMultiBufferSource(), model.rightArm);
+            model.leftArm.xRot = 0f;
+            drawSkinArm(event.getPoseStack(), event.getMultiBufferSource(), model.leftArm);
+            event.setCanceled(true);
+        }
+    }
+
+    /** First person: the same replacement for the left arm while a Knuckleblaster is worn. */
+    @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
+    public static final class FirstPersonLeft {
+        @SubscribeEvent
+        public static void onArm(RenderArmEvent event) {
+            AbstractClientPlayer player = event.getPlayer();
+            boolean whip = !CombatGear.granting(player, io.github.soundgoodizerfan.feedback.combat.whip.WhipTuning.WHIPLASH).isEmpty();
+            if (event.getArm() != HumanoidArm.LEFT || player != Minecraft.getInstance().player
+                    || CombatGear.granting(player, PunchTuning.HEAVY_PUNCH).isEmpty() && !whip)
+                return;
+            if (!(Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player) instanceof PlayerRenderer r))
+                return;
+            PlayerModel<AbstractClientPlayer> model = r.getModel();
+            model.attackTime = 0f;
+            model.crouching = false;
+            model.swimAmount = 0f;
+            model.setupAnim(player, 0f, 0f, 0f, 0f, 0f);
+            model.leftArm.xRot = 0f;
+            drawLeftSkinArm(event.getPoseStack(), event.getMultiBufferSource(), model.leftArm, whip ? WHIP_SKIN : LEFT_SKIN);
             event.setCanceled(true);
         }
     }
@@ -219,7 +297,13 @@ public final class CurioRenderers {
                 float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
             if (FirstPersonMode.isFirstPersonPass() && player == Minecraft.getInstance().player
                     && !CombatGear.granting(player, ParryTuning.PUNCH_PROJECTILES).isEmpty())
-                drawSkinArm(pose, buffer, getParentModel().rightArm);
+                drawSkinArm(pose, buffer, getParentModel().leftArm);
+            if (FirstPersonMode.isFirstPersonPass() && player == Minecraft.getInstance().player
+                    && !CombatGear.granting(player, PunchTuning.HEAVY_PUNCH).isEmpty())
+                drawLeftSkinArm(pose, buffer, getParentModel().leftArm);
+            if (FirstPersonMode.isFirstPersonPass() && player == Minecraft.getInstance().player
+                    && !CombatGear.granting(player, io.github.soundgoodizerfan.feedback.combat.whip.WhipTuning.WHIPLASH).isEmpty())
+                drawLeftSkinArm(pose, buffer, getParentModel().leftArm, WHIP_SKIN);
         }
     }
 

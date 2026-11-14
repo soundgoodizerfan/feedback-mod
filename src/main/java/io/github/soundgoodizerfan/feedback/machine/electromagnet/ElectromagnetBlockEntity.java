@@ -65,7 +65,10 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
     private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float condition = 1f;
     private float field;
+    private float fieldNotified;
     private int sinceLastPull;
+    private boolean humming;
+    private int sinceHum;
 
     // Every item whose material is magnetic, rebuilt when the material table reloads.
     private static int magneticGeneration = -1;
@@ -110,6 +113,20 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
     public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
         super.onResolved(band, eu, amps, wanted, blocked);
         field = ElectricRules.rate(eu, amps, wanted, ratedBand()) * condition;
+        if (level != null && !level.isClientSide) {
+            MagnetField.set(level, worldPosition, field);
+            // A sleeved shaft or bearing touching this magnet reads its drag at the next rebuild of its run: ask for one when the field has moved a step.
+            if (Math.abs(field - fieldNotified) >= ElectricMachineTuning.ELECTROMAGNET_SLEEVE_STEP || (field <= 0f) != (fieldNotified <= 0f)) {
+                fieldNotified = field;
+                io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateBlock.refreshAbove(level, worldPosition);
+                for (net.minecraft.core.Direction d : net.minecraft.core.Direction.values()) {
+                    BlockPos n = worldPosition.relative(d);
+                    if (level.getBlockEntity(n) instanceof io.github.soundgoodizerfan.feedback.fitting.Fittable f
+                            && io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeves.of(f) != null)
+                        io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator.rebuildFrom(level, n);
+                }
+            }
+        }
 
         float excess = ElectricRules.overVoltage(band, eu, ratedBand());
         if (excess > 0f) {
@@ -144,6 +161,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         if (field <= 0f || level == null || ++sinceLastPull < ElectricMachineTuning.ELECTROMAGNET_PULL_INTERVAL_TICKS)
             return;
         sinceLastPull = 0;
+        humming = false;
 
         double range = figures.get("Range", ElectricMachineTuning.ELECTROMAGNET_RANGE) * field;
         boolean flings = io.github.soundgoodizerfan.feedback.modular.attunement.MachineAura.levelsOf(this).getOrDefault("fling", 0) > 0;
@@ -151,9 +169,23 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         AABB reach = new AABB(worldPosition).inflate(range);
         for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, reach)) {
             boolean blank = item.getItem().is(io.github.soundgoodizerfan.feedback.registry.FItems.RARE_EARTH_MAGNET_BLANK.get());
-            if (!blank && (!isMagnetic(item.getItem()) || aboveCurie(item.getItem())))
+            boolean pulled = blank || isMagnetic(item.getItem()) && !aboveCurie(item.getItem());
+            // What is not drawn is pushed away by its own diamagnetism (the pull's mirror, as strong as the material is).
+            float repel = pulled ? 0f : Diamagnetism.of(item.getItem());
+            if (!pulled && repel <= 0f)
                 continue;
             Vec3 toward = centre.subtract(item.position());
+            if (!pulled) {
+                if (toward.lengthSqr() > 1.0e-4 && toward.length() <= range) {
+                    Vec3 away = toward.normalize().scale(-(flings ? -1 : 1) * figures.get("Pull", ElectricMachineTuning.ELECTROMAGNET_PULL) * field * repel);
+                    item.setDeltaMovement(item.getDeltaMovement().add(away.x, away.y + away.length() * ElectricMachineTuning.ELECTROMAGNET_REPEL_LIFT, away.z));
+                    item.hasImpulse = true;
+                    humming = true;
+                    if (level instanceof net.minecraft.server.level.ServerLevel server && level.random.nextInt(8) == 0)
+                        server.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, item.getX(), item.getY() + 0.2, item.getZ(), 1, 0.1, 0.05, 0.1, 0.02);
+                }
+                continue;
+            }
             if (blank && field >= ElectricMachineTuning.MAGNETISE_FIELD && toward.lengthSqr() < SEPARATE_REACH_SQ)
                 magnetise(item);
             if (toward.lengthSqr() < SEPARATE_REACH_SQ && OreLadder.feed(item.getItem()).isPresent())
@@ -164,6 +196,12 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
             item.setDeltaMovement(item.getDeltaMovement()
                     .add(toward.normalize().scale((flings ? -1 : 1) * figures.get("Pull", ElectricMachineTuning.ELECTROMAGNET_PULL) * field)));
             item.hasImpulse = true;
+        }
+        // A hum every couple of seconds while something diamagnetic is held off.
+        if (humming && (sinceHum += ElectricMachineTuning.ELECTROMAGNET_PULL_INTERVAL_TICKS) >= ElectricMachineTuning.ELECTROMAGNET_HUM_INTERVAL_TICKS) {
+            sinceHum = 0;
+            level.playSound(null, worldPosition, io.github.soundgoodizerfan.feedback.registry.FSounds.MACHINE_ELECTROMAGNET_HUM.get(),
+                    net.minecraft.sounds.SoundSource.BLOCKS, 0.4f * field, 1f);
         }
     }
 
@@ -239,6 +277,23 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
             magneticItems = found;
         }
         return magneticItems.contains(item);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level != null) {
+            MagnetField.clear(level, worldPosition);
+            if (!level.isClientSide)
+                io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateBlock.refreshAbove(level, worldPosition);
+        }
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        if (level != null)
+            MagnetField.clear(level, worldPosition);
     }
 
     // --- Wearing ------------------------------------------------------------------------------

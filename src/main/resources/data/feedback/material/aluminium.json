@@ -35,7 +35,8 @@
   "electrical": {
     "drop": 0.082,
     "electrode_potential": -1.66,
-    "conductivity": 0.61
+    "conductivity": 0.61,
+    "seebeck": 4.2
   },
   "ampacity": 0.74,
   "corrosion_resistance": 0.8,

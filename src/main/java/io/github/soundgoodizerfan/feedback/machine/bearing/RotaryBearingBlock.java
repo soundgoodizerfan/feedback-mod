@@ -156,6 +156,13 @@ public class RotaryBearingBlock extends Block implements EntityBlock, MicroRotat
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.is(newState.getBlock()) && !moved && level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.fitting.Fittable holder)
+            io.github.soundgoodizerfan.feedback.fitting.Fittable.dropAll(holder, level, pos);
+        super.onRemove(state, level, pos, newState, moved);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

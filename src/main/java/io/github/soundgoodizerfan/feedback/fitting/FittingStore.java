@@ -35,12 +35,19 @@ public final class FittingStore {
     }
 
     public void save(CompoundTag tag) {
+        for (UpgradeFitting u : upgrades)
+            if (u instanceof io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeveFitting sleeve)
+                tag.putString("Sleeve", sleeve.material().toString());
         for (Direction d : Direction.values())
             if (sided[d.get3DDataValue()] instanceof RedstoneAnalogFitting)
                 tag.putBoolean("RedstoneAnalog" + d.get3DDataValue(), true);
     }
 
     public void load(CompoundTag tag, BlockEntity holder) {
+        upgrades.removeIf(u -> u instanceof io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeveFitting);
+        if (tag.contains("Sleeve"))
+            upgrades.add(new io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeveFitting(
+                    net.minecraft.resources.ResourceLocation.parse(tag.getString("Sleeve"))));
         for (Direction d : Direction.values()) {
             int i = d.get3DDataValue();
             boolean has = tag.getBoolean("RedstoneAnalog" + i);

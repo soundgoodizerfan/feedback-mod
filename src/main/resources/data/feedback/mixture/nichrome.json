@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:nickel": {
+      "min": 0.76,
+      "max": 0.84
+    },
+    "feedback:chromium": {
+      "min": 0.16,
+      "max": 0.24
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_nichrome",
+    "amount": 144
+  }
+}

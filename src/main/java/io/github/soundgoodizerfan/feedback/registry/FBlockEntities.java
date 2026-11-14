@@ -519,6 +519,15 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity>> XP_WIRE =
             BLOCK_ENTITIES.register("xp_wire", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity::new, FBlocks.XP_WIRE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateBlockEntity>> LEVITATION_PLATE =
+            BLOCK_ENTITIES.register("levitation_plate", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateBlockEntity::new, FBlocks.LEVITATION_PLATE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateBlockEntity>> PYRO_PLATE =
+            BLOCK_ENTITIES.register("pyro_plate", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateBlockEntity::new, FBlocks.PYRO_PLATE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.hydride.HydrideBedBlockEntity>> HYDRIDE_BED =
+            BLOCK_ENTITIES.register("hydride_bed", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.hydride.HydrideBedBlockEntity::new, FBlocks.HYDRIDE_BED.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlockEntity>> PIPE =
             BLOCK_ENTITIES.register("pipe", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlockEntity::new, FormItems.all().stream()

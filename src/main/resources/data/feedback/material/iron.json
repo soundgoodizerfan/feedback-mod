@@ -38,7 +38,8 @@
     "conductivity": 0.17,
     "drop": 0.294,
     "core_loss": 0.06,
-    "electrode_potential": -0.44
+    "electrode_potential": -0.44,
+    "seebeck": 18.9
   },
   "ampacity": 0.31,
   "corrosion_resistance": 0.37,

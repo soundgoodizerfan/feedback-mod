@@ -1,0 +1,62 @@
+{
+  "fastener": 4,
+  "color": "#8d939c",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 25,
+  "density": 8.16,
+  "thermal": {
+    "melting_point": 1430,
+    "boiling_point": 3000,
+    "cooling_rate": 1.55,
+    "conductivity": 0.00524,
+    "anneal_temperature": 850,
+    "service_temperature": 600,
+    "specific_heat": 0.42,
+    "latent_heat_fusion": 250,
+    "latent_heat_vaporisation": 6100,
+    "oxidation_temperature": 600
+  },
+  "mechanical": {
+    "toughness": 40,
+    "ductility": 5,
+    "work_hardening": 1,
+    "yield_strength": 25,
+    "friction": 0.5,
+    "abrasiveness": 0.404,
+    "hardenable": true
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 7.3,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.6,
+    "magnetic": true,
+    "curie_temperature": 760
+  },
+  "electrical": {
+    "drop": 1.25,
+    "electrode_potential": -0.4,
+    "conductivity": 0.04
+  },
+  "ampacity": 0.231,
+  "corrosion_resistance": 0.35,
+  "enchantability": 9,
+  "toxicity": 0.5,
+  "composition": {
+    "feedback:steel": 0.8,
+    "feedback:tungsten": 0.065,
+    "feedback:molybdenum": 0.05,
+    "feedback:chromium": 0.045,
+    "feedback:vanadium": 0.02
+  },
+  "exclude": [
+    "lump",
+    "ore",
+    "deepslate_ore"
+  ]
+}

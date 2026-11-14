@@ -30,6 +30,15 @@
         "mb": 160
       }
     ],
-    "heat": 4
+    "heat": 4,
+    "byproducts": [
+      {
+        "item": {
+          "id": "feedback:gallium_nugget",
+          "count": 1
+        },
+        "chance": 0.1
+      }
+    ]
   }
 }

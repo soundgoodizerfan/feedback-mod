@@ -1,0 +1,43 @@
+{
+  "color": "#c8a46a",
+  "kind": "composite",
+  "traits": [
+    "flammable",
+    "fibrous"
+  ],
+  "hardness": 2.5,
+  "density": 0.65,
+  "thermal": {
+    "melting_point": 300,
+    "boiling_point": 800,
+    "cooling_rate": 4.8,
+    "conductivity": 3.24e-05,
+    "specific_heat": 1.7,
+    "latent_heat_fusion": 100,
+    "latent_heat_vaporisation": 1000,
+    "oxidation_temperature": 300,
+    "service_temperature": 100
+  },
+  "mechanical": {
+    "toughness": 5,
+    "yield_strength": 3,
+    "friction": 0.4,
+    "abrasiveness": 0.036
+  },
+  "separation": {
+    "reflectivity": 0.3
+  },
+  "corrosion_resistance": 0.4,
+  "toxicity": 0.1,
+  "molten": {
+    "viscosity": 100000,
+    "density": 0.54,
+    "shear_thickening": 0
+  },
+  "enchantability": 12,
+  "combustion": {
+    "flame_temperature": 760,
+    "burn_ticks": 600,
+    "spread": 0.12
+  }
+}

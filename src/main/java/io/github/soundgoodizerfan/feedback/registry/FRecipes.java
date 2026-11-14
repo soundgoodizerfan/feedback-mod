@@ -93,6 +93,21 @@ public class FRecipes {
             GEAR = SERIALIZERS.register("gear",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.combat.gear.GearRecipe::new));
 
+    /** One plate and one rod of one diamagnetic material -> a levitation sleeve in that material. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.levitation.LevitationSleeveRecipe>>
+            LEVITATION_SLEEVE = SERIALIZERS.register("levitation_sleeve",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationSleeveRecipe::new));
+
+    /** One crystal plate of a pyroelectric material and two wires -> a pyroelectric plate in that material. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateRecipe>>
+            PYRO_PLATE = SERIALIZERS.register("pyro_plate",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateRecipe::new));
+
+    /** Two plates of one diamagnetic material side by side -> a levitation plate in that material. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateRecipe>>
+            LEVITATION_PLATE = SERIALIZERS.register("levitation_plate",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateRecipe::new));
+
     /** Three items of one XP-conducting material in a row -> XP wire in that material. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.xp.XpWireRecipe>>
             XP_WIRE = SERIALIZERS.register("xp_wire",

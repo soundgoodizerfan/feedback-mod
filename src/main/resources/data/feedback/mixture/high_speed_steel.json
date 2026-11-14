@@ -1,0 +1,28 @@
+{
+  "parts": {
+    "feedback:steel": {
+      "min": 0.76,
+      "max": 0.84
+    },
+    "feedback:tungsten": {
+      "min": 0.05,
+      "max": 0.08
+    },
+    "feedback:molybdenum": {
+      "min": 0.04,
+      "max": 0.06
+    },
+    "feedback:chromium": {
+      "min": 0.03,
+      "max": 0.05
+    },
+    "feedback:vanadium": {
+      "min": 0.01,
+      "max": 0.03
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_high_speed_steel",
+    "amount": 144
+  }
+}

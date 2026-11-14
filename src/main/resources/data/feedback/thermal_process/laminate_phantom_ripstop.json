@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:phantom_membrane"
+    },
+    {
+      "item": "feedback:aramid_ingot"
+    }
+  ],
+  "min_temperature": 120,
+  "optimal_temperature": 150,
+  "max_temperature": 180,
+  "required_tpu": 200,
+  "spoil_temperature": 300,
+  "result": {
+    "id": "feedback:phantom_ripstop_plate"
+  }
+}

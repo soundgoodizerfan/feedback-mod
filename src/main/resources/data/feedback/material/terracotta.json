@@ -14,7 +14,8 @@
     "latent_heat_fusion": 350,
     "boiling_point": 2800,
     "latent_heat_vaporisation": 5000,
-    "oxidation_temperature": 1500
+    "oxidation_temperature": 1500,
+    "shock_limit": 100
   },
   "mechanical": {
     "toughness": 1,

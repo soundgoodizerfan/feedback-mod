@@ -61,8 +61,12 @@ public final class PulseShot {
      * @param band     the cell's band: what the wielder's insulation is tested against.
      * @param spreadDeg the cone one beam leaves in.
      * @param style    an {@link EnergyStyle}: how the beam is drawn.
+     * @param bounces  bounces a coherence lens's pulse survives (0 for none).
+     * @param coherent whether a coherence lens is fitted: a pulse that crosses a projectile in flight sets it off.
+     * @param malefic  whether a malefic lens is fitted: the pulse stops at the first body or block and blows there.
      */
-    public record Plan(float joules, float cutoff, int pierce, int colour, int beams, boolean fork, boolean cylinder, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, float spreadDeg, float widen, byte style) {
+    public record Plan(float joules, float cutoff, int pierce, int colour, int beams, boolean fork, boolean cylinder, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, float spreadDeg, float widen, byte style,
+                       int bounces, boolean coherent, boolean malefic) {
     }
 
     private PulseShot() {
@@ -95,14 +99,14 @@ public final class PulseShot {
 
     private static void trace(ServerLevel level, LivingEntity shooter, ItemStack gun, Plan plan, Vec3 from, Vec3 dir, float joules,
                               Set<Integer> seen) {
-        trace(level, shooter, gun, plan, from, dir, joules, seen, 0, plan.pierce() == Integer.MAX_VALUE ? Integer.MAX_VALUE : plan.pierce() + 1);
+        trace(level, shooter, gun, plan, from, dir, joules, seen, 0, plan.malefic() ? 1 : plan.pierce() == Integer.MAX_VALUE ? Integer.MAX_VALUE : plan.pierce() + 1, plan.bounces());
     }
 
     /** The beam from {@code from}, having already gone {@code travelled} blocks with {@code left} bodies it may still go through. */
     private static void trace(ServerLevel level, LivingEntity shooter, ItemStack gun, Plan plan, Vec3 from, Vec3 dir, float joules,
-                              Set<Integer> seen, double travelled, int left) {
+                              Set<Integer> seen, double travelled, int left, int bounces) {
         Vec3 pos = from;
-        for (int guard = 0; guard < 12 && travelled < plan.cutoff() && left > 0; guard++) {
+        for (int guard = 0; guard < 24 && travelled < plan.cutoff() && left > 0; guard++) {
             Vec3 end = pos.add(dir.scale(plan.cutoff() - travelled));
             // A coin the shooter flipped: the beam turns on it, whole.
             CoinShot.Result coin = CoinShot.resolve(level, shooter, pos, end, 0.001f, GunTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
@@ -120,10 +124,10 @@ public final class PulseShot {
                 final Vec3 resume = pos, resumeDir = dir;
                 final float resumeJoules = joules;
                 final double went = travelled;
-                final int bodies = left;
+                final int bodies = left, bouncesLeft = bounces;
                 io.github.soundgoodizerfan.feedback.core.Later.in(GunFuTuning.COIN_HOLD_TICKS, () -> {
                     if (!shooter.isRemoved())
-                        trace(level, shooter, gun, plan, resume, resumeDir, resumeJoules, seen, went, bodies);
+                        trace(level, shooter, gun, plan, resume, resumeDir, resumeJoules, seen, went, bodies, bouncesLeft);
                 });
                 return;
             }
@@ -138,8 +142,17 @@ public final class PulseShot {
             }
             hits.sort(Comparator.comparingDouble(Hit::dist));
             boolean ended = false;
+            // A coherence beam sets off a projectile it crosses, where it is.
+            if (plan.coherent())
+                detonate(level, shooter, pos, stop);
             for (Hit h : hits) {
                 seen.add(h.entity().getId());
+                if (plan.malefic()) {
+                    // The whole pulse into a spot: the first body it meets flash-boils and blows.
+                    line(level, plan, pos, h.at());
+                    blast(level, shooter, plan, h.at(), joules);
+                    return;
+                }
                 strike(level, shooter, gun, plan, h.entity(), h.at(), joules);
                 if (--left <= 0) {
                     stop = h.at();
@@ -154,12 +167,61 @@ public final class PulseShot {
             if (block.getType() == HitResult.Type.MISS)
                 return;
             BlockState state = level.getBlockState(block.getBlockPos());
-            if (!passes(state)) {
+            if (plan.malefic() || !passes(state)) {
                 GunImpacts.energyBlock(level, block.getBlockPos(), block.getDirection(), stop, 0.5f, plan.colour(), plan.style());
-                return;
+                if (plan.malefic()) {
+                    blast(level, shooter, plan, stop, joules);
+                    return;
+                }
+                // A coherence lens keeps the pulse coherent enough to bounce: what it keeps is the struck surface's reflectivity.
+                float kept = bounces > 0 ? joules * BlockReflectivity.of(level, block.getBlockPos(), state) : 0f;
+                if (kept < plan.joules() * ModularTuning.EGUN_COHERENCE_FLOOR)
+                    return;
+                Vec3 normal = Vec3.atLowerCornerOf(block.getDirection().getNormal());
+                dir = dir.subtract(normal.scale(2 * dir.dot(normal))).normalize();
+                joules = kept;
+                bounces--;
+                pos = stop.add(normal.scale(0.02));
+                continue;
             }
             pos = stop.add(dir.scale(0.02));
         }
+    }
+
+    /** A projectile in flight on the segment goes off where it is: a coherence lens's beam crossing an arrow, a fireball or a skull. */
+    private static void detonate(ServerLevel level, LivingEntity shooter, Vec3 a, Vec3 b) {
+        for (net.minecraft.world.entity.projectile.Projectile p : level.getEntitiesOfClass(net.minecraft.world.entity.projectile.Projectile.class,
+                new AABB(a, b).inflate(1.0), p -> p.isAlive() && p.getOwner() != shooter)) {
+            Optional<Vec3> at = p.getBoundingBox().inflate(0.3).clip(a, b);
+            if (at.isEmpty())
+                continue;
+            p.discard();
+            level.explode(shooter, at.get().x, at.get().y, at.get().z, ModularTuning.EGUN_COHERENCE_BLAST, false, net.minecraft.world.level.Level.ExplosionInteraction.TNT);
+        }
+    }
+
+    /**
+     * The malefic lens's blast at {@code at}: radius and hit from the pulse's energy, a wet or metal-armoured body taking the shock bonus as from
+     * any pulse, blocks broken by the world's rules. The wielder inside the radius takes it too, capped as the pump charge's blast is.
+     */
+    private static void blast(ServerLevel level, LivingEntity shooter, Plan plan, Vec3 at, float joules) {
+        float r = Mth.clamp(ModularTuning.EGUN_MALEFIC_RADIUS_PER_SQRT_J * Mth.sqrt(joules), ModularTuning.EGUN_MALEFIC_RADIUS_MIN, ModularTuning.EGUN_MALEFIC_RADIUS_MAX);
+        float damage = joules * ModularTuning.EGUN_DAMAGE_PER_J * ModularTuning.EGUN_MALEFIC_DAMAGE_MULT;
+        for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(at, at).inflate(r),
+                e -> e.isAlive() && !e.isSpectator() && e.getBoundingBox().getCenter().distanceTo(at) <= r)) {
+            float share = 1f - 0.75f * (float) (e.getBoundingBox().getCenter().distanceTo(at) / r);
+            if (e == shooter)
+                e.hurt(level.damageSources().explosion(shooter, shooter), Math.min(damage * share, shooter.getMaxHealth() * ModularTuning.EGUN_MALEFIC_SELF_CAP));
+            else
+                hurt(level, shooter, e, damage * share, joules, plan.band());
+        }
+        // The blast breaks blocks by the game's rules and hurts nobody a second time.
+        level.explode(shooter, null, new net.minecraft.world.level.ExplosionDamageCalculator() {
+            @Override
+            public boolean shouldDamageEntity(net.minecraft.world.level.Explosion explosion, Entity entity) {
+                return false;
+            }
+        }, at.x, at.y, at.z, r * ModularTuning.EGUN_MALEFIC_POWER_PER_RADIUS, false, net.minecraft.world.level.Level.ExplosionInteraction.TNT);
     }
 
     /** Glass and glass panes let a pulse through; tinted glass does not. */
@@ -178,11 +240,11 @@ public final class PulseShot {
             GunFu.bulletHit(level, shooter, target, ElectricGunSpec.impulse(joules));
         }
         if (plan.fork() && target instanceof LivingEntity struck)
-            arc(level, shooter, plan, struck, joules);
+            arc(level, shooter, plan.colour(), plan.band(), struck, joules);
     }
 
     /** One body's hit: a wet or metal-armoured target takes the shock bonus (and the armour no longer resists), then the stagger. */
-    private static void hurt(ServerLevel level, LivingEntity shooter, Entity target, float damage, float joules, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band) {
+    static void hurt(ServerLevel level, LivingEntity shooter, Entity target, float damage, float joules, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band) {
         boolean metal = target instanceof LivingEntity l && conductive(l);
         boolean wet = target.isInWaterOrRain();
         float dealt = damage * (wet || metal ? 1f + ModularTuning.EGUN_SHOCK_BONUS : 1f);
@@ -203,7 +265,7 @@ public final class PulseShot {
     }
 
     /** The arc fork: the shock goes on from the body struck to the nearest conductive one within reach, else the nearest of any. */
-    private static void arc(ServerLevel level, LivingEntity shooter, Plan plan, LivingEntity from, float joules) {
+    static void arc(ServerLevel level, LivingEntity shooter, int colour, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, LivingEntity from, float joules) {
         List<LivingEntity> near = level.getEntitiesOfClass(LivingEntity.class, from.getBoundingBox().inflate(ModularTuning.EGUN_FORK_RANGE),
                 e -> e != from && e != shooter && e.isAlive() && !e.isSpectator() && !shooter.isAlliedTo(e));
         near.sort(Comparator.comparingDouble(e -> e.distanceToSqr(from)));
@@ -211,10 +273,10 @@ public final class PulseShot {
         if (to == null)
             return;
         Vec3 a = from.getBoundingBox().getCenter(), b = to.getBoundingBox().getCenter();
-        EnergyBeamPayload.send(level, EnergyStyle.ARC, plan.colour(), a, b, 0.8f);
+        EnergyBeamPayload.send(level, EnergyStyle.ARC, colour, a, b, 0.8f);
         float damage = joules * ModularTuning.EGUN_DAMAGE_PER_J * ModularTuning.EGUN_FORK_SHARE;
-        hurt(level, shooter, to, damage, joules * ModularTuning.EGUN_FORK_SHARE, plan.band());
-        GunImpacts.energyBody(level, b, new Vec3(0, 1, 0), 0.5f, plan.colour(), EnergyStyle.ARC);
+        hurt(level, shooter, to, damage, joules * ModularTuning.EGUN_FORK_SHARE, band);
+        GunImpacts.energyBody(level, b, new Vec3(0, 1, 0), 0.5f, colour, EnergyStyle.ARC);
     }
 
     /** An arc fork fired in water or rain: everything wet within reach takes the shock, the wielder too unless insulated. */

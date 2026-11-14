@@ -1,0 +1,32 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:string"
+    },
+    {
+      "item": "minecraft:string"
+    }
+  ],
+  "min_temperature": 140,
+  "optimal_temperature": 160,
+  "max_temperature": 190,
+  "required_tpu": 200,
+  "spoil_temperature": 250,
+  "spoiled": {
+    "id": "minecraft:charcoal"
+  },
+  "result": {
+    "id": "feedback:micarta_plate"
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:phenolic_resin",
+        "mb": 144
+      }
+    ],
+    "min_pu": 1,
+    "optimal_pu": 2,
+    "heat": 4
+  }
+}

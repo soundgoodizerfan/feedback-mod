@@ -1,0 +1,20 @@
+{
+  "parts": {
+    "feedback:tin": {
+      "min": 0.86,
+      "max": 0.92
+    },
+    "feedback:antimony": {
+      "min": 0.05,
+      "max": 0.09
+    },
+    "feedback:copper": {
+      "min": 0.035,
+      "max": 0.05
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_babbitt",
+    "amount": 144
+  }
+}

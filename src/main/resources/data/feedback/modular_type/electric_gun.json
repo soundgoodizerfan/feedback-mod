@@ -567,6 +567,10 @@
           {
             "name": "dead_man_cutoff",
             "cells": 3
+          },
+          {
+            "name": "surge_shunt",
+            "cells": 2
           }
         ],
         "base": "fire_rate_throttle",
@@ -688,6 +692,20 @@
             "cells": 2,
             "params": {
               "fork": 1
+            }
+          },
+          {
+            "name": "coherence_lens",
+            "cells": 3,
+            "params": {
+              "coherence": 1
+            }
+          },
+          {
+            "name": "malefic_lens",
+            "cells": 3,
+            "params": {
+              "malefic": 1
             }
           }
         ],
@@ -832,6 +850,14 @@
             "params": {
               "tether": 1
             }
+          },
+          {
+            "name": "thermopile",
+            "cells": 4,
+            "params": {
+              "pile": 1,
+              "big": 1
+            }
           }
         ],
         "base": "cylinder",
@@ -898,6 +924,77 @@
         ]
       },
       "mount": "receiver"
+    },
+    "j": {
+      "name": "shock_lead",
+      "forms": [
+        "shock_lead"
+      ],
+      "litres": 0.05,
+      "layer": 4,
+      "part": {
+        "item": "feedback:shock_lead",
+        "cells": 1,
+        "stock": [
+          "rod"
+        ],
+        "variants": [],
+        "slots": [
+          {
+            "name": "reel",
+            "share": 3
+          },
+          {
+            "name": "line",
+            "share": 1,
+            "forms": [
+              "wire"
+            ]
+          }
+        ]
+      },
+      "axes": {
+        "line_length": {
+          "min": 3,
+          "max": 16,
+          "unit": "m",
+          "default": 8,
+          "step": 1,
+          "bands": [
+            {
+              "name": "short",
+              "max": 6
+            },
+            {
+              "name": "normal",
+              "max": 11
+            },
+            {
+              "name": "long"
+            }
+          ]
+        }
+      },
+      "mount": "receiver"
+    },
+    "k": {
+      "name": "heat_sink",
+      "class": "housing",
+      "forms": [
+        "heat_sink"
+      ],
+      "litres": 0.12,
+      "layer": 9,
+      "part": {
+        "item": "feedback:heat_sink",
+        "cells": 2,
+        "stock": [
+          "ingot",
+          "plate"
+        ],
+        "variants": []
+      },
+      "mount": "barrel"
     }
   },
   "patterns": [
@@ -906,11 +1003,11 @@
     ]
   ],
   "defaults": {
-    "R": "feedback:wood",
+    "R": "feedback:oak",
     "B": "feedback:copper",
     "T": "feedback:steel",
     "G": "feedback:wood",
-    "i": "feedback:wood",
+    "i": "feedback:oak",
     "s": "feedback:copper"
   },
   "names": {
@@ -943,6 +1040,12 @@
         "name": "spinner",
         "is": {
           "seat": "flywheel"
+        }
+      },
+      {
+        "name": "hotshot",
+        "is": {
+          "seat": "thermopile"
         }
       },
       {
@@ -1090,6 +1193,14 @@
       "u": [
         2,
         -2
+      ],
+      "j": [
+        0,
+        2
+      ],
+      "k": [
+        1,
+        2
       ]
     },
     "joins": [
@@ -1160,6 +1271,14 @@
       [
         "u",
         "R"
+      ],
+      [
+        "j",
+        "R"
+      ],
+      [
+        "k",
+        "B"
       ]
     ]
   },

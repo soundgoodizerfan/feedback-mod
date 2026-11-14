@@ -127,6 +127,53 @@ public final class Radiation {
     }
 
     /**
+     * The dose rate in Ru at a cell of the world, from what is around it and nothing carried: each radioactive block (its own included),
+     * the contents of each container and each dropped item within reach at {@code 1 / (1 + d^2)}, through whatever stands between. What a
+     * block that shows radiation reads; {@link io.github.soundgoodizerfan.feedback.machine.glow.RadiationField} caches it.
+     */
+    public static float rateAt(Level level, BlockPos centre, Map<ResourceLocation, Material> materials) {
+        Map<Item, Float> table = sources(materials);
+        if (table.isEmpty())
+            return 0f;
+        Map<Item, Float> density = densities(materials);
+        float total = 0f;
+        int r = HazardTuning.RAD_REACH_BLOCKS;
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int dx = -r; dx <= r; dx++)
+            for (int dy = -r; dy <= r; dy++)
+                for (int dz = -r; dz <= r; dz++) {
+                    pos.set(centre.getX() + dx, centre.getY() + dy, centre.getZ() + dz);
+                    // A cell near the edge of what is loaded must not load its neighbours to read them.
+                    if (!level.hasChunkAt(pos))
+                        continue;
+                    var state = level.getBlockState(pos);
+                    float here = table.getOrDefault(state.getBlock().asItem(), 0f);
+                    var be = state.hasBlockEntity() ? level.getBlockEntity(pos) : null;
+                    if (be instanceof RadiationEmitter emitter)
+                        here += emitter.radiationRu();
+                    if (be instanceof net.minecraft.world.Container box) {
+                        float held = 0f;
+                        for (int slot = 0; slot < box.getContainerSize(); slot++)
+                            held += activity(box.getItem(slot), materials);
+                        if (box instanceof Shielded lined) {
+                            Material lining = materials.get(lined.shieldMaterial());
+                            if (lining != null)
+                                held *= containerShield(lining);
+                        }
+                        here += held;
+                    }
+                    if (here > 0f)
+                        total += here / (1f + dx * dx + dy * dy + dz * dz) * through(level, pos.immutable(), centre, density);
+                }
+        for (ItemEntity drop : level.getEntitiesOfClass(ItemEntity.class, new net.minecraft.world.phys.AABB(centre).inflate(r))) {
+            float act = activity(drop.getItem(), materials);
+            if (act > 0f)
+                total += (float) (act / (1.0 + drop.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(centre)))) * through(level, drop.blockPosition(), centre, density);
+        }
+        return total;
+    }
+
+    /**
      * The dose rate in Ru at {@code player}, before their armour: what they carry in full; each
      * radioactive block, the contents of each container (through its lining, if it has one) and each
      * dropped item within reach at {@code 1 / (1 + d^2)}, then through whatever stands between.

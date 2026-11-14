@@ -1,0 +1,19 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:coal"
+    }
+  ],
+  "min_temperature": 450,
+  "optimal_temperature": 600,
+  "max_temperature": 800,
+  "required_tpu": 200,
+  "airless": true,
+  "result": {
+    "id": "minecraft:charcoal"
+  },
+  "result_fluid": {
+    "id": "feedback:phenolic_resin",
+    "amount": 250
+  }
+}

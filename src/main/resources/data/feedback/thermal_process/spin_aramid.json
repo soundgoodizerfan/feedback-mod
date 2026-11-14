@@ -1,0 +1,30 @@
+{
+  "inputs": [],
+  "min_temperature": 100,
+  "optimal_temperature": 140,
+  "max_temperature": 200,
+  "required_tpu": 200,
+  "spoil_temperature": 400,
+  "result": {
+    "id": "feedback:aramid_ingot"
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:phenolic_resin",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:ammonia",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:chlorine",
+        "mb": 50
+      }
+    ],
+    "min_pu": 1,
+    "optimal_pu": 2,
+    "heat": 6
+  }
+}

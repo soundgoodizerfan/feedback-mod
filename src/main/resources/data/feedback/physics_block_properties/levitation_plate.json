@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:levitation_plate",
+  "properties": {
+    "sable:mass": 0.04
+  }
+}

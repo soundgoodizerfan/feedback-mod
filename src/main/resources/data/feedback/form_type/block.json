@@ -1,5 +1,12 @@
 {
-  "kinds": ["metal", "polymer", "animal", "seafood"],
+  "kinds": [
+    "metal",
+    "polymer",
+    "animal",
+    "seafood",
+    "composite",
+    "glass"
+  ],
   "block": true,
   "mb": 1296,
   "grain": 3

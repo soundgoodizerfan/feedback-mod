@@ -31,12 +31,14 @@
   },
   "separation": {
     "reflectivity": 0.7,
-    "gangue": "feedback:calcite"
+    "gangue": "feedback:calcite",
+    "diamagnetism": 0.07
   },
   "electrical": {
     "drop": 0.172,
     "electrode_potential": -0.76,
-    "conductivity": 0.29
+    "conductivity": 0.29,
+    "seebeck": 7.1
   },
   "ampacity": 0.26,
   "corrosion_resistance": 0.6,

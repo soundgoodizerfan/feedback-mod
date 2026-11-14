@@ -63,7 +63,7 @@ public class ModularElectricGun extends GunItem {
     static final String HEAT = "EgunHeat", HEAT_AT = "EgunHeatAt", CHAMBERS = "PulseChambers", CHAMBERS_AT = "PulseChambersAt",
             INDEX = "PulseIndex", PIPS = "PulsePips", PIPS_AT = "PulsePipsAt", SPIN = "PulseSpin", SPIN_AT = "PulseSpinAt",
             HELD = "PulseHeld", HELD_AT = "PulseHeldAt", HELD_TICKS = "PulseHeldTicks", PUMPS = "PulsePumps", HOT = "PulseHot", LOCK = "PulseLock",
-            CUT = "PulseCut", AIM = "PulseAim";
+            CUT = "PulseCut", AIM = "PulseAim", SHUNT = "PulseShunt", SOAK = "PulseSoak", SOAK_AT = "PulseSoakAt";
 
     public ModularElectricGun(Properties properties) {
         super(properties);
@@ -72,6 +72,15 @@ public class ModularElectricGun extends GunItem {
     @Override
     public GunMechanism mechanism() {
         return ElectricMechanism.INSTANCE;
+    }
+
+    /** A hot core breech in the hand vents itself, whatever interrupted the stroke after the shot (a swap, a drop, a logout). */
+    @Override
+    public void inventoryTick(ItemStack stack, net.minecraft.world.level.Level level, net.minecraft.world.entity.Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, level, entity, slot, selected);
+        if (level instanceof net.minecraft.server.level.ServerLevel sl && entity instanceof net.minecraft.world.entity.player.Player player
+                && (selected || player.getOffhandItem() == stack) && hot(stack))
+            ElectricMechanism.vent(sl, player, stack);
     }
 
     @Override
@@ -427,6 +436,39 @@ public class ModularElectricGun extends GunItem {
     public static void setTripped(ItemStack gun, boolean on) {
         if (tripped(gun) != on)
             edit(gun, tag -> tag.putBoolean(CUT, on));
+    }
+
+    /** The game tick a surge shunt's window closes at (0 when it has never been closed). */
+    public static long shuntEnd(ItemStack gun) {
+        return tag(gun).getLong(SHUNT);
+    }
+
+    public static void setShunt(ItemStack gun, long end) {
+        edit(gun, tag -> tag.putLong(SHUNT, end));
+    }
+
+    /** Whether the shunt is closed now: the barrel runs at double rate and more power. */
+    public static boolean shuntOpen(ItemStack gun, long now) {
+        return now < shuntEnd(gun);
+    }
+
+    /** Whether the window has ended and the barrel is still over the heat the shunt resumes under: the gun locks, as a forced vent does. */
+    public static boolean shuntLocked(ItemStack gun, long now, float heat) {
+        long end = shuntEnd(gun);
+        return end > 0L && now >= end && heat > ModularTuning.EGUN_SHUNT_RESUME;
+    }
+
+    /** How full a thermopile's sink is now, 0 to 1: it empties into the air over {@link ModularTuning#EGUN_PILE_SOAK_DECAY_TICKS}. */
+    public static float soak(ItemStack gun, long now) {
+        CompoundTag tag = tag(gun);
+        return Mth.clamp(tag.getFloat(SOAK) - Math.max(0L, now - tag.getLong(SOAK_AT)) / ModularTuning.EGUN_PILE_SOAK_DECAY_TICKS, 0f, 1f);
+    }
+
+    public static void setSoak(ItemStack gun, float soak, long now) {
+        edit(gun, tag -> {
+            tag.putFloat(SOAK, Mth.clamp(soak, 0f, 1f));
+            tag.putLong(SOAK_AT, now);
+        });
     }
 
     /** The spec of {@code gun}'s design, or null. */

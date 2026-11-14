@@ -38,6 +38,20 @@
           "count": 1
         },
         "chance": 0.05
+      },
+      {
+        "item": {
+          "id": "feedback:platinum_nugget",
+          "count": 1
+        },
+        "chance": 0.03
+      },
+      {
+        "item": {
+          "id": "feedback:palladium_nugget",
+          "count": 1
+        },
+        "chance": 0.05
       }
     ]
   }

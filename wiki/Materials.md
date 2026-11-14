@@ -31,6 +31,19 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 | Aluminum | 2.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. Made from bauxite by [electrolysis](Making_Aluminum.md). |
 | Titanium | 15 | 4.51 | 20 | 1668 Tu | Light, strong, stands the heat. For cermet. |
 | Tungsten | 34 | 19.25 | 38 | 3422 Tu | The highest melting point of any metal. |
+| Magnesium | 4.5 | 1.74 | 4.5 | 650 Tu | Very light. Burns hot, at a flame temperature of 3100 Tu. |
+| Lithium | 0.05 | 0.534 | 0.1 | 181 Tu | The lightest and softest metal. Bites at air from 180 Tu. |
+| Bismuth | 2 | 9.78 | 1 | 271 Tu | Dense and brittle; melts low. A byproduct of smelting galena. |
+| Beryllium | 16.5 | 1.85 | 12 | 1287 Tu | Light and stiff; **moderates neutrons** like graphite. Toxic. |
+| Antimony | 3 | 6.7 | 0.5 | 631 Tu | Brittle and toxic. Hardens tin into pewter and babbitt. A mineral of its own: stibnite. |
+| Platinum | 5 | 21.45 | 2.5 | 1768 Tu | Dense and nearly immune to corrosion. A **catalyst** (activity 1.6). |
+| Gallium | 0.5 | 5.91 | 0.1 | 29.8 Tu | Melts in a warm biome. A byproduct of leaching bauxite. |
+| Molybdenum | 15 | 10.28 | 22 | 2623 Tu | Strong and stands high heat. |
+| Palladium | 4.5 | 12.02 | 2.5 | 1555 Tu | A **catalyst** (activity 1.4). |
+| Cadmium | 2 | 8.65 | 1 | 321 Tu | Soft and toxic. A byproduct of leaching sphalerite. |
+| Vanadium | 6.5 | 6.11 | 7.5 | 1910 Tu | Tough; stands 600 Tu. For high-speed steel and titanium 6Al-4V. Comes from vanadinite. |
+| Indium | 0.1 | 7.31 | 0.2 | 157 Tu | Very soft and ductile, melts low. A byproduct of leaching sphalerite. For galinstan. |
+| Mercury | 0.2 | 13.53 | 0.1 | -39 Tu | **Liquid at room temperature** and toxic. Its items are the frozen metal. Comes from cinnabar. |
 | Thorium | 4 | 11.7 | 5 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
 | Stainless Steel | 20 | 7.9 | 14 | 1400 Tu | Steel with chromium and nickel. Barely corrodes. |
 | Manganese Steel | 22 | 7.8 | 18 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
@@ -38,7 +51,27 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 | Titanium Carbide | 294 | 4.9 | 75 | 3160 Tu | Titanium baked with graphite. Hard and brittle. The grain in cermet. |
 | Thorium-Tungsten | 32 | 19 | 35 | 3380 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
 | Cermet | 177 | 6 | 100 | 1380 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder, sintered from powder ([Furnaces](Furnaces.md#sintering)). |
+| Constantan | 12 | 8.9 | 12 | 1270 Tu | Copper and nickel. Stands 500 Tu. |
+| Cupronickel | 12 | 8.94 | 7 | 1240 Tu | Copper with less nickel than constantan. Stands 500 Tu. |
+| High-Speed Steel | 25 | 8.16 | 25 | 1430 Tu | Steel with tungsten, molybdenum, chromium and vanadium. Stands 600 Tu. Hardens in a quench: see [High-speed steel](#high-speed-steel). |
+| Hardened High-Speed Steel | 75 | 8.16 | 90 | 1430 Tu | No blow moves it; only a drill bit, a lathe bit or the [Grinding Wheel](Grinding_Wheel.md) cuts it. Stands 600 Tu, where hardened steel stands 250. |
+| Titanium 6Al-4V | 34 | 4.43 | 44 | 1650 Tu | Titanium with aluminum and vanadium. Light and strong; soaks up hydrogen like titanium. |
+| Stellite | 39 | 8.4 | 30 | 1285 Tu | Cobalt, chromium and tungsten. Hard, and stands 800 Tu. |
+| Pewter | 1.5 | 7.28 | 1.5 | 235 Tu | Tin with antimony and a little copper. Soft. |
+| Babbitt | 2.5 | 7.34 | 1.5 | 350 Tu | Tin with antimony and copper. Slippery, at a grip friction of 0.3. |
+| Bell Metal | 20 | 8.8 | 15 | 990 Tu | Copper with a fifth tin. |
+| Shakudo | 8 | 8.98 | 5 | 1075 Tu | Copper with a little gold. |
+| Galinstan | 0.2 | 6.44 | 0.1 | -19 Tu | Gallium, indium and tin. **Liquid at room temperature.** |
+| Alnico | 44 | 7.3 | 8 | 1500 Tu | **Magnetic** below **890 Tu**. Iron, cobalt, nickel and aluminum. |
 | Redstone-Chromium | 29 | 4.5 | 15 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
+| Duralumin | 13.5 | 2.78 | 16 | 640 Tu | Aluminum hardened with a little copper, magnesium and manganese. Light and strong. |
+| Aluminium Foam | 0.5 | 0.4 | 0.25 | 640 Tu | **Porous**, lighter than any wood. 97 to 99.5% aluminum, 0.5 to 3% titanium, alloyed in the crucible ([Casting and Alloys](Casting.md)). |
+| Nichrome | 17.5 | 8.4 | 15.5 | 1400 Tu | Nickel and chromium. Stands 1150 Tu and barely corrodes; a poor conductor. |
+| Wood's Metal | 1 | 9.58 | 1 | 70 Tu | Bismuth, lead, tin and cadmium. Melts in hot water. Toxic. |
+| Beryllium Copper | 36 | 8.25 | 50 | 980 Tu | Copper with 2% beryllium. Springy and strong, and still conducts well. |
+| Invar | 13.5 | 8.05 | 14 | 1427 Tu | **Magnetic** below **230 Tu**. Iron and nickel. |
+| Electrum | 5 | 15.9 | 3 | 1040 Tu | Gold and silver. Soft and dense; conducts well. |
+| Amethyst Bronze | 12.5 | 7.4 | 12 | 1000 Tu | A mixture of bronze with a little amethyst. The best conductor of XP, at a conductance of 4 ([Experience](Experience.md)). |
 | Uranium | 20 | 19.1 | 10 | 1132 Tu | **Radioactive.** Nearly as dense as gold and tungsten. See [Uranium](#uranium). |
 | [Osmium](Heavy_Core.md) | 39 | 22.6 | 30 | 3033 Tu | The densest metal. Its only forms are powder, sponge, compact and the [Heavy Core](Heavy_Core.md). |
 | [Netherite](Netherite.md) | 130 | 7.5 | 100 | 1380 Tu | **Magnetic.** Harder than a drill bit; only a lathe bit or a grinding wheel cuts it. |
@@ -51,6 +84,18 @@ What the columns mean in play:
 - **Yield strength** (1 St is 20 MPa: steel 12 is 240 MPa) decides how much pressure a gun chamber or a cartridge case holds, and how fast an engine can rev. A 9 mm chamber with a 3 mm wall holds 0.67 × yield strength in Pu. See [Gun Parts](Gun_Parts.md#the-chamber).
 - **Melting point** is where a crucible melts it, and where a [Fuse](Fuse.md) wire or a pair of [tongs](Hazards.md#tongs) gives out. Stuff that melts above lava's 1200 Tu is fire resistant ([Lava](Lava.md)).
 - **Magnetic** metals are pulled by the [Electromagnet](Electromagnet.md).
+- **Diamagnetism** (0 to 1) is how strongly a material is pushed away by a magnet's field. It sets how hard an Electromagnet shoves a dropped item away, and how well a [Levitation Plate](Levitation_Plate.md) or [Levitation Sleeve](Levitation_Sleeve.md) made of it works.
+
+| Material | Diamagnetism |
+| --- | --- |
+| Bismuth | 1 |
+| Graphite | 0.9 |
+| Gold | 0.2 |
+| Silver | 0.15 |
+| Lead | 0.1 |
+| Cadmium | 0.1 |
+| Zinc | 0.07 |
+| Copper | 0.06 |
 
 Electrical behavior is on the pages that use it: how much current a wire of each metal carries and how much each packet loses along it ([Copper Cable](Copper_Cable.md#how-much-it-carries), [Fuse](Fuse.md)), and how noble a metal is as an electrode ([Electrolytic Cell](Electrolytic_Cell.md#the-liquid-picks-the-metal)).
 
@@ -61,6 +106,8 @@ Beyond the table, every material carries figures JEI's *Material Stats* page sho
 - **Specific heat** (Fu/Mu/Tu): the work to warm one Mu of it by one Tu. High means it soaks up a lot of heat before it gets hot. A vessel's thermal mass is its walls plus what it holds, each by its mass and specific heat, so a full crucible heats slower than an empty one, and food warms at its own rate.
 - **Melting heat** (Fu/Mu): the work to melt one Mu at its melting point, with no change in temperature. Melting takes it out of the vessel, so the pot cools while a charge melts.
 - **Boiling heat** (Fu/Mu): the same at the boiling point.
+- **Hydrogen uptake and release temperature**: palladium, magnesium, titanium and titanium 6Al-4V soak up hydrogen and give it back when hot. See the [Hydride Bed](Hydride_Bed.md).
+- **Shock limit** (Tu): glass, ceramic, brick, concrete and obsidian crack when dipped into a bath whose temperature differs from the part's by more than this. See [Thermal shock](Heat.md#thermal-shock). Obsidian 50, mud brick 60, glass, optical glass, uranium glass, terracotta and concrete 100, ceramic and glazed ceramic 120, brick 150, borosilicate glass 170, alumina and nether brick 200, silica glass and quartz glass 1000.
 - **Toxicity**: how harmful it is swallowed, a log scale of the real lethal dose. 0 is harmless; each step is ten times deadlier.
 - **Shear thickening**: how much thicker it gets the faster it is pushed. Soul oil has it: a [pump](Pump.md) turned fast on it moves less and labours.
 
@@ -70,7 +117,7 @@ Not everything is metal. A few others matter for parts and protection:
 
 | Material | Hardness | Grip friction | Stands | Used for |
 | --- | --- | --- | --- | --- |
-| Wood | 2.5 | 0.4 | 150 Tu | grips turned from a stick |
+| Wood | 2.5 | 0.4 | 150 Tu | grips turned from a stick; also bowls, vanilla tool items, bows, crossbows and shields. Logs and planks belong to their [species](#woods) |
 | Bamboo | 4 | 0.4 | 150 Tu | grips turned from a stalk |
 | Bone | 7 | 0.5 | 200 Tu | grips turned from a bone |
 | Leather | 1 | | 100 Tu | gloves |
@@ -79,13 +126,56 @@ Not everything is metal. A few others matter for parts and protection:
 | Rabbit Hide | 1 | | 100 Tu | animal, fibrous; a warm, tough [bed](Bed.md) padding |
 | Ghast Bladder | 1 | | | animal; the skin of a bladder [gas cell](Gas_Cell.md) |
 | Coated Cloth | 0.5 | | | cloth coated in slime; the skin of a coated cloth [gas cell](Gas_Cell.md) |
+| Ruby | 200 | | 1400 Tu | transparent crystal; glows under current |
+| Spinel | 140 | | 1243 Tu | transparent crystal; see [Spinel](#spinel) |
+| Jade | 65 | | 836 Tu | tough mineral |
+| Garnet | 120 | | 789 Tu | transparent crystal |
+| Tourmaline | 100 | | 660 Tu | transparent crystal that makes a voltage when squeezed or when its temperature changes |
+| Fibreglass | 3.5 | 0.3 | 130 Tu | composite; see [Composites](#composites) |
+| Carbon Fibre | 5 | 0.3 | 150 Tu | composite; see [Composites](#composites) |
+| Carbon-Carbon | 10 | 0.3 | 2500 Tu | composite; see [Composites](#composites) |
+| Plywood | 2.5 | 0.4 | 100 Tu | composite; see [Composites](#composites) |
 | Silicon, glasses, graphite, polymers | | | | sections below |
+
+The species woods have a table of their own under [Woods](#woods).
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armor](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
 
 A material can carry a **permeability**: how fast a gas cell skinned in it lets gas through. A material without one is gas-tight. Ghast bladder has none; coated cloth seeps slowly.
 
 "Stands" is the temperature a grip or glove can bear against your hand. See [Hazards](Hazards.md).
+
+## Woods
+
+Each tree species is a material of its own: its logs, stripped logs, wood blocks and planks are that wood, and each species differs in hardness, density, how long it burns and how well it resists rot. Sorted by hardness:
+
+| Wood | Hardness | Density | A log burns | Notes |
+| --- | --- | --- | --- | --- |
+| Spruce | 0.9 | 0.43 | 21.5 s | Softest and lightest. |
+| Cherry | 1.6 | 0.58 | 29 s | |
+| Birch | 2 | 0.65 | 32.5 s | |
+| Oak | 2.5 | 0.75 | 37.5 s | |
+| Acacia | 2.7 | 0.75 | 37.5 s | |
+| Jungle Wood | 4.5 | 0.85 | 42.5 s | |
+| Mangrove | 5 | 1 | 50 s | Resists rot best. |
+| Dark Oak | 6 | 1 | 50 s | Hardest and densest. |
+
+A plank burns a quarter as long as a log ([Firebox](Firebox.md#fuels)). Each wood has its own color, and a heavier wood makes a heavier part, such as a [water wheel](Water_Wheel.md) rim. The plain **Wood** above is what sticks, bowls, vanilla tool items, bows, crossbows and shields are made of.
+
+## Gems
+
+**Ruby**, **Jade**, **Garnet** and **Tourmaline** are gems that bear themselves: their ore block drops the stone as a lump (*Raw Ruby*, *Raw Jade*, *Raw Garnet*, *Raw Tourmaline*). They have no ingot, and no ore stage (crushed, concentrate, tailings). Each is mined from its own vein ([Ore Deposits](Ore_Deposits.md#gems)).
+
+- **Ruby** is a hard, transparent crystal (hardness 200). It stands 1400 Tu and **glows under an electric current**.
+- **Jade** is not a crystal but a tough mineral (hardness 65), the toughest of the four.
+- **Garnet** is transparent and hard (hardness 120) but brittle. It is slightly toxic.
+- **Tourmaline** is transparent and **piezoelectric** (coupling 0.6): squeezed, it makes a voltage. It is also **pyroelectric** (coupling 1.0): a change of temperature makes a charge, which the [Pyroelectric Plate](Pyroelectric_Plate.md) senses. It is slightly toxic.
+
+Like other brittle stock they grind to dust in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust).
+
+## Spinel
+
+A hard, transparent crystal (hardness 140, density 3.58) that stands 1243 Tu and is not mined: it is sintered from **Alumina** and **Dolomite Dust** at 1500 to 1750 Tu, best near 1600, and comes out as a raw stone. It melts at 2135 Tu. Like other brittle stock it grinds to dust in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust).
 
 ## Feather down and rabbit hide
 
@@ -194,6 +284,32 @@ A dark, hard metalloid that soaks up neutrons better than any metal: a bundle of
 
 Melt sand with a silicon ingot in a crucible at 1500 Tu or more and it makes glass. Crude silicon makes **Silica Glass**; pure silicon makes **Optical Glass**, the clearest there is. Silica glass has hardness 78.5 and optical glass 58.9; both insulate to HV, cast into ingots, and plates and rods are worked from them. See [Optics](Optics.md).
 
+## Borosilicate Glass and Uranium Glass
+
+Glasses that melt from sand and a dust at a high heat:
+
+| Glass | Melted from | Heat | Notes |
+| --- | --- | --- | --- |
+| Borosilicate Glass | sand or red sand and Borax Dust | 1500 Tu or more | Stands 500 Tu. Hardness 56. Insulates to HV. |
+| Uranium Glass | sand or red sand and Uraninite Dust | 1400 Tu or more | Hardness 54. Insulates to HV. **Faintly radioactive** ([Radiation](Radiation.md)). |
+| Lumen Glass | sand or red sand and Glowstone Dust | 1400 Tu or more | Stands 500 Tu. Hardness 50. Insulates to HV. **Glows under an electric current.** |
+
+Each makes 144 mB of melt, which casts like other glass ([Casting and Alloys](Casting.md)).
+
+Every glass, these two included, casts into a placeable **Block of** that glass in the Block Mold. Vanilla glass and obsidian keep their vanilla blocks.
+
+### Uranium glass block
+
+The **Block of Uranium Glass** fluoresces. With no radiation near it stays dark; as the [dose](Radiation.md) around it climbs it lights from level 1 to level 8, starting at **0.02 Ru** and brightening at 0.1, 0.3, 1, 3, 10, 30 and 100 Ru. It never gets brighter than level 8. It looks at the dose about every 2 seconds, so the glow follows a change after a moment. The glass is faintly radioactive itself, so a heap of blocks glows at level 1 on its own. Jade reads **Dark**, **Faint glow**, **Glowing** or **Bright glow**.
+
+## Silica Aerogel
+
+A glass that is almost all air: density 0.1, hardness 0.2, yield strength 0.02, stands 650 Tu and **transparent**. It dries from sand in a vessel at 40 to 120 Tu (best near 60) with 50 mB of lye and 200 mB of [carbon dioxide](Chemicals.md#carbon-dioxide) held at pressure, 4 Pu or more, and comes out as an ingot.
+
+## High-speed steel
+
+Steel alloyed with tungsten, molybdenum, chromium and a little vanadium, melted in a [crucible](Casting.md#alloys). Throw an ingot into water at **1220 Tu or more** and it becomes **Hardened High-Speed Steel**, which, unlike hardened steel, keeps its edge to 600 Tu. Only the [Grinding Wheel](Grinding_Wheel.md) shapes it, and it has only the ingot, ground ingot and swarf. See [Heat Treatment](Heat_Treatment.md#hardening-quenching) for the quench.
+
 ## Solders
 
 Plain **tin** is a solder: a Tin Ingot pastes a board as it is, no alloying needed, which makes it the solder for a first circuit. Two better ones are made by melting tin with lead or with a little copper in a [crucible](Crucible.md) or [mixer](Casting.md) and casting ingots like any metal.
@@ -222,11 +338,15 @@ Plastics and rubbers. They are light, soft, poor conductors and cheap to shape, 
 | --- | --- | --- | --- | --- | --- | --- |
 | Polyethylene | 0.59 | 0.95 | 130 Tu | 80 Tu | 0.3 | HV |
 | Polypropylene | 0.98 | 0.9 | 165 Tu | 100 Tu | 0.3 | MV |
+| Natural Rubber | 0.3 | 0.92 | 200 Tu | 70 Tu | 1.4 | HV |
 | PTFE | 0.49 | 2.2 | does not flow | 260 Tu | 0.05 | Trunk |
 | Synthetic Rubber | 0.39 | 1.1 | 200 Tu | 90 Tu | 1.2 | HV |
 | PVC | 1.47 | 1.4 | 180 Tu | 60 Tu | 0.4 | MV |
 | Soul Resin | 2.45 | 1.1 | 343 Tu | 160 Tu | 0.4 | MV |
 | Bitumen | 0.49 | 1.05 | 100 Tu | 50 Tu | 0.5 | LV |
+| Bakelite | 3 | 1.35 | 300 Tu | 150 Tu | 0.4 | |
+| Aramid | 2 | 1.44 | 450 Tu | 250 Tu | 0.4 | |
+| Amber | 2.5 | 1.08 | 300 Tu | 80 Tu | 0.3 | HV |
 
 "Stands" is the temperature the polymer can bear before it softens, the same figure grips and gloves use ([Hazards](Hazards.md)). Soul resin stands twice what polyethylene does.
 
@@ -249,6 +369,23 @@ Pour a melt into an **Ingot Mold** from a [crucible or ladle](Casting.md) and it
 
 Drilling gives a [Pipe](Pipe.md) of that polymer; a metal ingot drills into one the same way.
 
+Natural rubber is sticky and has the highest grip of any polymer. It comes from **jungle leaves** rendered in a vessel at 90 to 150 Tu (best near 110) for one ingot, and it casts and works like any polymer ingot.
+
+### Phenolic resin and its plastics
+
+**Phenolic Resin** is a toxic, corrosive liquor. Heat coal in a sealed vessel with no air at 450 to 800 Tu (best near 600) and each coal gives 250 mB of resin and a charcoal. Three plastics are made from it:
+
+| Product | Made from | Heat | Notes |
+| --- | --- | --- | --- |
+| Bakelite ingot | 144 mB resin and a stick | 140 to 190 Tu, best near 160 | A thermoset: it does not remelt, and chars to charcoal past 300 Tu. Stands 150 Tu. |
+| Aramid ingot | 100 mB resin, 100 mB [ammonia](Chemicals.md) and 50 mB [chlorine](Chemicals.md) | 100 to 200 Tu, best near 140 | Yield strength 150. Stands 250 Tu. |
+
+Each is cooked at a pressure of 1 Pu or more. Micarta, Carbon-Carbon and Ceramic-Steel Armour, other uses of the resin, are under [Composites](#composites).
+
+### Amber
+
+A hard, **transparent** polymer. It bakes from a honey bottle in a vessel at 200 to 270 Tu, best near 230, and comes out as an ingot; above 320 Tu the honey chars.
+
 ### Polymer insulation
 
 Every polymer has an **insulation band**, shown in the table: how high a band it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that carries a band above its own loses its coat. The bands run LV, MV, HV, UHV, EHV, Trunk: polyethylene and rubber hold HV, which quartz glass and quartz beat, and PTFE holds Trunk, above any other insulator. PTFE is a powder made in the [Reactor](Reactor.md#the-reactions) ([Chemicals](Chemicals.md#fluorine-and-ptfe)) and sintered at 360 to 410 Tu into its *Insulation* form in any vessel that holds that heat; above 450 Tu the powder spoils into charred remains.
@@ -256,6 +393,35 @@ Every polymer has an **insulation band**, shown in the table: how high a band it
 ### Polymer grips
 
 A polymer grip on a tool or gun raises how securely it is held, by its friction. Rubber's is highest of the polymers. Pressed into [Tire Rubber](Tire_Rubber.md), it makes the tread of a wheel.
+
+## Composites
+
+A **composite** is two materials mixed into one plate: light, tough and cheap to shape. Each is a mixture of two materials in the stated shares, and comes out as a plate.
+
+| Composite | Mix | Notes |
+| --- | --- | --- |
+| Fibreglass | 30 to 40% silica glass, 60 to 70% polypropylene | Insulates to HV. Stands 130 Tu. |
+| Carbon Fibre | 55 to 65% graphite, 35 to 45% polypropylene | Strong for its weight (yield strength 30) and conducts a little. Stands 150 Tu. |
+| Plywood | 85 to 95% wood, 5 to 15% slime | Flammable and fibrous. Stands 100 Tu. |
+| Cob | 60 to 72% clay, 14 to 24% sand, 8 to 18% wheat | Soft and rough (grip friction 0.7). Stands 900 Tu. Porous. |
+| Basalt Fibre | 60 to 70% basalt, 30 to 40% polypropylene | Tough (yield strength 20) and insulates to HV. Stands 250 Tu. |
+
+Composites come as ingot, block, plate and rod.
+
+Three more are cooked from phenolic resin ([above](#phenolic-resin-and-its-plastics)), each a plate:
+
+| Composite | Made from | Heat | Notes |
+| --- | --- | --- | --- |
+| Micarta | 144 mB resin and 2 string | 140 to 190 Tu, best near 160; chars past 250 | Hardness 3, yield strength 5. Stands 130 Tu. Needs 1 Pu or more. |
+| Ceramic-Steel Armour | 50 mB resin, a steel plate and alumina | 140 to 190 Tu, best near 160; chars past 300 | Hardness 150, density 5.2, yield strength 40. Stands 600 Tu. Needs 1 Pu or more. |
+| Carbon-Carbon | 100 mB resin and a carbon fibre plate, in nitrogen | 1000 to 1400 Tu, best near 1200 | Light (density 1.8) and stands 2500 Tu. **Burns away in air** from 450 Tu. |
+
+Two more are laminated in a vessel, each a plate:
+
+| Composite | Made from | Heat | Notes |
+| --- | --- | --- | --- |
+| Nacre Laminate | 2 Calcite Dust and 100 mB phenolic resin | 140 to 190 Tu, best near 160; chars past 300 | Hardness 15, density 2.7, yield strength 5. Stands 200 Tu. Needs 1 Pu or more. |
+| Phantom Ripstop | a phantom membrane and an Aramid ingot, or 2 Aramid ingots and a slime ball | 120 to 180 Tu, best near 150; spoils past 300 | Very light (density 0.9) and very tough (30). Insulates to HV. Stands 150 Tu. |
 
 ## Ore minerals
 
@@ -275,8 +441,17 @@ Ore minerals are not metal. Each melts into the metal it carries the most of, an
 | Wolframite | Tungsten |
 | Uraninite | Uranium |
 | Monazite | Thorium |
+| Spodumene | Lithium (3.7%) |
+| Beryl | Beryllium (5%) |
+| Stibnite | Antimony |
+| Vanadinite | Vanadium |
+| Cinnabar | Mercury |
+| Molybdenite | Molybdenum (60%) |
+| Dolomite | Magnesium (13%) |
 
-**Galena** and **Pyrite** are crystals that rectify, which is why a [Cat's Whisker Detector](Cats_Whisker_Detector.md) wants one. Galena melts down to lead.
+**Galena** and **Pyrite** are crystals that rectify, which is why a [Cat's Whisker Detector](Cats_Whisker_Detector.md) wants one. Galena melts down to lead. **Spodumene** and **beryl** are transparent crystals.
+
+Some metals come only as a byproduct of another ore's processing: bismuth, gallium, cadmium, indium (5% from sphalerite), platinum and palladium arrive as nuggets ([Ore Processing](Ore_Processing.md#leaching-and-winning)).
 
 ## Forms
 

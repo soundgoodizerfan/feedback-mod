@@ -34,7 +34,8 @@
   },
   "separation": {
     "reflectivity": 0.6,
-    "gangue": "feedback:calcite"
+    "gangue": "feedback:calcite",
+    "diamagnetism": 0.1
   },
   "electrical": {
     "drop": 0.625,
@@ -44,7 +45,8 @@
       "eu_per_ingot": 48000,
       "cold_factor": 0.5
     },
-    "conductivity": 0.08
+    "conductivity": 0.08,
+    "seebeck": 4.1
   },
   "ampacity": 0.135,
   "corrosion_resistance": 0.87,

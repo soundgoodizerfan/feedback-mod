@@ -249,6 +249,14 @@ final class GunDraw {
                     m.box(r - 0.0625f, -t, zB - t, out + t, t, zB + t, Tile.KNURL);
                 }
             }
+            case "thermopile" -> {
+                // Two legs of different metal in the receiver's window, banded where they join.
+                m.part(v, "s");
+                float rr = Math.min(0.4f, hh / 2f - 0.0625f);
+                m.rod(0, yc + hh / 2f, rr, z0, z1, Tile.METAL);
+                m.rod(0, yc - hh / 2f, rr, z0, z1, Tile.BRUSHED);
+                m.rings(0, yc, hh / 2f + rr, z0 + 0.5f, z1 - 0.5f, 3, 0.25f, Tile.RIBBED);
+            }
             case "core_breech" -> {
                 // Two heat cores stacked in the receiver's window, ringed; cool they carry a lamp strip, hot they glow red end to end.
                 m.part(v, "s");
@@ -374,6 +382,11 @@ final class GunDraw {
                         m.box(hw + 0.0625f, yg + 0.125f + 0.25f * i, gs, hw + 0.75f, yg + 0.25f + 0.25f * i, Math.min(gs + 0.75f, gb - 0.125f), Tile.BORE);
                 }
                 case "dead_man_cutoff" -> m.colour(0xFFFF4030).glow(hw + 0.0625f, yg + 0.125f, gs, hw + 0.75f, yg + 0.625f, gs + 0.5f, Tile.LAMP);
+                case "surge_shunt" -> {
+                    // A guarded switch: a plate on the flank with an amber toggle lamp.
+                    m.box(hw + 0.0625f, yg + 0.125f, gs, hw + 0.5f, yg + 0.75f, Math.min(gs + 0.75f, gb - 0.125f), Tile.PANEL);
+                    m.colour(0xFFFFB030).glow(hw + 0.5f, yg + 0.25f, gs + 0.125f, hw + 0.75f, yg + 0.5f, Math.min(gs + 0.5f, gb - 0.25f), Tile.LAMP);
+                }
                 default -> m.rod(hw + 0.375f, yg + 0.5f, 0.375f, gs, Math.min(gs + 0.5f, gb), Tile.KNURL);
             }
         }
@@ -398,6 +411,11 @@ final class GunDraw {
             m.part(v, "z");
             m.rod(0, v.top() + 0.375f, 0.375f, ga, Math.min(ga + 1.5f, gb), Tile.COIL);
         }
+        if (v.has("j")) {
+            // The shock lead's reel: a drum of line low on the right flank, behind the governor.
+            m.part(v, "j");
+            m.rod(hw + 0.375f, recvY(v)[0] + 0.5f, 0.375f, Math.min(gs + 1f, gb - 0.5f), Math.min(gs + 1.5f, gb), Tile.COIL);
+        }
     }
 
     /** The fittings on the barrel itself (the pump's slider, the beam lens): drawn inside the group a break action tips. */
@@ -410,7 +428,16 @@ final class GunDraw {
         if (v.has("l")) {
             m.part(v, "l");
             float r = v.r();
-            if (v.variant("l").equals("arc_fork")) {
+            if (v.variant("l").equals("coherence_lens")) {
+                // A long mirror-lined tube, a bright ring at its mouth.
+                m.rod(0, 0, r + 0.5f, end - 0.5f, end + 1.5f, Tile.BRUSHED);
+                m.colour(0xFFE8F4FF).glow(-r - 0.125f, -r - 0.125f, end + 1.5f, r + 0.125f, r + 0.125f, end + 1.5625f, Tile.LAMP);
+            } else if (v.variant("l").equals("malefic_lens")) {
+                // A collar that narrows to a pinhole with a red spot in it.
+                m.rod(0, 0, r + 0.5f, end - 0.5f, end + 0.5f, Tile.METAL);
+                m.rod(0, 0, Math.max(0.25f, r * 0.5f), end + 0.5f, end + 1.25f, Tile.BORE);
+                m.colour(0xFFFF5030).glow(-0.125f, -0.125f, end + 1.25f, 0.125f, 0.125f, end + 1.3125f, Tile.LAMP);
+            } else if (v.variant("l").equals("arc_fork")) {
                 m.box(-r - 0.75f, -0.25f, end - 1f, -r - 0.25f, 0.25f, end + 0.5f, Tile.METAL);
                 m.box(r + 0.25f, -0.25f, end - 1f, r + 0.75f, 0.25f, end + 0.5f, Tile.METAL);
                 m.colour(0xFF9FD8FF).glow(-r - 0.75f, -0.25f, end - 1.125f, -r - 0.25f, 0.25f, end - 1f, Tile.LAMP);
@@ -1106,6 +1133,17 @@ final class GunDraw {
         }
         if (v.has("J"))
             m.part(v, "J").rod(0, 0, r + 0.25f, start - len * 0.3f, start - len * 0.65f, Tile.PANEL);
+        if (v.has("k")) {
+            // The heat sink: a finned block clamped under the barrel.
+            float s0 = start - 0.5f, s1 = start - Math.min(len - 0.5f, 5f);
+            m.part(v, "k");
+            m.box(-r - 0.25f, -r - 0.5f, Math.min(s0, s1), r + 0.25f, -r, Math.max(s0, s1), Tile.METAL);
+            int fins = Math.max(2, (int) (Math.abs(s0 - s1) / 0.75f));
+            for (int i = 0; i < fins; i++) {
+                float z = Math.min(s0, s1) + (Math.abs(s0 - s1) - 0.25f) * i / (fins - 1);
+                m.box(-r - 0.5f, -r - 1.25f, z, r + 0.5f, -r - 0.5f, z + 0.25f, Tile.RIBBED);
+            }
+        }
         if (v.has("Q"))
             m.part(v, "Q").rod(0, 0, r + 0.25f, end, end + Math.min(2.5f, len * 0.4f), Tile.BRUSHED);
         if (v.has("P")) {

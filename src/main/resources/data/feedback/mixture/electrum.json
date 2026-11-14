@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:gold": {
+      "min": 0.7,
+      "max": 0.8
+    },
+    "feedback:silver": {
+      "min": 0.2,
+      "max": 0.3
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_electrum",
+    "amount": 144
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:honey_bottle"
+    }
+  ],
+  "min_temperature": 200,
+  "optimal_temperature": 230,
+  "max_temperature": 270,
+  "required_tpu": 300,
+  "spoil_temperature": 320,
+  "spoiled": {
+    "id": "minecraft:charcoal"
+  },
+  "result": {
+    "id": "feedback:amber_ingot"
+  }
+}

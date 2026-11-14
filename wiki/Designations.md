@@ -304,6 +304,7 @@ A pulse gun is named by its seat first. A seat word replaces the class on any fr
 | **Triplet** | a burst bank seat |
 | **Spinner** | a flywheel seat |
 | **Flux Cycler** | a flux cycler seat |
+| **Hotshot** | a thermopile seat |
 | **Pulse Hand Cannon** | a recoil dynamo or tether seat, a handgun receiver, bore wide |
 | **Pulse Pistol** | a recoil dynamo or tether seat, a handgun receiver |
 | **Pulse Cannon** | a recoil dynamo or tether seat, a long gun receiver, bore wide |

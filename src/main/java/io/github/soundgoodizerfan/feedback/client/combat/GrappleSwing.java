@@ -113,7 +113,7 @@ public final class GrappleSwing {
         ropes.keySet().retainAll(hooks.stream().map(h -> h.getId()).toList());
         boolean grappleInHand = player.getMainHandItem().getItem() instanceof GrappleItem || player.getOffhandItem().getItem() instanceof GrappleItem;
         // Holding use with the grapple in hand winches every line in; the drum takes a moment to come up to speed.
-        boolean reeling = mc.screen == null && mc.options.keyUse.isDown() && grappleInHand;
+        boolean reeling = mc.screen == null && mc.options.keyUse.isDown() && grappleInHand || WhipClient.winching();
         boolean payOut = mc.screen == null && PAY_OUT.isDown();
         spin = reeling ? Math.min(spin + 1, ModularTuning.GRAPPLE_SPIN_UP_TICKS) : 0;
         float drum = 0.3f + 0.7f * spin / ModularTuning.GRAPPLE_SPIN_UP_TICKS;

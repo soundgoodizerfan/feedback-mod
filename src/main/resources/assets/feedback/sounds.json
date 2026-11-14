@@ -730,6 +730,14 @@
     }
     ]
   },
+  "machine.electromagnet_hum": {
+    "subtitle": "feedback.subtitle.machine_electromagnet_hum",
+    "sounds": [
+    {
+      "name": "feedback:machine/electromagnet_hum"
+    }
+    ]
+  },
   "gun.egun_refill": {
     "subtitle": "feedback.subtitle.gun_egun_power",
     "sounds": [

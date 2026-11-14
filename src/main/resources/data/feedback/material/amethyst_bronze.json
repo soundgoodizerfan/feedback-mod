@@ -1,0 +1,62 @@
+{
+  "fastener": 2,
+  "color": "#a8758a",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 12.5,
+  "density": 7.4,
+  "thermal": {
+    "melting_point": 1000,
+    "boiling_point": 2300,
+    "cooling_rate": 1.75,
+    "conductivity": 0.0116,
+    "anneal_temperature": 550,
+    "service_temperature": 350,
+    "specific_heat": 0.41,
+    "latent_heat_fusion": 184,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 400
+  },
+  "mechanical": {
+    "toughness": 35,
+    "ductility": 6,
+    "work_hardening": 1,
+    "yield_strength": 12,
+    "friction": 0.3,
+    "abrasiveness": 0.293
+  },
+  "molten": {
+    "viscosity": 4.0,
+    "density": 6.8,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.5
+  },
+  "electrical": {
+    "drop": 0.417,
+    "electrode_potential": 0,
+    "conductivity": 0.12
+  },
+  "ampacity": 0.355,
+  "corrosion_resistance": 0.8,
+  "enchantability": 12,
+  "toxicity": 0.6,
+  "composition": {
+    "feedback:bronze": 0.92,
+    "feedback:amethyst": 0.08
+  },
+  "exclude": [
+    "lump",
+    "ore",
+    "deepslate_ore"
+  ],
+  "xp_store": {
+    "top_level": 10,
+    "capacitance": 30,
+    "conductance": 4,
+    "leak": 0.05
+  }
+}

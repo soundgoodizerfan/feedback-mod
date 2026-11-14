@@ -67,8 +67,8 @@ Leaching dissolves the metal out of a concentrate into a **liquor**, a fluid nam
 | --- | --- | --- | --- | --- |
 | Chalcopyrite (roasted) | sulfuric acid | Copper Sulfate | Silicate Slag | electrowin copper |
 | Malachite, Cuprite, native Copper | sulfuric acid | Copper Sulfate | Silicate Slag (sand from native copper); malachite also vents [carbon dioxide](Chemicals.md#carbon-dioxide) | electrowin copper |
-| Sphalerite (roasted), native Zinc | sulfuric acid | Zinc Sulfate | Silicate Slag | electrowin zinc |
-| Pentlandite (roasted) | sulfuric acid | Nickel Sulfate | 2 cobalt nuggets; rarely an Osmiridium lump | electrowin nickel |
+| Sphalerite (roasted), native Zinc | sulfuric acid | Zinc Sulfate | Silicate Slag; sphalerite also a cadmium nugget (10%) and an indium nugget (5%) | electrowin zinc |
+| Pentlandite (roasted) | sulfuric acid | Nickel Sulfate | 2 cobalt nuggets; rarely an Osmiridium lump, a platinum nugget (3%) or a palladium nugget (5%) | electrowin nickel |
 | Cobaltite (roasted) | sulfuric acid | Cobalt Sulfate | Silicate Slag | electrowin cobalt |
 | Gold | brine and hypochlorite | Gold Chloride | 2 silver nuggets | precipitate gold with sulfur dioxide |
 | Argentite (roasted) | brine and hypochlorite | Silver Chloride | a lead nugget | precipitate silver with hydrogen |
@@ -77,11 +77,11 @@ Leaching dissolves the metal out of a concentrate into a **liquor**, a fluid nam
 | End Stone | lye | Sodium Tungstate | nothing | precipitate tungsten with hydrogen |
 | Uraninite | sulfuric acid and oxygen | Uranyl Sulfate | 2 lead nuggets | precipitate uranium with hydrogen |
 | Monazite | lye | Thorium Hydroxide | Silicate Slag, Rare Earth Residue | precipitate thorium with hydrogen |
-| Bauxite | lye | Sodium Aluminate | Red Mud | precipitate alumina (see [Making Aluminum](Making_Aluminum.md)) |
+| Bauxite | lye | Sodium Aluminate | Red Mud; a gallium nugget (10%) | precipitate alumina (see [Making Aluminum](Making_Aluminum.md)) |
 
 Tailings of each of these leach too, at a lower yield. Rows and windows are on the Reactor's JEI cards; the Reactor page has the layout of a reaction.
 
-**Ores that stop at the concentrate** are smelted from it: galena roasts to molten lead with oxygen, leaving sulfur and a silver nugget; tin and pyrolusite are reduced with charcoal to molten tin and manganese; chromite with charcoal to molten chromium and iron nuggets.
+**Ores that stop at the concentrate** are smelted from it: galena roasts to molten lead with oxygen, leaving sulfur, a silver nugget and, one time in ten, a bismuth nugget; tin and pyrolusite are reduced with charcoal to molten tin and manganese; chromite with charcoal to molten chromium and iron nuggets.
 
 **Red Mud** is the bauxite waste. It melts to a little iron.
 

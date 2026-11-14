@@ -95,7 +95,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     }
 
     /** The barrel and what sits on it: the parts that take the bore's heat and glow with it. */
-    private static final java.util.Set<String> HOT = java.util.Set.of("B", "D", "M", "N", "Q", "Z", "P", "V", "H", "J");
+    private static final java.util.Set<String> HOT = java.util.Set.of("B", "D", "M", "N", "Q", "Z", "P", "V", "H", "J", "k");
 
     static GunView of(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);

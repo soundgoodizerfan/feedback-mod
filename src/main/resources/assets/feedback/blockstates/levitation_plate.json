@@ -1,0 +1,5 @@
+{ "variants": {
+  "lift=0": { "model": "feedback:block/levitation_plate" },
+  "lift=1": { "model": "feedback:block/levitation_plate" },
+  "lift=2": { "model": "feedback:block/levitation_plate" },
+  "lift=3": { "model": "feedback:block/levitation_plate" } } }

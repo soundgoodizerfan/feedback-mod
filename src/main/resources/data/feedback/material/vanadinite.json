@@ -1,0 +1,41 @@
+{
+  "color": "#b5301f",
+  "kind": "crystal",
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 10,
+  "density": 6.9,
+  "thermal": {
+    "cooling_rate": 3.07,
+    "conductivity": 0.000499,
+    "melting_point": 1000,
+    "specific_heat": 0.25,
+    "latent_heat_fusion": 120,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1000,
+    "service_temperature": 600
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.258,
+    "yield_strength": 2
+  },
+  "separation": {
+    "reflectivity": 0.2,
+    "gangue": "feedback:granite"
+  },
+  "bears": {
+    "feedback:vanadium": 0.108
+  },
+  "corrosion_resistance": 0.9,
+  "toxicity": 0.9,
+  "molten": {
+    "viscosity": 100,
+    "density": 6.21,
+    "shear_thickening": 0
+  },
+  "enchantability": 6
+}

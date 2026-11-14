@@ -19,7 +19,8 @@
   ],
   "rewards": {
     "recipes": [
-      "feedback:feedbacker"
+      "feedback:feedbacker",
+      "feedback:knuckleblaster"
     ]
   }
 }

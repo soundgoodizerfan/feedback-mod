@@ -46,6 +46,9 @@ final class CodeRecipeExamples {
         crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.breaker.BreakerRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.xp.XpWireRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationSleeveRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.TorchRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.FoodSaltingRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
@@ -167,6 +170,45 @@ final class CodeRecipeExamples {
         });
         if (!conductors.isEmpty())
             out.add(holder("xp_wire", List.of(conductors, conductors, conductors), 3, 1, wires));
+
+        // Levitation plate: two plates of one diamagnetic material side by side.
+        List<ItemStack> diaPlates = new ArrayList<>(), levitators = new ArrayList<>();
+        materials.forEach((id, m) -> {
+            if (m.separation().diamagnetism() > 0f && m.stack(id, "plate").isPresent()) {
+                diaPlates.add(m.stack(id, "plate").get());
+                levitators.add(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateItem.of(id));
+            }
+        });
+        if (!diaPlates.isEmpty())
+            out.add(holder("levitation_plate", List.of(diaPlates, diaPlates), 2, 1, levitators));
+
+        // Levitation sleeve: a plate and a rod of one diamagnetic material.
+        List<ItemStack> sleevePlates = new ArrayList<>(), sleeveRods = new ArrayList<>(), sleeves = new ArrayList<>();
+        materials.forEach((id, m) -> {
+            if (m.separation().diamagnetism() > 0f && m.stack(id, "plate").isPresent() && m.stack(id, "rod").isPresent()) {
+                sleevePlates.add(m.stack(id, "plate").get());
+                sleeveRods.add(m.stack(id, "rod").get());
+                sleeves.add(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationSleeveItem.of(id));
+            }
+        });
+        if (!sleevePlates.isEmpty())
+            out.add(holder("levitation_sleeve", List.of(sleevePlates, sleeveRods), 2, 1, sleeves));
+
+        // Pyroelectric plate: one crystal plate of a pyroelectric material and two wires.
+        List<ItemStack> pyroCrystals = new ArrayList<>(), pyroPlates = new ArrayList<>();
+        materials.forEach((id, m) -> {
+            if (m.electrical().pyroCoupling().filter(c -> c > 0f).isPresent() && m.stack(id, "crystal_plate").isPresent()) {
+                pyroCrystals.add(m.stack(id, "crystal_plate").get());
+                pyroPlates.add(io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateItem.of(id));
+            }
+        });
+        List<ItemStack> anyWire = new ArrayList<>();
+        materials.forEach((id, m) -> {
+            if (m.kind().filter(k -> k == io.github.soundgoodizerfan.feedback.process.Material.Kind.METAL).isPresent() && m.stack(id, "wire").isPresent())
+                anyWire.add(m.stack(id, "wire").get());
+        });
+        if (!pyroCrystals.isEmpty() && !anyWire.isEmpty())
+            out.add(holder("pyro_plate", List.of(pyroCrystals, anyWire, anyWire), 3, 1, pyroPlates));
 
         // Torch: anything that burns (a material with a flame and a burn time, no chamber) over a stick.
         List<ItemStack> fuels = new ArrayList<>();

@@ -93,6 +93,10 @@ public final class ElectricMechanism implements GunMechanism {
         int pumps = spec.pump() ? ModularElectricGun.pumps(gun) : 0;
         float zoomShare = spec.zoom() ? ModularElectricGun.zoomShare(gun, now) : 0f;
         float power = 1f + (spec.holdCharge() ? ModularTuning.EGUN_HOLD_POWER * holdShare * spec.holdGain() : 0f) + ModularTuning.EGUN_PUMP_POWER * spec.pumpGain() * pumps;
+        // A closed surge shunt bypasses the relay: more power, and the cycle below runs faster.
+        boolean shunt = spec.governor() == Governor.SHUNT && ModularElectricGun.shuntOpen(gun, now);
+        if (shunt)
+            power *= ModularTuning.EGUN_SHUNT_POWER;
         // What the seat needs before it can fire.
         float spin = 1f;
         switch (spec.seat()) {
@@ -131,6 +135,10 @@ public final class ElectricMechanism implements GunMechanism {
                 if (heat * spec.sense() + gain > 1f || ModularElectricGun.tripped(gun) && heat > ModularTuning.EGUN_CUTOFF_RESUME)
                     return null;
             }
+            case SHUNT -> {
+                if (ModularElectricGun.shuntLocked(gun, now, heat))
+                    return null;
+            }
             default -> {
             }
         }
@@ -143,7 +151,7 @@ public final class ElectricMechanism implements GunMechanism {
         ModularFigures baked = ModularStacks.figures(gun);
         float gunKg = baked == null || baked.get(ModularFigures.Fig.MASS) <= 0f ? spec.barrelMass() : baked.get(ModularFigures.Fig.MASS);
         float rate = spec.governor() == Governor.THROTTLE ? 1f - Mth.clamp(heat * spec.sense(), 0f, 1f) * (1f - ModularTuning.EGUN_THROTTLE_FLOOR) : 1f;
-        int ticks = Math.max(1, Math.round(spec.cycleTicks(mode == FireMode.BURST) / rate));
+        int ticks = Math.max(1, Math.round(spec.cycleTicks(mode == FireMode.BURST) / rate / (shunt ? ModularTuning.EGUN_SHUNT_RATE : 1f)));
         // A lit reticle helps where it is dark.
         float spreadMult = spec.darkAt() > 0f && shooter.level().getMaxLocalRawBrightness(shooter.blockPosition()) <= spec.darkAt()
                 ? 1f - spec.darkCut() : 1f;
@@ -198,9 +206,21 @@ public final class ElectricMechanism implements GunMechanism {
             case CAPACITOR_BANK -> ModularElectricGun.spendPip(gun, now, 1, spec.bankRechargeTicks(cells));
             case BURST_BANK -> ModularElectricGun.spendPip(gun, now, ModularTuning.GUN_BURST_ROUNDS, spec.bankRechargeTicks(cells));
             case RECOIL_DYNAMO -> BatteryStack.store(p.drawn(), p.joules() * ModularTuning.EGUN_DYNAMO_RETURN / ModularTuning.EGUN_J_PER_EU);
+            case THERMOPILE -> {
+                // The sink soaks the barrel's heat and the pile turns the difference back into charge, until the sink is full.
+                float soak = ModularElectricGun.soak(gun, now);
+                float share = spec.pileShare(ModularElectricGun.heat(gun, level), soak);
+                if (share > 0f) {
+                    BatteryStack.store(p.drawn(), p.joules() * share / ModularTuning.EGUN_J_PER_EU);
+                    ModularElectricGun.setSoak(gun, soak + spec.soakPerShot(), now);
+                }
+            }
             default -> {
             }
         }
+        // A shunt window that has run out and cooled is spent: the next close starts clean.
+        if (spec.governor() == Governor.SHUNT && ModularElectricGun.shuntEnd(gun) > 0L && now >= ModularElectricGun.shuntEnd(gun))
+            ModularElectricGun.setShunt(gun, 0L);
         p.source().write().accept(rewritten(p.source().battery(), p.drawn()));
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server)
             ModularElectricGun.mistakes(server, gun, spec, band, hand);
@@ -230,7 +250,8 @@ public final class ElectricMechanism implements GunMechanism {
             float widen = 1f + ModularTuning.EGUN_PUMP_SPREAD * pumps;
             int beams = spec.beams() > 0 ? spec.beams() + Math.round(spec.beams() * ModularTuning.EGUN_PUMP_BEAMS * pumps) : 0;
             PulseShot.fire(level, shooter, gun, new PulseShot.Plan(spec.delivered(p.joules()), spec.cutoff(p.zoomShare()), spec.pierce(p.holdShare()),
-                    ModularElectricGun.colourOf(gun), beams, spec.fork(), spec.seat() == Seat.CYLINDER, band, figures.spreadDeg() * widen, widen, spec.style()), yaw, pitch);
+                    ModularElectricGun.colourOf(gun), beams, spec.fork(), spec.seat() == Seat.CYLINDER, band, figures.spreadDeg() * widen, widen, spec.style(),
+                    spec.bounces(p.holdShare()), spec.coherence(), spec.malefic()), yaw, pitch);
         }
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         GunShots.report(level, shooter, figures, gun, muzzle);
@@ -303,7 +324,8 @@ public final class ElectricMechanism implements GunMechanism {
         float joules = spec.pulseJ() * spec.seatMult();
         GunFigures figures = spec.figures(joules, spec.barrelMass(), spec.cycleTicks(false), 0f, 1f);
         PulseShot.fire(level, mob, gun, new PulseShot.Plan(spec.delivered(joules), spec.cutoff(0f), spec.pierce(0f), ModularElectricGun.colourOf(gun),
-                spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, ModularTuning.EGUN_REF_BAND, figures.spreadDeg(), 1f, spec.style()), yaw, pitch);
+                spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, ModularTuning.EGUN_REF_BAND, figures.spreadDeg(), 1f, spec.style(),
+                spec.bounces(0f), spec.coherence(), spec.malefic()), yaw, pitch);
         GunShots.report(level, mob, figures, gun, mob.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4)));
         return true;
     }
@@ -370,11 +392,11 @@ public final class ElectricMechanism implements GunMechanism {
     @Override
     public boolean reloadKeyWorks(ItemStack gun) {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
-        return spec != null && (spec.pump() || spec.holdCharge());
+        return spec != null && spec.reloadKeyFitting();
     }
 
     /** Players whose core breech is mid-vent: the stroke takes {@link #VENT_TICKS}, and a second press during it does nothing. */
-    private static final java.util.Set<java.util.UUID> VENTING = new java.util.HashSet<>();
+    private static final java.util.Map<java.util.UUID, Long> VENTING = new java.util.HashMap<>();
 
     /** The client's vent stroke ({@code GunMotion.VENT_MS}, 900 ms) in ticks; its beats are the sounds below. */
     private static final int VENT_TICKS = 18;
@@ -384,20 +406,46 @@ public final class ElectricMechanism implements GunMechanism {
         return canPump(gun);
     }
 
-    /** The reload key works a pump charge's handle. */
+    /** The reload key works the one fitting on it: a pump charge's handle, a surge shunt's switch, a shock lead's plug (a hold charge is held on it and fires on release). */
     @Override
     public void reloadKey(ServerLevel level, Player player, ItemStack gun) {
-        pumpKey(level, player, gun);
+        ElectricGunSpec spec = ModularElectricGun.specOf(gun);
+        if (spec == null)
+            return;
+        if (spec.pump())
+            pumpKey(level, player, gun);
+        else if (spec.governor() == Governor.SHUNT)
+            shuntKey(level, player, gun, spec);
+        else if (spec.lead())
+            io.github.soundgoodizerfan.feedback.weapon.ShockLead.press(level, player, gun, spec);
+    }
+
+    /** Closes the shunt: a window of double rate and more power, then a lockout until the barrel is back under the resume heat. A press with the window open or the gun locked does nothing. */
+    private static void shuntKey(ServerLevel level, Player player, ItemStack gun, ElectricGunSpec spec) {
+        long now = level.getGameTime();
+        if (ModularElectricGun.shuntOpen(gun, now) || ModularElectricGun.shuntLocked(gun, now, ModularElectricGun.heat(gun, level))) {
+            level.playSound(null, player.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_FLAT.get(), SoundSource.PLAYERS, 0.6f, 1.2f);
+            return;
+        }
+        ModularElectricGun.setShunt(gun, now + Math.round(spec.shuntTicks()));
+        level.playSound(null, player.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_ARMED.get(), SoundSource.PLAYERS, 0.9f, 1.4f);
+        level.playSound(null, player.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_HEAT_TICK.get(), SoundSource.PLAYERS, 0.8f, 1.5f);
     }
 
     /**
      * A core breech breaks itself open after a shot: the hand slams the barrels down, the cores vent in a puff of steam, the hand
      * throws them shut. The gun stays hot, and cannot fire, until the whole stroke is done.
      */
-    private static void vent(ServerLevel level, Player player, ItemStack gun) {
+    public static void vent(ServerLevel level, Player player, ItemStack gun) {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
-        if (spec == null || spec.seat() != Seat.CORE_BREECH || !ModularElectricGun.hot(gun) || !VENTING.add(player.getUUID()))
+        if (spec == null || spec.seat() != Seat.CORE_BREECH || !ModularElectricGun.hot(gun))
             return;
+        // A stroke whose end never came (the player left, the gun moved) does not block the next one.
+        long now0 = level.getGameTime();
+        Long busyUntil = VENTING.get(player.getUUID());
+        if (busyUntil != null && now0 < busyUntil)
+            return;
+        VENTING.put(player.getUUID(), now0 + VENT_TICKS + 2);
         // The slap on the barrels, the steam, the forend taken from below, the slam shut and its latch.
         io.github.soundgoodizerfan.feedback.core.Later.in(3, () -> level.playSound(null, player.blockPosition(),
                 io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_BUTT.get(), SoundSource.PLAYERS, 0.9f, 0.8f));
@@ -484,11 +532,16 @@ public final class ElectricMechanism implements GunMechanism {
             case BACKPACK_TETHER -> List.of(new GunSound.Layer(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_TETHER.get(), volume * 0.7f, jitter), new GunSound.Layer(crack, volume, pitch * jitter));
             default -> List.of(new GunSound.Layer(crack, volume, pitch * jitter));
         };
-        // A beam lens adds its own voice over the seat's: a splitter fans out, a fork branches.
-        if (spec.beams() <= 0 && !spec.fork())
+        // A beam lens adds its own voice over the seat's: a splitter fans out, a fork branches, a coherence lens rings, a malefic lens thuds low.
+        if (spec.beams() <= 0 && !spec.fork() && !spec.coherence() && !spec.malefic())
             return seat;
         List<GunSound.Layer> out = new java.util.ArrayList<>(seat);
-        out.add(new GunSound.Layer(spec.beams() > 0 ? io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_SPLIT.get() : io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_FORK.get(), volume * 0.6f, jitter));
+        if (spec.coherence())
+            out.add(new GunSound.Layer(SoundEvents.AMETHYST_BLOCK_RESONATE, volume * 0.8f, 1.5f * jitter));
+        else if (spec.malefic())
+            out.add(new GunSound.Layer(SoundEvents.GENERIC_EXPLODE.value(), volume * 0.4f, 1.6f * jitter));
+        else
+            out.add(new GunSound.Layer(spec.beams() > 0 ? io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_SPLIT.get() : io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_FORK.get(), volume * 0.6f, jitter));
         return out;
     }
 

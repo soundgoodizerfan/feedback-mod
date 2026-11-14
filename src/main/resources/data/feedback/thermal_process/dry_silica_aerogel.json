@@ -1,0 +1,30 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:sand"
+    }
+  ],
+  "min_temperature": 40,
+  "optimal_temperature": 60,
+  "max_temperature": 120,
+  "required_tpu": 200,
+  "spoil_temperature": 200,
+  "result": {
+    "id": "feedback:silica_aerogel_ingot"
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:lye",
+        "mb": 50
+      },
+      {
+        "fluid": "feedback:carbon_dioxide",
+        "mb": 200
+      }
+    ],
+    "min_pu": 4,
+    "optimal_pu": 6,
+    "heat": 2
+  }
+}

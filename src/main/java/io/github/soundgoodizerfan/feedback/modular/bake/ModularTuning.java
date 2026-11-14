@@ -257,6 +257,40 @@ public final class ModularTuning {
     public static final float EGUN_SENSE_HALF_K = 0.003f, EGUN_SENSE_MIN = 0.5f;
     /** A cylinder pulse redirected by a coin hits this many times as hard. */
     public static final float EGUN_COIN_CYLINDER = 1.5f;
+    /**
+     * Surge shunt: ticks of window with a contact metal that holds {@link #EGUN_SHUNT_REF_TU} (copper), the bounds on that multiple, the rate of fire
+     * and the power inside the window, and the heat (a share of the limit) the barrel must be back under before the shunt can close again.
+     */
+    public static final int EGUN_SHUNT_WINDOW_TICKS = 60;
+    public static final float EGUN_SHUNT_REF_TU = 300f, EGUN_SHUNT_WINDOW_MIN = 0.4f, EGUN_SHUNT_WINDOW_MAX = 2f, EGUN_SHUNT_RATE = 2f,
+            EGUN_SHUNT_POWER = 1.25f, EGUN_SHUNT_RESUME = 0.6f;
+    /**
+     * Coherence lens: bounces a lining of reflectivity 1 holds, the bounces a held charge adds at full, the share of a pulse below which a beam
+     * is spent, the blast of a projectile the beam crosses, and the reflectivity of a lining that states none. Mixed blocks keep what
+     * {@code BlockReflectivity} says.
+     */
+    public static final int EGUN_COHERENCE_BOUNCES = 4, EGUN_COHERENCE_HOLD_BOUNCES = 2;
+    public static final float EGUN_COHERENCE_FLOOR = 0.08f, EGUN_COHERENCE_BLAST = 1.2f, EGUN_COHERENCE_DEFAULT_LINING = 0.5f;
+    /** Mixed blocks: the reflectivity of dark stone, dirt, wood, wool, ice, tinted glass and anything else. */
+    public static final float BLOCK_REFLECT_STONE = 0.12f, BLOCK_REFLECT_DIRT = 0.03f, BLOCK_REFLECT_WOOD = 0.08f, BLOCK_REFLECT_WOOL = 0.02f,
+            BLOCK_REFLECT_ICE = 0.3f, BLOCK_REFLECT_TINTED = 0.45f, BLOCK_REFLECT_OTHER = 0.1f;
+    /** Malefic lens: blast radius per square root of a pulse's joules and its bounds, the hit against a plain pulse's, the explosion power per block of radius, and the cap on what the wielder takes. */
+    public static final float EGUN_MALEFIC_RADIUS_PER_SQRT_J = 0.35f, EGUN_MALEFIC_RADIUS_MIN = 1.5f, EGUN_MALEFIC_RADIUS_MAX = 6f,
+            EGUN_MALEFIC_DAMAGE_MULT = 1.6f, EGUN_MALEFIC_POWER_PER_RADIUS = 0.45f, EGUN_MALEFIC_SELF_CAP = 0.75f;
+    /**
+     * Shock lead: blocks of line a metre of reel holds, the joules a line of ampacity 1 can carry, Eu a tick drawn while the plug is in, the
+     * share of the draw that reaches the body, the hurt of a line shorted through the wielder's own water, and the most ticks a charge builds.
+     */
+    public static final float EGUN_LEAD_PER_M = 1f, EGUN_LEAD_CAP_J = 90f, EGUN_LEAD_EU_PER_TICK = 6f, EGUN_LEAD_EFFICIENCY = 0.7f, EGUN_LEAD_SHORT_DAMAGE = 3f;
+    public static final int EGUN_LEAD_MAX_TICKS = 100;
+    /**
+     * Thermopile: the share of a shot's energy a pair of metals returns per microvolt a kelvin of Seebeck gap at the barrel's limit, the cap on that
+     * return of a heavy-tier seat (lighter tiers take a share), the Seebeck a metal with no figure of its own is estimated at per unit of electrode
+     * potential, the heat capacity (Fu per Tu, a kilogram of copper) at which a sink fills in {@link #EGUN_PILE_SOAK_SHOTS} returning shots, and the
+     * ticks a full sink takes to give its heat up.
+     */
+    public static final float EGUN_PILE_RETURN_PER_UV = 0.01f, EGUN_PILE_CAP = 0.45f, EGUN_PILE_EST_UV_PER_POTENTIAL = 40f,
+            EGUN_PILE_SINK_REF = 0.4f, EGUN_PILE_SOAK_SHOTS = 8f, EGUN_PILE_SOAK_DECAY_TICKS = 400f;
     public static final float EGUN_VOLUME = 0.6f;
     /** Placeholder [OPEN]. The fewest and most a wielder's strength scales the cocking time by. */
     public static final float AIR_PULL_MIN = 0.5f, AIR_PULL_MAX = 3f;

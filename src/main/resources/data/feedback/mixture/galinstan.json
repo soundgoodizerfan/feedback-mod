@@ -1,0 +1,20 @@
+{
+  "parts": {
+    "feedback:gallium": {
+      "min": 0.65,
+      "max": 0.72
+    },
+    "feedback:indium": {
+      "min": 0.19,
+      "max": 0.24
+    },
+    "feedback:tin": {
+      "min": 0.08,
+      "max": 0.12
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_galinstan",
+    "amount": 144
+  }
+}

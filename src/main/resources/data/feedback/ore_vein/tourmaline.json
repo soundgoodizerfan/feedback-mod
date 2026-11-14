@@ -1,0 +1,15 @@
+{
+  "radius": 6,
+  "thickness": 3,
+  "density": 0.85,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:tourmaline_loose_rock",
+  "ore": "feedback:tourmaline_ore",
+  "deepslate_ore": "feedback:tourmaline_deepslate_ore",
+  "weight": 3,
+  "min_y": 16,
+  "max_y": 128
+}

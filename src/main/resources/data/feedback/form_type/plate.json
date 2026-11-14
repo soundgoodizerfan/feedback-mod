@@ -2,7 +2,8 @@
   "kinds": [
     "metal",
     "metalloid",
-    "glass"
+    "glass",
+    "composite"
   ],
   "traits": [
     "rollable"

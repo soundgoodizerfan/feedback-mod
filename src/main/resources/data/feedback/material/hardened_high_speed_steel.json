@@ -1,0 +1,38 @@
+{
+  "color": "#6a727e",
+  "parent": "high_speed_steel",
+  "hardness": 75,
+  "thermal": {
+    "conductivity": 0.0052,
+    "service_temperature": 600,
+    "melting_point": 1430
+  },
+  "mechanical": {
+    "toughness": 15,
+    "ductility": 0,
+    "yield_strength": 90,
+    "abrasiveness": 0.58,
+    "work_hardening": 0,
+    "hardenable": null
+  },
+  "forms": {
+    "ingot": "feedback:hardened_high_speed_steel",
+    "ground_ingot": "feedback:ground_hardened_high_speed_steel",
+    "swarf": "feedback:high_speed_steel_swarf"
+  },
+  "exclude": [
+    "plate",
+    "foil",
+    "rod",
+    "wire",
+    "fine_wire",
+    "scrap",
+    "drilled_plate",
+    "turned_rod",
+    "nugget",
+    "block"
+  ],
+  "enchantability": 8,
+  "min_temperature": null,
+  "max_temperature": null
+}

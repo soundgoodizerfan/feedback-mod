@@ -31,7 +31,8 @@
     "yield_strength": 1
   },
   "separation": {
-    "reflectivity": 0.05
+    "reflectivity": 0.05,
+    "diamagnetism": 0.9
   },
   "forms": {
     "lump": "feedback:graphite",

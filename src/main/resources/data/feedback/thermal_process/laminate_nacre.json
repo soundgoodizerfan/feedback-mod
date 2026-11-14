@@ -1,0 +1,32 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:calcite_dust"
+    },
+    {
+      "item": "feedback:calcite_dust"
+    }
+  ],
+  "min_temperature": 140,
+  "optimal_temperature": 160,
+  "max_temperature": 190,
+  "required_tpu": 200,
+  "spoil_temperature": 300,
+  "spoiled": {
+    "id": "minecraft:charcoal"
+  },
+  "result": {
+    "id": "feedback:nacre_laminate_plate"
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:phenolic_resin",
+        "mb": 100
+      }
+    ],
+    "min_pu": 1,
+    "optimal_pu": 2,
+    "heat": 4
+  }
+}

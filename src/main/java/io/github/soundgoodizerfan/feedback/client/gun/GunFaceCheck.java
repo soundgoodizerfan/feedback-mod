@@ -38,7 +38,7 @@ public final class GunFaceCheck {
 
     /** Optional roles a gun may fit (the receiver R is always there). */
     private static final String[] OPTIONAL = {"A", "K", "G", "T", "i", "W", "S", "e", "F", "D", "H", "Z", "J", "Q", "P", "V",
-            "N", "M", "E", "C", "I", "a", "L", "d", "b", "Y", "s", "g", "h", "p", "l", "z", "u"};
+            "N", "M", "E", "C", "I", "a", "L", "d", "b", "Y", "s", "g", "h", "p", "l", "z", "u", "j", "k"};
 
     private record Base(String name, GunLayout.Type type, String action, boolean slide, boolean electric) {
     }

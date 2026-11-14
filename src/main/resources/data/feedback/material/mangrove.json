@@ -1,0 +1,29 @@
+{
+  "parent": "_kind_wood",
+  "color": "#7a3b32",
+  "hardness": 5.0,
+  "density": 1.0,
+  "thermal": {
+    "cooling_rate": 1.17,
+    "conductivity": 6.23e-05
+  },
+  "mechanical": {
+    "toughness": 5.0,
+    "yield_strength": 3.3,
+    "abrasiveness": 0.147
+  },
+  "combustion": {
+    "burn_ticks": 1000
+  },
+  "corrosion_resistance": 0.8,
+  "molten": {
+    "density": 0.9
+  },
+  "forms": {
+    "mangrove_log": "minecraft:mangrove_log",
+    "stripped_mangrove_log": "minecraft:stripped_mangrove_log",
+    "mangrove_wood": "minecraft:mangrove_wood",
+    "stripped_mangrove_wood": "minecraft:stripped_mangrove_wood",
+    "mangrove_planks": "minecraft:mangrove_planks"
+  }
+}

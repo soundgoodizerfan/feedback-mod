@@ -470,6 +470,12 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.registry.FLogistics.MODULE_ITEMS.forEach((m, item) -> info(registration, item.get(), "belt_module_" + m.id()));
         info(registration, FModular.ELECTROMAGNET.get(), "electromagnet");
         info(registration, FModular.LAMP.get(), "lamp");
+        info(registration, FItems.LEVITATION_PLATE.get(), "levitation_plate");
+        info(registration, FItems.PYRO_PLATE.get(), "pyro_plate");
+        info(registration, FItems.HYDRIDE_BED.get(), "hydride_bed");
+        net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(io.github.soundgoodizerfan.feedback.Feedback.id("uranium_glass_block"))
+                .ifPresent(item -> info(registration, item, "uranium_glass_block"));
+        info(registration, FItems.LEVITATION_SLEEVE.get(), "levitation_sleeve");
         info(registration, FModular.GAS_TANK.get(), "gas_tank");
         info(registration, FItems.TUBE.get(), "tube");
         info(registration, FItems.LINED_TUBE.get(), "lined_tube");

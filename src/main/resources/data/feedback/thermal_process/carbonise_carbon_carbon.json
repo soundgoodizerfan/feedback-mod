@@ -1,0 +1,27 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:carbon_fibre_plate"
+    }
+  ],
+  "min_temperature": 1000,
+  "optimal_temperature": 1200,
+  "max_temperature": 1400,
+  "required_tpu": 600,
+  "spoil_temperature": 1600,
+  "result": {
+    "id": "feedback:carbon_carbon_plate"
+  },
+  "atmosphere": {
+    "fluid": "feedback:nitrogen",
+    "mb": 50
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:phenolic_resin",
+        "mb": 100
+      }
+    ]
+  }
+}

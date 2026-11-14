@@ -63,6 +63,10 @@ public class FSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_FLAT = SOUNDS.register("gun.egun_flat",
             () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_flat")));
 
+    /** A powered electromagnet holding a diamagnetic thing off: a faint low hum. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MACHINE_ELECTROMAGNET_HUM = SOUNDS.register("machine.electromagnet_hum",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("machine.electromagnet_hum")));
+
     /** A seat gained a charge. */
     public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_REFILL = SOUNDS.register("gun.egun_refill",
             () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_refill")));

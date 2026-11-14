@@ -146,6 +146,13 @@ public class ShaftBlock extends RotatedPillarBlock implements EntityBlock, Micro
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.fitting.Fittable holder)
+            io.github.soundgoodizerfan.feedback.fitting.Fittable.dropAll(holder, level, pos);
+        super.onRemove(state, level, pos, newState, moved);
+    }
+
     private static Direction awayFromPlayer(Direction.Axis axis, Player player, BlockPos pos) {
         Vec3i normal = Direction.get(Direction.AxisDirection.POSITIVE, axis).getNormal();
         double along = player.position().x * normal.getX()

@@ -107,7 +107,11 @@ public final class FormItems {
                 String path = itemId(id, form).getPath();
                 if (types.get(form).block()) {
                     DeferredBlock<FormBlock> block = blocks.register(path, () -> form.equals("pipe")
-                            ? new io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock(id) : new FormBlock(id, form, material.food().isPresent()));
+                            ? new io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock(id)
+                            : form.equals("block") && material.kind().filter(k -> k == io.github.soundgoodizerfan.feedback.process.Material.Kind.GLASS).isPresent()
+                            ? (material.radioactivity().isPresent() ? new io.github.soundgoodizerfan.feedback.machine.glow.GlowGlassBlock(id, form)
+                                    : new io.github.soundgoodizerfan.feedback.machine.glow.GlassBlock(id, form))
+                            : new FormBlock(id, form, material.food().isPresent()));
                     DeferredItem<BlockItem> item = items.register(path,
                             () -> new FormBlock.FormBlockItem(block.get(), proof(edible(new Item.Properties(), material, form), material)));
                     ALL.add(new Generated(id, form, item, block));

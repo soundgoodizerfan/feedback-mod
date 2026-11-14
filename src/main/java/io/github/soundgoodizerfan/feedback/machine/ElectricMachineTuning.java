@@ -138,6 +138,14 @@ public final class ElectricMachineTuning {
     /** Invented. Field strength (0 to 1) an Electromagnet needs to magnetise a sintered magnet blank: full rated volts and amps. */
     public static final float MAGNETISE_FIELD = 0.95f;
 
+    /** Share of a diamagnetic item's push that goes upward, so a repelled item skips over the block rather than grinding along it (invented). */
+    public static final float ELECTROMAGNET_REPEL_LIFT = 0.5f;
+
+    /** Invented. How far the field must move (0 to 1) before sleeved shafts and bearings touching the magnet are asked to re-read their drag. */
+    public static final float ELECTROMAGNET_SLEEVE_STEP = 0.1f;
+
+    /** Ticks between hums while a magnet holds a diamagnetic item off (the sound is 2.2 s long). */
+    public static final int ELECTROMAGNET_HUM_INTERVAL_TICKS = 40;
     public static final float ELECTROMAGNET_PULL = 0.08f;
 
     public static final int ELECTROMAGNET_PULL_INTERVAL_TICKS = 2;

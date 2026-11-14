@@ -56,12 +56,23 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
  * @param serviceTu  the barrel material's service temperature (a constant for one that states none): past it a shot wears the gun.
  * @param sense      share of the barrel's true heat the governor's element passes on (its thermal conductivity); 1 for none fitted.
  * @param zoomGain   how strongly the zoom coil's field builds, from its winding's conductor; 1 for none fitted.
+ * @param coherence  whether a coherence lens is fitted (the pulse bounces off what it strikes).
+ * @param lining     the reflectivity of that lens's lining: how many bounces the tube holds.
+ * @param malefic    whether a malefic lens is fitted (the whole pulse stops at the first thing and blows).
+ * @param shuntTicks ticks a surge shunt's window stays open, from its contact metal's service temperature (0 for none fitted).
+ * @param lead       whether a shock lead is fitted.
+ * @param leadAmp    the lead line's ampacity: the most charge it carries.
+ * @param leadLength blocks of line on the reel.
+ * @param pileReturn the share of a shot's energy a thermopile returns at the barrel's limit (0 for no thermopile): its two metals' Seebeck gap, capped by tier.
+ * @param sinkK      the sink's heat capacity against a kilogram of copper: how many returning shots it takes to fill.
  */
 public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, float barrelLoss, float seatAmp, float seatDensity,
                               int dielectric, VoltageBand band, float barrelMass, int maxCells, float heatMult, float report,
                               float heatGain, float shed, float spreadMult, float darkAt, float darkCut, Governor governor,
                               boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank, float limitTu, float serviceTu,
-                              float sense, float zoomGain, float pumpGain, float pumpLever, float holdGain, float gaugeRes) {
+                              float sense, float zoomGain, float pumpGain, float pumpLever, float holdGain, float gaugeRes,
+                              boolean coherence, float lining, boolean malefic, float shuntTicks, boolean lead, float leadAmp, float leadLength,
+                              float pileReturn, float sinkK) {
 
     /** The heat cycle: what a seat does between shots, and the fire modes it allows. */
     public enum Seat {
@@ -72,7 +83,8 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         CORE_BREECH("core_breech", true, true, FireMode.SEMI),
         FLYWHEEL("flywheel", false, true, FireMode.AUTO, FireMode.SEMI),
         RECOIL_DYNAMO("recoil_dynamo", false, false, FireMode.AUTO, FireMode.SEMI, FireMode.BURST),
-        BACKPACK_TETHER("backpack_tether", false, false, FireMode.AUTO, FireMode.SEMI, FireMode.BURST);
+        BACKPACK_TETHER("backpack_tether", false, false, FireMode.AUTO, FireMode.SEMI, FireMode.BURST),
+        THERMOPILE("thermopile", false, true, FireMode.AUTO, FireMode.SEMI);
 
         private final String id;
         private final boolean single, big;
@@ -108,7 +120,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
     }
 
     public enum Governor {
-        NONE, THROTTLE, VENT, CUTOFF
+        NONE, THROTTLE, VENT, CUTOFF, SHUNT
     }
 
     public static final String BARREL = "barrel", RECEIVER = "receiver", SEAT = "seat";
@@ -126,6 +138,8 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         float sightFov = 1f;
         int bank = 0;
         float sense = 1f, zoomGain = 1f, pumpGain = 1f, pumpLever = 1f, holdGain = 1f, gaugeRes = 1f;
+        boolean coherence = false, malefic = false, lead = false;
+        float lining = 0f, shuntTicks = 0f, leadAmp = 0f, leadLength = 0f, pileGap = 0f, sinkK = 0f;
         float limitTu = ModularTuning.EGUN_LIMIT_TU, serviceTu = ModularTuning.EGUN_LIMIT_TU;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(design))
             if (a.kind().equals("pulse_bank"))
@@ -160,13 +174,34 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     seatDensity = m.density().muPerMb();
                     Material dm = ModularBake.slotMaterial(role, p, "dielectric", materials);
                     dielectric = (dm == null ? m : dm).electrical().insulation().orElse(VoltageBand.LV).ordinal();
+                    // A thermopile's two legs are the seat's conductor and its second slot: the gap between their Seebeck figures is what a kelvin of difference returns.
+                    if (seat == Seat.THERMOPILE)
+                        pileGap = dm == null ? 0f : Math.abs(m.electrical().seebeckOrEstimate() - dm.electrical().seebeckOrEstimate());
+                }
+                case "heat_sink" -> {
+                    float cp = m.thermal().specificHeat().map(c -> c.workPerMuPerTu()).orElse(ModularTuning.EGUN_PILE_SINK_REF);
+                    sinkK = Mth.clamp(ModularBake.mass(role, p, m) * cp / ModularTuning.EGUN_PILE_SINK_REF, 0.2f, 3f);
+                }
+                case "shock_lead" -> {
+                    lead = true;
+                    leadLength = role.axis(p, "line_length") * ModularTuning.EGUN_LEAD_PER_M;
+                    Material ln = ModularBake.slotMaterial(role, p, "line", materials);
+                    leadAmp = ln == null ? 0f : ln.ampacity().orElse(0f);
                 }
                 case "heat_governor" -> {
                     governor = switch (role.variant(p).map(ModularType.Variant::name).orElse("fire_rate_throttle")) {
                         case "forced_vent" -> Governor.VENT;
                         case "dead_man_cutoff" -> Governor.CUTOFF;
+                        case "surge_shunt" -> Governor.SHUNT;
                         default -> Governor.THROTTLE;
                     };
+                    if (governor == Governor.SHUNT) {
+                        // The contact metal sets the window: one that welds or softens at a lower temperature shortens it.
+                        Material ct = ModularBake.slotMaterial(role, p, "contacts", materials);
+                        float service = ct == null ? ModularTuning.EGUN_SHUNT_REF_TU : ct.thermal().serviceTemperature().map(v -> v.value()).orElse(ModularTuning.EGUN_SHUNT_REF_TU);
+                        shuntTicks = ModularTuning.EGUN_SHUNT_WINDOW_TICKS * Mth.clamp(service / ModularTuning.EGUN_SHUNT_REF_TU,
+                                ModularTuning.EGUN_SHUNT_WINDOW_MIN, ModularTuning.EGUN_SHUNT_WINDOW_MAX);
+                    }
                     // The element (a bimetal strip, a thermistor bead) follows the barrel as fast as it conducts heat.
                     Material el = ModularBake.slotMaterial(role, p, "element", materials);
                     float k = el == null ? 0f : el.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f);
@@ -197,6 +232,14 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     String v = role.variant(p).map(ModularType.Variant::name).orElse("beam_splitter");
                     if (v.equals("arc_fork"))
                         fork = true;
+                    else if (v.equals("coherence_lens")) {
+                        // The tube's lining sets how many bounces the pulse survives.
+                        coherence = true;
+                        Material lm = ModularBake.slotMaterial(role, p, "lens", materials);
+                        lining = Mth.clamp(lm == null ? ModularTuning.EGUN_COHERENCE_DEFAULT_LINING
+                                : lm.separation().reflectivity().orElse(ModularTuning.EGUN_COHERENCE_DEFAULT_LINING), 0f, 1f);
+                    } else if (v.equals("malefic_lens"))
+                        malefic = true;
                     else
                         beams = Mth.clamp(Math.round(role.axis(p, "beams")), 3, 7);
                 }
@@ -248,17 +291,21 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         if (!barrel || !receiver || !trigger || seat == null || bore <= 0 || length <= 0 || seatAmp <= 0)
             return Optional.empty();
         ElectricGunSpec spec = new ElectricGunSpec(seat, tier, bore, length, loss, seatAmp, seatDensity, dielectric, band, mass, maxCells,
-                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu, serviceTu, sense, zoomGain, pumpGain, pumpLever, holdGain, gaugeRes);
+                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu, serviceTu, sense, zoomGain, pumpGain, pumpLever, holdGain, gaugeRes,
+                coherence, lining, malefic, shuntTicks, lead, leadAmp, leadLength,
+                seat == Seat.THERMOPILE ? Math.min(ModularTuning.EGUN_PILE_CAP * tier / 3f, pileGap * ModularTuning.EGUN_PILE_RETURN_PER_UV) : 0f, sinkK);
         return fault(design, type) == null ? Optional.of(spec) : Optional.empty();
     }
 
     /**
      * Why the design is refused, as the tail of {@code message.feedback.blueprint_table.fault.<reason>}, or null: a big seat needs a long gun
-     * or machine gun frame; a hold-charge trigger and a pump charge need a seat that fires one shot a pull.
+     * or machine gun frame; a hold-charge trigger and a pump charge need a seat that fires one shot a pull; the reload key works one fitting
+     * (a pump charge, a hold-charge trigger, a surge shunt or a shock lead); a thermopile needs a heat sink on the barrel.
      */
     public static String fault(ModularDesign design, ModularType type) {
         String frame = "", seat = "";
-        boolean charge = false;
+        boolean charge = false, sink = false;
+        int reloadKey = 0;
         for (ModularDesign.Part p : design.parts()) {
             ModularType.Role role = type.roles().get(p.role());
             if (role == null)
@@ -266,7 +313,16 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
             switch (role.name()) {
                 case RECEIVER -> frame = role.variant(p).map(ModularType.Variant::name).orElse("handgun");
                 case SEAT -> seat = role.variant(p).map(ModularType.Variant::name).orElse("cylinder");
-                case "hold_charge", "pump_charge" -> charge = true;
+                case "hold_charge", "pump_charge" -> {
+                    charge = true;
+                    reloadKey++;
+                }
+                case "shock_lead" -> reloadKey++;
+                case "heat_governor" -> {
+                    if ("surge_shunt".equals(role.variant(p).map(ModularType.Variant::name).orElse("")))
+                        reloadKey++;
+                }
+                case "heat_sink" -> sink = true;
                 default -> {
                 }
             }
@@ -276,7 +332,36 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
             return "pulse_seat_frame";
         if (charge && !s.single())
             return "pulse_charge_seat";
+        if (reloadKey > 1)
+            return "pulse_reload_key";
+        if (s == Seat.THERMOPILE && !sink)
+            return "pulse_thermopile_sink";
         return null;
+    }
+
+    // --- the new fittings --------------------------------------------------------------------
+
+    /** Whether the reload key works a fitting of this gun (a pump charge, a hold charge, a surge shunt or a shock lead). */
+    public boolean reloadKeyFitting() {
+        return pump || holdCharge || governor == Governor.SHUNT || lead;
+    }
+
+    /** Bounces a coherence lens's pulse survives at hold charge {@code holdShare}: its lining, plus what a held charge buys; 0 with no coherence lens. */
+    public int bounces(float holdShare) {
+        if (!coherence)
+            return 0;
+        return (int) Math.floor(ModularTuning.EGUN_COHERENCE_BOUNCES * lining)
+                + (holdCharge ? Math.round(ModularTuning.EGUN_COHERENCE_HOLD_BOUNCES * holdShare) : 0);
+    }
+
+    /** The thermopile's return, a share of a shot's energy, with the barrel at {@code heat} of its limit and the sink {@code soak} full (0 to 1). */
+    public float pileShare(float heat, float soak) {
+        return seat == Seat.THERMOPILE ? pileReturn * Mth.clamp(heat, 0f, 1f) * (1f - Mth.clamp(soak, 0f, 1f)) : 0f;
+    }
+
+    /** How full a returning shot of {@code share} makes the sink: a bigger sink takes more of them. */
+    public float soakPerShot() {
+        return 1f / (ModularTuning.EGUN_PILE_SOAK_SHOTS * Math.max(0.2f, sinkK));
     }
 
     // --- the pulse ---------------------------------------------------------------------------

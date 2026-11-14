@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:alumina"
+    },
+    {
+      "item": "feedback:dolomite_dust"
+    }
+  ],
+  "min_temperature": 1500,
+  "optimal_temperature": 1600,
+  "max_temperature": 1750,
+  "required_tpu": 600,
+  "spoil_temperature": 1900,
+  "result": {
+    "id": "feedback:spinel"
+  }
+}

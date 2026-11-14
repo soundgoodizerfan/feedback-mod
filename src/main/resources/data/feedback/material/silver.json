@@ -30,12 +30,14 @@
     "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.95
+    "reflectivity": 0.95,
+    "diamagnetism": 0.15
   },
   "electrical": {
     "drop": 0.0476,
     "electrode_potential": 0.8,
-    "conductivity": 1.05
+    "conductivity": 1.05,
+    "seebeck": 6.5
   },
   "ampacity": 0.99,
   "corrosion_resistance": 0.95,

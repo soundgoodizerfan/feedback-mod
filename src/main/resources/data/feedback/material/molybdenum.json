@@ -1,0 +1,47 @@
+{
+  "fastener": 4,
+  "color": "#8a8f96",
+  "kind": "metal",
+  "hardness": 15,
+  "density": 10.28,
+  "thermal": {
+    "melting_point": 2623,
+    "boiling_point": 4639,
+    "cooling_rate": 2.05,
+    "conductivity": 0.0344,
+    "anneal_temperature": 1100,
+    "service_temperature": 1500,
+    "specific_heat": 0.251,
+    "latent_heat_fusion": 375,
+    "latent_heat_vaporisation": 6230,
+    "oxidation_temperature": 600
+  },
+  "mechanical": {
+    "toughness": 25,
+    "ductility": 8,
+    "work_hardening": 2,
+    "yield_strength": 22,
+    "friction": 0.5,
+    "abrasiveness": 0.323
+  },
+  "molten": {
+    "viscosity": 5.8,
+    "density": 9.33,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.55
+  },
+  "electrical": {
+    "drop": 0.156,
+    "electrode_potential": -0.2,
+    "conductivity": 0.32
+  },
+  "ampacity": 1.02,
+  "corrosion_resistance": 0.8,
+  "enchantability": 8,
+  "toxicity": 0.7,
+  "exclude": [
+    "lump"
+  ]
+}

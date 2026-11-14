@@ -110,7 +110,7 @@
   ],
   "defaults": {
     "C": "feedback:wool",
-    "F": "feedback:wood"
+    "F": "feedback:oak"
   },
   "vanilla": {}
 }

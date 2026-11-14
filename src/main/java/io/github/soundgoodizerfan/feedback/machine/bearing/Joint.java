@@ -168,6 +168,8 @@ public final class Joint {
     /** Set each game tick, read each physics step: where, which way, how fast (rad/s about the facing). */
     @Nullable
     private volatile ServerLevel level;
+    /** Share of a free hinge's damping a fitted levitation sleeve removes, set each server tick and read by the physics step. */
+    private volatile float sleeve;
     /** The axis in the parent's frame (the bearing's facing), and the parent the live joint was made to; null is the world. */
     private final Vector3d localAxis = new Vector3d();
     @Nullable
@@ -327,6 +329,7 @@ public final class Joint {
      * moved and the run should be rebuilt to count it.
      */
     public boolean tick(ServerLevel level, BlockPos bearingPos, Vector3d localAnchor, Direction facing, float command) {
+        sleeve = level.getBlockEntity(bearingPos) instanceof RotaryBearingBlockEntity b ? b.sleeveCut() : 0f;
         // A hinge's role: 0 turns at the shaft's speed; 1 steers and 2 to 4 are control surfaces, held at an angle by a level.
         float rpm = kind == Kind.HINGE && variant == 0 ? command : 0;
         angleLevel = kind == Kind.HINGE && variant > 0 ? Math.clamp(command, -1f, 1f) : 0;
@@ -486,7 +489,7 @@ public final class Joint {
                 } else {
                     holdAngle = Double.NaN;
                     // A free bearing is not frictionless (BEARING_DAMPING_RATE): damping scaled by the arm's inertia.
-                    joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, 0, 0, MachineTuning.BEARING_DAMPING_RATE * inertia, false, 0);
+                    joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, 0, 0, MachineTuning.BEARING_DAMPING_RATE * inertia * (1 - sleeve), false, 0);
                 }
             }
             default -> {

@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:bronze": {
+      "min": 0.9,
+      "max": 0.94
+    },
+    "feedback:amethyst": {
+      "min": 0.06,
+      "max": 0.1
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_amethyst_bronze",
+    "amount": 144
+  }
+}

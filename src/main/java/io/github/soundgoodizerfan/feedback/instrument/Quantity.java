@@ -108,7 +108,9 @@ public enum Quantity implements StringRepresentable {
     /** A reactor core's neutron flux, as a fraction of full power. A flux meter reads it. Appended, never inserted. */
     FLUX("flux"),
     /** Light at a block face, in levels 0 to 15 (block and sky read as one figure and one offset): a light meter reads it. Appended, never inserted. */
-    LIGHT("light");
+    LIGHT("light"),
+    /** How fast something is warming (positive) or cooling (negative), in Tu per second: a pyroelectric plate reads it. Appended, never inserted. */
+    HEATING_RATE("heating_rate");
 
     private final String key;
 

@@ -1,4 +1,4 @@
 {
-  "materials": ["feedback:wood", "feedback:bone", "feedback:stone", "feedback:granite", "feedback:diorite", "feedback:andesite", "feedback:basalt", "feedback:deepslate", "feedback:tuff", "feedback:obsidian"],
+  "materials": ["feedback:wood", "feedback:oak", "feedback:spruce", "feedback:birch", "feedback:cherry", "feedback:jungle", "feedback:dark_oak", "feedback:mangrove", "feedback:acacia", "feedback:bone", "feedback:stone", "feedback:granite", "feedback:diorite", "feedback:andesite", "feedback:basalt", "feedback:deepslate", "feedback:tuff", "feedback:obsidian"],
   "volumes": ["weapons:1"]
 }

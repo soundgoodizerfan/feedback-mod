@@ -1,0 +1,29 @@
+{
+  "parent": "_kind_wood",
+  "color": "#b8945f",
+  "hardness": 2.5,
+  "density": 0.75,
+  "thermal": {
+    "cooling_rate": 1.56,
+    "conductivity": 4.67e-05
+  },
+  "mechanical": {
+    "toughness": 3.8,
+    "yield_strength": 2.5,
+    "abrasiveness": 0.036
+  },
+  "combustion": {
+    "burn_ticks": 750
+  },
+  "corrosion_resistance": 0.45,
+  "molten": {
+    "density": 0.68
+  },
+  "forms": {
+    "oak_log": "minecraft:oak_log",
+    "stripped_oak_log": "minecraft:stripped_oak_log",
+    "oak_wood": "minecraft:oak_wood",
+    "stripped_oak_wood": "minecraft:stripped_oak_wood",
+    "oak_planks": "minecraft:oak_planks"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "fastener": 1,
+  "color": "#b2b6ba",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 2.5,
+  "density": 7.34,
+  "thermal": {
+    "melting_point": 350,
+    "boiling_point": 2500,
+    "cooling_rate": 3.14,
+    "conductivity": 0.0125,
+    "anneal_temperature": 150,
+    "service_temperature": 130,
+    "specific_heat": 0.23,
+    "latent_heat_fusion": 70,
+    "latent_heat_vaporisation": 2300,
+    "oxidation_temperature": 350
+  },
+  "mechanical": {
+    "toughness": 10,
+    "ductility": 20,
+    "work_hardening": 0,
+    "yield_strength": 1.5,
+    "friction": 0.3,
+    "abrasiveness": 0.036
+  },
+  "molten": {
+    "viscosity": 2,
+    "density": 6.9,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.7
+  },
+  "electrical": {
+    "drop": 0.625,
+    "electrode_potential": -0.12,
+    "conductivity": 0.08
+  },
+  "ampacity": 0.225,
+  "corrosion_resistance": 0.8,
+  "enchantability": 5,
+  "toxicity": 0.3,
+  "composition": {
+    "feedback:tin": 0.89,
+    "feedback:antimony": 0.07,
+    "feedback:copper": 0.04
+  },
+  "exclude": [
+    "lump",
+    "ore",
+    "deepslate_ore"
+  ]
+}

@@ -171,8 +171,12 @@ public final class ModularModifiers {
         if (spec.isEmpty())
             return;
         var g = spec.get();
-        if (g.governor() == ElectricGunSpec.Governor.NONE)
+        if (g.governor() == ElectricGunSpec.Governor.NONE || g.governor() == ElectricGunSpec.Governor.SHUNT)
             hazard("overheat", out);
+        if (g.malefic())
+            hazard("malefic_blast", out);
+        if (g.lead())
+            hazard("wet_line", out);
         hazard("shock", out, g.band().name());
         hazard("wet_arc", out);
         if (g.seat() == ElectricGunSpec.Seat.CORE_BREECH)

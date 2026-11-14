@@ -2,7 +2,7 @@
 
 A gauntlet that **punches any projectile back** at whoever sent it, faster than it came. The name is borrowed from the [Feedbacker](https://ultrakill.fandom.com/wiki/Feedbacker) arm in ULTRAKILL, whose parry it echoes; it is not named after this mod.
 
-It is a bracer-slot [combat gear](Combat_Gear.md) piece, and it grants the technique itself: no skill needed.
+It is a bracer-slot [combat gear](Combat_Gear.md) piece, so it takes the same slot as the [Knuckleblaster](Knuckleblaster.md) and the [Whiplash](Whiplash.md): you wear one of the three. It grants the technique itself: no skill needed.
 
 ## Getting one
 
@@ -34,4 +34,4 @@ It has 400 durability, and **it is never destroyed**: at its last point it simpl
 
 ## See also
 
-[Combat](Combat.md#parry) · [Combat Gear](Combat_Gear.md) · [Skills](Skills.md)
+[Combat](Combat.md#parry) · [Combat Gear](Combat_Gear.md) · [Skills](Skills.md) · [Whiplash](Whiplash.md)

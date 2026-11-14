@@ -140,6 +140,20 @@ public class FCreativeTabs {
                         feedbacker.set(FDataComponents.GRANTS.get(), java.util.List.of(
                                 io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.PUNCH_PROJECTILES));
                         output.accept(feedbacker);
+                        net.minecraft.world.item.ItemStack knuckleblaster = new net.minecraft.world.item.ItemStack(FItems.KNUCKLEBLASTER.get());
+                        knuckleblaster.set(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
+                                io.github.soundgoodizerfan.feedback.Feedback.id("tempered_steel"), io.github.soundgoodizerfan.feedback.Feedback.id("leather"),
+                                0f, 0.5f, 0f, 0f, 0f, 0f));
+                        knuckleblaster.set(FDataComponents.GRANTS.get(), java.util.List.of(
+                                io.github.soundgoodizerfan.feedback.combat.punch.PunchTuning.HEAVY_PUNCH));
+                        output.accept(knuckleblaster);
+                        net.minecraft.world.item.ItemStack whiplash = new net.minecraft.world.item.ItemStack(FItems.WHIPLASH.get());
+                        whiplash.set(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
+                                io.github.soundgoodizerfan.feedback.Feedback.id("wrought_iron"), io.github.soundgoodizerfan.feedback.Feedback.id("wrought_iron"),
+                                0f, 0f, 0f, 0f, 0f, 0f));
+                        whiplash.set(FDataComponents.GRANTS.get(), java.util.List.of(
+                                io.github.soundgoodizerfan.feedback.combat.whip.WhipTuning.WHIPLASH));
+                        output.accept(whiplash);
                         output.accept(FItems.UNLEARNING_TOKEN.get());
                         output.accept(FItems.FIREBOX.get());
                         output.accept(FItems.HEARTH.get());
@@ -244,6 +258,17 @@ public class FCreativeTabs {
                             if (material.xpStore().filter(x -> x.conductance() > 0).isPresent())
                                 output.accept(io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem.of(id));
                         });
+                        io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
+                            if (material.separation().diamagnetism() > 0f)
+                                output.accept(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateItem.of(id));
+                            if (material.separation().diamagnetism() > 0f)
+                                output.accept(io.github.soundgoodizerfan.feedback.machine.levitation.LevitationSleeveItem.of(id));
+                        });
+                        io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
+                            if (material.electrical().pyroCoupling().filter(c -> c > 0f).isPresent())
+                                output.accept(io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateItem.of(id));
+                        });
+                        output.accept(FItems.HYDRIDE_BED.get());
                         output.accept(FItems.DAMPER.get());
                         output.accept(FItems.VALVE.get());
                         output.accept(FItems.REDSTONE_EMITTER.get());

@@ -1,0 +1,38 @@
+{
+  "color": "#26262c",
+  "kind": "composite",
+  "hardness": 10,
+  "density": 1.8,
+  "thermal": {
+    "melting_point": 3650,
+    "boiling_point": 800,
+    "cooling_rate": 4.15,
+    "conductivity": 0.02,
+    "specific_heat": 0.71,
+    "latent_heat_fusion": 100,
+    "latent_heat_vaporisation": 1000,
+    "oxidation_temperature": 450,
+    "service_temperature": 2500
+  },
+  "mechanical": {
+    "toughness": 15,
+    "yield_strength": 15,
+    "friction": 0.3,
+    "abrasiveness": 0.258
+  },
+  "separation": {
+    "reflectivity": 0.05
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100000,
+    "density": 1.62,
+    "shear_thickening": 0
+  },
+  "enchantability": 4,
+  "electrical": {
+    "conductivity": 0.006,
+    "drop": 8
+  }
+}

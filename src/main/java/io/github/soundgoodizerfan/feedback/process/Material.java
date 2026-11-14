@@ -218,6 +218,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         FLUID,
         /** Plastics and rubbers (spec 11): shaped by the form, mould and casting systems like a metal. */
         POLYMER,
+        /** Two stuffs bonded into one body that is neither (fibre in resin, veneers in glue): fibreglass, carbon fibre, plywood. */
+        COMPOSITE,
         /** Foodstuffs are classed as finely as stone and metal are, by what they are: */
         GRAIN, VEGETABLE, FRUIT, FUNGUS, ANIMAL, SEAFOOD, DOUGH, DISH,
         /** Plants that carry a path for the brewing stand (potions spec 15): a flower, and a herb or fern. */
@@ -377,14 +379,19 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param latentHeatFusion     Work per Mu a melt or freeze absorbs or gives up at the melting point, the temperature holding.
      * @param latentHeatVaporisation Work per Mu a boil or condensation absorbs or gives up at the boiling point.
      */
+    /**
+     * The thermal figures. {@code shockLimit}: the sudden jump in temperature, in Tu, a body of it takes without crazing (real critical
+     * thermal-shock difference: soda-lime glass about 100, borosilicate about 170, silica glass about 1000). Absent is not rated.
+     */
     public record Thermal(Optional<Tu> meltingPoint, Optional<Tu> boilingPoint, Optional<TuRate> coolingRate,
                           Optional<Conductance> conductivity, Optional<Tu> oxidationTemperature,
                           Optional<Tu> annealTemperature, Optional<Tu> serviceTemperature,
                           Optional<Tu> sublimationTemperature, Optional<SpecificHeat> specificHeat,
-                          Optional<LatentHeat> latentHeatFusion, Optional<LatentHeat> latentHeatVaporisation) {
+                          Optional<LatentHeat> latentHeatFusion, Optional<LatentHeat> latentHeatVaporisation,
+                          Optional<Tu> shockLimit) {
         static final Thermal NONE = new Thermal(Optional.empty(), Optional.empty(), Optional.empty(),
                 Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Thermal> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(Tu::new).optionalFieldOf("melting_point").forGetter(Thermal::meltingPoint),
@@ -397,7 +404,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Units.codec(Tu::new).optionalFieldOf("sublimation_temperature").forGetter(Thermal::sublimationTemperature),
                 Units.codec(SpecificHeat::new).optionalFieldOf("specific_heat").forGetter(Thermal::specificHeat),
                 Units.codec(LatentHeat::new).optionalFieldOf("latent_heat_fusion").forGetter(Thermal::latentHeatFusion),
-                Units.codec(LatentHeat::new).optionalFieldOf("latent_heat_vaporisation").forGetter(Thermal::latentHeatVaporisation)
+                Units.codec(LatentHeat::new).optionalFieldOf("latent_heat_vaporisation").forGetter(Thermal::latentHeatVaporisation),
+                Units.codec(Tu::new).optionalFieldOf("shock_limit").forGetter(Thermal::shockLimit)
         ).apply(instance, Thermal::new));
     }
 
@@ -418,7 +426,21 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     public record Mechanical(Optional<St> toughness, Optional<Integer> ductility, Optional<St> workHardening,
                              Optional<St> yieldStrength, Optional<Float> friction, Optional<Float> abrasiveness,
-                             boolean hardenable, Optional<Damping> damping, Optional<Float> permeability) {
+                             boolean hardenable, Optional<Damping> damping, Optional<Float> permeability,
+                             Optional<Hydrogen> hydrogen) {
+        /**
+         * How a metal soaks hydrogen: {@code uptake} is the volumes of gas (at the pressure a pipe holds, ambient) one volume of the metal takes at
+         * saturation (real: palladium 900, magnesium about 1300, titanium about 400), {@code release} the Tu above which it gives the gas back (real
+         * desorption temperatures). A bed of it stores gas densely at low pressure and gives it back when heated.
+         */
+        public record Hydrogen(float uptake, Tu release) {
+            static final Codec<Hydrogen> CODEC = RecordCodecBuilder.create(i -> i.group(
+                    Codec.FLOAT.fieldOf("uptake").forGetter(Hydrogen::uptake),
+                    Units.codec(Tu::new).fieldOf("release_temperature").forGetter(Hydrogen::release)
+            ).apply(i, Hydrogen::new));
+        }
+
+
         /**
          * How a material stores a barrel's vibration when shrunk on as its jacket: cold, the group tightens to {@code coldSpread}; once the barrel
          * has heated past {@code spoilAt} (a share of the way from the room to the round's ignition) the stored vibration goes bad and the group
@@ -433,7 +455,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         }
 
         static final Mechanical NONE = new Mechanical(Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), false, Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Mechanical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(St::new).optionalFieldOf("toughness").forGetter(Mechanical::toughness),
@@ -444,7 +466,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.FLOAT.optionalFieldOf("abrasiveness").forGetter(Mechanical::abrasiveness),
                 Codec.BOOL.optionalFieldOf("hardenable", false).forGetter(Mechanical::hardenable),
                 Damping.CODEC.optionalFieldOf("damping").forGetter(Mechanical::damping),
-                Codec.FLOAT.optionalFieldOf("permeability").forGetter(Mechanical::permeability)
+                Codec.FLOAT.optionalFieldOf("permeability").forGetter(Mechanical::permeability),
+                Hydrogen.CODEC.optionalFieldOf("hydrogen").forGetter(Mechanical::hydrogen)
         ).apply(instance, Mechanical::new));
     }
 
@@ -477,16 +500,20 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param gangue           for a bearer (an ore): the host rock its grains are locked in. Ore separation reads the
      *                         contrast between this material's density, magnetism and reflectivity and the bearer's
      *                         ({@code OreLadder}); absent means {@code feedback:stone}.
+     * @param diamagnetism     0 to 1, how hard a field pushes it away: real volume susceptibility over bismuth's (-1.7e-4, the
+     *                         strongest of the metals), so graphite is 0.9, gold 0.2, copper 0.06. Every material is repelled a little in real life; 0 is
+     *                         a material left unmeasured here. Read by the electromagnet, the levitation plate and the levitation sleeve.
      */
     public record Separation(boolean magnetic, Optional<Tu> curieTemperature, Optional<Float> reflectivity,
-                             Optional<ResourceLocation> gangue) {
-        static final Separation NONE = new Separation(false, Optional.empty(), Optional.empty(), Optional.empty());
+                             Optional<ResourceLocation> gangue, float diamagnetism) {
+        static final Separation NONE = new Separation(false, Optional.empty(), Optional.empty(), Optional.empty(), 0f);
 
         static final Codec<Separation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.BOOL.optionalFieldOf("magnetic", false).forGetter(Separation::magnetic),
                 Units.codec(Tu::new).optionalFieldOf("curie_temperature").forGetter(Separation::curieTemperature),
                 Codec.FLOAT.optionalFieldOf("reflectivity").forGetter(Separation::reflectivity),
-                ResourceLocation.CODEC.optionalFieldOf("gangue").forGetter(Separation::gangue)
+                ResourceLocation.CODEC.optionalFieldOf("gangue").forGetter(Separation::gangue),
+                Codec.FLOAT.optionalFieldOf("diamagnetism", 0f).forGetter(Separation::diamagnetism)
         ).apply(instance, Separation::new));
     }
 
@@ -591,13 +618,25 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                           the core (hysteresis and eddy currents). Absent, {@code FTuning.CORE_LOSS_DEFAULT}.
      * @param quenchDrop         a superconductor's drop once it quenches (current past its ampacity). Absent, the
      *                           conductor never quenches: it only heats when overloaded.
+     * @param seebeck            microvolts a kelvin of difference across a junction of it drives, signed (real thermocouple tables:
+     *                           copper +1.9, iron +19, constantan -35). A thermopile's return follows the gap between its two metals.
+     *                           Absent, the seat estimates one from {@code electrodePotential} ({@code seebeckOrEstimate}).
+     * @param pyroCoupling       0 to 1, how much charge a plate of it gives for a change in its temperature: real pyroelectric coefficient over
+     *                           tourmaline's (about 4 uC per square metre per kelvin, the strongest common crystal). A plate answers only to
+     *                           change, never to a steady heat. Absent is none.
      */
     public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential, Optional<Float> conductivity,
                              Optional<VoltageBand> insulation,
                              Optional<Float> piezoCoupling, Optional<Float> rectifying,
-                             Optional<SecondaryCell> secondaryCell, Optional<Float> coreLoss, Optional<Float> quenchDrop) {
+                             Optional<SecondaryCell> secondaryCell, Optional<Float> coreLoss, Optional<Float> quenchDrop,
+                             Optional<Float> seebeck, Optional<Float> pyroCoupling) {
         static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+
+        /** The Seebeck figure (µV/K): the file's own, else an estimate from the electrode potential, else 0. */
+        public float seebeckOrEstimate() {
+            return seebeck.orElseGet(() -> electrodePotential.map(v -> v * io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.EGUN_PILE_EST_UV_PER_POTENTIAL).orElse(0f));
+        }
 
         static final Codec<Electrical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("drop").forGetter(Electrical::drop),
@@ -608,7 +647,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.FLOAT.optionalFieldOf("rectifying").forGetter(Electrical::rectifying),
                 SecondaryCell.CODEC.optionalFieldOf("secondary_cell").forGetter(Electrical::secondaryCell),
                 Codec.FLOAT.optionalFieldOf("core_loss").forGetter(Electrical::coreLoss),
-                Codec.FLOAT.optionalFieldOf("quench_drop").forGetter(Electrical::quenchDrop)
+                Codec.FLOAT.optionalFieldOf("quench_drop").forGetter(Electrical::quenchDrop),
+                Codec.FLOAT.optionalFieldOf("seebeck").forGetter(Electrical::seebeck),
+                Codec.FLOAT.optionalFieldOf("pyro_coupling").forGetter(Electrical::pyroCoupling)
         ).apply(instance, Electrical::new));
     }
 

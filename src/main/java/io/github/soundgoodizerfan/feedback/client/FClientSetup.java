@@ -203,6 +203,7 @@ public class FClientSetup {
             event.register(k);
         event.register(CombatKeys.RADIAL);
         event.register(GrappleSwing.PAY_OUT);
+        event.register(io.github.soundgoodizerfan.feedback.client.combat.WhipClient.WHIP);
         event.register(ItemInfoHud.TOGGLE);
         event.register(SkillTreeScreen.KEY);
     }

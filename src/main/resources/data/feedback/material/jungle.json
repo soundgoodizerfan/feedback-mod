@@ -1,0 +1,29 @@
+{
+  "parent": "_kind_wood",
+  "color": "#a97a54",
+  "hardness": 4.5,
+  "density": 0.85,
+  "thermal": {
+    "cooling_rate": 1.38,
+    "conductivity": 5.3e-05
+  },
+  "mechanical": {
+    "toughness": 4.2,
+    "yield_strength": 2.8,
+    "abrasiveness": 0.13
+  },
+  "combustion": {
+    "burn_ticks": 850
+  },
+  "corrosion_resistance": 0.55,
+  "molten": {
+    "density": 0.77
+  },
+  "forms": {
+    "jungle_log": "minecraft:jungle_log",
+    "stripped_jungle_log": "minecraft:stripped_jungle_log",
+    "jungle_wood": "minecraft:jungle_wood",
+    "stripped_jungle_wood": "minecraft:stripped_jungle_wood",
+    "jungle_planks": "minecraft:jungle_planks"
+  }
+}

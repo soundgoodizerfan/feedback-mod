@@ -4,7 +4,8 @@
     "metalloid",
     "glass",
     "animal",
-    "seafood"
+    "seafood",
+    "composite"
   ],
   "grain": 0.5
 }

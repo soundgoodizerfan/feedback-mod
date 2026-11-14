@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:copper": {
+      "min": 0.52,
+      "max": 0.58
+    },
+    "feedback:nickel": {
+      "min": 0.42,
+      "max": 0.48
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_constantan",
+    "amount": 144
+  }
+}

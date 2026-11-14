@@ -752,6 +752,7 @@ Copied or derived from Minecraft 1.21.1's textures (Mojang AB assets, reused by 
 - `item/copper_bucket.png`: the vanilla bucket, recoloured.
 - `item/form/lump.png`, `item/form/raw.png`: the vanilla raw iron sprite, recoloured (greyscale form sprites tinted at runtime).
 - `item/form/dust.png`: `items/material_dust_generic.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley), reduced to luminance (greyscale form sprite tinted at runtime).
+- `item/levitation_sleeve.png`: `items/part_diamond_bearing.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley), reduced to luminance (greyscale sprite tinted at runtime by the sleeve material).
 
 ### Exception: Feedback's own art (All Rights Reserved)
 
@@ -788,6 +789,7 @@ Log every file here. Row: path, Soundza id, creator and title, download date, `a
 
 | File | Soundza id, creator, title, date | AI | Edit | Licence |
 | --- | --- | --- | --- | --- |
+| `assets/feedback/sounds/machine/electromagnet_hum.ogg` | Soundza `cmvl6iev0o13n8bkfxnsb3d9i`, no creator listed, "AC Power Hum Dark", and Soundza `cmv5o1bxk02hp06l4r3w8frog`, no creator listed, "Space Station Hum Loop 3", both 2026-11-14 | no, no | two hums layered: the 1 s steady 50 Hz hum looped to 2.2 s and low-passed at 320 Hz, the station hum cut to 2.2 s, low-passed at 520 Hz and mixed in at 0.6; faded in and out, mono, normalised to -24 LUFS | Soundza Standard License |
 | `assets/feedback/sounds/gun/shot_light_0.ogg`, `_1`, `_2` | Soundza `cmvpw0bb2ya1sl982a4ej21gw`, no creator listed, "Pistol Shot", 2026-11-12 | no | converted mono ogg, trimmed, loudness normalised; three takes of the one recording (re-pitched 0.97 / 1.0 / 1.035, EQ shifted), re-pitched again in game | Soundza Standard License |
 | `assets/feedback/sounds/gun/shot_heavy_0.ogg`, `_1`, `_2` | Soundza `cmvpw9k9augibke37ww42iwyw`, no creator listed, "AR15 Rifle Shot", 2026-11-12 | no | converted mono ogg, trimmed, loudness normalised; three takes of the one recording (re-pitched 0.97 / 1.0 / 1.035, EQ shifted), re-pitched again in game | Soundza Standard License |
 | `assets/feedback/sounds/gun/reload_chamber.ogg` | Soundza `fhzqldhod2ca1pkwse4nkwqc`, no creator listed, "Bullet Chamber Click", 2026-11-12 | no | converted mono ogg, trimmed, normalised, re-pitched in game | Soundza Standard License |
@@ -823,7 +825,9 @@ Log every file here. Row: path, Soundza id, creator and title, download date, `a
 | `assets/feedback/sounds/gun/egun_cell_in.ogg` | Soundza `cmukd12m4g9vicnwfsu84ndb2` "Jack Plug Insert" layered with Soundza `cmv5mx2p1008w06l44cimlw81` "Lockbox Key Insert 2", no creator listed, 2026-11-13 | no | plug cut to 0.6 s over the key click pitched down 15%, mono, normalised | Soundza Standard License |
 | `assets/feedback/sounds/gun/egun_cell_out.ogg` | Soundza `cmukd12m4g9vicnwfsu84ndb2` "Jack Plug Insert" layered with Soundza `cmv5mx2p1008w06l44cimlw81` "Lockbox Key Insert 2", no creator listed, 2026-11-13 | no | plug reversed over the key click pitched down 30% and delayed, mono, normalised | Soundza Standard License |
 | `assets/feedback/sounds/gun/egun_flat.ogg` | Soundza `cmvl67ogefvi2yvo8qx577rf4` "Electric Noise Zap", no creator listed, 2026-11-13 | no | 0.35 s slice, pitched down 20%, low-passed, faded, mono, normalised | Soundza Standard License |
-| `assets/feedback/sounds/gun/egun_refill.ogg` | Soundza `cmvcmg962fgioul3nwtiwxjwt` "Futuristic UI Blip", no creator listed, 2026-11-13 | no | two copies pitched 0.7 and 1.05 offset 70 ms, echo, faded, mono, normalised | Soundza Standard License |
+| `assets/feedback/sounds/gun/egun_refill.ogg` | Soundza `cmujgkdir0d6az57rbe7iwhsh` "Bright Notification Chime", no creator listed, 2026-11-13 | no | pitched down 15%, echo, faded, mono, quietened | Soundza Standard License |
+| `assets/feedback/sounds/gun/egun_power_on.ogg` | Soundza `cmv0i6i8f01et06l8exyy3emc` "Electric Power Down" layered with Soundza `cmvl6hzhtig134ug4ku2f1bmz` "Soft Digital Whoosh", no creator listed, 2026-11-13 | no | power-down slice reversed so it rises, low-passed, under the whoosh pitched down 10%, faded, mono | Soundza Standard License |
+| `assets/feedback/sounds/gun/egun_power_off.ogg` | Soundza `cmv0i6i8f01et06l8exyy3emc` "Electric Power Down" layered with Soundza `cmvl6hzhtig134ug4ku2f1bmz` "Soft Digital Whoosh", no creator listed, 2026-11-13 | no | power-down slice low-passed under the whoosh pitched down 30%, faded, mono | Soundza Standard License |
 | `assets/feedback/sounds/gun/egun_bank.ogg` | Soundza `cmvl67ogefvi2yvo8qx577rf4` "Electric Noise Zap", no creator listed, 2026-11-13 | no | first 0.7 s chopped with a 38 Hz tremolo, pitched down 10%, mono, normalised | Soundza Standard License |
 | `assets/feedback/sounds/gun/egun_dynamo.ogg` | Soundza `cmukhw12zchlnfrswmrsxo5cr` "Toy Electric Motor Spin" layered with Soundza `cmv5mx2p1008w06l44cimlw81` "Lockbox Key Insert 2", no creator listed, 2026-11-13 | no | first 0.9 s of the spin low-passed under the key click pitched down 40%, mono, normalised | Soundza Standard License |
 | `assets/feedback/sounds/gun/egun_tether.ogg` | Soundza `cmvl6luz5xk0y09uxqjbc9369` "Electrical Buzz Static", no creator listed, 2026-11-13 | no | 0.6 s slice band-passed 200 Hz to 3 kHz, faded, mono, normalised | Soundza Standard License |
@@ -845,6 +849,8 @@ Log every file here. Row: path, Soundza id, creator and title, download date, `a
 | File | Source | Licence |
 | --- | --- | --- |
 | `assets/feedback/textures/entity/feedbacker_skin.png` | a Minecraft skin supplied by the author; only its right arm is drawn, as the Feedbacker's sleeve | Author's own supply; creator and licence not recorded. Confirm before any public release. |
+| `assets/feedback/textures/entity/knuckleblaster_skin.png` | the left arm (base and outer layer) of a V2 ULTRAKILL Minecraft skin from Planet Minecraft (`V2-Ultrakill-on-planetminecraft-com.png`), supplied by the author; only the left arm is kept, drawn as the Knuckleblaster's sleeve | Creator and licence not recorded. Confirm before any public release. |
+| `assets/feedback/textures/entity/whiplash_skin.png` | the Knuckleblaster's skin arm (above) with every saturated pixel's hue turned a third of the way round the wheel, so red reads green; no pixel redrawn | As the Knuckleblaster's skin: creator and licence not recorded. Confirm before any public release. |
 
 ### cleannrooster/forg-cleannrooster-assets (skill tree icons, 2026-10-23)
 

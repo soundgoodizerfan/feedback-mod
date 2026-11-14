@@ -1,6 +1,6 @@
 # Electromagnet
 
-The first machine that runs on [electricity](Electricity.md). While it's powered, it pulls nearby dropped items toward itself, but only items made of a magnetic metal.
+The first machine that runs on [electricity](Electricity.md). While it's powered, it pulls nearby dropped items of a magnetic metal toward itself and pushes dropped items of a diamagnetic material away.
 
 ## Building it
 
@@ -23,6 +23,12 @@ Anything on the ground made of **iron, steel, cast iron, hardened steel or nethe
 It ignores everything else: copper, gold, zinc, tin, brass, bronze, lead, stone, wood and so on. A magnet over a mixed pile will drag the iron and steel out and leave the rest behind. That's what it's for: **sorting by what something is made of**, not by which item it is.
 
 It only moves items that are lying on the ground. It doesn't pick anything up into an inventory, and it doesn't touch mobs or players. Put a hopper or a chest under where the items end up.
+
+## What it pushes
+
+Dropped items made of a **diamagnetic** material (bismuth above all, then graphite, and weakly gold, silver, lead, cadmium, zinc and copper; see [Materials](Materials.md#the-metals)) are shoved away from a powered magnet and slightly upward, harder the higher the material's diamagnetism and the stronger the field. The magnet gives a faint hum and sparks while it does. With **Scatter** the magnet pulls them in instead.
+
+A powered magnet also lets [Levitation Plates](Levitation_Plate.md) float above it and takes the drag off a shaft, flywheel or bearing fitted with a [Levitation Sleeve](Levitation_Sleeve.md).
 
 ## Separating ore
 
@@ -57,4 +63,4 @@ You can check a magnet's condition with [Calipers](Instruments.md#calipers), but
 
 ## Attunements
 
-**Lode** on the magnet core reaches further, **Scatter** throws the magnetic items it would draw; **Ward** and **Mend** handle its overload wear, and the yoke takes **Ground**. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.
+**Lode** on the magnet core reaches further, **Scatter** throws the magnetic items it would draw and pulls the diamagnetic ones instead; **Ward** and **Mend** handle its overload wear, and the yoke takes **Ground**. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

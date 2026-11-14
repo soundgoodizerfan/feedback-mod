@@ -210,7 +210,7 @@
     ]
   ],
   "defaults": {
-    "F": "feedback:wood",
+    "F": "feedback:oak",
     "R": "feedback:wrought_iron"
   },
   "vanilla": {

@@ -1,0 +1,15 @@
+{
+  "radius": 12,
+  "thickness": 5,
+  "density": 0.9,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "indicator": "feedback:dolomite_loose_rock",
+  "ore": "feedback:dolomite_ore",
+  "deepslate_ore": "feedback:dolomite_deepslate_ore",
+  "weight": 8,
+  "min_y": 0,
+  "max_y": 96
+}

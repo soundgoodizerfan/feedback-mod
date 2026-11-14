@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.03
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "feedback:knuckleblaster",
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "feedback:gear": {
+                  "shell": "feedback:tempered_steel",
+                  "strap": "feedback:leather",
+                  "window": 0,
+                  "joint": 0.5,
+                  "roll_distance": 0,
+                  "recovery_shave": 0,
+                  "i_frames": 0,
+                  "mass": 0
+                },
+                "feedback:grants": [
+                  "feedback:heavy_punch"
+                ]
+              }
+            },
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "min": 0.3,
+                "max": 0.7
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

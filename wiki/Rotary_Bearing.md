@@ -22,7 +22,7 @@ The piece can hold up to 1024 blocks. A bigger build, or one touching the ground
 
 ## How it works
 
-The piece speeds up and slows down with the network: a heavy piece makes the whole line slower to change speed, and the bearing is what holds it to the shaft's turn. The bearing costs the network **0.2 Su per RPM** of friction.
+The piece speeds up and slows down with the network: a heavy piece makes the whole line slower to change speed, and the bearing is what holds it to the shaft's turn. The bearing costs the network **0.2 Su per RPM** of friction. A [Levitation Sleeve](Levitation_Sleeve.md) fitted to it cuts that friction, and a free bearing's damping, by up to 90 percent while a powered [Electromagnet](Electromagnet.md) touches it.
 
 A bearing also works on something that moves. Put one on a car or on the arm of another bearing and the part it turns pushes back on what carries it. Put back the outermost arm first.
 

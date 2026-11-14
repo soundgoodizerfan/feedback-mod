@@ -74,6 +74,8 @@ public final class MaterialDescription {
         Material.Separation s = m.separation();
         row(out, 4, "magnet", Component.translatable(s.magnetic() ? "screen.feedback.probe.pulled" : "screen.feedback.probe.ignored").getString());
         s.curieTemperature().filter(v -> s.magnetic()).ifPresent(v -> row(out, 4, "curie", num(v.value()) + " Tu"));
+        if (s.diamagnetism() > 0f)
+            row(out, 4, "diamagnetism", percent(s.diamagnetism()) + " of bismuth");
         s.reflectivity().ifPresent(v -> row(out, 4, "reflectivity", percent(v)));
 
         m.ampacity().ifPresent(v -> row(out, 5, "ampacity", num(v) + "x copper"));

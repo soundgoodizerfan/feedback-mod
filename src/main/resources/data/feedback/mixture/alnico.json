@@ -1,0 +1,28 @@
+{
+  "parts": {
+    "feedback:iron": {
+      "min": 0.47,
+      "max": 0.55
+    },
+    "feedback:aluminium": {
+      "min": 0.06,
+      "max": 0.1
+    },
+    "feedback:nickel": {
+      "min": 0.11,
+      "max": 0.17
+    },
+    "feedback:cobalt": {
+      "min": 0.2,
+      "max": 0.28
+    },
+    "feedback:copper": {
+      "min": 0.01,
+      "max": 0.05
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_alnico",
+    "amount": 144
+  }
+}

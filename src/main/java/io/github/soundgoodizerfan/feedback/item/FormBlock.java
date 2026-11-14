@@ -34,6 +34,19 @@ public class FormBlock extends Block {
         this.food = food;
     }
 
+    /** A block whose properties the caller sets (glass, which is not metal). */
+    protected FormBlock(ResourceLocation material, String form, BlockBehaviour.Properties properties) {
+        super(properties);
+        this.material = material;
+        this.form = form;
+        this.food = false;
+    }
+
+    /** A block of glass: brittle, clear of the light, quick to break. */
+    public static BlockBehaviour.Properties glassProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.NONE).strength(0.3f).sound(SoundType.GLASS).noOcclusion();
+    }
+
     /** Whether this is a block of foodstuff. */
     public boolean food() {
         return food;

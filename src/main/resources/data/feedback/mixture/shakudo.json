@@ -1,0 +1,16 @@
+{
+  "parts": {
+    "feedback:copper": {
+      "min": 0.95,
+      "max": 0.97
+    },
+    "feedback:gold": {
+      "min": 0.03,
+      "max": 0.05
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_shakudo",
+    "amount": 144
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "parts": {
+    "feedback:titanium": {
+      "min": 0.88,
+      "max": 0.92
+    },
+    "feedback:aluminium": {
+      "min": 0.05,
+      "max": 0.07
+    },
+    "feedback:vanadium": {
+      "min": 0.03,
+      "max": 0.05
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_titanium_6al_4v",
+    "amount": 144
+  }
+}

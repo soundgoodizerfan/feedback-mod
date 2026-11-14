@@ -28,7 +28,7 @@ A mold's shape names a form. Any metal or glass with a molten fluid freezes into
 - **Ingot Mold**: casts one ingot. Craft it from three Bricks in a row, a flat tray. Fired clay, so no metal needed to make your first one.
 - **Ball Mold**: casts **eight round balls** from one ingot's worth (see [Bullet shapes](Ammunition.md#bullet-shapes)).
 - **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Wrought Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
-- **Block Mold**: casts a **Glass Block** from 144 mB of molten glass. Four Wrought Iron Drilled Plates in a square.
+- **Block Mold**: casts a glass block of the melt's glass (a [Block of Uranium Glass](Materials.md#uranium-glass-block), for one). Four Wrought Iron Drilled Plates in a square.
 - **Glass Pane Mold**: casts **3 Glass Panes** from 144 mB of molten glass.
 - **Glass Bottle Mold**: casts a **Glass Bottle** from 144 mB of molten glass.
 - **Atomising Mold**: see [below](#atomising-mold).
@@ -85,7 +85,7 @@ The first row is the Pickaxe, Axe and Shovel Head Molds; the second is the Hoe, 
 
 A [Casting Basin](Casting_Basin.md) under the crucible pours into up to four molds, or into an open pool, without the hand work.
 
-You can pour copper, gold, iron, wrought iron, cast iron, tin, zinc, lead, silver, bronze, brass, glass and quartz glass. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
+You can pour copper, gold, iron, wrought iron, cast iron, tin, zinc, lead, silver, antimony, vanadium, indium, mercury, bronze, brass, the other alloys above, glass, borosilicate glass, uranium glass and quartz glass. Plastic melts ([Polyethylene Melt, Soul Resin Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100 and 150 Tu.
 
 ## Alloys
 
@@ -98,6 +98,24 @@ Melt two metals into the **same crucible or furnace** in the right proportions a
 | **Stainless steel** | about 3 parts steel to 1 part chromium and nickel together (74% steel, 18% chromium, 8% nickel) |
 | **Manganese steel** | about 7 parts steel to 1 part manganese (87% steel) |
 | **Thorium-tungsten** | about 9 parts tungsten to 1 part thorium (90%) |
+| **Duralumin** | about 93.5% aluminum, 4.4% copper, 1.5% magnesium, 0.6% manganese |
+| **Nichrome** | about 4 parts nickel to 1 part chromium (80%) |
+| **Wood's metal** | about 50% bismuth, 25% lead, 12.5% tin, 12.5% cadmium |
+| **Beryllium copper** | about 98% copper, 2% beryllium |
+| **Invar** | about 64% iron, 36% nickel |
+| **Electrum** | about 3 parts gold to 1 part silver (75%) |
+| **Amethyst bronze** | about 92% bronze, 8% amethyst |
+| **Constantan** | about 55% copper, 45% nickel |
+| **Cupronickel** | about 70% copper, 30% nickel |
+| **Alnico** | about 51% iron, 24% cobalt, 14% nickel, 8% aluminum, 3% copper |
+| **High-speed steel** | about 80% steel, 6.5% tungsten, 5% molybdenum, 4% chromium, 2% vanadium |
+| **Titanium 6Al-4V** | about 90% titanium, 6% aluminum, 4% vanadium |
+| **Stellite** | about 62% cobalt, 28% chromium, 8.5% tungsten |
+| **Pewter** | about 91% tin, 7.5% antimony, 1.5% copper |
+| **Babbitt** | about 89% tin, 7% antimony, 4% copper |
+| **Bell metal** | about 78% copper, 22% tin |
+| **Shakudo** | about 96% copper, 4% gold |
+| **Galinstan** | about 68% gallium, 21.5% indium, 10% tin |
 | **Redstone-chromium** | about 1 part chromium to 1 part molten redstone (each 40 to 60%) |
 
 The ratio has some leeway, but not much. If the mix is **off**, the tank looks **empty**. The metal is still in there, but it isn't anything with a name, so nothing pours. **Add more of whichever metal is short** to bring it back into range.

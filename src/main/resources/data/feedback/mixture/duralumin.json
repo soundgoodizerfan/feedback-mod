@@ -1,0 +1,24 @@
+{
+  "parts": {
+    "feedback:aluminium": {
+      "min": 0.92,
+      "max": 0.95
+    },
+    "feedback:copper": {
+      "min": 0.035,
+      "max": 0.055
+    },
+    "feedback:magnesium": {
+      "min": 0.01,
+      "max": 0.02
+    },
+    "feedback:manganese": {
+      "min": 0.003,
+      "max": 0.01
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_duralumin",
+    "amount": 144
+  }
+}

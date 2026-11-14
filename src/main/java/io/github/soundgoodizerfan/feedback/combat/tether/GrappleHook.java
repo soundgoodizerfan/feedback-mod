@@ -63,6 +63,8 @@ public class GrappleHook extends Projectile {
     public static final int BARB = 4;
     /** A second hook head: using the grapple again with a line out throws a second line. */
     public static final int MULTI = 8;
+    /** Thrown from the Whiplash arm: the line holds after the bite until the key is released ({@link #pull}), the spear also bites items and projectiles, and a coin it passes is knocked up. */
+    public static final int WHIP = 16;
 
     private static final EntityDataAccessor<Integer> DATA_FITTINGS = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_ANCHORED = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.BOOLEAN);
@@ -105,6 +107,10 @@ public class GrappleHook extends Projectile {
     private float holdStrain;
     private int lastCutter = -1;
     private int lastCutTick;
+    /** A whip's reel has been asked for (its key came up): until then the line holds what it bit and reels nothing. */
+    private boolean pulling;
+    /** The item or projectile a whip's spear caught, or -1: it is fetched on release. */
+    private int carriedId = -1;
 
     public GrappleHook(EntityType<? extends GrappleHook> type, Level level) {
         super(type, level);
@@ -144,6 +150,20 @@ public class GrappleHook extends Projectile {
         double along = velocity.dot(r); // toward the anchor when positive
         Vec3 v = along < 0 ? velocity.subtract(r.scale(along)) : velocity;
         return v.add(r.scale(Math.min(stretch, ModularTuning.GRAPPLE_SWING_DRAW)));
+    }
+
+    /** The whip's key came up: the line reels. */
+    public void pull() {
+        pulling = true;
+    }
+
+    /** A whip's spear bites an item or a projectile in flight as well as a creature (neither is pickable, so the plain rule would pass through them). */
+    @Override
+    protected boolean canHitEntity(Entity entity) {
+        if (has(WHIP) && entity != getOwner() && !(entity instanceof GrappleHook) && entity.isAlive()
+                && (entity instanceof net.minecraft.world.entity.item.ItemEntity || entity instanceof Projectile))
+            return true;
+        return super.canHitEntity(entity);
     }
 
     public void setFittings(int fittings) {
@@ -209,8 +229,12 @@ public class GrappleHook extends Projectile {
     public void tick() {
         super.tick();
         if (anchored()) {
-            if (!level().isClientSide)
-                reel();
+            if (!level().isClientSide) {
+                if (carriedId >= 0)
+                    carry();
+                else
+                    reel();
+            }
             return;
         }
         Entity owner = getOwner();
@@ -227,6 +251,9 @@ public class GrappleHook extends Projectile {
             }
         }
         setPos(position().add(getDeltaMovement()));
+        // A coin the spear passes is knocked back up where it hangs.
+        if (!level().isClientSide && has(WHIP) && owner instanceof net.minecraft.server.level.ServerPlayer thrower)
+            io.github.soundgoodizerfan.feedback.weapon.CoinShot.touch(thrower, position(), io.github.soundgoodizerfan.feedback.combat.whip.WhipTuning.COIN_TOUCH_RADIUS);
         setDeltaMovement(getDeltaMovement().scale(0.99).add(0, -ModularTuning.GRAPPLE_GRAVITY, 0));
         ProjectileUtil.rotateTowardsMovement(this, 0.5f);
     }
@@ -243,7 +270,14 @@ public class GrappleHook extends Projectile {
         super.onHitEntity(hit);
         if (hit.getEntity() instanceof LivingEntity target)
             bite(target, hit.getLocation(), null);
-        else
+        else if (has(WHIP) && canHitEntity(hit.getEntity())) {
+            // The spear catches an item or a projectile and holds it where it is until the key comes up.
+            carriedId = hit.getEntity().getId();
+            setDeltaMovement(Vec3.ZERO);
+            setPos(hit.getEntity().position());
+            entityData.set(DATA_ANCHORED, true);
+            playSound(SoundEvents.CHAIN_HIT, 1f, 1.2f);
+        } else
             discard();
     }
 
@@ -271,6 +305,41 @@ public class GrappleHook extends Projectile {
         entityData.set(DATA_SWING_ROPE, !dragTarget && owner instanceof Player ? rope : 0f);
         entityData.set(DATA_ANCHORED, true);
         playSound(SoundEvents.CHAIN_HIT, 1f, 1f);
+        if (has(WHIP) && target != null)
+            target.hurt(damageSources().thrown(this, owner), io.github.soundgoodizerfan.feedback.combat.whip.WhipTuning.BITE_DAMAGE);
+    }
+
+    /**
+     * What the whip's spear caught that is not a creature: held where it is until the key comes up, then drawn in along the line. An item
+     * is dropped at the wearer's feet ready to pick up; a projectile is handed to the wearer and sent along their look.
+     */
+    private void carry() {
+        Entity owner = getOwner();
+        Entity caught = level().getEntity(carriedId);
+        if (!(owner instanceof LivingEntity thrower) || !owner.isAlive() || caught == null || !caught.isAlive()
+                || ++reelTicks > ModularTuning.GRAPPLE_MAX_TICKS || reelTicks > ModularTuning.GRAPPLE_SNEAK_GRACE && owner.isShiftKeyDown()) {
+            discard();
+            return;
+        }
+        if (!pulling) {
+            caught.setDeltaMovement(Vec3.ZERO);
+            caught.hurtMarked = true;
+            setPos(caught.position());
+            return;
+        }
+        Vec3 offset = thrower.getEyePosition().add(0, -0.3, 0).subtract(caught.position());
+        if (offset.length() <= ModularTuning.GRAPPLE_STOP_DISTANCE) {
+            if (caught instanceof net.minecraft.world.entity.item.ItemEntity item)
+                item.setPickUpDelay(0);
+            else if (caught instanceof Projectile projectile)
+                io.github.soundgoodizerfan.feedback.combat.parry.Parrying.turn(thrower, projectile, io.github.soundgoodizerfan.feedback.combat.whip.WhipTuning.RETURN_SPEED);
+            discard();
+            return;
+        }
+        caught.setPos(caught.position().add(offset.normalize().scale(Math.min(offset.length(), reelSpeed()))));
+        caught.setDeltaMovement(Vec3.ZERO);
+        caught.hurtMarked = true;
+        setPos(caught.position());
     }
 
     /**
@@ -327,6 +396,11 @@ public class GrappleHook extends Projectile {
         Vec3 offset = to.subtract(living.position().add(0, living.getBbHeight() * 0.5, 0));
         float distance = (float) offset.length();
         boolean swing = living == owner;
+        // A whip's swing is over when the reel has brought the wearer to the anchor.
+        if (swing && has(WHIP) && pulling && distance <= ModularTuning.GRAPPLE_STOP_DISTANCE + 0.5) {
+            discard();
+            return;
+        }
         if (++reelTicks > ModularTuning.GRAPPLE_MAX_TICKS || !swing && distance <= ModularTuning.GRAPPLE_STOP_DISTANCE
                 || reelTicks > ModularTuning.GRAPPLE_SNEAK_GRACE && owner.isShiftKeyDown()) {
             // A staggered body hauled all the way in is the Throw's moment (Throwing checks skill and stagger).
@@ -335,7 +409,7 @@ public class GrappleHook extends Projectile {
             discard();
             return;
         }
-        boolean stalled = !swing && reelTicks > 2 && lastDistance - distance < reelSpeed() * ModularTuning.GRAPPLE_STALL_FRACTION;
+        boolean stalled = !swing && (!has(WHIP) || pulling) && reelTicks > 2 && lastDistance - distance < reelSpeed() * ModularTuning.GRAPPLE_STALL_FRACTION;
         lastDistance = distance;
         if (swing && anchorEntity < 0 && owner instanceof Player) {
             Vec3 end = living.position().add(0, living.getBbHeight() * 0.5, 0);
@@ -378,6 +452,11 @@ public class GrappleHook extends Projectile {
         }
         if (swing) {
             swing(living, offset, distance);
+            return;
+        }
+        // A whip holds a creature it bit until its key comes up.
+        if (has(WHIP) && !pulling) {
+            living.fallDistance = 0f;
             return;
         }
         float speed = reelSpeed();

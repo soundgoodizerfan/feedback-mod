@@ -73,6 +73,10 @@ Full-size blocks touching a micro arm join it when its bearing is inside a body.
 
 A [Data Connector](Data_Connector.md) picks a single joint voxel, so a [Controller](Controller.md) card can brake or steer a bearing, set a piston's level or switch a micro [Clutch](Clutch.md#micro-clutch).
 
+## Floating on a magnet
+
+A [Levitation Plate](Levitation_Plate.md) in a vehicle floats above a powered [Electromagnet](Electromagnet.md).
+
 ## Wheels
 
 A [Rotary Bearing](Rotary_Bearing.md) with role 0 whose turned body contains **tire stock** is a wheel. Black wool and [Tire Rubber](Tire_Rubber.md) are tire stock. The voxels of the tire have no collision; the wheel finds the ground with a ray from the axle.

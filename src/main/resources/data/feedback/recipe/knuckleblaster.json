@@ -1,0 +1,54 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "P": {
+      "item": "feedback:steel_plate"
+    },
+    "C": {
+      "item": "feedback:copper_coil"
+    },
+    "E": {
+      "item": "feedback:electromagnet"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "CEC",
+    " L "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:knuckleblaster",
+    "components": {
+      "feedback:gear": {
+        "shell": "feedback:tempered_steel",
+        "strap": "feedback:leather",
+        "window": 0,
+        "joint": 0.5,
+        "roll_distance": 0,
+        "recovery_shave": 0,
+        "i_frames": 0,
+        "mass": 0
+      },
+      "feedback:grants": [
+        "feedback:heavy_punch"
+      ]
+    }
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 2,
+    "forms": [
+      "screw"
+    ]
+  }
+}

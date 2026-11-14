@@ -48,4 +48,4 @@ The plate keeps no heat off the hand; the body and lining do that. A broken glov
 
 ## Granting techniques
 
-A piece of gear can also carry a **grants** list: techniques it gives you while worn, the same as buying the node in the [skill tree](Skills.md#skills-from-gear). The [Feedbacker](Feedbacker.md) is the one that does so today.
+A piece of gear can also carry a **grants** list: techniques it gives you while worn, the same as buying the node in the [skill tree](Skills.md#skills-from-gear). The [Feedbacker](Feedbacker.md), the [Knuckleblaster](Knuckleblaster.md) and the [Whiplash](Whiplash.md) do so.

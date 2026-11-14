@@ -49,7 +49,7 @@
     },
     {
       "role": "i",
-      "material": "feedback:wood",
+      "material": "feedback:oak",
       "form": "oak_planks",
       "count": 1,
       "kind": "gun_stock",

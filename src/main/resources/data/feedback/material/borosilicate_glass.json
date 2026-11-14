@@ -1,0 +1,49 @@
+{
+  "color": "#cfe8ee",
+  "kind": "glass",
+  "traits": [
+    "transparent"
+  ],
+  "hardness": 56,
+  "density": 2.23,
+  "thermal": {
+    "melting_point": 1650,
+    "cooling_rate": 2.86,
+    "conductivity": 0.000284,
+    "anneal_temperature": 565,
+    "service_temperature": 500,
+    "specific_heat": 0.83,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1650,
+    "shock_limit": 170
+  },
+  "mechanical": {
+    "toughness": 0.8,
+    "friction": 0.4,
+    "abrasiveness": 0.533,
+    "hardenable": true,
+    "yield_strength": 3.5
+  },
+  "molten": {
+    "viscosity": 30000,
+    "density": 2.1,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.08
+  },
+  "corrosion_resistance": 1,
+  "exclude": [
+    "plate",
+    "rod",
+    "lens",
+    "fibre"
+  ],
+  "enchantability": 2,
+  "electrical": {
+    "insulation": "hv"
+  },
+  "toxicity": 0
+}

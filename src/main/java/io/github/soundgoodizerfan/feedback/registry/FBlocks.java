@@ -1176,6 +1176,26 @@ public class FBlocks {
                     .strength(0.5f)
                     .sound(SoundType.AMETHYST)
                     .noOcclusion()));
+    /** A slab of a diamagnetic material that a powered electromagnet below makes slick and, in a vehicle body, lifts; the material rides on the item. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateBlock> LEVITATION_PLATE = BLOCKS.register("levitation_plate",
+            () -> new io.github.soundgoodizerfan.feedback.machine.levitation.LevitationPlateBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    /** A plate of a pyroelectric crystal that signals how fast the block it touches is warming or cooling; the material rides on the item. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateBlock> PYRO_PLATE = BLOCKS.register("pyro_plate",
+            () -> new io.github.soundgoodizerfan.feedback.machine.pyro.PyroPlateBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GREEN)
+                    .strength(1.5f)
+                    .sound(SoundType.AMETHYST)
+                    .noOcclusion()));
+    /** A box of hydrogen-absorbing metal that soaks gas from a pipe and gives it back when heated. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.hydride.HydrideBedBlock> HYDRIDE_BED = BLOCKS.register("hydride_bed",
+            () -> new io.github.soundgoodizerfan.feedback.machine.hydride.HydrideBedBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.METAL)));
     public static final DeferredBlock<CreativeSourceBlock> CREATIVE_ELECTRIC = creativeSource("creative_electric",
             CreativeElectricBlockEntity::new, MapColor.GOLD);
 

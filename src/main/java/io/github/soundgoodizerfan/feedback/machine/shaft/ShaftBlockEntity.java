@@ -37,23 +37,62 @@ import net.minecraft.world.level.block.state.BlockState;
  * strains and its condition falls, to a floor and never to a burst. A strained rim carries less inertia, read the
  * next time the run is rebuilt.
  */
-public class ShaftBlockEntity extends RotationNode implements Wearing, io.github.soundgoodizerfan.feedback.machine.Reachable {
+public class ShaftBlockEntity extends RotationNode implements Wearing, io.github.soundgoodizerfan.feedback.machine.Reachable,
+        io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
 
     private float condition = 1f;
     /** A flywheel built from a disc design carries its baked inertia, drag and rim speed; a plain shaft, bearing or creative copy has none and runs on the block's figures. */
     private final FigureStore figures = new FigureStore();
 
+    private final io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings = new io.github.soundgoodizerfan.feedback.fitting.FittingStore();
+
     public ShaftBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.SHAFT.get(), pos, state);
+    }
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings() {
+        return fittings;
+    }
+
+    @Override
+    public boolean canMount(io.github.soundgoodizerfan.feedback.fitting.SidedFitting fitting, net.minecraft.core.Direction side) {
+        return false;
+    }
+
+    /** A shaft, flywheel or bearing honours one levitation sleeve. */
+    @Override
+    public boolean canAdd(io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting upgrade) {
+        return upgrade instanceof io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeveFitting
+                && io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeves.of(this) == null;
+    }
+
+    @Override
+    public boolean addUpgrade(io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting upgrade) {
+        boolean added = fittings.upgrades().add(upgrade);
+        if (added) {
+            setChanged();
+            if (level != null && !level.isClientSide)
+                io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator.rebuildFrom(level, worldPosition);
+        }
+        return added;
+    }
+
+    @Override
+    public void removeUpgrade(io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting upgrade) {
+        io.github.soundgoodizerfan.feedback.fitting.StoredFittable.super.removeUpgrade(upgrade);
+        setChanged();
     }
 
     /** One block entity type serves both the Shaft and the Bearing; the figures live on the block,
      * the same split {@code CogBlockEntity} already uses for its two sizes. */
     @Override
     public Drag getDragSuPerRpm() {
-        return getBlockState().getBlock() instanceof ShaftBlock shaft
+        Drag drag = getBlockState().getBlock() instanceof ShaftBlock shaft
                 ? new Drag(figures.get("Drag", shaft.getDragSuPerRpm().suPerRpm()))
                 : MachineTuning.SHAFT_DRAG_SU_PER_RPM;
+        float cut = io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeves.cut(level, worldPosition, this);
+        return cut <= 0f ? drag : new Drag(drag.suPerRpm() * (1f - cut));
     }
 
     @Override
@@ -114,6 +153,7 @@ public class ShaftBlockEntity extends RotationNode implements Wearing, io.github
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         figures.save(tag, registries);
+        fittings.save(tag);
         tag.putFloat("Condition", condition);
     }
 
@@ -121,6 +161,7 @@ public class ShaftBlockEntity extends RotationNode implements Wearing, io.github
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         figures.load(tag, registries);
+        fittings.load(tag, this);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 

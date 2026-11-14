@@ -1,0 +1,15 @@
+{
+  "parts": {
+    "feedback:wood": {
+      "min": 0.85,
+      "max": 0.95
+    },
+    "feedback:slime": {
+      "min": 0.05,
+      "max": 0.15
+    }
+  },
+  "result": {
+    "id": "feedback:plywood_plate"
+  }
+}

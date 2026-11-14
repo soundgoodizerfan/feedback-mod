@@ -12,7 +12,8 @@
     "latent_heat_fusion": 1070,
     "latent_heat_vaporisation": 15000,
     "oxidation_temperature": 2072,
-    "service_temperature": 1243
+    "service_temperature": 1243,
+    "shock_limit": 200
   },
   "mechanical": {
     "toughness": 4,

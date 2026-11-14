@@ -1,0 +1,24 @@
+{
+  "parts": {
+    "feedback:bismuth": {
+      "min": 0.48,
+      "max": 0.52
+    },
+    "feedback:lead": {
+      "min": 0.24,
+      "max": 0.26
+    },
+    "feedback:tin": {
+      "min": 0.12,
+      "max": 0.13
+    },
+    "feedback:cadmium": {
+      "min": 0.12,
+      "max": 0.13
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_woods_metal",
+    "amount": 144
+  }
+}

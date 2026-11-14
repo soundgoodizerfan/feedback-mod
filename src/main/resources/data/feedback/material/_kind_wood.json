@@ -1,0 +1,47 @@
+{
+  "color": "#8f6b3c",
+  "kind": "organic",
+  "traits": [
+    "flammable",
+    "fibrous"
+  ],
+  "hardness": 2.5,
+  "density": 0.6,
+  "thermal": {
+    "cooling_rate": 1.95,
+    "conductivity": 3.74e-05,
+    "oxidation_temperature": 300,
+    "service_temperature": 150,
+    "melting_point": 300,
+    "specific_heat": 1.7,
+    "latent_heat_fusion": 100,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800
+  },
+  "mechanical": {
+    "toughness": 3,
+    "yield_strength": 2,
+    "friction": 0.4,
+    "abrasiveness": 0.0359
+  },
+  "separation": {
+    "reflectivity": 0.3
+  },
+  "combustion": {
+    "flame_temperature": 760,
+    "burn_ticks": 600,
+    "spread": 0.12
+  },
+  "corrosion_resistance": 0.4,
+  "enchantability": 15,
+  "exclude": [
+    "paper_case"
+  ],
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.54,
+    "shear_thickening": 0
+  },
+  "template": true
+}

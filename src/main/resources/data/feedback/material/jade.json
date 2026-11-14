@@ -1,0 +1,44 @@
+{
+  "color": "#5f8f6a",
+  "kind": "mineral",
+  "hardness": 65,
+  "density": 2.95,
+  "thermal": {
+    "melting_point": 1393,
+    "cooling_rate": 2.25,
+    "conductivity": 0.00125,
+    "specific_heat": 0.8,
+    "latent_heat_fusion": 350,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1393,
+    "service_temperature": 836
+  },
+  "mechanical": {
+    "toughness": 5,
+    "friction": 0.4,
+    "abrasiveness": 0.557,
+    "yield_strength": 25
+  },
+  "separation": {
+    "reflectivity": 0.06,
+    "gangue": "feedback:granite"
+  },
+  "bears": {
+    "feedback:jade": 1.0
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.66,
+    "shear_thickening": 0
+  },
+  "enchantability": 12,
+  "exclude": [
+    "ingot",
+    "crushed",
+    "concentrate",
+    "tailings"
+  ]
+}

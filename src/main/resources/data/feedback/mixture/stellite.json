@@ -1,0 +1,20 @@
+{
+  "parts": {
+    "feedback:cobalt": {
+      "min": 0.58,
+      "max": 0.66
+    },
+    "feedback:chromium": {
+      "min": 0.25,
+      "max": 0.31
+    },
+    "feedback:tungsten": {
+      "min": 0.05,
+      "max": 0.12
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_stellite",
+    "amount": 144
+  }
+}

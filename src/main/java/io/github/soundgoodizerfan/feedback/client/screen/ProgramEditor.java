@@ -1746,7 +1746,7 @@ public final class ProgramEditor {
         if (quantity == null)
             return COLOR_NUMBER_UNKNOWN;
         return switch (quantity) {
-            case TEMPERATURE -> 0xFFFF8833;
+            case TEMPERATURE, HEATING_RATE -> 0xFFFF8833;
             case LOAD -> 0xFFAA55FF;
             case SPEED -> 0xFF55CCFF;
             case WORK -> 0xFFFFDD55;
