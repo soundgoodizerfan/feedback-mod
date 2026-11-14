@@ -1,6 +1,6 @@
 # Grinding Wheel
 
-An abrasive stone wheel. It's the hardest cutter in the game, and the **only** machine that can shape **hardened steel**.
+An abrasive stone wheel, the hardest cutter among the machines: it cuts what a drill bit or a lathe bit cannot, such as tungsten carbide and cermet.
 
 The first part cut on a grinding wheel enters the [Machine Age](Ages.md) for you and any player nearby.
 
@@ -18,7 +18,7 @@ C is Cobblestone, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
 
 It sits **directly on a shaft line**; connect it from any side. Faster turning grinds faster. It's a **45 Su** load.
 
-The wheel's hardness is **30**, above every metal but netherite (40). It cannot cut quartz or amethyst (40); for those, see the Diamond Grinding Wheel below.
+The wheel's hardness is **196** (alumina grit). It cuts everything softer than that, quartz and amethyst (108) and cermet (177) included. Titanium carbide and boron (294) need the Diamond Grinding Wheel below.
 
 - **Right-click with an item** to put a workpiece in (or take the current one back).
 - **Right-click with an empty hand** to take it out.
@@ -40,14 +40,14 @@ The wheel **heats whatever it's grinding**, 0.4 Tu for every Fu it grinds. Enoug
 
 Every other machine wears only when misused. A grinding wheel is different: **it wears every time it cuts**, because the grit is being used up.
 
-- **Coarse** (16 St) cuts fast and wears the wheel fast: a wheel lasts **250 Fu** of grinding.
-- **Fine** (6 St) cuts slower and makes the wheel last longer: about **670 Fu**.
+- **Coarse** (35.2 St) cuts fast and wears the wheel fast: a wheel lasts **250 Fu** of grinding.
+- **Fine** (13.2 St) cuts slower and makes the wheel last longer: about **670 Fu**.
 
 A fully worn (bald) wheel **can't cut anything at all**. Breaking and replacing it doesn't help, because the wear goes with the item. Craft a new one.
 
 ## Diamond Grinding Wheel
 
-The same wheel with diamond grit. Its hardness is **the diamond material's own (100)**, so it cuts everything the stone wheel does and the crystals too: **quartz and amethyst** (hardness 40), which is how you get the plates for a [Mass Probe](Instruments.md#mass-probe).
+The same wheel with diamond grit. Its hardness is **the diamond material's own (981)**, so it cuts everything the stone wheel does and the hardest stock too: titanium carbide and boron (294).
 
 ```
 D C D
@@ -57,4 +57,4 @@ C B C
 
 D is a Diamond, C is Cobblestone, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
 
-It works exactly like the stone wheel: it sits on a shaft line, 45 Su, coarse and fine grit by sneak-right-click, heats what it grinds. **Grit is still the consumable**: it wears at the same rate per Fu as the stone wheel and a bald one cuts nothing. A harder grit does not last longer yet; that's untested.
+It works exactly like the stone wheel: it sits on a shaft line, 45 Su, coarse and fine grit by sneak-right-click, heats what it grinds. **Grit is still the consumable**: it wears at the same rate per Fu as the stone wheel and a bald one cuts nothing.

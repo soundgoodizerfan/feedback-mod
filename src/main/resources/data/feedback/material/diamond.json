@@ -4,22 +4,27 @@
   "traits": [
     "transparent"
   ],
-  "hardness": 100,
+  "hardness": 981.0,
   "density": 3.51,
   "thermal": {
     "melting_point": 3550,
-    "cooling_rate": 2.5,
-    "conductivity": 0.5,
-    "oxidation_temperature": 700
+    "cooling_rate": 2.97,
+    "conductivity": 0.549,
+    "oxidation_temperature": 700,
+    "specific_heat": 0.51,
+    "latent_heat_fusion": 1000,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "service_temperature": 2130
   },
   "mechanical": {
-    "toughness": 5,
+    "toughness": 3,
     "friction": 0.1,
-    "abrasiveness": 1,
-    "yield_strength": 20
+    "abrasiveness": 1.0,
+    "yield_strength": 20.0
   },
   "separation": {
-    "reflectivity": 0.6
+    "reflectivity": 0.17
   },
   "forms": {
     "gem": "minecraft:diamond",
@@ -38,5 +43,19 @@
     "boots": "minecraft:diamond_boots"
   },
   "enchantability": 10,
-  "attuning": {"temperature": 300, "lock": 300, "coercive": 0.7, "loop_width": 0.1, "lag": 20, "cold": true}
+  "attuning": {
+    "temperature": 300,
+    "lock": 300,
+    "coercive": 0.7,
+    "loop_width": 0.1,
+    "lag": 20,
+    "cold": true
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 3.16,
+    "shear_thickening": 0
+  }
 }

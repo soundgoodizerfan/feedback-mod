@@ -1,25 +1,39 @@
 {
   "kind": "mineral",
-  "exclude": ["ingot"],
-  "hardness": 4,
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 14.7,
   "density": 2.71,
   "thermal": {
     "melting_point": 825,
-    "cooling_rate": 0.8,
-    "conductivity": 0.00075,
-    "service_temperature": 600
+    "cooling_rate": 2.24,
+    "conductivity": 0.000898,
+    "service_temperature": 600,
+    "specific_heat": 0.82,
+    "latent_heat_fusion": 200,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 825
   },
   "mechanical": {
-    "toughness": 2,
-    "yield_strength": 0.5,
+    "toughness": 0.2,
+    "yield_strength": 0.2,
     "friction": 0.6,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.324
   },
   "separation": {
-    "reflectivity": 0.85
+    "reflectivity": 0.3
   },
-  "corrosion_resistance": 0.3,
+  "corrosion_resistance": 0.6,
   "forms": {
     "block": "minecraft:calcite"
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.44,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

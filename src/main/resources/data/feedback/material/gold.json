@@ -2,39 +2,44 @@
   "fastener": 1,
   "color": "#fcee4b",
   "kind": "metal",
-  "hardness": 0.5,
+  "hardness": 2.45,
   "density": 19.3,
   "thermal": {
-    "melting_point": 950,
-    "boiling_point": 2970,
-    "cooling_rate": 1.4,
-    "conductivity": 0.0795,
+    "melting_point": 1064,
+    "boiling_point": 2856,
+    "cooling_rate": 2.13,
+    "conductivity": 0.0791,
     "anneal_temperature": 300,
-    "service_temperature": 200
+    "service_temperature": 200,
+    "specific_heat": 0.129,
+    "latent_heat_fusion": 64,
+    "latent_heat_vaporisation": 1650,
+    "oxidation_temperature": 1064
   },
   "mechanical": {
-    "toughness": 500,
+    "toughness": 100,
     "ductility": 20,
-    "work_hardening": 0.1,
-    "yield_strength": 2,
+    "work_hardening": 0.49,
+    "yield_strength": 0.3,
     "friction": 0.5,
-    "abrasiveness": 0.05
+    "abrasiveness": 0.0359
   },
   "molten": {
-    "viscosity": 5,
-    "density": 17.3
+    "viscosity": 5.4,
+    "density": 17.3,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.8,
+    "reflectivity": 0.7,
     "gangue": "feedback:quartz"
   },
   "electrical": {
     "conductivity": 0.7,
-    "drop": 0.07,
+    "drop": 0.0714,
     "electrode_potential": 1.5
   },
-  "ampacity": 0.7,
-  "corrosion_resistance": 1,
+  "ampacity": 0.76,
+  "corrosion_resistance": 1.0,
   "forms": {
     "ingot": "minecraft:gold_ingot",
     "nugget": "minecraft:gold_nugget",
@@ -69,5 +74,6 @@
   },
   "exclude": [
     "lump"
-  ]
+  ],
+  "toxicity": 0
 }

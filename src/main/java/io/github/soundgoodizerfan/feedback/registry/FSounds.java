@@ -119,6 +119,14 @@ public class FSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_SHOCK = SOUNDS.register("gun.egun_shock",
             () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_shock")));
 
+    /** A pulse gun comes out and powers on. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_POWER_ON = SOUNDS.register("gun.egun_power_on",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_power_on")));
+
+    /** A pulse gun goes away and powers off. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_POWER_OFF = SOUNDS.register("gun.egun_power_off",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_power_off")));
+
     /** A scope zoom coil comes up. */
     public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_ZOOM = SOUNDS.register("gun.egun_zoom",
             () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_zoom")));

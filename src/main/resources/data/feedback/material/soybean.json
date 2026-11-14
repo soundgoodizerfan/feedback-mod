@@ -20,5 +20,6 @@
     "perks": {
       "mending": 0.04
     }
-  }
+  },
+  "parent": "_kind_grain"
 }

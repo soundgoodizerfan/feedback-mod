@@ -13,5 +13,6 @@
     "compounds": {
       "sugar": 0.06
     }
-  }
+  },
+  "parent": "_kind_dough"
 }

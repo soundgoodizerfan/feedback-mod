@@ -1,6 +1,6 @@
 # Heavy Core
 
-The densest stock in the game, and the one material that exists to be heavy. Dense as osmium (**22.6**, about three times iron), very hard and brittle, and too hard to melt: it is pressed from osmium powder and sintered, never cast. Trial chambers hold the very same block, and either one works anywhere a Heavy Core is wanted.
+The densest stock in the game: osmium's own form. Osmium is dense (**22.6**, about three times iron), very hard and brittle, and melts only at 3033 Tu, so its heavy core is pressed from osmium powder and sintered, never cast. Trial chambers hold the very same block, and either one works anywhere a Heavy Core is wanted.
 
 ## Obtaining
 
@@ -19,6 +19,6 @@ The sinter fails two ways. Above **2300 Tu** the grains coarsen into a weak **Po
 
 ## Using it
 
-A Heavy Core is not hammered, drawn or machined. Its use is whole, as the **slug** form: the head of a **mace** or a **maul** (a head and two handles, put together in a crafting grid; see [Tools and Weapons](Tools_and_Weapons.md)).
+A Heavy Core is not hammered, drawn or machined. Its use is whole, as osmium's **heavy core** form: the head of a **mace** or a **maul** (a head and two handles, put together in a crafting grid; see [Tools and Weapons](Tools_and_Weapons.md)).
 
 A mace hits with its fall: the damage grows with how far you drop, **and with how heavy the head is**. A heavy core is the full mace. A block of iron on a mace works, but it's much lighter and hits much softer. The head is also a lot to hang on a handle: put it on an ordinary stick and the joint works loose at once. The mace's own shaft, a **Breeze Rod**, is strong enough to carry it. A mace found in a chest or given in creative is converted into a modular mace with a Breeze Rod handle and a polypropylene string binding; vanilla's mace recipe does not exist.

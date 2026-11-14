@@ -1,26 +1,48 @@
 {
-  "xp_store": {"top_level": 12, "capacitance": 100, "conductance": 2, "leak": 0.1},
+  "xp_store": {
+    "top_level": 12,
+    "capacitance": 100,
+    "conductance": 2,
+    "leak": 0.1
+  },
   "kind": "mineral",
-  "exclude": ["ingot"],
-  "hardness": 25,
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 54.0,
   "density": 2.8,
   "thermal": {
-    "melting_point": 1100,
-    "cooling_rate": 0.9,
-    "conductivity": 0.0005
+    "melting_point": 1200,
+    "cooling_rate": 2.11,
+    "conductivity": 0.000499,
+    "specific_heat": 0.8,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1200,
+    "service_temperature": 720
   },
   "mechanical": {
-    "toughness": 4,
+    "toughness": 1,
     "friction": 0.6,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.533,
+    "yield_strength": 0.5
   },
   "separation": {
-    "reflectivity": 0.2
+    "reflectivity": 0.1
   },
   "forms": {
     "gem": "minecraft:lapis_lazuli",
     "block": "minecraft:lapis_block",
     "ore": "feedback:lapis_ore",
     "deepslate_ore": "feedback:deepslate_lapis_ore"
-  }
+  },
+  "corrosion_resistance": 0.9,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.52,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

@@ -70,7 +70,7 @@ You won't see a stat sheet. Hold the tool and read the words on its tooltip: *he
 
 - **A heavier head hits harder and swings slower.** Gold is nearly three times iron's weight; a gold pickaxe is slow and hits hard, but gold is soft.
 - **A longer handle reaches further** and puts more strain on the joint.
-- **Hardness decides what it can dig.** An edge needs to be at least **3** hardness for iron ore and the stone class, **6** for gold, diamond and redstone ore, and **40** for obsidian and ancient debris. So copper and gold can't mine iron ore, iron can't mine obsidian, and diamond and netherite can. (Stone has a very high number, so a stone pickaxe *can* mine diamond ore. It chips doing it.)
+- **Hardness decides what it can dig.** An edge needs to be at least **3** hardness for iron ore and the stone class, **6** for gold, diamond and redstone ore, and **40** for obsidian and ancient debris. So gold, tin and lead can't mine iron ore, copper can't mine gold or diamond ore, iron can't mine obsidian, and diamond and netherite can. (Stone has a very high number, so a stone pickaxe *can* mine diamond ore. It chips doing it.)
 - **How long it lasts** comes from how hard and strong the edge is. Iron lasts about as long as vanilla iron; gold barely lasts; a whole diamond head bites superbly but is [brittle](#brittle-heads), so diamond is better as a tip.
 - **Enchanting** is done to a **part**, not the finished tool, at the [Enchanting Table](Enchanting_Table.md). How well a part takes one depends on its material: gold is best, stone is worst.
 

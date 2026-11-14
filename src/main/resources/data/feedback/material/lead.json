@@ -5,43 +5,49 @@
   "neutron": {
     "absorption": 0.15
   },
-  "hardness": 0.3,
+  "hardness": 0.491,
   "density": 11.34,
   "thermal": {
     "melting_point": 327,
     "boiling_point": 1749,
-    "cooling_rate": 1.4,
-    "conductivity": 0.00875,
+    "cooling_rate": 3.61,
+    "conductivity": 0.00873,
     "anneal_temperature": 20,
-    "service_temperature": 150
+    "service_temperature": 150,
+    "specific_heat": 0.129,
+    "latent_heat_fusion": 23,
+    "latent_heat_vaporisation": 860,
+    "oxidation_temperature": 327
   },
   "mechanical": {
-    "toughness": 500,
+    "toughness": 100,
     "ductility": 25,
     "work_hardening": 0,
-    "yield_strength": 0.5,
+    "yield_strength": 0.12,
     "friction": 0.6,
-    "abrasiveness": 0.02
+    "abrasiveness": 0
   },
   "molten": {
-    "viscosity": 2,
-    "density": 10.66
+    "viscosity": 2.6,
+    "density": 10.66,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.4,
+    "reflectivity": 0.6,
     "gangue": "feedback:calcite"
   },
   "electrical": {
-    "drop": 0.65,
+    "drop": 0.625,
     "electrode_potential": -0.13,
     "secondary_cell": {
       "empty_share": 0.8,
       "eu_per_ingot": 48000,
       "cold_factor": 0.5
-    }
+    },
+    "conductivity": 0.08
   },
-  "ampacity": 0.08,
-  "corrosion_resistance": 0.9,
+  "ampacity": 0.135,
+  "corrosion_resistance": 0.87,
   "forms": {
     "ingot": "feedback:lead_ingot",
     "raw": "feedback:raw_lead",
@@ -65,5 +71,6 @@
   },
   "exclude": [
     "lump"
-  ]
+  ],
+  "toxicity": 1.3
 }

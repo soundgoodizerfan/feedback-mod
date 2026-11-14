@@ -3,26 +3,38 @@
   "traits": [
     "porous"
   ],
-  "hardness": 5,
+  "hardness": 14.7,
   "density": 1.7,
   "thermal": {
-    "melting_point": 1200,
-    "cooling_rate": 0.8,
+    "melting_point": 1500,
+    "cooling_rate": 2.45,
     "conductivity": 0.00015,
-    "service_temperature": 400
+    "service_temperature": 400,
+    "specific_heat": 0.9,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1500
   },
   "mechanical": {
-    "toughness": 2,
-    "yield_strength": 0.3,
+    "toughness": 0.5,
+    "yield_strength": 0.05,
     "friction": 0.7,
-    "abrasiveness": 0.3
+    "abrasiveness": 0.324
   },
   "separation": {
-    "reflectivity": 0.35
+    "reflectivity": 0.2
   },
-  "corrosion_resistance": 0.3,
+  "corrosion_resistance": 0.6,
   "forms": {
     "block": "minecraft:mud_bricks",
     "packed": "minecraft:packed_mud"
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.53,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

@@ -1,16 +1,27 @@
 {
   "kind": "mineral",
-  "exclude": ["dust", "ingot"],
-  "hardness": 10,
+  "exclude": [
+    "dust",
+    "ingot"
+  ],
+  "hardness": 49.1,
   "density": 1.5,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.00025
+    "cooling_rate": 3.5,
+    "conductivity": 0.000499,
+    "melting_point": 1400,
+    "specific_heat": 0.9,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1400,
+    "service_temperature": 840
   },
   "mechanical": {
-    "toughness": 3,
+    "toughness": 1.5,
     "friction": 0.3,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.518,
+    "yield_strength": 0.6
   },
   "separation": {
     "reflectivity": 0.2
@@ -21,5 +32,13 @@
   },
   "perks": {
     "blink": 1
-  }
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0.5,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.35,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

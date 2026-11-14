@@ -1,0 +1,14 @@
+{
+  "template": true,
+  "kind": "animal",
+  "hardness": 2,
+  "density": 1.05,
+  "toxicity": 0,
+  "thermal": {
+    "specific_heat": 3.2,
+    "conductivity": 0.000112,
+    "latent_heat_vaporisation": 1700,
+    "oxidation_temperature": 200,
+    "cooling_rate": 1.02
+  }
+}

@@ -25,11 +25,11 @@ Throw doesn't change how much work gets done over time. It changes **how hard ea
 
 | | Long throw | Short throw |
 | --- | --- | --- |
-| On a hammer | Gentle blows, 3 St | Hard blows, 12 St |
+| On a hammer | Gentle blows, an eighth of the head's ceiling | Hard blows, half of it |
 | Use for | Soft metal, stopping at plate | Hard metal, or making foil on purpose |
 | On a bellows | More air per stroke, 30 mB | Less air per stroke, 10 mB |
 
-Short and long make **different products**, not the same product faster or slower. On copper, a short throw skips plate entirely and goes straight to foil.
+Short and long make **different products**, not the same product faster or slower. On soft metal, a short throw overshoots plate.
 
 ## Gearing
 

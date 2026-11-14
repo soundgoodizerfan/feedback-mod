@@ -1,22 +1,30 @@
 {
   "color": "#d8c83a",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "traits": [
     "flammable"
   ],
-  "hardness": 1.5,
+  "hardness": 1.96,
   "density": 2.0,
   "thermal": {
     "melting_point": 115,
-    "cooling_rate": 1,
-    "conductivity": 0.002,
-    "oxidation_temperature": 250
+    "cooling_rate": 1.66,
+    "conductivity": 4.99e-05,
+    "oxidation_temperature": 250,
+    "boiling_point": 445,
+    "specific_heat": 0.71,
+    "latent_heat_fusion": 54,
+    "latent_heat_vaporisation": 290,
+    "service_temperature": 69
   },
   "mechanical": {
-    "toughness": 0.5,
+    "toughness": 0.2,
     "friction": 0.3,
-    "abrasiveness": 0.1
+    "abrasiveness": 0,
+    "yield_strength": 0.03
   },
   "separation": {
     "reflectivity": 0.4
@@ -27,5 +35,13 @@
   "forms": {
     "lump": "feedback:sulfur",
     "ore": "feedback:sulfur_ore"
-  }
+  },
+  "corrosion_resistance": 0.5,
+  "toxicity": 0.2,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.8,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

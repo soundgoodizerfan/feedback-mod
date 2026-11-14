@@ -59,7 +59,7 @@ public final class FTuning {
      * <p>Steel stays out of reach by hand with no rule about hands anywhere: its hardness is 15, over
      * every swing below, so nothing lands -- philosophy 8's hard gate, a genuine impossibility.
      */
-    public static final St HAND_SWING_BLOW_ST = new St(3f);
+    public static final St HAND_SWING_BLOW_ST = new St(6.6f);
 
     /**
      * Bottoms of the condition bands, descending -- how battered a machine looks, in words.
@@ -269,6 +269,24 @@ public final class FTuning {
      * load. The large frame at a gas turbine's 240 RPM is about 15 kW (1 Su x 1 RPM is 1 W).
      */
     public static final float FRAME_SU_SMALL = 2f, FRAME_SU_MEDIUM = 16f, FRAME_SU_LARGE = 64f;
+
+    /**
+     * Anchors untyped {@code Work} to joules: one Work is a kilojoule, so a real specific heat in kJ/(kg K) is a
+     * {@code SpecificHeat} unchanged and a latent heat in kJ/kg a {@code LatentHeat}. Author 2026-11-13.
+     */
+    public static final float JOULES_PER_WORK = 1000f;
+
+    /**
+     * Invented. The flow, in mB per tick through one pipe or pump, at which a fluid's {@code shear_thickening} figure is
+     * the multiplier its viscosity has reached (read by the pump; the pipe's own flow does not read it).
+     */
+    public static final float SHEAR_REFERENCE_MB_PER_TICK = 20f;
+
+    /** Invented. The stiffness (1 at rest) past which a pump labouring on a shear-thickening fluid counts as misused. */
+    public static final float SHEAR_JAM_STIFFNESS = 3f;
+
+    /** The specific heat of a middling wet food, kJ/(kg K): a food's stated heft is for a piece at this, and a drier piece's heft shrinks with its specific heat. */
+    public static final float FOOD_REFERENCE_SPECIFIC_HEAT = 3.5f;
 
     /** Placeholder. Thermal mass of the three frames, Work per Tu (a motor was 12). */
     public static final ThermalMass FRAME_MASS_SMALL = new ThermalMass(6f), FRAME_MASS_MEDIUM = new ThermalMass(20f),

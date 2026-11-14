@@ -3,7 +3,7 @@
   "to": "dust",
   "operation": "roll",
   "base": 3,
-  "slope": 1.2,
+  "slope": 0.78,
   "kinds": [
     "mineral",
     "crystal",

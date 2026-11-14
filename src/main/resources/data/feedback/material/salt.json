@@ -4,19 +4,27 @@
     "seasoning",
     "saline"
   ],
-  "hardness": 2,
+  "hardness": 1.96,
   "density": 2.16,
   "thermal": {
     "melting_point": 801,
-    "cooling_rate": 0.8,
-    "conductivity": 0.0006
+    "cooling_rate": 2.69,
+    "conductivity": 0.00162,
+    "boiling_point": 1465,
+    "specific_heat": 0.88,
+    "latent_heat_fusion": 480,
+    "latent_heat_vaporisation": 2900,
+    "oxidation_temperature": 801,
+    "service_temperature": 481
   },
   "mechanical": {
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0,
+    "yield_strength": 0.05,
+    "toughness": 0.5
   },
   "separation": {
-    "reflectivity": 0.8
+    "reflectivity": 0.4
   },
   "forms": {
     "raw": "feedback:salt"
@@ -28,7 +36,16 @@
       "brine_tolerance": 0.05
     }
   },
-  "exclude": ["ingot", 
+  "exclude": [
+    "ingot",
     "grip"
-  ]
+  ],
+  "corrosion_resistance": 0.4,
+  "toxicity": 0.5,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.94,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

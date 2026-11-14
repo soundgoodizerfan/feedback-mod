@@ -149,7 +149,7 @@ public final class PetrochemTuning {
 
     public static final float DERRICK_PASSES_PER_RPM = 0.02f;
 
-    public static final St DERRICK_DRIVE_ST = new St(20f);
+    public static final St DERRICK_DRIVE_ST = new St(44f);
 
     public static final float DERRICK_RATED_RPM = 60f, DERRICK_OVERSPEED_ST_PER_RPM = 0.5f;
 

@@ -12,15 +12,15 @@ Hover over a cartridge to see what it is: size, case metal, bullet metal, what's
 
 ## Cases
 
-Draw a **metal plate** through a [Wire Drawer](Wire_Drawer.md) to make a **case** of that metal. A case holds **0.75 × its metal's strength** in Pu, whatever its size:
+Draw a **metal plate** through a [Wire Drawer](Wire_Drawer.md) to make a **case** of that metal. A case holds **0.75 × its metal's yield strength** in Pu, whatever its size:
 
 | Case | Holds |
 | --- | --- |
-| Steel | 11.3 Pu |
-| Wrought Iron | 6 Pu |
-| Bronze | 4.5 Pu |
-| Brass | 3.75 Pu |
-| Copper | 3 Pu |
+| Steel | 1.9 Pu |
+| Wrought Iron | 1.5 Pu |
+| Bronze | 1.5 Pu |
+| Brass | 0.9 Pu |
+| Copper | 0.5 Pu |
 
 A case weaker than the pressure inside it can hurt you even if the gun is fine. The press shows this before you seat anything. A **Rolled Paper Case** stands in for a metal one and holds almost nothing: see [Paper cases](Reloading_Press.md#paper-cases).
 

@@ -4,36 +4,43 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 5,
+  "hardness": 29.4,
   "density": 4.5,
   "thermal": {
     "melting_point": 1300,
     "boiling_point": 2500,
-    "cooling_rate": 1.5,
-    "conductivity": 0.0125,
+    "cooling_rate": 2.62,
+    "conductivity": 0.0748,
     "anneal_temperature": 500,
-    "service_temperature": 500
+    "service_temperature": 500,
+    "specific_heat": 0.45,
+    "latent_heat_fusion": 250,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1300
   },
   "mechanical": {
-    "toughness": 40,
+    "toughness": 30,
     "ductility": 6,
-    "work_hardening": 0.3,
-    "yield_strength": 6,
+    "work_hardening": 1.76,
+    "yield_strength": 3.0,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.436
   },
   "molten": {
-    "viscosity": 6,
-    "density": 4.14
+    "viscosity": 5,
+    "density": 4.14,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.6
+    "reflectivity": 0.5
   },
   "electrical": {
-    "drop": 0.4,
-    "electrode_potential": -0.6
+    "drop": 0.025,
+    "electrode_potential": -0.6,
+    "conductivity": 2.0
   },
-  "ampacity": 0.3,
+  "ampacity": 2.0,
   "corrosion_resistance": 0.9,
-  "enchantability": 8
+  "enchantability": 8,
+  "toxicity": 1.2
 }

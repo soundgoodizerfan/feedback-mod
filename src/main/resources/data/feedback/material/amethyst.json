@@ -1,24 +1,36 @@
 {
   "color": "#a77bdb",
-  "xp_store": {"top_level": 10, "capacitance": 100, "conductance": 2, "leak": 0.1},
+  "xp_store": {
+    "top_level": 10,
+    "capacitance": 100,
+    "conductance": 2,
+    "leak": 0.1
+  },
   "kind": "crystal",
   "traits": [
     "transparent"
   ],
-  "hardness": 40,
+  "hardness": 108.0,
   "density": 2.65,
   "thermal": {
     "melting_point": 1650,
-    "cooling_rate": 1,
-    "conductivity": 0.002
+    "cooling_rate": 2.62,
+    "conductivity": 0.00175,
+    "specific_heat": 0.74,
+    "latent_heat_fusion": 140,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1650,
+    "service_temperature": 990
   },
   "mechanical": {
-    "toughness": 2,
+    "toughness": 1,
     "friction": 0.4,
-    "abrasiveness": 0.9
+    "abrasiveness": 0.645,
+    "yield_strength": 1.0
   },
   "separation": {
-    "reflectivity": 0.4
+    "reflectivity": 0.1
   },
   "forms": {
     "shard": "minecraft:amethyst_shard",
@@ -32,5 +44,12 @@
   "enchantability": 18,
   "electrical": {
     "piezo_coupling": 0.8
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.38,
+    "shear_thickening": 0
   }
 }

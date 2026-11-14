@@ -1,10 +1,12 @@
 {
-  "exclude": ["dust"],
+  "exclude": [
+    "dust"
+  ],
   "kind": "granular",
   "traits": [
     "seasoning"
   ],
-  "hardness": 0.1,
+  "hardness": 0.981,
   "forms": {
     "raw": "feedback:pepper"
   },
@@ -18,5 +20,34 @@
       "warming": 0.08,
       "keen_edge": 0.07
     }
-  }
+  },
+  "thermal": {
+    "melting_point": 250,
+    "specific_heat": 1.6,
+    "latent_heat_fusion": 100,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 250,
+    "service_temperature": 150,
+    "conductivity": 3.74e-05,
+    "cooling_rate": 1.25
+  },
+  "mechanical": {
+    "yield_strength": 0.03,
+    "toughness": 0.2,
+    "abrasiveness": 0,
+    "friction": 0.6
+  },
+  "corrosion_resistance": 0.4,
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "toxicity": 0.1,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.9,
+    "shear_thickening": 0
+  },
+  "enchantability": 1,
+  "density": 0.5
 }

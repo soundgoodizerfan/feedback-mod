@@ -4,9 +4,23 @@
     "corrosive"
   ],
   "hardness": 0.1,
-  "density": 1.43,
+  "density": 1.3,
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 0.0006
-  }
+    "conductivity": 0.00015,
+    "melting_point": -10,
+    "boiling_point": 120,
+    "specific_heat": 3.6,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 2200
+  },
+  "molten": {
+    "viscosity": 4,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.9,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0
 }

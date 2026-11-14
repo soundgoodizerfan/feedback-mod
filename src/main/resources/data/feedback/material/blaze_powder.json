@@ -3,19 +3,27 @@
   "traits": [
     "flammable"
   ],
-  "hardness": 0.5,
+  "hardness": 1.47,
   "density": 1.2,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 2.5e-05,
-    "oxidation_temperature": 220
+    "cooling_rate": 1.61,
+    "conductivity": 7.48e-05,
+    "oxidation_temperature": 220,
+    "melting_point": 1200,
+    "specific_heat": 1.5,
+    "latent_heat_fusion": 150,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "service_temperature": 720
   },
   "mechanical": {
     "friction": 0.4,
-    "abrasiveness": 0.1
+    "abrasiveness": 0,
+    "yield_strength": 0.05,
+    "toughness": 0.2
   },
   "separation": {
-    "reflectivity": 0.3
+    "reflectivity": 0.4
   },
   "combustion": {
     "oxygen_balance": -1,
@@ -42,5 +50,13 @@
       "stimulant": 0.07,
       "mineral": 0.02
     }
-  }
+  },
+  "corrosion_resistance": 0.5,
+  "toxicity": 0.6,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.08,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }

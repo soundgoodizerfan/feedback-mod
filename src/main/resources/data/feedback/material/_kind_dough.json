@@ -1,0 +1,14 @@
+{
+  "template": true,
+  "kind": "dough",
+  "hardness": 2,
+  "density": 1.1,
+  "toxicity": 0,
+  "thermal": {
+    "specific_heat": 2.8,
+    "conductivity": 7.48e-05,
+    "latent_heat_vaporisation": 1000,
+    "oxidation_temperature": 220,
+    "cooling_rate": 0.942
+  }
+}

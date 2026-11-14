@@ -1,31 +1,45 @@
 {
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "traits": [
     "porous"
   ],
-  "hardness": 8,
+  "hardness": 24.5,
   "density": 1.9,
   "thermal": {
-    "melting_point": 1150,
-    "cooling_rate": 0.8,
-    "conductivity": 0.00025,
-    "service_temperature": 700
+    "melting_point": 1200,
+    "cooling_rate": 2.76,
+    "conductivity": 0.000299,
+    "service_temperature": 700,
+    "specific_heat": 0.84,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1200
   },
   "mechanical": {
-    "toughness": 3,
-    "yield_strength": 0.5,
+    "toughness": 0.8,
+    "yield_strength": 0.3,
     "friction": 0.7,
-    "abrasiveness": 0.4
+    "abrasiveness": 0.406
   },
   "separation": {
-    "reflectivity": 0.3
+    "reflectivity": 0.25
   },
-  "corrosion_resistance": 0.7,
+  "corrosion_resistance": 0.9,
   "forms": {
     "block": "minecraft:tuff",
     "polished": "minecraft:polished_tuff",
     "bricks": "minecraft:tuff_bricks",
     "chiseled": "minecraft:chiseled_tuff"
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.71,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

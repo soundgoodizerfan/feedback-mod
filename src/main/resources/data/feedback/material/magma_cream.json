@@ -17,5 +17,34 @@
   "exclude": [
     "grip",
     "paper_case"
-  ]
+  ],
+  "thermal": {
+    "melting_point": 40,
+    "boiling_point": 300,
+    "specific_heat": 2,
+    "latent_heat_fusion": 150,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 40,
+    "service_temperature": 24,
+    "conductivity": 7.48e-05,
+    "cooling_rate": 1.45
+  },
+  "mechanical": {
+    "yield_strength": 0,
+    "toughness": 0,
+    "abrasiveness": 0,
+    "friction": 0.5
+  },
+  "corrosion_resistance": 0.5,
+  "separation": {
+    "reflectivity": 0.2
+  },
+  "toxicity": 0.3,
+  "molten": {
+    "viscosity": 5000,
+    "density": 0.9,
+    "shear_thickening": 0
+  },
+  "enchantability": 15,
+  "density": 1.4
 }

@@ -2,11 +2,23 @@
   "color": "#d8ecf4",
   "kind": "fluid",
   "hardness": 0.1,
-  "density": 1.107,
+  "density": 1.1,
   "thermal": {
-    "melting_point": 3.82,
+    "melting_point": 3.8,
     "boiling_point": 101.4,
     "cooling_rate": 1,
-    "conductivity": 0.0006
-  }
+    "conductivity": 0.00015,
+    "specific_heat": 4.2,
+    "latent_heat_fusion": 318,
+    "latent_heat_vaporisation": 2250
+  },
+  "molten": {
+    "viscosity": 1.25,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.2,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0
 }

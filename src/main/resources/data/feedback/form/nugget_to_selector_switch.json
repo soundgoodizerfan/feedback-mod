@@ -3,5 +3,5 @@
   "to": "selector_switch",
   "operation": "drill",
   "base": 4,
-  "slope": 1
+  "slope": 0.65
 }

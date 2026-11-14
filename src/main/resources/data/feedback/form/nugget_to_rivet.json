@@ -3,5 +3,5 @@
   "to": "rivet",
   "operation": "blow",
   "base": 4,
-  "slope": 1.5
+  "slope": 0.98
 }

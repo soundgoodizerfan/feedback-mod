@@ -16,5 +16,7 @@
       "cycles": 1,
       "amp": 0.3
     }
-  }
+  },
+  "parent": "_kind_flower",
+  "toxicity": 0.3
 }

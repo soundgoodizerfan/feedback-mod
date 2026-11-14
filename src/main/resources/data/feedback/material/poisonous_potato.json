@@ -24,5 +24,7 @@
       "teeth": 3,
       "amp": 0.25
     }
-  }
+  },
+  "parent": "_kind_vegetable",
+  "toxicity": 1.0
 }

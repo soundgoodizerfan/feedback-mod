@@ -39,7 +39,7 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
         generation++;
         TreeMap<ResourceLocation, Material> loaded = new TreeMap<>();
-        json.forEach((id, element) -> Material.CODEC.parse(JsonOps.INSTANCE, resolve(id, element, json, new HashSet<>()))
+        resolved(json).forEach((id, element) -> Material.CODEC.parse(JsonOps.INSTANCE, element)
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad material {}: {}", id, error))
                 .ifPresent(material -> loaded.put(id, material)));
         materials = java.util.Collections.unmodifiableSortedMap(loaded);
@@ -47,6 +47,24 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
         FormTable.get().invalidate();
         ThermalProcessTable.get().invalidate();
         CastingTable.get().invalidate();
+    }
+
+    /**
+     * Every file with its {@code parent} chain merged in, templates left out. A file with {@code "template": true} is a kind
+     * template: it exists only to be named as a parent, so it is neither a material nor a source of generated items.
+     */
+    public static Map<ResourceLocation, JsonElement> resolved(Map<ResourceLocation, JsonElement> json) {
+        Map<ResourceLocation, JsonElement> out = new TreeMap<>();
+        json.forEach((id, element) -> {
+            if (!isTemplate(element))
+                out.put(id, resolve(id, element, json, new HashSet<>()));
+        });
+        return out;
+    }
+
+    private static boolean isTemplate(JsonElement element) {
+        return element.isJsonObject() && element.getAsJsonObject().has("template")
+                && element.getAsJsonObject().get("template").getAsBoolean();
     }
 
     /**
@@ -67,7 +85,13 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
             return child;
         }
         JsonElement parent = resolve(parentId, all.get(parentId), all, seen);
-        return parent.isJsonObject() ? merge(parent.getAsJsonObject(), child) : child;
+        if (!parent.isJsonObject())
+            return child;
+        JsonObject merged = merge(parent.getAsJsonObject(), child);
+        // "template" marks the file it is written in, never a child that names it as parent.
+        if (!child.has("template"))
+            merged.remove("template");
+        return merged;
     }
 
     private static JsonObject merge(JsonObject base, JsonObject over) {

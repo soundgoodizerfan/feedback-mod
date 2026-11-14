@@ -16,5 +16,7 @@
       "at": 0.6,
       "side": -1
     }
-  }
+  },
+  "parent": "_kind_flower",
+  "toxicity": 0.1
 }

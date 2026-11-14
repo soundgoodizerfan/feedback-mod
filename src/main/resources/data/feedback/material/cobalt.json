@@ -2,40 +2,54 @@
   "fastener": 4,
   "color": "#8d9ab5",
   "kind": "metal",
-  "neutron": {"absorption": 0.5},
-  "hardness": 5,
+  "neutron": {
+    "absorption": 0.5
+  },
+  "hardness": 17.7,
   "density": 8.9,
   "thermal": {
     "melting_point": 1495,
     "boiling_point": 2927,
-    "cooling_rate": 1.5,
-    "conductivity": 0.02,
+    "cooling_rate": 1.42,
+    "conductivity": 0.0249,
     "anneal_temperature": 800,
-    "service_temperature": 700
+    "service_temperature": 700,
+    "specific_heat": 0.421,
+    "latent_heat_fusion": 275,
+    "latent_heat_vaporisation": 6300,
+    "oxidation_temperature": 1495
   },
   "mechanical": {
-    "toughness": 50,
+    "toughness": 60,
     "ductility": 6,
-    "work_hardening": 0.5,
-    "yield_strength": 8,
+    "work_hardening": 1.77,
+    "yield_strength": 2.5,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.353
   },
   "molten": {
-    "viscosity": 6,
-    "density": 8.19
+    "viscosity": 5,
+    "density": 8.19,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.6,
+    "reflectivity": 0.65,
     "magnetic": true,
     "curie_temperature": 1115
   },
   "electrical": {
-    "drop": 0.4,
-    "electrode_potential": -0.28
+    "drop": 0.185,
+    "electrode_potential": -0.28,
+    "conductivity": 0.27
   },
-  "ampacity": 0.17,
-  "corrosion_resistance": 0.7,
-  "catalyst": {"activity": 0.9, "sulfur_tolerance": 0.3, "regeneration_temperature": 600, "sinter_temperature": 1600},
-  "enchantability": 8
+  "ampacity": 0.612,
+  "corrosion_resistance": 0.85,
+  "catalyst": {
+    "activity": 0.9,
+    "sulfur_tolerance": 0.3,
+    "regeneration_temperature": 600,
+    "sinter_temperature": 1600
+  },
+  "enchantability": 8,
+  "toxicity": 0.2
 }

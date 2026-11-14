@@ -1,6 +1,9 @@
 {
   "kind": "animal",
-  "exclude": ["block", "rod"],
+  "exclude": [
+    "block",
+    "rod"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:phantom_membrane"
@@ -11,5 +14,6 @@
       "protein": 0.04,
       "sedative": 0.03
     }
-  }
+  },
+  "parent": "_kind_animal"
 }

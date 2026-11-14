@@ -5,35 +5,40 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 4.2,
+  "hardness": 14.7,
   "density": 8.4,
   "thermal": {
-    "melting_point": 1480,
-    "cooling_rate": 1.5,
-    "conductivity": 0.02,
+    "melting_point": 1440,
+    "cooling_rate": 1.38,
+    "conductivity": 0.00349,
     "oxidation_temperature": 600,
     "anneal_temperature": 680,
-    "service_temperature": 500
+    "service_temperature": 500,
+    "boiling_point": 2900,
+    "specific_heat": 0.45,
+    "latent_heat_fusion": 280,
+    "latent_heat_vaporisation": 6200
   },
   "mechanical": {
-    "toughness": 60,
+    "toughness": 80,
     "ductility": 13,
-    "work_hardening": 0.4,
-    "yield_strength": 5.5,
+    "work_hardening": 1.4,
+    "yield_strength": 2.75,
     "friction": 0.55,
-    "abrasiveness": 0.22
+    "abrasiveness": 0.324
   },
   "molten": {
-    "viscosity": 6,
-    "density": 7.6
+    "viscosity": 5,
+    "density": 7.6,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.62,
+    "reflectivity": 0.65,
     "magnetic": true,
     "curie_temperature": 500
   },
   "electrical": {
-    "drop": 0.35,
+    "drop": 0.833,
     "electrode_potential": -0.3,
     "secondary_cell": {
       "empty_share": 0.75,
@@ -42,12 +47,21 @@
       "electrolyte": "feedback:battery_lye",
       "charge_efficiency": 0.65,
       "gassing": false
-    }
+    },
+    "conductivity": 0.06
   },
-  "ampacity": 0.2,
+  "ampacity": 0.283,
   "corrosion_resistance": 0.8,
-  "composition": { "feedback:nickel": 0.5, "feedback:iron": 0.5 },
+  "composition": {
+    "feedback:nickel": 0.5,
+    "feedback:iron": 0.5
+  },
   "forms": {},
-  "exclude": ["lump", "ore", "deepslate_ore"],
-  "enchantability": 10
+  "exclude": [
+    "lump",
+    "ore",
+    "deepslate_ore"
+  ],
+  "enchantability": 10,
+  "toxicity": 0.3
 }

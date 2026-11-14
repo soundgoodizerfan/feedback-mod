@@ -16,5 +16,6 @@
       "sugar": 0.005,
       "mineral": 0.005
     }
-  }
+  },
+  "parent": "_kind_dough"
 }

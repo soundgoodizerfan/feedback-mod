@@ -7,13 +7,27 @@
   "density": 0.7,
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 1.5e-05,
-    "oxidation_temperature": 250
+    "conductivity": 3.24e-05,
+    "oxidation_temperature": 232,
+    "melting_point": -60,
+    "boiling_point": 150,
+    "specific_heat": 2.1,
+    "latent_heat_fusion": 130,
+    "latent_heat_vaporisation": 300
   },
   "combustion": {
     "flame_temperature": 1400,
     "burn_ticks": 600,
     "spread": 0.08,
     "flash_point": 10
-  }
+  },
+  "molten": {
+    "viscosity": 0.6,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.5,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0
 }

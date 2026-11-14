@@ -1,28 +1,43 @@
 {
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "traits": [
     "flammable",
     "porous"
   ],
-  "hardness": 3,
+  "hardness": 11.8,
   "density": 1.6,
   "thermal": {
-    "melting_point": 900,
-    "cooling_rate": 0.8,
-    "conductivity": 0.00025
+    "melting_point": 1000,
+    "cooling_rate": 2.95,
+    "conductivity": 0.000249,
+    "specific_heat": 0.9,
+    "latent_heat_fusion": 250,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1000,
+    "service_temperature": 600
   },
   "mechanical": {
-    "toughness": 2,
-    "yield_strength": 0.3,
+    "toughness": 0.5,
+    "yield_strength": 0.1,
     "friction": 0.7,
-    "abrasiveness": 0.3
+    "abrasiveness": 0.288
   },
   "separation": {
-    "reflectivity": 0.2
+    "reflectivity": 0.1
   },
   "corrosion_resistance": 0.5,
   "forms": {
     "block": "minecraft:netherrack"
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.44,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

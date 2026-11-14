@@ -1,17 +1,29 @@
 {
   "color": "#5a5a52",
   "kind": "metal",
-  "traits": ["assembly"],
-  "hardness": 20,
+  "traits": [
+    "assembly"
+  ],
+  "hardness": 29.4,
   "density": 10,
   "thermal": {
-    "melting_point": 1132
+    "melting_point": 1850,
+    "boiling_point": 3000,
+    "specific_heat": 0.3,
+    "latent_heat_fusion": 250,
+    "latent_heat_vaporisation": 6000,
+    "oxidation_temperature": 1850,
+    "service_temperature": 925,
+    "conductivity": 0.00499,
+    "cooling_rate": 1.75,
+    "anneal_temperature": 576
   },
   "radioactivity": 6.0,
   "forms": {
     "ingot": "feedback:spent_fuel_rod"
   },
-  "exclude": ["dust", 
+  "exclude": [
+    "dust",
     "plate",
     "foil",
     "rod",
@@ -22,5 +34,30 @@
     "turned_rod",
     "nugget",
     "block"
-  ]
+  ],
+  "mechanical": {
+    "yield_strength": 4.0,
+    "toughness": 30,
+    "abrasiveness": 0.436,
+    "friction": 0.5,
+    "ductility": 3,
+    "work_hardening": 2.94
+  },
+  "corrosion_resistance": 0.9,
+  "separation": {
+    "reflectivity": 0.4
+  },
+  "toxicity": 2.0,
+  "molten": {
+    "viscosity": 6,
+    "density": 9.0,
+    "shear_thickening": 0
+  },
+  "enchantability": 8,
+  "electrical": {
+    "conductivity": 0.05,
+    "drop": 1.0,
+    "electrode_potential": 0
+  },
+  "ampacity": 0.293
 }

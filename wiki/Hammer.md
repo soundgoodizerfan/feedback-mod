@@ -18,13 +18,13 @@ S is Cobblestone and T is a Stick. This gives the first hammer: a stone head on 
 
 ## Making a better one
 
-Shape a **Hammer Head** (ingots, blocks, gems, planks or cobblestone) at a bench ([Smithing Table](Smithing_Table.md) for metal, [Stonecutter](Stonecutter.md) for stone, [Woodworking Table](Woodworking_Table.md) for wood), then put it with a handle (stick, rod or bone) in a crafting grid. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel stays out of reach by hand.
+Shape a **Hammer Head** (ingots, blocks, gems, planks or cobblestone) at a bench ([Smithing Table](Smithing_Table.md) for metal, [Stonecutter](Stonecutter.md) for stone, [Woodworking Table](Woodworking_Table.md) for wood), then put it with a handle (stick, rod or bone) in a crafting grid. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel is within reach only of a mighty blow.
 
 ## Using it
 
 Put the hammer and **one** workpiece anywhere in a crafting grid. The output slot shows what that piece will be **after one more blow**. Take it, and that's one swing: the hammer loses a little durability and the piece takes one blow's worth of work.
 
-Keep swinging and watch the result change. An ordinary swing lands **3 St**, which is 3 Fu on copper: a copper ingot becomes a **Copper Plate** on the fifth swing, **Copper Foil** on the eighth, then **Copper Scrap**.
+Keep swinging and watch the result change. An ordinary swing lands **6.6 St**, which is 2 Fu on copper: a copper ingot becomes a **Copper Plate** on the tenth swing, **Copper Foil** on the sixteenth, then **Copper Scrap**.
 
 ## At the benches
 
@@ -44,24 +44,24 @@ Hold the hammer, **sneak and scroll** to pick a swing. The hammer's tooltip says
 
 | Swing | Strength | Good for |
 | --- | --- | --- |
-| **Tap** | 1 St | Finishing, and very soft metals like lead |
-| **Blow** | 3 St | Copper, tin, zinc, gold (the default) |
-| **Heavy blow** | 5 St | Brass and bronze |
-| **Mighty blow** | 7 St | Iron. Only while you have the **Strength** effect; it drops back to a heavy blow when that wears off |
+| **Tap** | 2.2 St | Finishing, and very soft metals like lead and tin |
+| **Blow** | 6.6 St | Copper, zinc, silver, gold (the default) |
+| **Heavy blow** | 11 St | Brass, bronze and iron |
+| **Mighty blow** | 15.4 St | Hot steel. Only while you have the **Strength** effect; it drops back to a heavy blow when that wears off |
 
-Harder isn't better. A heavy blow on copper is 5 Fu at a time, so it's easy to swing straight past the plate.
+Harder isn't better. A heavy blow on lead is 22 Fu at a time, so it's easy to swing straight past the plate.
 
-Every swing makes you a little hungrier, and harder swings more so: sixteen heavy blows cost about one hunger point.
+Every swing makes you a little hungrier, and harder swings more so: seven heavy blows cost about one hunger point.
 
 Shift-clicking the output is the same as taking it: **one swing**, and the piece goes to your inventory. The hammer only works one piece at a time, so put it back to swing again. The risk is in not counting: nothing stops you swinging a plate into foil. See [Metalworking](Metalworking.md).
 
 ## What it can work
 
-A swing only moves metal at least as soft as it is strong. An ordinary blow (3 St) shapes **copper (1), tin (0.6), zinc (2), gold (0.5) and lead (0.3)**, and can hammer **nuggets into bullets** (see [Ammunition](Ammunition.md)). A heavy blow adds **brass (4) and bronze (5)**; a mighty blow adds **iron (6)**.
+A swing only moves metal at least as soft as it is strong. A tap (2.2 St) shapes **tin (0.98) and lead (0.49)**. An ordinary blow (6.6 St) adds **copper (3.92), zinc (3.43), silver and gold (2.45)**, and can hammer **nuggets into bullets** (see [Ammunition](Ammunition.md)). A heavy blow (11 St) adds **brass and iron (7.85), nickel (8.83), bronze and wrought iron (9.81)**; a mighty blow adds **steel (14.7)**.
 
-Nothing you can swing touches **steel (15)**. The craft simply isn't offered. For that you need a [Mechanical Hammer](Mechanical_Hammer.md) with the right gearing.
+Steel answers only to a mighty blow, and only inside its working window of 900 to 1100 Tu ([Metalworking](Metalworking.md#hot-metal)). Cast iron (19.6) and anything harder are out of reach by hand; they need a [Mechanical Hammer](Mechanical_Hammer.md) with the right gearing.
 
-Very soft metals move a lot with each blow: 3 St on lead (0.3) is 10 Fu a swing. Tap lead.
+Very soft metals move a lot with each blow: 6.6 St on lead (0.49) is 13 Fu a swing. Tap lead: 4 Fu.
 
 ## Wear
 

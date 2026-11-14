@@ -1,23 +1,30 @@
 {
   "color": "#8a8f99",
   "kind": "crystal",
-  "hardness": 3,
+  "hardness": 7.36,
   "density": 7.5,
   "thermal": {
-    "melting_point": 1390,
-    "cooling_rate": 1,
-    "conductivity": 0.02
+    "melting_point": 1115,
+    "cooling_rate": 3.22,
+    "conductivity": 0.000623,
+    "specific_heat": 0.2,
+    "latent_heat_fusion": 60,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1115,
+    "service_temperature": 669
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 0.8,
     "friction": 0.3,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.213,
+    "yield_strength": 0.1
   },
   "electrical": {
     "rectifying": 1.0
   },
   "separation": {
-    "reflectivity": 0.7,
+    "reflectivity": 0.4,
     "gangue": "feedback:calcite"
   },
   "forms": {
@@ -26,5 +33,13 @@
   },
   "bears": {
     "feedback:lead": 0.85
-  }
+  },
+  "corrosion_resistance": 0.7,
+  "toxicity": 1.0,
+  "molten": {
+    "viscosity": 100,
+    "density": 6.75,
+    "shear_thickening": 0
+  },
+  "enchantability": 10
 }

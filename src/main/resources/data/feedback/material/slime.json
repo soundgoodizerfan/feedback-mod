@@ -4,18 +4,27 @@
     "sticky",
     "transparent"
   ],
-  "hardness": 0.05,
+  "hardness": 0.1,
   "density": 1.1,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.000125
+    "cooling_rate": 1.05,
+    "conductivity": 7.48e-05,
+    "melting_point": 60,
+    "boiling_point": 250,
+    "specific_heat": 2.5,
+    "latent_heat_fusion": 150,
+    "latent_heat_vaporisation": 1200,
+    "oxidation_temperature": 60,
+    "service_temperature": 36
   },
   "mechanical": {
     "friction": 1.6,
-    "abrasiveness": 0
+    "abrasiveness": 0,
+    "yield_strength": 0.01,
+    "toughness": 3
   },
   "separation": {
-    "reflectivity": 0.4
+    "reflectivity": 0.2
   },
   "forms": {
     "ball": "minecraft:slime_ball",
@@ -27,5 +36,13 @@
   ],
   "perks": {
     "bounce": 1
-  }
+  },
+  "corrosion_resistance": 0.5,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.99,
+    "shear_thickening": 0
+  },
+  "enchantability": 15
 }

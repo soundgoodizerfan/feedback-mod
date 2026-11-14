@@ -1,6 +1,9 @@
 {
   "kind": "animal",
-  "exclude": ["block", "rod"],
+  "exclude": [
+    "block",
+    "rod"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:fermented_spider_eye"
@@ -11,5 +14,7 @@
       "toxin": 0.04,
       "sedative": 0.03
     }
-  }
+  },
+  "parent": "_kind_animal",
+  "toxicity": 0.8
 }

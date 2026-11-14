@@ -16,5 +16,7 @@
       "cycles": 1,
       "amp": 0.2
     }
-  }
+  },
+  "parent": "_kind_fruit",
+  "toxicity": 0.2
 }

@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * Each electrode's {@code electrode_potential} is read from its material file and only the
  * magnitude of the gap matters: a close pair is LV, a wide pair MV, and cells in series (a pack) raise it
  * a band per {@link ElectricMachineTuning#GALVANIC_CELLS_PER_BAND}, like a voltaic pile. No potential is held or shown. A cell whose electrodes lack the figure, or are the same
- * metal, holds nothing: an unmeasured material is a cell that does nothing, not one that guesses.
+ * metal, holds nothing: a material without the figure is a cell that does nothing, not one that guesses.
  *
  * <h2>It eats its anode</h2>
  * A real cell consumes its anode (user ruling, 2026-10-23). The current it supplies spends

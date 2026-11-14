@@ -2,38 +2,43 @@
   "fastener": 1,
   "color": "#9db0c4",
   "kind": "metal",
-  "hardness": 2,
+  "hardness": 3.43,
   "density": 7.14,
   "thermal": {
     "melting_point": 420,
     "boiling_point": 907,
-    "cooling_rate": 1.6,
-    "conductivity": 0.029,
+    "cooling_rate": 1.92,
+    "conductivity": 0.0289,
     "oxidation_temperature": 400,
     "anneal_temperature": 150,
-    "service_temperature": 200
+    "service_temperature": 200,
+    "specific_heat": 0.388,
+    "latent_heat_fusion": 112,
+    "latent_heat_vaporisation": 1770
   },
   "mechanical": {
-    "toughness": 20,
+    "toughness": 40,
     "ductility": 3,
-    "work_hardening": 0.4,
-    "yield_strength": 3,
+    "work_hardening": 0.686,
+    "yield_strength": 1.0,
     "friction": 0.6,
-    "abrasiveness": 0.1
+    "abrasiveness": 0.09
   },
   "molten": {
-    "viscosity": 3,
-    "density": 6.57
+    "viscosity": 3.5,
+    "density": 6.57,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.5,
+    "reflectivity": 0.7,
     "gangue": "feedback:calcite"
   },
   "electrical": {
-    "drop": 0.17,
-    "electrode_potential": -0.76
+    "drop": 0.172,
+    "electrode_potential": -0.76,
+    "conductivity": 0.29
   },
-  "ampacity": 0.28,
+  "ampacity": 0.26,
   "corrosion_resistance": 0.6,
   "forms": {
     "ingot": "feedback:zinc_ingot",
@@ -54,5 +59,6 @@
   },
   "exclude": [
     "lump"
-  ]
+  ],
+  "toxicity": 0.35
 }

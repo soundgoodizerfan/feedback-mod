@@ -37,5 +37,7 @@
   },
   "perks": {
     "siphon": 1
-  }
+  },
+  "parent": "_kind_fungus",
+  "toxicity": 0.2
 }

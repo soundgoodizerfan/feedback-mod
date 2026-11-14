@@ -5,34 +5,43 @@
     "alloy",
     "solder"
   ],
-  "hardness": 0.5,
+  "hardness": 1.47,
   "density": 9.0,
   "thermal": {
     "melting_point": 183,
-    "cooling_rate": 1.6,
-    "conductivity": 0.012,
-    "service_temperature": 120
+    "cooling_rate": 3.27,
+    "conductivity": 0.0125,
+    "service_temperature": 120,
+    "boiling_point": 2000,
+    "specific_heat": 0.18,
+    "latent_heat_fusion": 45,
+    "latent_heat_vaporisation": 1500,
+    "oxidation_temperature": 183,
+    "anneal_temperature": -91
   },
   "mechanical": {
-    "toughness": 200,
+    "toughness": 60,
     "ductility": 15,
-    "work_hardening": 0.1,
-    "yield_strength": 1,
+    "work_hardening": 0.294,
+    "yield_strength": 0.3,
     "friction": 0.5,
-    "abrasiveness": 0.05
+    "abrasiveness": 0
   },
   "molten": {
-    "viscosity": 2,
-    "density": 8.7
+    "viscosity": 2.3,
+    "density": 8.7,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.6
+    "reflectivity": 0.7
   },
   "electrical": {
-    "drop": 0.4
+    "drop": 0.417,
+    "conductivity": 0.12,
+    "electrode_potential": 0
   },
-  "ampacity": 0.1,
-  "corrosion_resistance": 0.8,
+  "ampacity": 0.136,
+  "corrosion_resistance": 0.7,
   "composition": {
     "feedback:tin": 0.6,
     "feedback:lead": 0.4
@@ -57,5 +66,7 @@
   ],
   "perks": {
     "toxic": 1
-  }
+  },
+  "toxicity": 0.8,
+  "enchantability": 8
 }

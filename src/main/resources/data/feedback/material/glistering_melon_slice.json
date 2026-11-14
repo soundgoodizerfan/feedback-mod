@@ -13,5 +13,6 @@
       "sugar": 0.05,
       "mineral": 0.02
     }
-  }
+  },
+  "parent": "_kind_fruit"
 }

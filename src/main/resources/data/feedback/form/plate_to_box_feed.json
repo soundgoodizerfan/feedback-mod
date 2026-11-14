@@ -3,5 +3,5 @@
   "to": "box_feed",
   "operation": "roll",
   "base": 4,
-  "slope": 1
+  "slope": 0.65
 }

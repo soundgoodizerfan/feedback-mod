@@ -1,7 +1,7 @@
 {
   "color": "#8da383",
   "kind": "metal",
-  "hardness": 6,
+  "hardness": 19.6,
   "density": 19.1,
   "traits": [
     "luminous"
@@ -9,36 +9,42 @@
   "thermal": {
     "melting_point": 1132,
     "boiling_point": 4131,
-    "cooling_rate": 1.2,
-    "conductivity": 0.012,
+    "cooling_rate": 2.38,
+    "conductivity": 0.00673,
     "oxidation_temperature": 200,
     "anneal_temperature": 600,
-    "service_temperature": 500
+    "service_temperature": 500,
+    "specific_heat": 0.116,
+    "latent_heat_fusion": 52,
+    "latent_heat_vaporisation": 1900
   },
   "mechanical": {
-    "toughness": 60,
+    "toughness": 30,
     "ductility": 6,
-    "work_hardening": 0.4,
-    "yield_strength": 7,
+    "work_hardening": 1.31,
+    "yield_strength": 2.0,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.37
   },
   "molten": {
     "viscosity": 6,
-    "density": 17.3
+    "density": 17.3,
+    "shear_thickening": 0
   },
   "separation": {
     "reflectivity": 0.6
   },
   "electrical": {
-    "drop": 0.9,
-    "electrode_potential": -1.8
+    "drop": 0.833,
+    "electrode_potential": -1.66,
+    "conductivity": 0.06
   },
-  "ampacity": 0.04,
+  "ampacity": 0.25,
   "corrosion_resistance": 0.2,
   "radioactivity": 1.0,
   "enchantability": 6,
   "perks": {
     "radiant": 1
-  }
+  },
+  "toxicity": 1.7
 }

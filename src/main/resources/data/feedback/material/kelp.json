@@ -31,5 +31,6 @@
       "cycles": 1,
       "amp": 0.25
     }
-  }
+  },
+  "parent": "_kind_vegetable"
 }

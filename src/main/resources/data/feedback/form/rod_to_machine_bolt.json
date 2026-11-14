@@ -3,5 +3,5 @@
   "to": "machine_bolt",
   "operation": "turn",
   "base": 1,
-  "slope": 1
+  "slope": 0.65
 }

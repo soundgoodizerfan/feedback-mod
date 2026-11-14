@@ -1,28 +1,34 @@
 {
   "color": "#7f7f7f",
   "kind": "mineral",
-  "hardness": 30,
+  "hardness": 49.1,
   "density": 2.7,
   "thermal": {
-    "melting_point": 1200,
-    "cooling_rate": 0.8,
-    "conductivity": 0.000625,
-    "service_temperature": 900
+    "melting_point": 1250,
+    "cooling_rate": 2.08,
+    "conductivity": 0.000499,
+    "service_temperature": 900,
+    "specific_heat": 0.84,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1250
   },
   "mechanical": {
-    "toughness": 6,
-    "yield_strength": 1,
+    "toughness": 1.5,
+    "yield_strength": 1.0,
     "friction": 0.7,
-    "abrasiveness": 0.6
+    "abrasiveness": 0.518
   },
   "molten": {
     "viscosity": 100000,
-    "density": 2.6
+    "density": 2.6,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.35
+    "reflectivity": 0.3
   },
-  "corrosion_resistance": 0.9,
+  "corrosion_resistance": 1,
   "forms": {
     "block": "minecraft:stone",
     "cobble": "minecraft:cobblestone",
@@ -43,5 +49,6 @@
     "hoe": "minecraft:stone_hoe",
     "molten_bucket": "minecraft:lava_bucket"
   },
-  "enchantability": 5
+  "enchantability": 5,
+  "toxicity": 0
 }

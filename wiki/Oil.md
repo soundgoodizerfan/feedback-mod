@@ -83,6 +83,7 @@ Soul oil:
 
 - **It brings its own oxygen.** In a burner or [Firebox](Firebox.md) it burns as if blown on by a [Powered Bellows](Powered_Bellows.md), hotter than its flame figure alone. A [Thruster](Thruster.md) fed it burns where there is no air, in the End or under water, as hard as the fuel's own oxygen allows.
 - **It knocks.** Its low ignition point means an [Engine](Engine.md#compression-fuel-and-knock) at high compression lights it before the spark: the engine still runs but wears.
+- It thickens the faster it is pushed, so a [pump](Pump.md) turned fast on it moves less.
 - It mixes with other fuels in a tank by mass ([Fuels](Fuels.md#mixtures)).
 
 Wisp gas:

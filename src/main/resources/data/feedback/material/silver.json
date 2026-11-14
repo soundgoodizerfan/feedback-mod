@@ -2,37 +2,43 @@
   "fastener": 1,
   "color": "#dfe3e8",
   "kind": "metal",
-  "hardness": 0.9,
+  "hardness": 2.45,
   "density": 10.49,
   "thermal": {
     "melting_point": 962,
     "boiling_point": 2162,
-    "cooling_rate": 1.8,
-    "conductivity": 0.11,
+    "cooling_rate": 2.16,
+    "conductivity": 0.107,
     "anneal_temperature": 300,
-    "service_temperature": 250
+    "service_temperature": 250,
+    "specific_heat": 0.235,
+    "latent_heat_fusion": 105,
+    "latent_heat_vaporisation": 2360,
+    "oxidation_temperature": 962
   },
   "mechanical": {
-    "toughness": 400,
+    "toughness": 100,
     "ductility": 14,
-    "work_hardening": 0.25,
-    "yield_strength": 3,
+    "work_hardening": 0.681,
+    "yield_strength": 0.55,
     "friction": 0.4,
-    "abrasiveness": 0.05
+    "abrasiveness": 0.0359
   },
   "molten": {
-    "viscosity": 4,
-    "density": 9.32
+    "viscosity": 3.9,
+    "density": 9.32,
+    "shear_thickening": 0
   },
   "separation": {
     "reflectivity": 0.95
   },
   "electrical": {
-    "drop": 0.047,
-    "electrode_potential": 0.8
+    "drop": 0.0476,
+    "electrode_potential": 0.8,
+    "conductivity": 1.05
   },
-  "ampacity": 1.05,
-  "corrosion_resistance": 0.75,
+  "ampacity": 0.99,
+  "corrosion_resistance": 0.95,
   "perks": {
     "smite": 1
   },
@@ -40,5 +46,12 @@
     "ingot": "feedback:silver_ingot"
   },
   "enchantability": 20,
-  "attuning": {"temperature": 300, "lock": 210, "coercive": 0.1, "loop_width": 0.12, "lag": 3}
+  "attuning": {
+    "temperature": 300,
+    "lock": 210,
+    "coercive": 0.1,
+    "loop_width": 0.12,
+    "lag": 3
+  },
+  "toxicity": 0.4
 }

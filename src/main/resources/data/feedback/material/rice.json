@@ -21,5 +21,6 @@
       "fortifying": 0.02,
       "slow_release": 0.04
     }
-  }
+  },
+  "parent": "_kind_grain"
 }

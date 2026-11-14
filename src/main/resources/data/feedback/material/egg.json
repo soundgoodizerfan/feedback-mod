@@ -4,7 +4,10 @@
     "protein",
     "enriching"
   ],
-  "exclude": ["block", "rod"],
+  "exclude": [
+    "block",
+    "rod"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:egg",
@@ -18,5 +21,6 @@
       "protein": 0.05,
       "mineral": 0.01
     }
-  }
+  },
+  "parent": "_kind_animal"
 }

@@ -1,11 +1,13 @@
 {
-  "exclude": ["dust"],
+  "exclude": [
+    "dust"
+  ],
   "kind": "granular",
   "traits": [
     "seasoning",
     "enriching"
   ],
-  "hardness": 0.2,
+  "hardness": 0.491,
   "forms": {
     "raw": "minecraft:sugar"
   },
@@ -14,5 +16,34 @@
     "compounds": {
       "sugar": 0.1
     }
-  }
+  },
+  "thermal": {
+    "melting_point": 186,
+    "specific_heat": 1.2,
+    "latent_heat_fusion": 130,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 186,
+    "service_temperature": 112,
+    "conductivity": 4.99e-05,
+    "cooling_rate": 1.97
+  },
+  "mechanical": {
+    "yield_strength": 0.01,
+    "toughness": 0.1,
+    "abrasiveness": 0,
+    "friction": 0.6
+  },
+  "corrosion_resistance": 0.3,
+  "separation": {
+    "reflectivity": 0.7
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.9,
+    "shear_thickening": 0
+  },
+  "enchantability": 1,
+  "density": 0.85
 }

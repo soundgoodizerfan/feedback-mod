@@ -1,26 +1,38 @@
 {
   "color": "#ede6dd",
-  "xp_store": {"top_level": 10, "capacitance": 100, "conductance": 2, "leak": 0.1},
+  "xp_store": {
+    "top_level": 10,
+    "capacitance": 100,
+    "conductance": 2,
+    "leak": 0.1
+  },
   "kind": "crystal",
-  "hardness": 40,
+  "hardness": 108.0,
   "density": 2.65,
   "thermal": {
-    "melting_point": 1650,
-    "cooling_rate": 1,
-    "conductivity": 0.002,
-    "service_temperature": 1000
+    "melting_point": 1710,
+    "cooling_rate": 2.62,
+    "conductivity": 0.00175,
+    "service_temperature": 1000,
+    "specific_heat": 0.74,
+    "latent_heat_fusion": 140,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1710
   },
   "mechanical": {
-    "toughness": 3,
+    "toughness": 1,
     "friction": 0.4,
-    "abrasiveness": 1
+    "abrasiveness": 0.645,
+    "yield_strength": 1.0
   },
   "molten": {
     "viscosity": 100000,
-    "density": 2.2
+    "density": 2.2,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.85
+    "reflectivity": 0.1
   },
   "forms": {
     "gem": "minecraft:quartz",
@@ -32,10 +44,19 @@
     "chiseled": "minecraft:chiseled_quartz_block"
   },
   "enchantability": 10,
-  "attuning": {"temperature": 300, "lock": 300, "coercive": 0.2, "loop_width": 0.4, "lag": 3, "cold": true},
+  "attuning": {
+    "temperature": 300,
+    "lock": 300,
+    "coercive": 0.2,
+    "loop_width": 0.4,
+    "lag": 3,
+    "cold": true
+  },
   "electrical": {
     "insulation": "ehv",
     "piezo_coupling": 1.0,
     "rectifying": 0.3
-  }
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0
 }

@@ -15,5 +15,6 @@
       "type": "spiral",
       "turns": 1
     }
-  }
+  },
+  "parent": "_kind_flower"
 }

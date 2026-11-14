@@ -1,5 +1,7 @@
 {
-  "exclude": ["dust"],
+  "exclude": [
+    "dust"
+  ],
   "xp_store": {
     "top_level": 30,
     "capacitance": 400,
@@ -7,24 +9,40 @@
     "leak": 0
   },
   "kind": "crystal",
-  "hardness": 40,
+  "hardness": 78.5,
   "density": 3,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.00125
+    "cooling_rate": 2.04,
+    "conductivity": 0.000748,
+    "melting_point": 1500,
+    "specific_heat": 0.8,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1500,
+    "service_temperature": 900
   },
   "mechanical": {
     "toughness": 2,
     "friction": 0.4,
-    "abrasiveness": 0.8
+    "abrasiveness": 0.593,
+    "yield_strength": 0.6
   },
   "separation": {
-    "reflectivity": 0.1
+    "reflectivity": 0.3
   },
   "forms": {
     "shard": "minecraft:echo_shard"
   },
   "perks": {
     "echo": 1
-  }
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0.2,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.7,
+    "shear_thickening": 0
+  },
+  "enchantability": 10
 }

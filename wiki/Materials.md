@@ -8,50 +8,61 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 
 ## The metals
 
-| Metal | Hardness | Density | Strength | Melts at | Notes |
+| Metal | Hardness | Density | Yield strength | Melts at | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Lead | 0.3 | 11.3 | 0.5 | 327 Tu | Dense: the classic bullet metal. Useless for guns. |
-| Silver | 0.9 | 10.5 | 3 | 962 Tu | Soft and bright; the best conductor. Its [smite](Material_Perks.md) hurts the undead. |
-| Gold | 0.5 | 19.3 | 2 | 950 Tu | |
-| Tin | 0.6 | 7.3 | 1 | 232 Tu | For bronze. |
-| Copper | 1 | 9.0 | 4 | 1000 Tu | The first metal you'll work. Wire, cable, plates, foil. |
-| Zinc | 2 | 7.1 | 3 | 420 Tu | For brass and the [Galvanic Cell](Galvanic_Cell.md). |
-| Brass | 4 | 8.5 | 5 | 900 Tu | 65% copper, 35% zinc. Good cartridge cases. |
-| Bronze | 5 | 8.8 | 6 | 950 Tu | 90% copper, 10% tin. |
-| Iron | 4.5 | 7.87 | 5 | 1538 Tu | **Magnetic.** Pure iron. Softer and weaker than wrought iron. |
-| Wrought Iron | 6 | 7.9 | 8 | 1600 Tu | **Magnetic.** Vanilla's iron: soft, tough, worked cold. Made by hammering the slag out of a bloom ([Making Wrought Iron](Making_Wrought_Iron.md)). |
-| Cast Iron | 12 | 7.2 | 6 | 1200 Tu | **Magnetic.** Too brittle for plates, rods or wire; good for steelmaking. |
-| Steel | 15 | 7.9 | 15 | 1450 Tu | **Magnetic.** Only moves between **900 and 1100 Tu**. See [Making Steel](Steel.md). |
-| Hardened Steel | 25 | 7.9 | 35 | 1450 Tu | **Magnetic.** Only the [Grinding Wheel](Grinding_Wheel.md) can shape it. |
-| Tempered Steel | 20 | 7.9 | 28 | 1450 Tu | **Magnetic.** [Tempered](Heat_Treatment.md#tempering) hardened steel: tough again. Worked cold, never hot. Springs, blades, gun parts. |
-| Chromium | 9 | 7.19 | 12 | 1907 Tu | Hard and stainless. For stainless steel and the redstone alloy. |
-| Nickel | 4 | 8.91 | 6 | 1455 Tu | **Magnetic.** For stainless steel and cermet. |
-| Cobalt | 5 | 8.9 | 8 | 1495 Tu | **Magnetic.** The binder in cermet. |
-| Manganese | 6 | 7.21 | 6 | 1246 Tu | Brittle alone. For manganese steel. |
-| Aluminum | 1.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. Made from bauxite by [electrolysis](Making_Aluminum.md). |
-| Titanium | 6 | 4.51 | 12 | 1668 Tu | Light, strong, stands the heat. For cermet. |
-| Tungsten | 7.5 | 19.25 | 20 | 3422 Tu | The highest melting point of any metal. |
-| Thorium | 2.5 | 11.7 | 3 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
-| Stainless Steel | 18 | 7.9 | 18 | 1450 Tu | Steel with chromium and nickel. Barely corrodes. |
-| Manganese Steel | 22 | 7.8 | 22 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
-| Tungsten Carbide | 40 | 15.6 | 40 | 2870 Tu | Hard and brittle. Sintered from powder with cobalt ([Furnaces](Furnaces.md#sintering)). |
-| Titanium Carbide | 36 | 4.9 | 36 | 3160 Tu | Titanium baked with graphite. Hard and brittle. The grain in cermet. |
-| Thorium-Tungsten | 8 | 19 | 22 | 3400 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
-| Cermet | 38 | 6 | 35 | 2900 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder, sintered from powder ([Furnaces](Furnaces.md#sintering)). |
-| Redstone-Chromium | 5 | 4.5 | 6 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
-| Uranium | 6 | 19.1 | 7 | 1132 Tu | **Radioactive.** The densest metal. See [Uranium](#uranium). |
-| [Netherite](Netherite.md) | 40 | 13.5 | 50 | 2600 Tu | **Magnetic.** Harder than every cutting tool. |
-| Cast Netherite | 26 | 13.5 | 50 | 2600 Tu | **Magnetic.** The ingot before soul quenching ([Netherite](Netherite.md#soul-quenching)). |
+| Lead | 0.49 | 11.3 | 0.12 | 327 Tu | Dense: the classic bullet metal. Useless for guns. |
+| Silver | 2.45 | 10.5 | 0.55 | 962 Tu | Soft and bright; the best conductor. Its [smite](Material_Perks.md) hurts the undead. |
+| Gold | 2.45 | 19.3 | 0.3 | 1064 Tu | Soft and dense. |
+| Tin | 0.98 | 7.3 | 0.15 | 232 Tu | For bronze. |
+| Copper | 3.92 | 9.0 | 0.7 | 1085 Tu | The first metal you'll work. Wire, cable, plates, foil. |
+| Zinc | 3.43 | 7.1 | 1 | 420 Tu | For brass and the [Galvanic Cell](Galvanic_Cell.md). |
+| Brass | 7.85 | 8.5 | 1.25 | 930 Tu | 65% copper, 35% zinc. Good cartridge cases. |
+| Bronze | 9.81 | 8.8 | 2 | 1000 Tu | 90% copper, 10% tin. |
+| Iron | 7.85 | 7.87 | 1.5 | 1538 Tu | **Magnetic.** Pure iron. Softer and weaker than wrought iron. |
+| Wrought Iron | 9.81 | 7.8 | 2 | 1500 Tu | **Magnetic.** Vanilla's iron: soft, tough, worked cold. Made by hammering the slag out of a bloom ([Making Wrought Iron](Making_Wrought_Iron.md)). |
+| Cast Iron | 19.6 | 7.2 | 2 | 1200 Tu | **Magnetic.** Too brittle for plates, rods or wire; good for steelmaking. |
+| Steel | 14.7 | 7.85 | 2.5 | 1450 Tu | **Magnetic.** Only moves between **900 and 1100 Tu**. See [Making Steel](Steel.md). |
+| Hardened Steel | 68.7 | 7.85 | 15 | 1450 Tu | **Magnetic.** No blow moves it; only a drill bit, a lathe bit or the [Grinding Wheel](Grinding_Wheel.md) cuts it. |
+| Tempered Steel | 44.1 | 7.85 | 11 | 1450 Tu | **Magnetic.** [Tempered](Heat_Treatment.md#tempering) hardened steel: tough again. Worked cold, never hot. Springs, blades, gun parts. |
+| Chromium | 19.6 | 7.19 | 3 | 1907 Tu | Hard and stainless. For stainless steel and the redstone alloy. |
+| Nickel | 8.83 | 8.91 | 0.7 | 1455 Tu | **Magnetic.** For stainless steel and cermet. |
+| Cobalt | 17.7 | 8.9 | 2.5 | 1495 Tu | **Magnetic.** The binder in cermet. |
+| Manganese | 19.6 | 7.21 | 2 | 1246 Tu | Brittle alone. For manganese steel. |
+| Aluminum | 2.45 | 2.7 | 0.35 | 660 Tu | Light and soft; conducts well for its weight. Made from bauxite by [electrolysis](Making_Aluminum.md). |
+| Titanium | 14.7 | 4.51 | 4 | 1668 Tu | Light, strong, stands the heat. For cermet. |
+| Tungsten | 34.3 | 19.25 | 7.5 | 3422 Tu | The highest melting point of any metal. |
+| Thorium | 3.92 | 11.7 | 1 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
+| Stainless Steel | 19.6 | 7.9 | 2.9 | 1400 Tu | Steel with chromium and nickel. Barely corrodes. |
+| Manganese Steel | 21.6 | 7.8 | 3.5 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
+| Tungsten Carbide | 157 | 15.6 | 20 | 2870 Tu | Hard and brittle. Sintered from powder with cobalt ([Furnaces](Furnaces.md#sintering)). |
+| Titanium Carbide | 294 | 4.9 | 15 | 3160 Tu | Titanium baked with graphite. Hard and brittle. The grain in cermet. |
+| Thorium-Tungsten | 32.4 | 19 | 7 | 3380 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
+| Cermet | 177 | 6 | 20 | 1380 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder, sintered from powder ([Furnaces](Furnaces.md#sintering)). |
+| Redstone-Chromium | 29.4 | 4.5 | 3 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
+| Uranium | 19.6 | 19.1 | 2 | 1132 Tu | **Radioactive.** Nearly as dense as gold and tungsten. See [Uranium](#uranium). |
+| [Osmium](Heavy_Core.md) | 39.2 | 22.6 | 6 | 3033 Tu | The densest metal. Its only forms are powder, sponge, compact and the [Heavy Core](Heavy_Core.md). |
+| [Netherite](Netherite.md) | 128 | 7.5 | 20 | 1380 Tu | **Magnetic.** Harder than a drill bit; only a lathe bit or a grinding wheel cuts it. |
+| Cast Netherite | 83.4 | 7.5 | 12 | 1380 Tu | **Magnetic.** The ingot before soul quenching ([Netherite](Netherite.md#soul-quenching)). |
 
 What the columns mean in play:
 
-- **Hardness** decides what can shape a metal. A blow weaker than the hardness, or a cutting tool not harder than the metal, does nothing at all. Above that, each blow does **strength of the blow ÷ hardness** in work. See [Metalworking](Metalworking.md). It also decides what a bullet goes through: see [Guns](Guns.md#hardness-glass-glancing-armor).
+- **Hardness** (real Vickers hardness, 1 St per 0.1 GPa: copper about 3.9, iron 7.8, steel 14.7) decides what can shape a metal. A blow weaker than the hardness, or a cutting tool not harder than the metal, does nothing at all. Above that, each blow does **strength of the blow ÷ hardness** in work. See [Metalworking](Metalworking.md). It also decides what a bullet goes through: see [Guns](Guns.md#hardness-glass-glancing-armor).
 - **Density** (kg per liter, water is 1) decides how heavy things are: bullets, guns, engines and vehicle plates. Dense bullets keep their energy.
-- **Strength** decides how much pressure a gun chamber or a cartridge case holds, and how fast an engine can rev. A 9 mm chamber with a 3 mm wall holds 1.33 × strength in Pu. See [Gun Parts](Gun_Parts.md#the-chamber).
-- **Melting point** is where a crucible melts it, and where a [Fuse](Fuse.md) wire or a pair of [tongs](Hazards.md#tongs) gives out.
+- **Yield strength** decides how much pressure a gun chamber or a cartridge case holds, and how fast an engine can rev. A 9 mm chamber with a 3 mm wall holds 0.67 × yield strength in Pu. See [Gun Parts](Gun_Parts.md#the-chamber).
+- **Melting point** is where a crucible melts it, and where a [Fuse](Fuse.md) wire or a pair of [tongs](Hazards.md#tongs) gives out. Stuff that melts above lava's 1200 Tu is fire resistant ([Lava](Lava.md)).
 - **Magnetic** metals are pulled by the [Electromagnet](Electromagnet.md).
 
 Electrical behavior is on the pages that use it: how much current a wire of each metal carries and how much each packet loses along it ([Copper Cable](Copper_Cable.md#how-much-it-carries), [Fuse](Fuse.md)), and how noble a metal is as an electrode ([Electrolytic Cell](Electrolytic_Cell.md#the-liquid-picks-the-metal)).
+
+## Heat and other figures
+
+Beyond the table, every material carries figures JEI's *Material Stats* page shows:
+
+- **Specific heat** (Fu/Mu/Tu): the work to warm one Mu of it by one Tu. High means it soaks up a lot of heat before it gets hot. A vessel's thermal mass is its walls plus what it holds, each by its mass and specific heat, so a full crucible heats slower than an empty one, and food warms at its own rate.
+- **Melting heat** (Fu/Mu): the work to melt one Mu at its melting point, with no change in temperature. Melting takes it out of the vessel, so the pot cools while a charge melts.
+- **Boiling heat** (Fu/Mu): the same at the boiling point.
+- **Toxicity**: how harmful it is swallowed, a log scale of the real lethal dose. 0 is harmless; each step is ten times deadlier.
+- **Shear thickening**: how much thicker it gets the faster it is pushed. Soul oil has it: a [pump](Pump.md) turned fast on it moves less and labours.
 
 ## Other materials
 
@@ -59,16 +70,15 @@ Not everything is metal. A few others matter for parts and protection:
 
 | Material | Hardness | Grip friction | Stands | Used for |
 | --- | --- | --- | --- | --- |
-| Wood | 0.5 | 0.4 | 150 Tu | grips turned from a stick |
-| Bamboo | 1 | 0.4 | 150 Tu | grips turned from a stalk |
-| Bone | 3 | 0.5 | 200 Tu | grips turned from a bone |
-| Leather | 0.3 | | 100 Tu | gloves |
-| Diamond | 100 | | | armor: nothing pierces it; can be [grown](#synthetic-diamond) |
-| Heavy Core | 9 | | | dense as osmium, sintered from osmium powder: see [Heavy Core](Heavy_Core.md) |
+| Wood | 2.45 | 0.4 | 150 Tu | grips turned from a stick |
+| Bamboo | 3.92 | 0.4 | 150 Tu | grips turned from a stalk |
+| Bone | 6.87 | 0.5 | 200 Tu | grips turned from a bone |
+| Leather | 0.79 | | 100 Tu | gloves |
+| Diamond | 981 | | | armor: nothing pierces it; can be [grown](#synthetic-diamond) |
 | Feather Down | | | | animal, fibrous; a very light, warm [bed](Bed.md) padding: see [below](#feather-down-and-rabbit-hide) |
 | Rabbit Hide | 0.2 | | 100 Tu | animal, fibrous; a warm, tough [bed](Bed.md) padding |
 | Ghast Bladder | 0.1 | | | animal; the skin of a bladder [gas cell](Gas_Cell.md) |
-| Coated Cloth | 0.05 | | | cloth coated in slime; the skin of a coated cloth [gas cell](Gas_Cell.md) |
+| Coated Cloth | 0.49 | | | cloth coated in slime; the skin of a coated cloth [gas cell](Gas_Cell.md) |
 | Silicon, glasses, graphite, polymers | | | | sections below |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armor](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
@@ -83,7 +93,7 @@ A material can carry a **permeability**: how fast a gas cell skinned in it lets 
 
 ## Nickel-iron
 
-A magnetic alloy of about half nickel and half iron, melting at 1480 Tu. Melt equal parts nickel and iron together in a [crucible](Crucible.md) and cast ingots like any alloy (a [Mixer](Mixer.md#alloying-with-heat) gives the molten alloy too) ([Casting and Alloys](Casting.md)). Its plates make the cells of a [nickel-iron battery](Battery.md): a lower strength per cell than lead, filled with lye, with no gassing, good in the cold and a lower return than lead.
+A magnetic alloy of about half nickel and half iron, melting at 1440 Tu. Melt equal parts nickel and iron together in a [crucible](Crucible.md) and cast ingots like any alloy (a [Mixer](Mixer.md#alloying-with-heat) gives the molten alloy too) ([Casting and Alloys](Casting.md)). Its plates make the cells of a [nickel-iron battery](Battery.md): a lower strength per cell than lead, filled with lye, with no gassing, good in the cold and a lower return than lead.
 
 ## Graphite
 
@@ -125,7 +135,7 @@ Uraninite grows in rare, deep veins (Y -64 to 16), rimmed with galena (the lead 
 
 Uraninite melts into uranium (1132 Tu) like any ore, and molten uranium casts into ingots. Uranium makes every metal form: plates, rods, wire, blocks and the rest. A block of uranium is nine ingots of radiation in one place.
 
-- It is the densest metal in the game (19.1), twice lead's weight per block. Heavy parts make heavy hammers, counterweights and shot.
+- It is very dense (19.1, against lead's 11.3). Heavy parts make heavy hammers, counterweights and shot.
 - **Radiant**: a weapon with a uranium part withers what it hits and makes it glow for a few seconds. Whoever carries the weapon carries the part, and takes the dose.
 - It is **luminous**.
 
@@ -169,7 +179,7 @@ Cable made from the wire is a superconductor: see [Superconducting cable](Copper
 
 ## Silicon
 
-A dark, brittle metalloid. It casts like a metal but breaks like glass, and it is for glass and optics. Hardness 10, melts at 1414 Tu.
+A dark, brittle metalloid. It casts like a metal but breaks like glass, and it is for glass and optics. Hardness 98.1, melts at 1414 Tu.
 
 - **Crude Silicon**: sand with charcoal at 1600 to 1800 Tu. Above 1950 Tu the batch is ruined into Porous Sinter.
 - **Silicon**: nether quartz with charcoal at 1600 to 1800 Tu. Purer. Above 1950 Tu the batch is ruined into Silicate Slag.
@@ -178,11 +188,11 @@ Both cast into ingots. Plates and rods are worked from the ingot like a metal's,
 
 ## Boron
 
-A dark, hard metalloid that soaks up neutrons better than any metal: a bundle of boron in a [Control Rod Assembly](Control_Rod.md) takes off more than the same bundle of cobalt, tungsten or lead. Hardness 11, melts at 2076 Tu. It comes from **Borax**, a pale evaporite ore found in veins in **deserts and badlands** (a loose rock on the surface marks one). Borax goes through the [ore ladder](Ore_Processing.md) like any other ore and ends as boron ingots, from which plates and rods are worked.
+A dark, hard metalloid that soaks up neutrons better than any metal: a bundle of boron in a [Control Rod Assembly](Control_Rod.md) takes off more than the same bundle of cobalt, tungsten or lead. Hardness 294, melts at 2076 Tu. It comes from **Borax**, a pale evaporite ore found in veins in **deserts and badlands** (a loose rock on the surface marks one). Borax goes through the [ore ladder](Ore_Processing.md) like any other ore and ends as boron ingots, from which plates and rods are worked.
 
 ## Silica Glass and Optical Glass
 
-Melt sand with a silicon ingot in a crucible at 1500 Tu or more and it makes glass. Crude silicon makes **Silica Glass**; pure silicon makes **Optical Glass**, the clearest there is. Both have hardness 30, insulate to HV, cast into ingots, and plates and rods are worked from them. See [Optics](Optics.md).
+Melt sand with a silicon ingot in a crucible at 1500 Tu or more and it makes glass. Crude silicon makes **Silica Glass**; pure silicon makes **Optical Glass**, the clearest there is. Silica glass has hardness 78.5 and optical glass 58.9; both insulate to HV, cast into ingots, and plates and rods are worked from them. See [Optics](Optics.md).
 
 ## Solders
 
@@ -210,13 +220,13 @@ Plastics and rubbers. They are light, soft, poor conductors and cheap to shape, 
 
 | Polymer | Hardness | Density | Melts at | Stands | Grip friction | Insulates |
 | --- | --- | --- | --- | --- | --- | --- |
-| Polyethylene | 2 | 0.95 | 130 Tu | 80 Tu | 0.3 | HV |
-| Polypropylene | 2 | 0.9 | 165 Tu | 100 Tu | 0.3 | MV |
-| PTFE | 1.5 | 2.2 | does not flow | 260 Tu | 0.05 | Trunk |
-| Synthetic Rubber | 1 | 1.1 | 180 Tu | 90 Tu | 1.2 | HV |
-| PVC | 3 | 1.4 | 160 Tu | 60 Tu | 0.4 | MV |
-| Soul Resin | 2 | 1.1 | 200 Tu | 160 Tu | 0.4 | MV |
-| Bitumen | 1 | 1.05 | 100 Tu | 50 Tu | 0.5 | LV |
+| Polyethylene | 0.59 | 0.95 | 130 Tu | 80 Tu | 0.3 | HV |
+| Polypropylene | 0.98 | 0.9 | 165 Tu | 100 Tu | 0.3 | MV |
+| PTFE | 0.49 | 2.2 | does not flow | 260 Tu | 0.05 | Trunk |
+| Synthetic Rubber | 0.39 | 1.1 | 200 Tu | 90 Tu | 1.2 | HV |
+| PVC | 1.47 | 1.4 | 180 Tu | 60 Tu | 0.4 | MV |
+| Soul Resin | 2.45 | 1.1 | 343 Tu | 160 Tu | 0.4 | MV |
+| Bitumen | 0.49 | 1.05 | 100 Tu | 50 Tu | 0.5 | LV |
 
 "Stands" is the temperature the polymer can bear before it softens, the same figure grips and gloves use ([Hazards](Hazards.md)). Soul resin stands twice what polyethylene does.
 
@@ -293,11 +303,11 @@ Every metal comes in a family of **forms**, each made by a particular machine:
 
 So there's a *Bronze Plate*, *Lead Wire*, *Gold Foil* and so on, for every metal. A few don't exist: cast iron is too brittle to be made into plates, rods or wire, and neither is hardened steel. Tempered steel is: plate, rod, wire and the machined parts, but no foil, nuggets or blocks.
 
-How much work each step takes depends on the metal: **a fixed amount plus a little more for every point of hardness**. A copper plate takes 14 Fu; a steel plate 60. JEI shows the figure for every step and every metal.
+How much work each step takes depends on the metal: **a fixed amount plus a little more for every point of hardness**. A copper plate takes about 19 Fu; a steel plate about 42. JEI shows the figure for every step and every metal.
 
 ## Dust
 
-Dust is the finest form: a material ground or shattered to grains. Nearly every material has one (not blaze rod, breeze rod, ice, blue ice, ancient debris, heavy core, ghast tear, ender pearl, echo shard, sugar, pepper, fuel rods or purpur). Brittle stock (a mineral, crystal, ceramic, glass or gem) grinds to dust in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust); a ductile metal's dust comes from an [Atomising Mold](Casting.md#atomising-mold).
+Dust is the finest form: a material ground or shattered to grains. Nearly every material has one (not blaze rod, breeze rod, ice, blue ice, ancient debris, ghast tear, ender pearl, echo shard, sugar, pepper, fuel rods or purpur). Brittle stock (a mineral, crystal, ceramic, glass or gem) grinds to dust in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust); a ductile metal's dust comes from an [Atomising Mold](Casting.md#atomising-mold).
 
 Dust reacts and melts faster than a lump or ingot of the same material. A finer form shortens the hold of any reaction that takes more than one form (roasting pyrite, carburizing cast iron to steel), and JEI's thermal card shows the hold for the form on display. It also has costs:
 
@@ -311,6 +321,6 @@ Copper and gold come from vanilla's ores. Iron ore, raw iron and the iron minera
 
 Tin, zinc and lead are ores in the ground. **Silver** comes from **argentite**, which fills its own silver lode ([Ore Deposits](Ore_Deposits.md)) and shows up in a thin scatter through galena veins. Argentite gives silver by roasting and leaching ([Ore Processing](Ore_Processing.md)). Silver comes as ingots, nuggets and blocks.
 
-JEI's **Material Stats** page shows every figure a material has (kind, XP top level, XP capacity, XP conductance, XP leak, oxygen share, hardness, density, heat, strength, electrical, and for foods moisture, fat, fiber, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. A material that skins gas cells also shows its permeability.
+JEI's **Material Stats** page shows every figure a material has (kind, XP top level, XP capacity, XP conductance, XP leak, oxygen share, hardness, density, heat (including specific, melting and boiling heat), toxicity, shear thickening, strength, electrical, and for foods moisture, fat, fiber, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. A material that skins gas cells also shows its permeability.
 
 Some materials also carry a **[perk](Material_Perks.md)**: what they do to whatever a weapon made of them hits.

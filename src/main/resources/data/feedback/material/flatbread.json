@@ -1,7 +1,9 @@
 {
   "kind": "dough",
   "color": "#dcc08a",
-  "traits": ["wrapper"],
+  "traits": [
+    "wrapper"
+  ],
   "hardness": 0.05,
   "forms": {
     "raw": "feedback:flatbread_dough",
@@ -13,5 +15,6 @@
     "compounds": {
       "sugar": 0.015
     }
-  }
+  },
+  "parent": "_kind_dough"
 }

@@ -15,5 +15,6 @@
       "protein": 0.04,
       "vitamin": 0.02
     }
-  }
+  },
+  "parent": "_kind_dish"
 }

@@ -132,7 +132,7 @@ public final class ForgeRhythm {
         float min = material.minTemperature().value();
         if (min <= 0)
             return new int[] {0, Integer.MAX_VALUE};
-        float rate = ThermalTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick();
+        float rate = material.looseCooling().tuPerTick();
         float max = material.maxTemperature().value();
         int from = temperature > max ? (int) Math.ceil((temperature - max) / rate) : 0;
         int to = temperature <= min ? -1 : hold >= min ? Integer.MAX_VALUE : (int) Math.floor((temperature - min) / rate);

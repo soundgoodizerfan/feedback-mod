@@ -3,24 +3,29 @@
   "traits": [
     "fibrous"
   ],
-  "hardness": 0.6,
+  "hardness": 2.45,
   "density": 0.5,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 3.75e-05,
+    "cooling_rate": 2.35,
+    "conductivity": 3.74e-05,
     "oxidation_temperature": 500,
-    "service_temperature": 300
+    "service_temperature": 300,
+    "melting_point": 330,
+    "specific_heat": 1.7,
+    "latent_heat_fusion": 100,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800
   },
   "mechanical": {
-    "toughness": 20,
-    "yield_strength": 3,
+    "toughness": 3,
+    "yield_strength": 0.4,
     "friction": 0.4,
-    "abrasiveness": 0.05
+    "abrasiveness": 0.0359
   },
   "separation": {
     "reflectivity": 0.2
   },
-  "corrosion_resistance": 0.5,
+  "corrosion_resistance": 0.4,
   "forms": {
     "crimson_stem": "minecraft:crimson_stem",
     "warped_stem": "minecraft:warped_stem",
@@ -30,5 +35,12 @@
   "exclude": [
     "grip",
     "paper_case"
-  ]
+  ],
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.45,
+    "shear_thickening": 0
+  },
+  "enchantability": 15
 }

@@ -16,5 +16,6 @@
       "at": 0.75,
       "side": 1
     }
-  }
+  },
+  "parent": "_kind_flower"
 }

@@ -4,15 +4,29 @@
     "flammable"
   ],
   "hardness": 0.1,
-  "density": 0.0005,
+  "density": 0.002,
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 1.5e-05,
-    "oxidation_temperature": 1000
+    "conductivity": 4.99e-06,
+    "oxidation_temperature": 1000,
+    "melting_point": -100,
+    "boiling_point": -40,
+    "specific_heat": 2,
+    "latent_heat_fusion": 100,
+    "latent_heat_vaporisation": 300
   },
   "combustion": {
     "flame_temperature": 1050,
     "burn_ticks": 200,
     "spread": 0.05
-  }
+  },
+  "molten": {
+    "viscosity": 0.012,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.5,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0
 }

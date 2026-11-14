@@ -1,17 +1,18 @@
 {
   "color": "#6e7783",
   "parent": "steel",
-  "hardness": 25,
+  "hardness": 68.7,
   "thermal": {
-    "conductivity": 0.0115,
-    "service_temperature": 250
+    "conductivity": 0.0112,
+    "service_temperature": 250,
+    "melting_point": 1450
   },
   "mechanical": {
-    "toughness": 8,
+    "toughness": 20,
     "ductility": 0,
-    "yield_strength": 35,
-    "abrasiveness": 0.6,
-    "work_hardening": null,
+    "yield_strength": 15.0,
+    "abrasiveness": 0.572,
+    "work_hardening": 0,
     "hardenable": null
   },
   "forms": {

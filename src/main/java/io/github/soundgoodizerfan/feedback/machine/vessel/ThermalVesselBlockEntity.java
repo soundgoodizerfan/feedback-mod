@@ -148,9 +148,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
 
     @Override
     public ThermalMass getThermalMass() {
-        if (upgrades.isEmpty())
-            return kind.mass();
-        float mass = kind.mass().workPerTu();
+        float mass = kind.mass().workPerTu() + chargeWorkPerTu();
         for (UpgradeFitting upgrade : upgrades)
             mass += upgrade.addedThermalMass().workPerTu();
         return new ThermalMass(mass);

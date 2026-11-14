@@ -1,26 +1,38 @@
 {
   "kind": "granular",
-  "hardness": 40,
+  "hardness": 98.1,
   "density": 1.6,
   "thermal": {
-    "melting_point": 1650,
-    "cooling_rate": 0.9,
-    "conductivity": 7.5e-05
+    "melting_point": 1700,
+    "cooling_rate": 2.18,
+    "conductivity": 7.48e-05,
+    "specific_heat": 0.83,
+    "latent_heat_fusion": 140,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 1700,
+    "service_temperature": 1020
   },
   "mechanical": {
     "friction": 0.6,
-    "abrasiveness": 1
+    "abrasiveness": 0.629,
+    "yield_strength": 0.01,
+    "toughness": 0.1
   },
   "molten": {
     "viscosity": 100000,
-    "density": 2.2
+    "density": 2.2,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.45
+    "reflectivity": 0.3
   },
   "forms": {
     "block": "minecraft:sand",
     "red": "minecraft:red_sand",
     "suspicious": "minecraft:suspicious_sand"
-  }
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "enchantability": 1
 }

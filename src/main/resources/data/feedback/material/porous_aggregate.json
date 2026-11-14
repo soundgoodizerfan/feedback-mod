@@ -7,24 +7,37 @@
     "shard",
     "substrate"
   ],
-  "hardness": 6,
+  "hardness": 14.7,
   "density": 0.6,
   "thermal": {
-    "cooling_rate": 0.8,
-    "conductivity": 0.0001,
-    "service_temperature": 1400
+    "cooling_rate": 4.69,
+    "conductivity": 4.99e-05,
+    "service_temperature": 1400,
+    "melting_point": 1200,
+    "specific_heat": 0.84,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1200
   },
   "mechanical": {
-    "toughness": 2,
-    "yield_strength": 0.5,
+    "toughness": 0.2,
+    "yield_strength": 0.05,
     "friction": 0.7,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.324
   },
   "separation": {
-    "reflectivity": 0.6
+    "reflectivity": 0.2
   },
   "corrosion_resistance": 0.9,
   "forms": {
     "raw": "feedback:porous_aggregate"
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.54,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

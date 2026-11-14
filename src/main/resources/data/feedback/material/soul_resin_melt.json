@@ -1,11 +1,24 @@
 {
   "kind": "fluid",
   "hardness": 0.1,
-  "density": 1.1,
+  "density": 1.2,
   "thermal": {
-    "melting_point": 200,
+    "melting_point": 343,
     "cooling_rate": 1,
-    "conductivity": 2e-05,
-    "service_temperature": 160
-  }
+    "conductivity": 4.99e-05,
+    "service_temperature": 160,
+    "boiling_point": 500,
+    "specific_heat": 2.4,
+    "latent_heat_fusion": 130,
+    "latent_heat_vaporisation": 600
+  },
+  "molten": {
+    "viscosity": 100000.0,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.4,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0
 }

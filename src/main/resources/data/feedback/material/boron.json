@@ -4,31 +4,41 @@
   "neutron": {
     "absorption": 1.1
   },
-  "hardness": 11,
+  "hardness": 294.0,
   "density": 2.34,
   "thermal": {
     "melting_point": 2076,
-    "boiling_point": 4000,
-    "cooling_rate": 1.2,
-    "conductivity": 0.004,
+    "boiling_point": 3927,
+    "cooling_rate": 2.19,
+    "conductivity": 0.00673,
     "service_temperature": 1500,
-    "oxidation_temperature": 800
+    "oxidation_temperature": 800,
+    "specific_heat": 1.03,
+    "latent_heat_fusion": 2080,
+    "latent_heat_vaporisation": 35000
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 3,
     "ductility": 0.05,
     "work_hardening": 0,
-    "yield_strength": 10,
+    "yield_strength": 5.0,
     "friction": 0.4,
-    "abrasiveness": 0.7
+    "abrasiveness": 0.806
   },
   "molten": {
-    "viscosity": 8,
-    "density": 2.08
+    "viscosity": 5,
+    "density": 2.08,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.25
+    "reflectivity": 0.3
   },
-  "corrosion_resistance": 0.8,
-  "enchantability": 2
+  "corrosion_resistance": 1.0,
+  "enchantability": 2,
+  "toxicity": 0.7,
+  "electrical": {
+    "conductivity": 1e-06,
+    "drop": 50000.0
+  },
+  "ampacity": 0.00139
 }

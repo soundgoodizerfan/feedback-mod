@@ -1,22 +1,27 @@
 {
   "color": "#e8e6d0",
   "kind": "organic",
-  "hardness": 3,
+  "hardness": 6.87,
   "density": 1.9,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.000125,
+    "cooling_rate": 1.32,
+    "conductivity": 9.98e-05,
     "oxidation_temperature": 600,
-    "service_temperature": 200
+    "service_temperature": 200,
+    "melting_point": 800,
+    "specific_heat": 1.3,
+    "latent_heat_fusion": 200,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800
   },
   "mechanical": {
-    "toughness": 6,
-    "yield_strength": 6,
+    "toughness": 5,
+    "yield_strength": 1.0,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.202
   },
   "separation": {
-    "reflectivity": 0.75
+    "reflectivity": 0.5
   },
   "forms": {
     "bone": "minecraft:bone",
@@ -26,5 +31,12 @@
   "enchantability": 8,
   "exclude": [
     "paper_case"
-  ]
+  ],
+  "corrosion_resistance": 0.5,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.71,
+    "shear_thickening": 0
+  }
 }

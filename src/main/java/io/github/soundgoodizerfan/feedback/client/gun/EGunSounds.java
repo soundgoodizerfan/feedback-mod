@@ -27,6 +27,7 @@ public final class EGunSounds {
     private static SoundInstance charge;
     private static Spin spin;
     private static boolean wasAiming;
+    private static boolean wasHeld;
     /** The refill reading last frame: chambers of a cylinder, pips of a bank; -1 while there is nothing to compare with. */
     private static float lastCharge = -1f;
     private static int lastSlot = -1;
@@ -37,10 +38,17 @@ public final class EGunSounds {
     /** One client frame: {@code gun} is the held gun, or empty. */
     static void tick(Minecraft mc, LocalPlayer player, ItemStack gun, boolean aiming) {
         ElectricGunSpec spec = gun.isEmpty() ? null : ModularElectricGun.specOf(gun);
+        // Drawn: the gun powers on; put away or swapped out: it powers off.
         if (spec == null) {
+            if (wasHeld)
+                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), FSounds.GUN_EGUN_POWER_OFF.get(), SoundSource.PLAYERS, 0.6f, 1f, false);
+            wasHeld = false;
             stopAll(mc);
             return;
         }
+        if (!wasHeld)
+            mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), FSounds.GUN_EGUN_POWER_ON.get(), SoundSource.PLAYERS, 0.6f, 1f, false);
+        wasHeld = true;
         long now = mc.level.getGameTime();
         // A hold charge whines as long as the trigger is down: the whole wind-up is one sound, cut off when the trigger comes up.
         if (spec.holdCharge() && ModularElectricGun.held(gun)) {

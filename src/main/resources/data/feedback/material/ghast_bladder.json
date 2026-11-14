@@ -25,5 +25,6 @@
   "exclude": [
     "block",
     "rod"
-  ]
+  ],
+  "parent": "_kind_animal"
 }

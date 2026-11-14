@@ -39,14 +39,14 @@ Two Wrought Iron Drilled Plates make a **Bullet Mold** (see [Ammunition](Ammunit
 
 ## Cutting is different from hammering
 
-Hammering is about **force**. Cutting is about the **tool being harder than the metal**. The drill bit is **18**: hard enough for copper, iron, cast iron and steel (15), but **not** hardened steel (25) or netherite (40). Those need a [Grinding Wheel](Grinding_Wheel.md). JEI shows each metal's hardness under *"Tool must beat"*.
+Hammering is about **force**. Cutting is about the **tool being harder than the metal**. The drill bit is **78**: hard enough for copper, iron, cast iron, steel (14.7) and hardened steel (68.7), but **not** netherite (128) or tungsten carbide (157). Those need a harder cutter such as the [Grinding Wheel](Grinding_Wheel.md). JEI shows each metal's hardness under *"Tool must beat"*.
 
 ## Slow vs. fast feed
 
-- **Slow** (10 St) cuts less per push and never jams.
-- **Fast** (22 St) cuts more than twice as much per push, but **one push in twenty** the bit **binds**: you hear a clank and that push is wasted. Nothing is damaged.
+- **Slow** (22 St) cuts less per push and never jams.
+- **Fast** (48.4 St) cuts more than twice as much per push, but **one push in twenty** the bit **binds**: you hear a clank and that push is wasted. Nothing is damaged.
 
-Each push removes strength ÷ hardness in work. A drilled steel plate (20 Fu) is about 14 fast pushes or 30 slow ones.
+Each push removes strength ÷ hardness in work. A drilled steel plate (about 15 Fu) is about 5 fast pushes or 10 slow ones.
 
 ## Wear
 

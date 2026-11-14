@@ -1,0 +1,14 @@
+{
+  "template": true,
+  "kind": "fruit",
+  "hardness": 2,
+  "density": 0.85,
+  "toxicity": 0,
+  "thermal": {
+    "specific_heat": 3.7,
+    "conductivity": 0.000125,
+    "latent_heat_vaporisation": 2000,
+    "oxidation_temperature": 180,
+    "cooling_rate": 1.13
+  }
+}

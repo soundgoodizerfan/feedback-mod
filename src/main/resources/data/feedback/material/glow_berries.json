@@ -28,5 +28,6 @@
       "cycles": 2,
       "amp": 0.2
     }
-  }
+  },
+  "parent": "_kind_fruit"
 }

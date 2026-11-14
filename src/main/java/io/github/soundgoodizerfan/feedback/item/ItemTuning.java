@@ -19,16 +19,16 @@ public final class ItemTuning {
     private ItemTuning() {
     }
     /** Invented. A tap: one Fu on copper, the finishing blow, and the only kind lead forgives. */
-    public static final St HAND_SWING_TAP_ST = new St(1f);
+    public static final St HAND_SWING_TAP_ST = new St(2.2f);
 
     /**
      * Invented. A heavy swing: reaches brass (4) and bronze (5), and overshoots copper by a plate's
      * third in one blow. The playtest asked for a harder swing (2026-10-15).
      */
-    public static final St HAND_SWING_HEAVY_ST = new St(5f);
+    public static final St HAND_SWING_HEAVY_ST = new St(11f);
 
     /** Invented. A swing with the Strength effect on: just over iron's hardness of 6, well under steel's. */
-    public static final St HAND_SWING_MIGHTY_ST = new St(7f);
+    public static final St HAND_SWING_MIGHTY_ST = new St(15.4f);
 
     /**
      * Invented. Food exhaustion per St of a hand swing; vanilla takes 4 exhaustion per hunger point

@@ -28,5 +28,6 @@
       "loops": 1,
       "r": 1.2
     }
-  }
+  },
+  "parent": "_kind_vegetable"
 }

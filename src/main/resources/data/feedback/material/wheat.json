@@ -12,5 +12,6 @@
     "compounds": {
       "mineral": 0.01
     }
-  }
+  },
+  "parent": "_kind_grain"
 }

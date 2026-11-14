@@ -1,21 +1,26 @@
 {
   "kind": "ceramic",
-  "hardness": 20,
+  "hardness": 19.6,
   "density": 2.4,
   "thermal": {
-    "melting_point": 1500,
-    "cooling_rate": 0.8,
-    "conductivity": 0.000375,
-    "service_temperature": 600
+    "melting_point": 1200,
+    "cooling_rate": 2.14,
+    "conductivity": 0.000349,
+    "service_temperature": 600,
+    "specific_heat": 0.88,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1200
   },
   "mechanical": {
-    "toughness": 4,
-    "yield_strength": 1,
+    "toughness": 0.5,
+    "yield_strength": 0.3,
     "friction": 0.7,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.37
   },
   "separation": {
-    "reflectivity": 0.4
+    "reflectivity": 0.3
   },
   "corrosion_resistance": 0.8,
   "forms": {
@@ -51,5 +56,12 @@
     "green_powder": "minecraft:green_concrete_powder",
     "red_powder": "minecraft:red_concrete_powder",
     "black_powder": "minecraft:black_concrete_powder"
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.16,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

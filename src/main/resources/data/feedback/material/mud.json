@@ -3,15 +3,24 @@
   "traits": [
     "sticky"
   ],
-  "hardness": 0.1,
+  "hardness": 0.196,
   "density": 1.8,
   "thermal": {
-    "cooling_rate": 0.9,
-    "conductivity": 0.00025
+    "cooling_rate": 1.18,
+    "conductivity": 0.000249,
+    "melting_point": 1500,
+    "specific_heat": 2.0,
+    "latent_heat_fusion": 250,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 1500,
+    "service_temperature": 900
   },
   "mechanical": {
     "friction": 0.9,
-    "abrasiveness": 0.2
+    "abrasiveness": 0,
+    "yield_strength": 0.002,
+    "toughness": 0.1
   },
   "separation": {
     "reflectivity": 0.1
@@ -19,5 +28,13 @@
   "forms": {
     "block": "minecraft:mud",
     "muddy_roots": "minecraft:muddy_mangrove_roots"
-  }
+  },
+  "corrosion_resistance": 0.7,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.62,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }

@@ -1,26 +1,40 @@
 {
   "kind": "mineral",
-  "exclude": ["ingot"],
-  "hardness": 30,
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 58.9,
   "density": 2.85,
   "thermal": {
     "melting_point": 1250,
-    "cooling_rate": 0.8,
-    "conductivity": 0.00065,
-    "service_temperature": 900
+    "cooling_rate": 2.09,
+    "conductivity": 0.000549,
+    "service_temperature": 900,
+    "specific_heat": 0.8,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1250
   },
   "mechanical": {
-    "toughness": 7,
-    "yield_strength": 1,
+    "toughness": 1.5,
+    "yield_strength": 1.5,
     "friction": 0.7,
-    "abrasiveness": 0.7
+    "abrasiveness": 0.547
   },
   "separation": {
-    "reflectivity": 0.7
+    "reflectivity": 0.35
   },
-  "corrosion_resistance": 0.9,
+  "corrosion_resistance": 1,
   "forms": {
     "block": "minecraft:diorite",
     "polished": "minecraft:polished_diorite"
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.56,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

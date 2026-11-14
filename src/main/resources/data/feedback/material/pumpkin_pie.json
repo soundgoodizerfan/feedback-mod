@@ -15,5 +15,6 @@
       "sugar": 0.04,
       "vitamin": 0.01
     }
-  }
+  },
+  "parent": "_kind_dough"
 }

@@ -3,5 +3,5 @@
   "to": "receiver",
   "operation": "drill",
   "base": 8,
-  "slope": 2
+  "slope": 1.3
 }

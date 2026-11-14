@@ -17,5 +17,7 @@
       "teeth": 2,
       "amp": 0.3
     }
-  }
+  },
+  "parent": "_kind_herb",
+  "toxicity": 0.1
 }

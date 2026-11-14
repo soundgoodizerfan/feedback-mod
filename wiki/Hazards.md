@@ -60,10 +60,10 @@ Hold the tongs in **one hand** and the hot piece in the **other**. Tongs put an 
 | Grip | Arms | Safe up to | |
 | --- | --- | --- | --- |
 | Wood or bamboo | Iron | 1320 Tu | yellow heat: hot-working steel (900–1100 Tu) |
-| Bone | Iron | 1600 Tu | iron's melting point: steel fresh from the crucible |
+| Bone | Iron | 1538 Tu | iron's melting point: steel fresh from the crucible |
 | Bone | Steel | 1450 Tu | steel's melting point |
-| Any | Copper | 1000 Tu | copper's melting point |
-| Any | Brass | 900 Tu | |
+| Any | Copper | 1085 Tu | copper's melting point |
+| Any | Brass | 930 Tu | |
 
 So for **steel straight out of the crucible** (1350–1410 Tu) you want **bone-gripped tongs with iron or steel arms**. Wooden grips are fine once the steel has cooled into its working window.
 

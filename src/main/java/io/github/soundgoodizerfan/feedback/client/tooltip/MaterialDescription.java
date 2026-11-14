@@ -12,9 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * A material file as label and figure rows, grouped the way the file is, for the Material Probe. Absent
- * figures are skipped, because absent means nobody has measured it (see {@link Material}), and a missing
- * row says so better than "unknown" would. Labels and hover lines are lang keys
+ * A material file as label and figure rows, grouped the way the file is, for the Material Probe. A figure the
+ * material's phase does not have (see {@link Material}) has no row. Labels and hover lines are lang keys
  * {@code screen.feedback.probe.row.<key>} and {@code .tip}.
  */
 public final class MaterialDescription {
@@ -38,6 +37,7 @@ public final class MaterialDescription {
         if (m.density().muPerMb() > 0)
             row(out, 0, "density", num(m.density().muPerMb()) + " Mu/mB");
         row(out, 0, "hardness", num(m.hardness().value()));
+        m.toxicity().ifPresent(v -> row(out, 0, "toxicity", num(v)));
         if (m.minTemperature().value() > 0)
             row(out, 0, "work_min", num(m.minTemperature().value()) + " Tu");
         if (m.maxTemperature().value() < Float.MAX_VALUE)
@@ -52,6 +52,9 @@ public final class MaterialDescription {
                 num(v.value()) + " Tu"));
         t.coolingRate().ifPresent(v -> row(out, 1, "cooling", num(v.tuPerTick()) + " Tu/t"));
         t.conductivity().ifPresent(v -> row(out, 1, "conductivity", num(v.workPerTickPerTu())));
+        t.specificHeat().ifPresent(v -> row(out, 1, "specific_heat", num(v.workPerMuPerTu()) + " Fu/Mu/Tu"));
+        t.latentHeatFusion().ifPresent(v -> row(out, 1, "latent_fusion", num(v.workPerMu()) + " Fu/Mu"));
+        t.latentHeatVaporisation().ifPresent(v -> row(out, 1, "latent_vaporisation", num(v.workPerMu()) + " Fu/Mu"));
         m.combustion().ifPresent(c -> c.flameTemperature().ifPresent(f -> c.burnTicks().ifPresent(n ->
                 row(out, 1, "flame", num(f.value()) + " Tu, " + n + " t"))));
 
@@ -66,6 +69,7 @@ public final class MaterialDescription {
 
         m.molten().viscosity().ifPresent(v -> row(out, 3, "viscosity", num(v) + "x water"));
         m.molten().density().ifPresent(v -> row(out, 3, "melt_density", num(v.muPerMb()) + " Mu/mB"));
+        m.molten().shearThickening().filter(v -> v > 0f).ifPresent(v -> row(out, 3, "shear_thickening", "x" + num(1f + v) + " at full flow"));
 
         Material.Separation s = m.separation();
         row(out, 4, "magnet", Component.translatable(s.magnetic() ? "screen.feedback.probe.pulled" : "screen.feedback.probe.ignored").getString());

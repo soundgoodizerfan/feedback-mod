@@ -1,21 +1,27 @@
 {
   "color": "#5fb3a5",
   "kind": "crystal",
-  "hardness": 25,
+  "hardness": 49.1,
   "density": 2.8,
   "thermal": {
-    "melting_point": 1300,
-    "cooling_rate": 0.9,
-    "conductivity": 0.00075,
-    "service_temperature": 800
+    "melting_point": 1600,
+    "cooling_rate": 1.99,
+    "conductivity": 0.000499,
+    "service_temperature": 800,
+    "specific_heat": 0.85,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1600
   },
   "mechanical": {
-    "toughness": 5,
+    "toughness": 1,
     "friction": 0.6,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.518,
+    "yield_strength": 0.5
   },
   "separation": {
-    "reflectivity": 0.4
+    "reflectivity": 0.15
   },
   "forms": {
     "shard": "minecraft:prismarine_shard",
@@ -29,5 +35,12 @@
   "enchantability": 10,
   "perks": {
     "impaling": 1
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.52,
+    "shear_thickening": 0
   }
 }

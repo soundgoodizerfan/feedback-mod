@@ -47,7 +47,7 @@ Ores, raw metal and ingots melt into the crucible's **tank** once they're hot en
 
 Scrap, swarf and a whole made part melt back too. Swarf pours nine tenths of its volume (a part of metal filed down at a bench sheds it, and so do the [Lathe](Lathe.md) and other cutting machines); a whole made part pours nineteen twentieths of the metal it holds, a filed part less.
 
-The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost. Molten metal held past its boiling point boils off with a poisonous fume ([Arc Furnace](Arc_Furnace.md#hazards)). A melt will not pour into a tank holding crude oil or a gas.
+Melting takes the metal's **melting heat** out of the crucible: the pot cools a little for every piece that melts, more for a metal with a high melting heat. The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost. Molten metal held past its boiling point boils off with a poisonous fume ([Arc Furnace](Arc_Furnace.md#hazards)). A melt will not pour into a tank holding crude oil or a gas.
 
 ## Building around it
 
@@ -68,7 +68,7 @@ Because it's open, a crucible can always be watched. The sealed furnaces can't; 
 
 ## Boiling
 
-Water (or any other liquid that boils) in a crucible that reaches its boiling point turns to vapor and leaves through the open top. Each part that boils takes its latent heat from the crucible, so the pot cools while it boils.
+Water (or any other liquid that boils) in a crucible that reaches its boiling point turns to vapor and leaves through the open top. Each part that boils takes its boiling heat from the crucible, so the pot cools while it boils.
 
 ## Cooking
 

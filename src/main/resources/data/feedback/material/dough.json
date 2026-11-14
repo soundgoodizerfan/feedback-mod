@@ -1,7 +1,10 @@
 {
   "kind": "dough",
   "color": "#e8d3a0",
-  "traits": ["starchy", "kneadable"],
+  "traits": [
+    "starchy",
+    "kneadable"
+  ],
   "hardness": 0.05,
   "forms": {
     "raw": "feedback:dough",
@@ -15,5 +18,6 @@
       "sugar": 0.015,
       "mineral": 0.01
     }
-  }
+  },
+  "parent": "_kind_dough"
 }

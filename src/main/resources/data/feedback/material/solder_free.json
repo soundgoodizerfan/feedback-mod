@@ -5,33 +5,42 @@
     "alloy",
     "solder"
   ],
-  "hardness": 0.5,
+  "hardness": 1.47,
   "density": 7.3,
   "thermal": {
-    "melting_point": 227,
-    "cooling_rate": 1.6,
-    "conductivity": 0.012,
-    "service_temperature": 120
+    "melting_point": 217,
+    "cooling_rate": 3.15,
+    "conductivity": 0.015,
+    "service_temperature": 120,
+    "boiling_point": 2200,
+    "specific_heat": 0.23,
+    "latent_heat_fusion": 60,
+    "latent_heat_vaporisation": 2200,
+    "oxidation_temperature": 217,
+    "anneal_temperature": -77
   },
   "mechanical": {
-    "toughness": 200,
+    "toughness": 60,
     "ductility": 15,
-    "work_hardening": 0.1,
-    "yield_strength": 1,
+    "work_hardening": 0.294,
+    "yield_strength": 0.3,
     "friction": 0.5,
-    "abrasiveness": 0.05
+    "abrasiveness": 0
   },
   "molten": {
-    "viscosity": 4,
-    "density": 7.0
+    "viscosity": 1.9,
+    "density": 7.0,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.6
+    "reflectivity": 0.75
   },
   "electrical": {
-    "drop": 0.4
+    "drop": 0.357,
+    "conductivity": 0.14,
+    "electrode_potential": 0
   },
-  "ampacity": 0.1,
+  "ampacity": 0.161,
   "corrosion_resistance": 0.8,
   "composition": {
     "feedback:tin": 0.96,
@@ -54,5 +63,7 @@
     "wire",
     "rod",
     "heavy_core"
-  ]
+  ],
+  "toxicity": 0.2,
+  "enchantability": 8
 }

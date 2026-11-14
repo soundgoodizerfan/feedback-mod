@@ -5,34 +5,40 @@
     "alloy",
     "fireproof"
   ],
-  "hardness": 26,
-  "density": 13.5,
+  "hardness": 83.4,
+  "density": 7.5,
   "thermal": {
-    "melting_point": 2600,
-    "cooling_rate": 1,
-    "conductivity": 0.03,
+    "melting_point": 1380,
+    "cooling_rate": 1.33,
+    "conductivity": 0.00873,
     "anneal_temperature": 1200,
-    "service_temperature": 1500
+    "service_temperature": 1500,
+    "boiling_point": 3200,
+    "specific_heat": 0.53,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 8000,
+    "oxidation_temperature": 1380
   },
   "mechanical": {
-    "toughness": 100,
+    "toughness": 9,
     "ductility": 4,
-    "work_hardening": 1.5,
-    "yield_strength": 50,
+    "work_hardening": 4.81,
+    "yield_strength": 12.0,
     "friction": 0.6,
-    "abrasiveness": 0.7
+    "abrasiveness": 0.603
   },
   "molten": {
-    "viscosity": 8,
-    "density": 12.5
+    "viscosity": 7,
+    "density": 12.5,
+    "shear_thickening": 0
   },
   "separation": {
     "magnetic": true,
     "curie_temperature": 1500,
-    "reflectivity": 0.2
+    "reflectivity": 0.5
   },
-  "ampacity": 0.3,
-  "corrosion_resistance": 1,
+  "ampacity": 0.196,
+  "corrosion_resistance": 0.9,
   "forms": {
     "ingot": "feedback:cast_netherite_ingot"
   },
@@ -55,5 +61,11 @@
     "turned_rod",
     "nugget",
     "block"
-  ]
+  ],
+  "toxicity": 0.3,
+  "electrical": {
+    "conductivity": 0.03,
+    "drop": 1.67,
+    "electrode_potential": 0
+  }
 }

@@ -1,0 +1,14 @@
+{
+  "template": true,
+  "kind": "fungus",
+  "hardness": 1,
+  "density": 1.0,
+  "toxicity": 0,
+  "thermal": {
+    "specific_heat": 3.6,
+    "conductivity": 0.000112,
+    "latent_heat_vaporisation": 2000,
+    "oxidation_temperature": 180,
+    "cooling_rate": 0.949
+  }
+}

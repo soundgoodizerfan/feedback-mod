@@ -124,6 +124,11 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         add(rows, "oxidation", t.oxidationTemperature());
         add(rows, "thermal_conductivity", t.conductivity());
         add(rows, "cooling_rate", t.coolingRate());
+        add(rows, "specific_heat", t.specificHeat());
+        add(rows, "latent_fusion", t.latentHeatFusion());
+        add(rows, "latent_vaporisation", t.latentHeatVaporisation());
+        number(rows, "toxicity", m.toxicity());
+        number(rows, "shear_thickening", m.molten().shearThickening());
         var mech = m.mechanical();
         add(rows, "toughness", mech.toughness());
         number(rows, "ductility", mech.ductility());

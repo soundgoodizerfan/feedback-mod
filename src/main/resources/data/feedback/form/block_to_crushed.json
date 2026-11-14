@@ -3,7 +3,7 @@
   "to": "crushed",
   "operation": "blow",
   "base": 4,
-  "slope": 1.0,
+  "slope": 0.65,
   "kinds": [
     "mineral"
   ]

@@ -1,22 +1,29 @@
 {
   "color": "#1b1426",
   "kind": "glass",
-  "hardness": 30,
+  "hardness": 58.9,
   "density": 2.4,
   "thermal": {
-    "melting_point": 1100,
-    "cooling_rate": 0.9,
-    "conductivity": 0.0003,
-    "service_temperature": 900
+    "melting_point": 1300,
+    "cooling_rate": 2.21,
+    "conductivity": 0.000324,
+    "service_temperature": 900,
+    "specific_heat": 0.84,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1300
   },
   "mechanical": {
-    "toughness": 2,
+    "toughness": 0.8,
     "friction": 0.4,
-    "abrasiveness": 0.6
+    "abrasiveness": 0.547,
+    "yield_strength": 0.6
   },
   "molten": {
     "viscosity": 100000,
-    "density": 2.3
+    "density": 2.3,
+    "shear_thickening": 0
   },
   "separation": {
     "reflectivity": 0.05
@@ -26,6 +33,13 @@
     "block": "minecraft:obsidian",
     "crying": "minecraft:crying_obsidian"
   },
-  "exclude": ["ingot", "plate", "rod", "lens", "fibre"],
-  "enchantability": 4
+  "exclude": [
+    "ingot",
+    "plate",
+    "rod",
+    "lens",
+    "fibre"
+  ],
+  "enchantability": 4,
+  "toxicity": 0
 }

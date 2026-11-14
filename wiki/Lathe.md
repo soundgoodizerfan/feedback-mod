@@ -43,11 +43,11 @@ It also turns [gun parts](Gun_Parts.md):
 - **Coins**, from a plate (the coin a [Coin flip](Skills.md) throws).
 - **Gun Barrels**: chucked in the lathe, a barrel's **outside** gets thinner, 0.2 mm per Fu, for as long as it turns. Thin the wall too far and it's swarf.
 
-The bit is **20**, so it can cut anything up to and including **steel** (15). Hardened steel (25) needs the [Grinding Wheel](Grinding_Wheel.md).
+The bit is **150**, so it cuts everything softer than that: steel (14.7), hardened steel (68.7) and netherite (128). Tungsten carbide (157) needs the [Grinding Wheel](Grinding_Wheel.md).
 
 ## Light vs. heavy cut
 
-**Heavy** (18 St) cuts more than twice as fast. **Light** (8 St) is slower, so there's more time to catch the turned rod before it's ruined.
+**Heavy** (39.6 St) cuts more than twice as fast. **Light** (17.6 St) is slower, so there's more time to catch the turned rod before it's ruined.
 
 ## The lathe is also a sensor
 

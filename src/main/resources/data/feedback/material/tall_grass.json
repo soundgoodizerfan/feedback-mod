@@ -16,5 +16,6 @@
       "type": "arc",
       "bulge": 0.2
     }
-  }
+  },
+  "parent": "_kind_herb"
 }

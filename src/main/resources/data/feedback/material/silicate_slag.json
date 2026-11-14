@@ -1,15 +1,24 @@
 {
   "color": "#6e6a66",
   "kind": "granular",
-  "hardness": 3,
+  "hardness": 49.1,
   "density": 2.6,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.001
+    "cooling_rate": 1.82,
+    "conductivity": 0.000249,
+    "melting_point": 1300,
+    "specific_heat": 0.9,
+    "latent_heat_fusion": 300,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 1300,
+    "service_temperature": 780
   },
   "mechanical": {
     "friction": 0.6,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.518,
+    "yield_strength": 0.3,
+    "toughness": 0.8
   },
   "forms": {
     "raw": "feedback:silicate_slag"
@@ -25,5 +34,16 @@
   ],
   "bears": {
     "feedback:cast_iron": 0.1
-  }
+  },
+  "corrosion_resistance": 0.9,
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.34,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }

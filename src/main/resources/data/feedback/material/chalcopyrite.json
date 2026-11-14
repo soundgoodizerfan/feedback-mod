@@ -4,24 +4,39 @@
   "exclude": [
     "ingot"
   ],
-  "hardness": 3.5,
+  "hardness": 19.6,
   "density": 4.2,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.02,
-    "oxidation_temperature": 500
+    "cooling_rate": 2.27,
+    "conductivity": 0.002,
+    "oxidation_temperature": 500,
+    "melting_point": 880,
+    "specific_heat": 0.54,
+    "latent_heat_fusion": 150,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "service_temperature": 528
   },
   "mechanical": {
     "toughness": 1,
     "friction": 0.4,
-    "abrasiveness": 0.3
+    "abrasiveness": 0.37,
+    "yield_strength": 0.3
   },
   "separation": {
-    "reflectivity": 0.7,
+    "reflectivity": 0.45,
     "gangue": "feedback:quartz"
   },
   "bears": {
     "feedback:copper": 0.7,
     "feedback:iron": 0.3
-  }
+  },
+  "corrosion_resistance": 0.7,
+  "toxicity": 0.4,
+  "molten": {
+    "viscosity": 100,
+    "density": 3.78,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

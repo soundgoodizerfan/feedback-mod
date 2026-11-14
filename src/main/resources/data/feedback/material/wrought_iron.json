@@ -2,43 +2,49 @@
   "fastener": 2,
   "color": "#d0d0d0",
   "kind": "metal",
-  "hardness": 6,
+  "hardness": 9.81,
   "density": 7.8,
   "thermal": {
-    "melting_point": 1600,
-    "boiling_point": 2862,
-    "cooling_rate": 1.5,
-    "conductivity": 0.016,
+    "melting_point": 1500,
+    "boiling_point": 2860,
+    "cooling_rate": 1.51,
+    "conductivity": 0.015,
     "oxidation_temperature": 570,
     "anneal_temperature": 700,
-    "service_temperature": 500
+    "service_temperature": 500,
+    "specific_heat": 0.45,
+    "latent_heat_fusion": 247,
+    "latent_heat_vaporisation": 6090
   },
   "mechanical": {
-    "toughness": 80,
+    "toughness": 70,
     "ductility": 8,
-    "work_hardening": 0.5,
-    "yield_strength": 8,
+    "work_hardening": 0.818,
+    "yield_strength": 2.0,
     "friction": 0.6,
-    "abrasiveness": 0.3
+    "abrasiveness": 0.259
   },
   "molten": {
     "viscosity": 6,
-    "density": 6.98
+    "density": 6.98,
+    "shear_thickening": 0
   },
   "separation": {
     "magnetic": true,
     "curie_temperature": 770,
-    "reflectivity": 0.55
+    "reflectivity": 0.6
   },
   "electrical": {
     "conductivity": 0.1,
-    "drop": 0.42,
+    "drop": 0.5,
     "core_loss": 0.05,
     "electrode_potential": -0.44
   },
-  "ampacity": 0.1,
-  "corrosion_resistance": 0.25,
-  "exclude": ["loose_rock"],
+  "ampacity": 0.373,
+  "corrosion_resistance": 0.33,
+  "exclude": [
+    "loose_rock"
+  ],
   "forms": {
     "ingot": "minecraft:iron_ingot",
     "nugget": "minecraft:iron_nugget",
@@ -70,5 +76,12 @@
     "burnt": "feedback:burnt_iron"
   },
   "enchantability": 14,
-  "attuning": {"temperature": 700, "lock": 480, "coercive": 0.35, "loop_width": 0.25, "lag": 8}
+  "attuning": {
+    "temperature": 700,
+    "lock": 480,
+    "coercive": 0.35,
+    "loop_width": 0.25,
+    "lag": 8
+  },
+  "toxicity": 0
 }

@@ -138,6 +138,59 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         return true;
     }
 
+    private float chargeLoad;
+    private long chargeLoadAt = Long.MIN_VALUE;
+
+    /**
+     * Work to warm everything the vessel holds by one Tu: each held stack and each fluid in the tank, by its mass (material density
+     * over the volume of its form) and its material's specific heat. Added to the body's own thermal mass, so a full crucible is slower to
+     * heat than an empty one. Recomputed every {@code CHARGE_LOAD_INTERVAL} ticks.
+     */
+    protected final float chargeWorkPerTu() {
+        long now = level == null ? 0 : level.getGameTime();
+        if (now - chargeLoadAt < CHARGE_LOAD_INTERVAL && now >= chargeLoadAt)
+            return chargeLoad;
+        float total = 0f;
+        for (ItemStack stack : processSlots()) {
+            if (stack.isEmpty())
+                continue;
+            var located = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(stack.getItem());
+            if (located.isPresent())
+                total += stack.getCount() * io.github.soundgoodizerfan.feedback.registry.FormItems.volume(located.get().form())
+                        * located.get().material().density().muPerMb() * heatPerMu(located.get().material());
+        }
+        var materials = MaterialTable.get().materials();
+        if (alloy.amount() > 0) {
+            for (var part : alloy.content().entrySet())
+                total += fluidLoad(materials, part.getKey(), part.getValue());
+        } else if (!tank.getFluid().isEmpty())
+            total += fluidLoad(materials, tank.getFluid().getFluid(), tank.getFluid().getAmount());
+        chargeLoad = total;
+        chargeLoadAt = now;
+        return total;
+    }
+
+    private static final int CHARGE_LOAD_INTERVAL = 10;
+
+    private static float heatPerMu(Material m) {
+        return m.thermal().specificHeat().map(h -> h.workPerMuPerTu()).orElse(0f);
+    }
+
+    private static float fluidLoad(java.util.Map<net.minecraft.resources.ResourceLocation, Material> materials,
+            net.minecraft.world.level.material.Fluid fluid, int mB) {
+        return io.github.soundgoodizerfan.feedback.process.Mixture.fluidMaterial(materials, fluid).map(materials::get).map(m ->
+                mB * m.molten().density().orElse(m.density()).muPerMb() * heatPerMu(m)).orElse(0f);
+    }
+
+    /** What melting {@code mB} of {@code first}'s material takes out of the vessel, in Tu: its latent heat of fusion over the vessel's thermal mass. */
+    private float fusionCost(ItemStack first, int mB) {
+        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(first.getItem()).map(l -> {
+            float work = l.material().thermal().latentHeatFusion().map(h -> h.workPerMu()).orElse(0f)
+                    * mB * l.material().density().muPerMb();
+            return work / Math.max(1f, getThermalMass().workPerTu());
+        }).orElse(0f);
+    }
+
     /** How many mB of {@code cut} to boil this tick, given the share-of-the-tank figure {@code wanted}; a boiler spends the heat it has instead. */
     protected int boilAmount(PhaseChange cut, float wanted) {
         return (int) wanted;
@@ -477,6 +530,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
             if (overflow > 0 && alloy.resolve().isEmpty())
                 alloy.remove(Math.min(overflow, alloy.amount()));
             alloy.add(result.getFluid(), Math.min(result.getAmount(), tank.getCapacity() - alloy.amount()));
+            temperature = Math.max(ThermalTuning.AMBIENT_TU.value(), temperature - fusionCost(first, result.getAmount()));
             refreshTank();
             // A melt may also leave a solid behind (the slag of smelting an ore): its item result is that byproduct.
             placeHot(process.result().copy());

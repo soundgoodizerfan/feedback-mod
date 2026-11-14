@@ -6,22 +6,32 @@
     "seasoning",
     "enriching"
   ],
-  "hardness": 0.02,
+  "hardness": 0.1,
   "density": 1.42,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.000125
+    "cooling_rate": 1.04,
+    "conductivity": 0.000125,
+    "melting_point": 20,
+    "boiling_point": 120,
+    "specific_heat": 2.4,
+    "latent_heat_fusion": 200,
+    "latent_heat_vaporisation": 2000,
+    "oxidation_temperature": 20,
+    "service_temperature": 12
   },
   "mechanical": {
     "friction": 1.5,
-    "abrasiveness": 0
+    "abrasiveness": 0,
+    "yield_strength": 0,
+    "toughness": 0
   },
   "molten": {
     "viscosity": 10000,
-    "density": 1.42
+    "density": 1.42,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.5
+    "reflectivity": 0.2
   },
   "forms": {
     "raw": "minecraft:honey_bottle",
@@ -46,5 +56,8 @@
       "quickening": 0.07,
       "sleep_ward": 0.03
     }
-  }
+  },
+  "corrosion_resistance": 0.6,
+  "toxicity": 0,
+  "enchantability": 15
 }

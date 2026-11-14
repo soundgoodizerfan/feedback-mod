@@ -4,36 +4,42 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 36,
+  "hardness": 294.0,
   "density": 4.9,
   "thermal": {
     "melting_point": 3160,
     "boiling_point": 4820,
-    "cooling_rate": 1.5,
-    "conductivity": 0.015,
+    "cooling_rate": 1.79,
+    "conductivity": 0.00524,
     "anneal_temperature": 1400,
-    "service_temperature": 2400
+    "service_temperature": 2400,
+    "specific_heat": 0.6,
+    "latent_heat_fusion": 500,
+    "latent_heat_vaporisation": 9000,
+    "oxidation_temperature": 3160
   },
   "mechanical": {
-    "toughness": 12,
+    "toughness": 4,
     "ductility": 0.5,
-    "work_hardening": 0.1,
-    "yield_strength": 36,
+    "work_hardening": 0.817,
+    "yield_strength": 15.0,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.806
   },
   "molten": {
-    "viscosity": 6,
-    "density": 4.51
+    "viscosity": 7,
+    "density": 4.51,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.5
+    "reflectivity": 0.55
   },
   "electrical": {
-    "drop": 0.4,
-    "electrode_potential": 0.0
+    "drop": 1.67,
+    "electrode_potential": 0.0,
+    "conductivity": 0.03
   },
-  "ampacity": 0.15,
+  "ampacity": 0.297,
   "corrosion_resistance": 0.95,
   "enchantability": 8,
   "exclude": [
@@ -41,5 +47,6 @@
     "fine_wire",
     "foil",
     "coin"
-  ]
+  ],
+  "toxicity": 0
 }

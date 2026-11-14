@@ -47,7 +47,7 @@ A [Firebox](Firebox.md), [Fluid Burner](Fluid_Burner.md), [Heating Coil](Heating
 
 ## Heavy vs. light vessels
 
-How fast something heats up and cools down depends on how heavy it is:
+How fast something heats up and cools down depends on how heavy it is. A vessel's weight is its walls **plus what it holds**: a full crucible heats slower than an empty one, and metal (heavy, but easy to warm) and water (slow to warm) weigh in by how much heat they soak up per Mu ([specific heat](Materials.md#heat-and-other-figures)).
 
 - A **light** vessel (a Small Crucible) moves fast: it closes most of the gap to its fire in about **2 seconds**. It responds quickly, but it's twitchy and overshoots.
 - A **heavy** vessel (a Large Crucible) takes about **20 seconds** for the same. It's hard to get going and hard to stop, but it holds a temperature almost by itself. A [Refractory Lining](Refractory_Lining.md) doubles a small crucible's sluggishness.
@@ -56,9 +56,9 @@ Some processes care how **fast** the temperature is changing as well as what it 
 
 ## Hot items stay hot, and cool down anywhere
 
-When you take something out of a hot vessel, it comes out **at that temperature** and starts cooling straight away, at a steady **1.5 Tu per tick (30 Tu a second)**, every item the same. It cools in your hand, on the ground, in a chest, in a hopper, even in an unloaded chunk. Hover over it to see how hot it is.
+When you take something out of a hot vessel, it comes out **at that temperature** and starts cooling straight away, at a steady rate set by what it is made of: iron **1.5 Tu per tick** (30 Tu a second), steel 1.38, copper 1.54, gold 2.13, tin 3.19, lead 3.61. Dense, poorly conducting stuff cools differently from light, well-conducting stuff. Anything that is not a material cools at 1.5 Tu per tick. It cools in your hand, on the ground, in a chest, in a hopper, even in an unloaded chunk. Hover over it to see how hot it is.
 
-Because the cooling is steady, you can work out your time exactly. Steel straight out of the crucible at about 1400 Tu has **about 10 seconds** before it drops under its 1100 Tu working limit, and 17 seconds before it's too cold to work at all (900 Tu). Hot pieces also hurt to hold: see [Hazards](Hazards.md).
+Because the cooling is steady, you can work out your time. Steel straight out of the crucible at about 1400 Tu has **about 11 seconds** before it drops under its 1100 Tu working limit, and 18 seconds before it's too cold to work at all (900 Tu). Hot pieces also hurt to hold: see [Hazards](Hazards.md).
 
 Ways to change an item's heat by hand:
 

@@ -5,13 +5,27 @@
     "corrosive"
   ],
   "hardness": 0.1,
-  "density": 1.5,
+  "density": 1.2,
   "composition": {
     "feedback:zinc": 0.4,
     "feedback:sulfuric_acid": 0.6
   },
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 0.0006
-  }
+    "conductivity": 0.000137,
+    "melting_point": -2,
+    "boiling_point": 102,
+    "specific_heat": 3.5,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 2200
+  },
+  "molten": {
+    "viscosity": 1.3,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.5,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0
 }

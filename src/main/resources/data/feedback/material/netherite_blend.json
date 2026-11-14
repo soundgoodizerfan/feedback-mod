@@ -4,27 +4,32 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 30,
+  "hardness": 39.2,
   "density": 6.0,
   "thermal": {
-    "melting_point": 2900,
-    "boiling_point": 5000,
-    "cooling_rate": 1.5,
-    "conductivity": 0.02,
+    "melting_point": 1380,
+    "boiling_point": 3200,
+    "cooling_rate": 1.64,
+    "conductivity": 0.00374,
     "anneal_temperature": 1200,
-    "service_temperature": 1800
+    "service_temperature": 1800,
+    "specific_heat": 0.53,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 8000,
+    "oxidation_temperature": 1380
   },
   "mechanical": {
-    "toughness": 20,
+    "toughness": 3,
     "ductility": 0.5,
-    "work_hardening": 0.2,
-    "yield_strength": 35,
+    "work_hardening": 0.261,
+    "yield_strength": 2.0,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.482
   },
   "molten": {
-    "viscosity": 6,
-    "density": 5.52
+    "viscosity": 7,
+    "density": 5.52,
+    "shear_thickening": 0
   },
   "separation": {
     "reflectivity": 0.4,
@@ -32,11 +37,12 @@
     "curie_temperature": 900
   },
   "electrical": {
-    "drop": 0.4,
-    "electrode_potential": -0.2
+    "drop": 5.0,
+    "electrode_potential": -0.2,
+    "conductivity": 0.01
   },
-  "ampacity": 0.05,
-  "corrosion_resistance": 0.95,
+  "ampacity": 0.113,
+  "corrosion_resistance": 0.8,
   "enchantability": 8,
   "forms": {
     "dust": "feedback:netherite_powder",
@@ -47,5 +53,6 @@
     "fine_wire",
     "foil",
     "coin"
-  ]
+  ],
+  "toxicity": 0.3
 }

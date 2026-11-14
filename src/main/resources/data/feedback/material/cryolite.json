@@ -4,22 +4,37 @@
   "exclude": [
     "ingot"
   ],
-  "hardness": 2.5,
+  "hardness": 24.5,
   "density": 2.95,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.003,
-    "melting_point": 1010
+    "cooling_rate": 1.31,
+    "conductivity": 0.000249,
+    "melting_point": 1012,
+    "specific_heat": 1.1,
+    "latent_heat_fusion": 330,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1012,
+    "service_temperature": 607
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 0.3,
     "friction": 0.4,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.406,
+    "yield_strength": 0.1
   },
   "separation": {
-    "reflectivity": 0.7
+    "reflectivity": 0.1
   },
   "bears": {
     "feedback:aluminium": 0.1
-  }
+  },
+  "corrosion_resistance": 0.7,
+  "toxicity": 0.9,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.66,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

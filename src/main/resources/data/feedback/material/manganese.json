@@ -1,37 +1,43 @@
 {
   "color": "#a08fa0",
   "kind": "metal",
-  "hardness": 6,
+  "hardness": 19.6,
   "density": 7.21,
   "thermal": {
     "melting_point": 1246,
     "boiling_point": 2061,
-    "cooling_rate": 1.5,
-    "conductivity": 0.02,
+    "cooling_rate": 1.49,
+    "conductivity": 0.002,
     "anneal_temperature": 700,
     "service_temperature": 500,
-    "oxidation_temperature": 300
+    "oxidation_temperature": 300,
+    "specific_heat": 0.479,
+    "latent_heat_fusion": 235,
+    "latent_heat_vaporisation": 4100
   },
   "mechanical": {
-    "toughness": 10,
+    "toughness": 4,
     "ductility": 1,
-    "work_hardening": 0.6,
-    "yield_strength": 6,
+    "work_hardening": 1.96,
+    "yield_strength": 2.0,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.37
   },
   "molten": {
-    "viscosity": 6,
-    "density": 6.63
+    "viscosity": 4,
+    "density": 6.63,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.5
+    "reflectivity": 0.6
   },
   "electrical": {
-    "drop": 0.4,
-    "electrode_potential": -1.18
+    "drop": 7.14,
+    "electrode_potential": -1.18,
+    "conductivity": 0.007
   },
-  "ampacity": 0.02,
-  "corrosion_resistance": 0.1,
-  "enchantability": 8
+  "ampacity": 0.0898,
+  "corrosion_resistance": 0.15,
+  "enchantability": 8,
+  "toxicity": 0.4
 }

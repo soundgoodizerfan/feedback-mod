@@ -1,0 +1,14 @@
+{
+  "template": true,
+  "kind": "flower",
+  "hardness": 1,
+  "density": 0.6,
+  "toxicity": 0,
+  "thermal": {
+    "specific_heat": 3.5,
+    "conductivity": 9.98e-05,
+    "latent_heat_vaporisation": 1800,
+    "oxidation_temperature": 230,
+    "cooling_rate": 1.56
+  }
+}

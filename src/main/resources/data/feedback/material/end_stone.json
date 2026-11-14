@@ -3,30 +3,42 @@
   "exclude": [
     "ingot"
   ],
-  "hardness": 20,
+  "hardness": 39.2,
   "density": 2.2,
   "thermal": {
-    "melting_point": 1400,
-    "cooling_rate": 0.8,
-    "conductivity": 0.0005,
-    "service_temperature": 1000
+    "melting_point": 1200,
+    "cooling_rate": 2.59,
+    "conductivity": 0.000374,
+    "service_temperature": 1000,
+    "specific_heat": 0.8,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1200
   },
   "mechanical": {
-    "toughness": 5,
-    "yield_strength": 1,
+    "toughness": 1,
+    "yield_strength": 0.6,
     "friction": 0.7,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.482
   },
   "separation": {
-    "reflectivity": 0.65,
+    "reflectivity": 0.5,
     "gangue": "feedback:stone"
   },
-  "corrosion_resistance": 0.9,
+  "corrosion_resistance": 1,
   "forms": {
     "block": "minecraft:end_stone",
     "bricks": "minecraft:end_stone_bricks"
   },
   "bears": {
     "feedback:tungsten": 0.08
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.98,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

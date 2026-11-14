@@ -3,5 +3,5 @@
   "to": "gun_grip",
   "operation": "grind",
   "base": 2,
-  "slope": 1
+  "slope": 0.65
 }

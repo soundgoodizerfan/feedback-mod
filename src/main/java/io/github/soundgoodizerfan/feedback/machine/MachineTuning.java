@@ -280,9 +280,9 @@ public final class MachineTuning {
      * hardness of 15; slow does not, which is a genuine hard gate rather than a slower route --
      * steel wire is only reachable by accepting the risk, not by waiting it out.
      */
-    public static final St WIRE_DRAWER_ST_SLOW = new St(6f);
+    public static final St WIRE_DRAWER_ST_SLOW = new St(13.2f);
 
-    public static final St WIRE_DRAWER_ST_FAST = new St(18f);
+    public static final St WIRE_DRAWER_ST_FAST = new St(39.6f);
 
     /** Invented. Chance per landed fast draw that the wire snaps outright (a draw lands about
      * four times a second at 32 RPM, so this is roughly the old 1%-per-tick rate). A
@@ -296,7 +296,7 @@ public final class MachineTuning {
     /** Invented. The Rolling Mill has one setting -- no discrete choice is named for it in the
      * spec, so none is invented here. High enough to clear steel's hardness of 15 as well as
      * copper's. */
-    public static final St ROLLING_MILL_ST = new St(20f);
+    public static final St ROLLING_MILL_ST = new St(44f);
 
     public static final Su ROLLING_MILL_LOAD_SU = new Su(50f);
 
@@ -332,18 +332,17 @@ public final class MachineTuning {
      */
     public static final float SWARF_DROP_CHANCE = 0.15f;
 
-    /** Invented. The Drill Press's stock bit -- a fixed hardness rating rather than a swappable
-     * item this pass, since the Lathe (next) is where a physical, wearable tool bit actually
-     * earns its own class. High enough to clear steel's hardness of 15. */
-    public static final St DRILL_BIT_HARDNESS = new St(18f);
+    /** The Drill Press's stock bit: high-speed steel, about 800 HV, so 78 St (1 St = 0.1 GPa Vickers). A fixed rating rather than a swappable
+     * item this pass, since the Lathe is where a physical, wearable tool bit earns its own class. Clears steel (about 15 St). */
+    public static final St DRILL_BIT_HARDNESS = new St(78f);
 
     /** Invented. The Drill Press's two feed speeds -- slow is always safe, fast risks a bound,
      * snapped bit (see {@link #BIT_SNAP_CHANCE}) but cuts faster. Both clear steel's hardness once
      * the bit itself does ({@link #DRILL_BIT_HARDNESS}); the choice is speed against risk, not
      * possible against impossible, unlike the Wire Drawer's pair. */
-    public static final St DRILL_PRESS_ST_SLOW = new St(10f);
+    public static final St DRILL_PRESS_ST_SLOW = new St(22f);
 
-    public static final St DRILL_PRESS_ST_FAST = new St(22f);
+    public static final St DRILL_PRESS_ST_FAST = new St(48.4f);
 
     /** Invented. Chance per fast-feed push that the bit binds -- a wasted push and a warning
      * sound, not damage to the machine body or the workpiece (§7: a hard gate on the fast setting
@@ -353,19 +352,17 @@ public final class MachineTuning {
     public static final Su DRILL_PRESS_LOAD_SU = new Su(35f);
 
     /**
-     * Invented. The Lathe's tool bit -- a real physical component this time (see {@code
-     * FDataComponents#TOOL_CONDITION}), not a fixed constant like the Drill Press's. A little
-     * harder than the Drill Press's stock bit, since turning against a target diameter is the
-     * finer of the two jobs.
+     * The Lathe's tool bit: a cemented-carbide insert, about 1500 HV, so 150 St (see {@code
+     * FDataComponents#TOOL_CONDITION}). Harder than the Drill Press's high-speed steel, softer than the grinding wheel.
      */
-    public static final St LATHE_BIT_HARDNESS = new St(20f);
+    public static final St LATHE_BIT_HARDNESS = new St(150f);
 
     /** Invented. Light/heavy pass -- same shape as every other discrete throw in the mod: heavy
      * cuts faster and coarser, light is slower and controllable. Neither risks the bit; only
      * cutting a material the bit's own rating cannot clear wears it (see {@link #LATHE_BIT_WEAR_PER_ST}). */
-    public static final St LATHE_ST_LIGHT = new St(8f);
+    public static final St LATHE_ST_LIGHT = new St(17.6f);
 
-    public static final St LATHE_ST_HEAVY = new St(18f);
+    public static final St LATHE_ST_HEAVY = new St(39.6f);
 
     public static final Su LATHE_LOAD_SU = new Su(40f);
 
@@ -377,19 +374,19 @@ public final class MachineTuning {
     public static final float LATHE_BIT_CONDITION_FLOOR = 0.4f;
 
     /**
-     * Invented. The Grinding Wheel's own hardness rating -- set above every other removal tool in
+     * The Grinding Wheel's own hardness: an alumina wheel, about 2000 HV, so 196 St. Set above every other removal tool in
      * this document ({@link #DRILL_BIT_HARDNESS}, {@link #LATHE_BIT_HARDNESS}) on purpose, so it
      * is the one route through a material like hardened tool steel rather than a finishing
      * upgrade. {@link io.github.soundgoodizerfan.feedback.process.Removal#canBeCutBy} is the same gate either way; this is simply the one
      * tool whose rating clears it.
      */
-    public static final St GRINDING_WHEEL_HARDNESS = new St(30f);
+    public static final St GRINDING_WHEEL_HARDNESS = new St(196f);
 
     /** Invented. Coarse/fine grit -- coarse removes faster and wears the wheel faster; fine is
      * slower on both counts. Discrete, per §3, not a continuous grit number. */
-    public static final St GRINDING_WHEEL_ST_COARSE = new St(16f);
+    public static final St GRINDING_WHEEL_ST_COARSE = new St(35.2f);
 
-    public static final St GRINDING_WHEEL_ST_FINE = new St(6f);
+    public static final St GRINDING_WHEEL_ST_FINE = new St(13.2f);
 
     public static final Su GRINDING_WHEEL_LOAD_SU = new Su(45f);
 

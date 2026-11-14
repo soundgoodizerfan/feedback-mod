@@ -1,13 +1,22 @@
 {
   "kind": "fruit",
-  "traits": ["vegetal"],
+  "traits": [
+    "vegetal"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:enchanted_golden_apple"
   },
   "food": {
     "moisture": 0.85,
-    "compounds": {"vitamin": 0.1, "sugar": 0.06, "mineral": 0.05},
-    "perks": {"mending": 0.07}
-  }
+    "compounds": {
+      "vitamin": 0.1,
+      "sugar": 0.06,
+      "mineral": 0.05
+    },
+    "perks": {
+      "mending": 0.07
+    }
+  },
+  "parent": "_kind_fruit"
 }

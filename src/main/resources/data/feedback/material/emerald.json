@@ -4,20 +4,27 @@
   "traits": [
     "transparent"
   ],
-  "hardness": 50,
+  "hardness": 147.0,
   "density": 2.76,
   "thermal": {
-    "melting_point": 1600,
-    "cooling_rate": 1,
-    "conductivity": 0.0015
+    "melting_point": 1650,
+    "cooling_rate": 2.21,
+    "conductivity": 0.00125,
+    "specific_heat": 0.83,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1650,
+    "service_temperature": 990
   },
   "mechanical": {
-    "toughness": 4,
+    "toughness": 1.5,
     "friction": 0.3,
-    "abrasiveness": 0.8
+    "abrasiveness": 0.694,
+    "yield_strength": 1.0
   },
   "separation": {
-    "reflectivity": 0.3
+    "reflectivity": 0.12
   },
   "forms": {
     "gem": "minecraft:emerald",
@@ -25,5 +32,12 @@
     "ore": "feedback:emerald_ore",
     "deepslate_ore": "feedback:deepslate_emerald_ore"
   },
-  "enchantability": 12
+  "enchantability": 12,
+  "corrosion_resistance": 1,
+  "toxicity": 0.3,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.48,
+    "shear_thickening": 0
+  }
 }

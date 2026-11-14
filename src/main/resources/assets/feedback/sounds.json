@@ -714,6 +714,22 @@
     }
     ]
   },
+  "gun.egun_power_on": {
+    "subtitle": "feedback.subtitle.gun_egun_power_on",
+    "sounds": [
+    {
+      "name": "feedback:gun/egun_power_on"
+    }
+    ]
+  },
+  "gun.egun_power_off": {
+    "subtitle": "feedback.subtitle.gun_egun_power_off",
+    "sounds": [
+    {
+      "name": "feedback:gun/egun_power_off"
+    }
+    ]
+  },
   "gun.egun_refill": {
     "subtitle": "feedback.subtitle.gun_egun_power",
     "sounds": [

@@ -1,24 +1,29 @@
 {
   "kind": "ceramic",
   "traits": [],
-  "hardness": 22,
+  "hardness": 68.7,
   "density": 2.4,
   "thermal": {
-    "melting_point": 1500,
-    "cooling_rate": 0.8,
-    "conductivity": 0.00025,
-    "service_temperature": 1000
+    "melting_point": 1650,
+    "cooling_rate": 2.23,
+    "conductivity": 0.000374,
+    "service_temperature": 1000,
+    "specific_heat": 0.85,
+    "latent_heat_fusion": 500,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1650
   },
   "mechanical": {
-    "toughness": 3,
-    "yield_strength": 1,
+    "toughness": 1.5,
+    "yield_strength": 0.5,
     "friction": 0.7,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.572
   },
   "separation": {
-    "reflectivity": 0.3
+    "reflectivity": 0.7
   },
-  "corrosion_resistance": 1.0,
+  "corrosion_resistance": 1,
   "electrical": {
     "insulation": "mv"
   },
@@ -28,5 +33,12 @@
   },
   "exclude": [
     "substrate"
-  ]
+  ],
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.16,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

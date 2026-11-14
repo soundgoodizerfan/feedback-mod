@@ -14,5 +14,6 @@
       "vitamin": 0.02,
       "sugar": 0.02
     }
-  }
+  },
+  "parent": "_kind_dish"
 }

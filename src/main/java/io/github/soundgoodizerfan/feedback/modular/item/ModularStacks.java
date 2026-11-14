@@ -157,6 +157,13 @@ public final class ModularStacks {
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
         write(stack, design, type, baked.get(), broken(stack));
+        // An assembly survives lava only as far as its lowest-melting part does.
+        boolean fireproof = !design.parts().isEmpty() && design.parts().stream().map(p -> materials.get(p.material()))
+                .filter(java.util.Objects::nonNull).allMatch(Material::survivesLava);
+        if (fireproof)
+            stack.set(DataComponents.FIRE_RESISTANT, net.minecraft.util.Unit.INSTANCE);
+        else
+            stack.remove(DataComponents.FIRE_RESISTANT);
         if (type.family() == ModularType.Family.VESSEL)
             ModularBake.xpStore(design, type, materials, stack.get(FDataComponents.XP_STORE.get()))
                     .ifPresent(s -> stack.set(FDataComponents.XP_STORE.get(), s));

@@ -5,38 +5,45 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 12,
+  "hardness": 19.6,
   "density": 7.2,
   "thermal": {
     "melting_point": 1200,
-    "boiling_point": 2862,
-    "cooling_rate": 1.4,
+    "boiling_point": 2860,
+    "cooling_rate": 1.6,
     "conductivity": 0.0125,
     "oxidation_temperature": 570,
     "anneal_temperature": 800,
-    "service_temperature": 450
+    "service_temperature": 450,
+    "specific_heat": 0.46,
+    "latent_heat_fusion": 230,
+    "latent_heat_vaporisation": 6090
   },
   "mechanical": {
-    "toughness": 6,
+    "toughness": 15,
     "ductility": 0,
-    "yield_strength": 6,
+    "yield_strength": 2.0,
     "friction": 0.5,
-    "abrasiveness": 0.4
+    "abrasiveness": 0.37,
+    "work_hardening": 1.96
   },
   "molten": {
-    "viscosity": 6,
-    "density": 6.9
+    "viscosity": 5,
+    "density": 6.9,
+    "shear_thickening": 0
   },
   "separation": {
     "magnetic": true,
     "curie_temperature": 770,
-    "reflectivity": 0.4
+    "reflectivity": 0.55
   },
   "electrical": {
-    "drop": 0.7
+    "drop": 1.0,
+    "conductivity": 0.05,
+    "electrode_potential": 0
   },
-  "ampacity": 0.08,
-  "corrosion_resistance": 0.3,
+  "ampacity": 0.235,
+  "corrosion_resistance": 0.35,
   "forms": {
     "ingot": "feedback:cast_iron"
   },
@@ -51,5 +58,12 @@
     "turned_rod"
   ],
   "enchantability": 5,
-  "attuning": {"temperature": 800, "lock": 600, "coercive": 0.4, "loop_width": 0.35, "lag": 12}
+  "attuning": {
+    "temperature": 800,
+    "lock": 600,
+    "coercive": 0.4,
+    "loop_width": 0.35,
+    "lag": 12
+  },
+  "toxicity": 0
 }

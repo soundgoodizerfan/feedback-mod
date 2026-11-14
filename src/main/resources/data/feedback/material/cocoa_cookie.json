@@ -1,6 +1,8 @@
 {
   "kind": "dough",
-  "traits": ["starchy"],
+  "traits": [
+    "starchy"
+  ],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:cookie"
@@ -12,5 +14,6 @@
       "stimulant": 0.06,
       "sugar": 0.03
     }
-  }
+  },
+  "parent": "_kind_dough"
 }

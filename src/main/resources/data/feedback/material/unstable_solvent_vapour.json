@@ -5,9 +5,23 @@
     "spatial"
   ],
   "hardness": 0.1,
-  "density": 0.004,
+  "density": 0.005,
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 0.0006
-  }
+    "conductivity": 4.99e-06,
+    "melting_point": -20,
+    "boiling_point": 120,
+    "specific_heat": 1.8,
+    "latent_heat_fusion": 200,
+    "latent_heat_vaporisation": 1500
+  },
+  "molten": {
+    "viscosity": 0.01,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.8,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0
 }

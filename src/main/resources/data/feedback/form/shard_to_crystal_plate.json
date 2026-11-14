@@ -3,5 +3,5 @@
   "to": "crystal_plate",
   "operation": "grind",
   "base": 0,
-  "slope": 1
+  "slope": 0.65
 }

@@ -14,5 +14,6 @@
     "shape": {
       "type": "line"
     }
-  }
+  },
+  "parent": "_kind_flower"
 }

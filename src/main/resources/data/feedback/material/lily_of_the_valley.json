@@ -16,5 +16,7 @@
       "teeth": 5,
       "amp": 0.12
     }
-  }
+  },
+  "parent": "_kind_flower",
+  "toxicity": 1.3
 }

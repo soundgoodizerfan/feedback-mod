@@ -102,6 +102,14 @@ public class PumpBlockEntity extends RotationNode implements io.github.soundgood
         }
     }
 
+    /** How much stiffer than at rest the fluid is when pushed at {@code perTick} mB a tick: 1 for a fluid that does not thicken under shear. */
+    private static float stiffness(net.minecraft.world.level.material.Fluid fluid, int perTick) {
+        var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        return io.github.soundgoodizerfan.feedback.process.Mixture.fluidMaterial(materials, fluid).map(materials::get)
+                .flatMap(m -> m.molten().shearThickening()).filter(s -> s > 0f)
+                .map(s -> 1f + s * perTick / io.github.soundgoodizerfan.feedback.core.FTuning.SHEAR_REFERENCE_MB_PER_TICK).orElse(1f);
+    }
+
     public void tickServer() {
         if (level == null)
             return;
@@ -123,6 +131,13 @@ public class PumpBlockEntity extends RotationNode implements io.github.soundgood
         IFluidHandler source = level.getCapability(Capabilities.FluidHandler.BLOCK, behind, out);
         if (source != null) {
             FluidStack offered = source.drain(amount, IFluidHandler.FluidAction.SIMULATE);
+            // A shear-thickening fluid (soul oil) stiffens the harder it is pushed: the impeller moves less of it per turn, and a pump
+            // turned fast on it labours against its own plug.
+            float stiff = offered.isEmpty() ? 1f : stiffness(offered.getFluid(), amount);
+            if (stiff > 1f)
+                offered = offered.copyWithAmount(Math.max(1, Math.round(offered.getAmount() / stiff)));
+            if (stiff > io.github.soundgoodizerfan.feedback.core.FTuning.SHEAR_JAM_STIFFNESS)
+                misuse();
             int fits = offered.isEmpty() ? 0 : target.fill(offered, IFluidHandler.FluidAction.SIMULATE);
             if (fits > 0)
                 target.fill(source.drain(offered.copyWithAmount(fits), IFluidHandler.FluidAction.EXECUTE),

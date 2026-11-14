@@ -36,5 +36,6 @@
   "enchantability": 5,
   "electrical": {
     "insulation": "lv"
-  }
+  },
+  "parent": "_kind_animal"
 }

@@ -2,7 +2,7 @@
   "fastener": 2,
   "color": "#d8d8d8",
   "kind": "metal",
-  "hardness": 4.5,
+  "hardness": 7.85,
   "density": 7.87,
   "thermal": {
     "melting_point": 1538,
@@ -11,19 +11,23 @@
     "conductivity": 0.02,
     "oxidation_temperature": 570,
     "anneal_temperature": 650,
-    "service_temperature": 450
+    "service_temperature": 450,
+    "specific_heat": 0.449,
+    "latent_heat_fusion": 247,
+    "latent_heat_vaporisation": 6090
   },
   "mechanical": {
-    "toughness": 50,
+    "toughness": 80,
     "ductility": 12,
-    "work_hardening": 0.4,
-    "yield_strength": 5,
+    "work_hardening": 0.698,
+    "yield_strength": 1.5,
     "friction": 0.6,
-    "abrasiveness": 0.25
+    "abrasiveness": 0.223
   },
   "molten": {
-    "viscosity": 6,
-    "density": 6.98
+    "viscosity": 5.5,
+    "density": 6.98,
+    "shear_thickening": 0
   },
   "separation": {
     "magnetic": true,
@@ -32,21 +36,37 @@
   },
   "electrical": {
     "conductivity": 0.17,
-    "drop": 0.29,
+    "drop": 0.294,
     "core_loss": 0.06,
     "electrode_potential": -0.44
   },
-  "ampacity": 0.17,
-  "corrosion_resistance": 0.15,
+  "ampacity": 0.31,
+  "corrosion_resistance": 0.37,
   "forms": {
     "ore": "feedback:iron_ore",
     "deepslate_ore": "feedback:deepslate_iron_ore",
     "raw": "minecraft:raw_iron",
     "raw_block": "minecraft:raw_iron_block"
   },
-  "exclude": ["lump"],
-  "bears": {"feedback:cast_iron": 1.0},
-  "catalyst": {"activity": 1.0, "sulfur_tolerance": 0.5, "regeneration_temperature": 450, "sinter_temperature": 900},
+  "exclude": [
+    "lump"
+  ],
+  "bears": {
+    "feedback:cast_iron": 1.0
+  },
+  "catalyst": {
+    "activity": 1.0,
+    "sulfur_tolerance": 0.5,
+    "regeneration_temperature": 450,
+    "sinter_temperature": 900
+  },
   "enchantability": 12,
-  "attuning": {"temperature": 650, "lock": 450, "coercive": 0.3, "loop_width": 0.2, "lag": 7}
+  "attuning": {
+    "temperature": 650,
+    "lock": 450,
+    "coercive": 0.3,
+    "loop_width": 0.2,
+    "lag": 7
+  },
+  "toxicity": 0
 }

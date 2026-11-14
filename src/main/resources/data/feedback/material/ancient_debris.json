@@ -1,25 +1,43 @@
 {
   "kind": "mineral",
-  "exclude": ["dust", "ingot"],
+  "exclude": [
+    "dust",
+    "ingot"
+  ],
   "traits": [
     "fireproof"
   ],
-  "hardness": 45,
+  "hardness": 78.5,
   "density": 5,
   "thermal": {
-    "melting_point": 2400,
-    "cooling_rate": 0.9,
-    "conductivity": 0.005
+    "melting_point": 1500,
+    "cooling_rate": 1.4,
+    "conductivity": 0.000748,
+    "specific_heat": 0.7,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1500,
+    "service_temperature": 900
   },
   "mechanical": {
-    "toughness": 10,
+    "toughness": 3,
     "friction": 0.7,
-    "abrasiveness": 0.8
+    "abrasiveness": 0.593,
+    "yield_strength": 3.0
   },
   "separation": {
-    "reflectivity": 0.15
+    "reflectivity": 0.2
   },
   "forms": {
     "block": "minecraft:ancient_debris"
-  }
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0.4,
+  "molten": {
+    "viscosity": 100,
+    "density": 4.5,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

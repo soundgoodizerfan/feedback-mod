@@ -1,22 +1,38 @@
 {
   "kind": "granular",
-  "hardness": 30,
+  "hardness": 29.4,
   "density": 1.8,
   "thermal": {
-    "melting_point": 1200,
-    "cooling_rate": 0.9,
-    "conductivity": 0.000125
+    "melting_point": 1250,
+    "cooling_rate": 3.01,
+    "conductivity": 0.000374,
+    "specific_heat": 0.84,
+    "latent_heat_fusion": 300,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 1250,
+    "service_temperature": 750
   },
   "mechanical": {
     "friction": 0.6,
-    "abrasiveness": 0.7
+    "abrasiveness": 0.436,
+    "yield_strength": 0.01,
+    "toughness": 0.1
   },
   "separation": {
-    "reflectivity": 0.3
+    "reflectivity": 0.25
   },
   "forms": {
     "block": "minecraft:gravel",
     "suspicious": "minecraft:suspicious_gravel",
     "flint": "minecraft:flint"
-  }
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.62,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }

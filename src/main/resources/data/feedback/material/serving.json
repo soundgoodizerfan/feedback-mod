@@ -1,9 +1,12 @@
 {
   "kind": "dish",
   "color": "#b98a52",
-  "traits": ["broth"],
+  "traits": [
+    "broth"
+  ],
   "hardness": 0.02,
   "forms": {
     "raw": "feedback:meal"
-  }
+  },
+  "parent": "_kind_dish"
 }

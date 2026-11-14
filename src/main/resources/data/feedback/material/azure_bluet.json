@@ -14,5 +14,7 @@
     "shape": {
       "type": "line"
     }
-  }
+  },
+  "parent": "_kind_flower",
+  "toxicity": 0.1
 }

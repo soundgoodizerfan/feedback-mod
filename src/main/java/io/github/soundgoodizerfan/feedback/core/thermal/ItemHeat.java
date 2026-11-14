@@ -67,6 +67,17 @@ public final class ItemHeat {
         }
     }
 
+    /**
+     * How fast a loose stack sheds heat: its item's own say, else its material's {@code thermal.cooling_rate} (derived from
+     * conductivity, density and specific heat), else the stock rate for anything that is no material.
+     */
+    public static TuRate coolingRate(ItemStack stack) {
+        if (stack.getItem() instanceof Cooling c)
+            return c.coolingRate(stack);
+        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(stack.getItem())
+                .map(l -> l.material().looseCooling()).orElse(ThermalTuning.ITEM_COOLING_TU_PER_TICK);
+    }
+
     /** Stamp a stack as being at this temperature, now. */
     public static void set(ItemStack stack, Tu tu, Level level) {
         if (tu.value() <= ThermalTuning.WARM_TU.value()) {
@@ -94,7 +105,7 @@ public final class ItemHeat {
             return floor != null ? floor : AmbientTable.at(level);
         long at = stack.getOrDefault(FDataComponents.HEATED_AT.get(), level.getGameTime());
         float elapsed = Math.max(0, level.getGameTime() - at);
-        TuRate rate = stack.getItem() instanceof Cooling c ? c.coolingRate(stack) : ThermalTuning.ITEM_COOLING_TU_PER_TICK;
+        TuRate rate = coolingRate(stack);
         Tu cooled = Heat.cooled(new Tu(stamped), elapsed, rate, AmbientTable.at(level));
         return floor != null && floor.value() > cooled.value() ? floor : cooled;
     }

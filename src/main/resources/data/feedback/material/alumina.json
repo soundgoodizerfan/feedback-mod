@@ -1,20 +1,27 @@
 {
   "color": "#f2f2f0",
   "kind": "ceramic",
-  "hardness": 9,
+  "hardness": 177.0,
   "density": 3.95,
   "thermal": {
     "melting_point": 2072,
-    "cooling_rate": 1,
-    "conductivity": 0.03
+    "cooling_rate": 1.52,
+    "conductivity": 0.00748,
+    "boiling_point": 2977,
+    "specific_heat": 0.88,
+    "latent_heat_fusion": 1070,
+    "latent_heat_vaporisation": 15000,
+    "oxidation_temperature": 2072,
+    "service_temperature": 1243
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 4,
     "friction": 0.4,
-    "abrasiveness": 0.9
+    "abrasiveness": 0.724,
+    "yield_strength": 3.0
   },
   "separation": {
-    "reflectivity": 0.7
+    "reflectivity": 0.75
   },
   "bears": {
     "feedback:aluminium": 0.53
@@ -27,5 +34,13 @@
     "crushed",
     "concentrate",
     "tailings"
-  ]
+  ],
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 3.56,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

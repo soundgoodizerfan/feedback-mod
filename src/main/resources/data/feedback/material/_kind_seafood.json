@@ -1,0 +1,14 @@
+{
+  "template": true,
+  "kind": "seafood",
+  "hardness": 2,
+  "density": 1.05,
+  "toxicity": 0,
+  "thermal": {
+    "specific_heat": 3.3,
+    "conductivity": 0.000125,
+    "latent_heat_vaporisation": 1800,
+    "oxidation_temperature": 200,
+    "cooling_rate": 1.02
+  }
+}

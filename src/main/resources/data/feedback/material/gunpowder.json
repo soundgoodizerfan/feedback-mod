@@ -3,19 +3,27 @@
   "traits": [
     "flammable"
   ],
-  "hardness": 1,
+  "hardness": 0.981,
   "density": 1.7,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 2.5e-05,
-    "oxidation_temperature": 300
+    "cooling_rate": 1.17,
+    "conductivity": 3.74e-05,
+    "oxidation_temperature": 300,
+    "melting_point": 300,
+    "specific_heat": 1.0,
+    "latent_heat_fusion": 100,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "service_temperature": 180
   },
   "mechanical": {
     "friction": 0.5,
-    "abrasiveness": 0.1
+    "abrasiveness": 0,
+    "yield_strength": 0.02,
+    "toughness": 0.1
   },
   "separation": {
-    "reflectivity": 0.05
+    "reflectivity": 0.1
   },
   "combustion": {
     "oxygen_balance": 0.5,
@@ -26,5 +34,13 @@
   },
   "forms": {
     "dust": "minecraft:gunpowder"
-  }
+  },
+  "corrosion_resistance": 0.4,
+  "toxicity": 0.3,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.53,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }

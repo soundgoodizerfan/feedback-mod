@@ -4,37 +4,43 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 40,
+  "hardness": 157.0,
   "density": 15.6,
   "thermal": {
     "melting_point": 2870,
     "boiling_point": 6000,
-    "cooling_rate": 1.5,
-    "conductivity": 0.015,
+    "cooling_rate": 1.7,
+    "conductivity": 0.0209,
     "anneal_temperature": 1500,
-    "service_temperature": 2200
+    "service_temperature": 2200,
+    "specific_heat": 0.2,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 8000,
+    "oxidation_temperature": 2870
   },
   "mechanical": {
-    "toughness": 15,
+    "toughness": 12,
     "ductility": 0.5,
-    "work_hardening": 0.1,
-    "yield_strength": 40,
+    "work_hardening": 0.393,
+    "yield_strength": 20.0,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.705
   },
   "molten": {
-    "viscosity": 6,
-    "density": 14.35
+    "viscosity": 7,
+    "density": 14.35,
+    "shear_thickening": 0
   },
   "separation": {
     "reflectivity": 0.5
   },
   "electrical": {
-    "drop": 0.4,
-    "electrode_potential": 0.0
+    "drop": 0.581,
+    "electrode_potential": 0.0,
+    "conductivity": 0.086
   },
-  "ampacity": 0.15,
-  "corrosion_resistance": 0.95,
+  "ampacity": 0.48,
+  "corrosion_resistance": 0.9,
   "enchantability": 8,
   "forms": {
     "dust": "feedback:tungsten_carbide_powder",
@@ -45,5 +51,6 @@
     "fine_wire",
     "foil",
     "coin"
-  ]
+  ],
+  "toxicity": 0.3
 }

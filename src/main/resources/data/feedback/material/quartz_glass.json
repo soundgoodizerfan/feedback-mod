@@ -4,27 +4,34 @@
   "traits": [
     "transparent"
   ],
-  "hardness": 30,
+  "hardness": 78.5,
   "density": 2.2,
   "thermal": {
-    "melting_point": 1650,
-    "cooling_rate": 1,
-    "conductivity": 0.0003,
+    "melting_point": 1710,
+    "cooling_rate": 2.77,
+    "conductivity": 0.000349,
     "anneal_temperature": 1100,
-    "service_temperature": 1000
+    "service_temperature": 1000,
+    "specific_heat": 0.74,
+    "latent_heat_fusion": 140,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1710
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 0.8,
     "friction": 0.4,
-    "abrasiveness": 0.6,
-    "hardenable": true
+    "abrasiveness": 0.593,
+    "hardenable": true,
+    "yield_strength": 0.5
   },
   "molten": {
     "viscosity": 10000,
-    "density": 2.1
+    "density": 2.1,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.06
+    "reflectivity": 0.08
   },
   "corrosion_resistance": 1,
   "enchantability": 2,
@@ -33,5 +40,6 @@
   },
   "forms": {
     "ingot": "feedback:quartz_glass_ingot"
-  }
+  },
+  "toxicity": 0
 }

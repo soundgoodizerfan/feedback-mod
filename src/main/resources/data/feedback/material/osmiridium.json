@@ -7,21 +7,42 @@
     "concentrate",
     "tailings"
   ],
-  "hardness": 7,
+  "hardness": 78.5,
   "density": 19.5,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.02
+    "cooling_rate": 2.09,
+    "conductivity": 0.0175,
+    "melting_point": 2700,
+    "boiling_point": 4500,
+    "specific_heat": 0.13,
+    "latent_heat_fusion": 40,
+    "latent_heat_vaporisation": 3300,
+    "oxidation_temperature": 2700,
+    "service_temperature": 1620
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 8,
     "friction": 0.4,
-    "abrasiveness": 0.6
+    "abrasiveness": 0.593,
+    "yield_strength": 6.0
   },
   "separation": {
     "reflectivity": 0.7
   },
   "bears": {
     "feedback:osmium": 0.5
-  }
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 2.0,
+  "molten": {
+    "viscosity": 100,
+    "density": 17.6,
+    "shear_thickening": 0
+  },
+  "enchantability": 5,
+  "electrical": {
+    "conductivity": 0.12,
+    "drop": 0.417
+  },
+  "ampacity": 0.55
 }

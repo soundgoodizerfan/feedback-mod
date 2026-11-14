@@ -327,7 +327,7 @@ Every vein can show itself on the surface above it, if it is not buried too deep
 
 A slice of quartz or amethyst on a metal backing. Hang it in an [Electrolytic Cell](Electrolytic_Cell.md) and it tells you how much metal has plated onto it. A crystal rings at one pitch, and a coat of metal on it drags the pitch down; the drop is the mass.
 
-**Making one.** Grind a quartz or amethyst into a plate on the Grinding Wheel; it comes out a **coarse cut**. Put the plate back on the wheel and it goes **standard cut**, then **fine cut**: stop when it is as thin as you want. Hover a plate to see its cut. Craft the plate with any metal plate (shapeless) and the probe has the same cut. Only crystals that ring work (quartz and amethyst; a diamond does not). Quartz and amethyst (hardness 40) are harder than the stone [Grinding Wheel](Grinding_Wheel.md) (30), so use the **Diamond Grinding Wheel**.
+**Making one.** Grind a quartz or amethyst into a plate on the Grinding Wheel; it comes out a **coarse cut**. Put the plate back on the wheel and it goes **standard cut**, then **fine cut**: stop when it is as thin as you want. Hover a plate to see its cut. Craft the plate with any metal plate (shapeless) and the probe has the same cut. Only crystals that ring work (quartz and amethyst; a diamond does not). Quartz and amethyst (hardness 108) are within reach of either [Grinding Wheel](Grinding_Wheel.md).
 
 | Cut | Reads up to | Tells apart |
 | --- | --- | --- |

@@ -14,5 +14,7 @@
       "mineral": 0.02,
       "vitamin": 0.01
     }
-  }
+  },
+  "parent": "_kind_dish",
+  "toxicity": 0.3
 }

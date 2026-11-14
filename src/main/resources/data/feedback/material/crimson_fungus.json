@@ -16,5 +16,6 @@
       "type": "spiral",
       "turns": 2
     }
-  }
+  },
+  "parent": "_kind_fungus"
 }

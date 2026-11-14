@@ -17,5 +17,6 @@
       "cycles": 2,
       "amp": 0.3
     }
-  }
+  },
+  "parent": "_kind_herb"
 }

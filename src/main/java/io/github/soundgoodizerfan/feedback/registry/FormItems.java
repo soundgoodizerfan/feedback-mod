@@ -92,7 +92,7 @@ public final class FormItems {
     /** The jar's materials, read once; the client reads them again for fluid tints. */
     static Map<ResourceLocation, Material> jarMaterials() {
         if (materials.isEmpty())
-            materials = read("material", Material.CODEC);
+            materials = parse("material", io.github.soundgoodizerfan.feedback.process.MaterialTable.resolved(readJson("material")), Material.CODEC);
         return materials;
     }
 
@@ -109,10 +109,10 @@ public final class FormItems {
                     DeferredBlock<FormBlock> block = blocks.register(path, () -> form.equals("pipe")
                             ? new io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlock(id) : new FormBlock(id, form, material.food().isPresent()));
                     DeferredItem<BlockItem> item = items.register(path,
-                            () -> new FormBlock.FormBlockItem(block.get(), edible(new Item.Properties(), material, form)));
+                            () -> new FormBlock.FormBlockItem(block.get(), proof(edible(new Item.Properties(), material, form), material)));
                     ALL.add(new Generated(id, form, item, block));
                 } else {
-                    DeferredItem<Item> item = items.registerItem(path, props -> new FormItem(edible(props, material, form), id, form));
+                    DeferredItem<Item> item = items.registerItem(path, props -> new FormItem(proof(edible(props, material, form), material), id, form));
                     ALL.add(new Generated(id, form, item, null));
                 }
             }
@@ -124,6 +124,11 @@ public final class FormItems {
      * A foodstuff's block or log is food: its raw item's hunger, saturation and effects, scaled by how many raw items' worth of
      * volume it holds (a block is nine). Anything else is returned unchanged.
      */
+    /** An item made of stuff that survives lava (its failure temperature is over lava's fire) is fire resistant, by vanilla's own component. */
+    private static Item.Properties proof(Item.Properties props, Material material) {
+        return material.survivesLava() ? props.fireResistant() : props;
+    }
+
     private static Item.Properties edible(Item.Properties props, Material material, String form) {
         ResourceLocation raw = material.food().isPresent() ? material.forms().get("raw") : null;
         FoodProperties base = raw == null ? null : BuiltInRegistries.ITEM.getOptional(raw).map(i -> i.components().get(DataComponents.FOOD)).orElse(null);
@@ -135,7 +140,19 @@ public final class FormItems {
     }
 
     private static <T> Map<ResourceLocation, T> read(String directory, Codec<T> codec) {
+        return parse(directory, readJson(directory), codec);
+    }
+
+    private static <T> Map<ResourceLocation, T> parse(String directory, Map<ResourceLocation, com.google.gson.JsonElement> json, Codec<T> codec) {
         Map<ResourceLocation, T> out = new TreeMap<>();
+        json.forEach((id, element) -> codec.parse(JsonOps.INSTANCE, element)
+                .resultOrPartial(error -> Feedback.LOGGER.error("Bad {} {}: {}", directory, id, error))
+                .ifPresent(value -> out.put(id, value)));
+        return out;
+    }
+
+    private static Map<ResourceLocation, com.google.gson.JsonElement> readJson(String directory) {
+        Map<ResourceLocation, com.google.gson.JsonElement> out = new TreeMap<>();
         Path dir = ModList.get().getModFileById(Feedback.MOD_ID).getFile()
                 .findResource("data", Feedback.MOD_ID, directory);
         if (!Files.isDirectory(dir))
@@ -146,9 +163,7 @@ public final class FormItems {
                 ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID,
                         name.substring(0, name.length() - ".json".length()));
                 try (Reader reader = Files.newBufferedReader(p)) {
-                    codec.parse(JsonOps.INSTANCE, JsonParser.parseReader(reader))
-                            .resultOrPartial(error -> Feedback.LOGGER.error("Bad {} {}: {}", directory, id, error))
-                            .ifPresent(value -> out.put(id, value));
+                    out.put(id, JsonParser.parseReader(reader));
                 } catch (IOException e) {
                     Feedback.LOGGER.error("Could not read {}", p, e);
                 }

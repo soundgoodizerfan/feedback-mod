@@ -123,9 +123,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         ThermalMass base = getBlockState().getBlock() instanceof CrucibleBlock crucible
                 ? crucible.getThermalMass()
                 : VesselTuning.CRUCIBLE_SMALL_MASS;
-        if (upgrades.isEmpty())
-            return base;
-        float mass = base.workPerTu();
+        float mass = base.workPerTu() + chargeWorkPerTu();
         for (UpgradeFitting upgrade : upgrades)
             mass += upgrade.addedThermalMass().workPerTu();
         return new ThermalMass(mass);

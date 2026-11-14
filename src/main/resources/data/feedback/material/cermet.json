@@ -4,39 +4,45 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 38,
+  "hardness": 177.0,
   "density": 6.0,
   "thermal": {
-    "melting_point": 2900,
-    "boiling_point": 5000,
-    "cooling_rate": 1.5,
-    "conductivity": 0.02,
+    "melting_point": 1380,
+    "boiling_point": 3200,
+    "cooling_rate": 1.66,
+    "conductivity": 0.00998,
     "anneal_temperature": 1200,
-    "service_temperature": 1800
+    "service_temperature": 1800,
+    "specific_heat": 0.53,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 8000,
+    "oxidation_temperature": 1380
   },
   "mechanical": {
-    "toughness": 20,
+    "toughness": 12,
     "ductility": 0.5,
-    "work_hardening": 0.2,
-    "yield_strength": 35,
+    "work_hardening": 0.932,
+    "yield_strength": 20.0,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0.724
   },
   "molten": {
-    "viscosity": 6,
-    "density": 5.52
+    "viscosity": 7,
+    "density": 5.52,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.4,
+    "reflectivity": 0.5,
     "magnetic": true,
     "curie_temperature": 900
   },
   "electrical": {
-    "drop": 0.4,
-    "electrode_potential": -0.2
+    "drop": 1.67,
+    "electrode_potential": -0.2,
+    "conductivity": 0.03
   },
-  "ampacity": 0.05,
-  "corrosion_resistance": 0.95,
+  "ampacity": 0.196,
+  "corrosion_resistance": 0.9,
   "enchantability": 8,
   "forms": {
     "dust": "feedback:cermet_powder",
@@ -47,5 +53,6 @@
     "fine_wire",
     "foil",
     "coin"
-  ]
+  ],
+  "toxicity": 0.3
 }

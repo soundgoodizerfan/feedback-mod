@@ -41,7 +41,7 @@ Only real fuels burn here, and an item burns because of what it's *made of*: log
 
 With neither, the piece smoulders. Self-fired vessels have no oxidiser input, so a blaze fuel in one only smoulders. Nothing is damaged by a smouldering fuel.
 
-Wood fires are too cool for any metalwork. Coal and charcoal will melt copper (1000 Tu) and gold (950 Tu) but **won't reach steel** (1350 Tu) on their own.
+Wood fires are too cool for any metalwork. Coal and charcoal will melt copper (1085 Tu) and gold (1064 Tu) but **won't reach steel** (1350 Tu) on their own.
 
 **Every piece of fuel burns a little differently.** Each piece runs a bit hotter or cooler than the last, for its whole burn, so you'll notice good and bad batches.
 

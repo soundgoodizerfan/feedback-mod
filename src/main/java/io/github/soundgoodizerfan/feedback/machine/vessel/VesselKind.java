@@ -57,8 +57,27 @@ public enum VesselKind {
         this.smoke = smoke;
     }
 
+    /**
+     * The walls' mass in Mu and the material they are built of: the vessel's own thermal mass is that many Mu times the
+     * material's specific heat (the charge's is added by the vessel). The old invented figure (the field) stands only where the
+     * material table does not have the wall.
+     */
+    private record Wall(String material, float mu) {
+    }
+
+    private static final java.util.Map<VesselKind, Wall> WALLS = java.util.Map.of(
+            FURNACE, new Wall("stone", 24f), SMOKER, new Wall("stone", 18f), BLAST_FURNACE, new Wall("brick", 360f),
+            IMPROVED_FURNACE, new Wall("brick", 72f), KILN, new Wall("brick", 36f), ANNEALING_FURNACE, new Wall("brick", 180f),
+            PUDDLING_FURNACE, new Wall("brick", 140f));
+
     public ThermalMass mass() {
-        return mass;
+        Wall wall = WALLS.get(this);
+        if (wall == null)
+            return mass;
+        var material = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()
+                .get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", wall.material()));
+        return material == null ? mass : material.thermal().specificHeat()
+                .map(h -> new ThermalMass(h.workPerMuPerTu() * wall.mu())).orElse(mass);
     }
 
     public Conductance leak() {

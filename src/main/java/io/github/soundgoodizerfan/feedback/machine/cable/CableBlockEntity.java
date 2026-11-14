@@ -123,8 +123,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         Material material = MaterialTable.get().materials().get(this.material);
         if (material == null)
             return;
-        // Absent means unmeasured, never zero: an unmeasured material is a wire
-        // that carries nothing, which is a pack error that shows on the first current.
+        // A file that lacks the figure is unfinished (the completeness checker lists it): such a material is a wire
+        // that carries nothing, which shows on the first current.
         float area = gauge().area();
         baseRating = material.ampacity().orElse(0f) * ElectricMachineTuning.WIRE_AMPS_PER_AMPACITY * area;
         baseDrop = material.electrical().drop().orElse(0f) * ElectricMachineTuning.CABLE_LOSS_EU_PER_DROP / area;

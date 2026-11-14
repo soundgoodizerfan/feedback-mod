@@ -1,13 +1,17 @@
 {
   "color": "#9fb8e8",
   "kind": "mineral",
-  "exclude": ["dust", "ingot"],
-  "hardness": 8,
+  "exclude": [
+    "dust",
+    "ingot"
+  ],
+  "hardness": 4.91,
   "density": 0.8,
   "mechanical": {
-    "toughness": 30,
-    "yield_strength": 40,
-    "friction": 0.4
+    "toughness": 2,
+    "yield_strength": 0.2,
+    "friction": 0.4,
+    "abrasiveness": 0.147
   },
   "enchantability": 20,
   "forms": {
@@ -15,5 +19,26 @@
   },
   "perks": {
     "featherlight": 1
+  },
+  "thermal": {
+    "melting_point": 1000,
+    "specific_heat": 1.2,
+    "latent_heat_fusion": 150,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1000,
+    "service_temperature": 600,
+    "conductivity": 7.48e-05,
+    "cooling_rate": 3.02
+  },
+  "corrosion_resistance": 0.5,
+  "separation": {
+    "reflectivity": 0.4
+  },
+  "toxicity": 0.2,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.72,
+    "shear_thickening": 0
   }
 }

@@ -1,20 +1,40 @@
 {
   "color": "#e8e4d0",
   "kind": "granular",
-  "hardness": 1,
+  "hardness": 1.47,
   "density": 1.77,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.0006
+    "cooling_rate": 1.17,
+    "conductivity": 7.48e-05,
+    "melting_point": 210,
+    "specific_heat": 1.4,
+    "latent_heat_fusion": 100,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 210,
+    "service_temperature": 126
   },
   "mechanical": {
     "friction": 0.5,
-    "abrasiveness": 0.1
+    "abrasiveness": 0,
+    "yield_strength": 0.03,
+    "toughness": 0.2
   },
   "forms": {
     "raw": "feedback:fertiliser"
   },
   "exclude": [
     "ingot"
-  ]
+  ],
+  "corrosion_resistance": 0.4,
+  "separation": {
+    "reflectivity": 0.4
+  },
+  "toxicity": 0.5,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.59,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }

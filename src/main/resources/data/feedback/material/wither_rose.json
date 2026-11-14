@@ -16,5 +16,7 @@
       "loops": 2,
       "r": 1.5
     }
-  }
+  },
+  "parent": "_kind_flower",
+  "toxicity": 0.6
 }

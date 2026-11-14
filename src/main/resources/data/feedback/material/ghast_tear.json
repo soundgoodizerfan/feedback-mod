@@ -3,7 +3,7 @@
   "traits": [
     "saline"
   ],
-  "hardness": 1,
+  "hardness": 0.981,
   "forms": {
     "raw": "minecraft:ghast_tear"
   },
@@ -14,8 +14,38 @@
       "vitamin": 0.03
     }
   },
-  "exclude": ["dust", 
+  "exclude": [
+    "dust",
     "ingot",
     "grip"
-  ]
+  ],
+  "thermal": {
+    "melting_point": 300,
+    "boiling_point": 900,
+    "specific_heat": 3,
+    "latent_heat_fusion": 200,
+    "latent_heat_vaporisation": 1500,
+    "oxidation_temperature": 300,
+    "service_temperature": 180,
+    "conductivity": 0.00015,
+    "cooling_rate": 1.25
+  },
+  "mechanical": {
+    "yield_strength": 0.02,
+    "toughness": 0.2,
+    "abrasiveness": 0,
+    "friction": 0.6
+  },
+  "corrosion_resistance": 0.6,
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "toxicity": 0.3,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.9,
+    "shear_thickening": 0
+  },
+  "enchantability": 5,
+  "density": 1.0
 }

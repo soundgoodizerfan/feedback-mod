@@ -1,29 +1,38 @@
 {
   "kind": "mineral",
-  "exclude": ["dust", "ingot"],
+  "exclude": [
+    "dust",
+    "ingot"
+  ],
   "traits": [
     "transparent"
   ],
-  "hardness": 2,
+  "hardness": 1.47,
   "density": 0.917,
   "thermal": {
     "melting_point": 0,
     "boiling_point": 100,
-    "cooling_rate": 1,
-    "conductivity": 0.00055
+    "cooling_rate": 2.54,
+    "conductivity": 0.000549,
+    "specific_heat": 2.05,
+    "latent_heat_fusion": 334,
+    "latent_heat_vaporisation": 2257,
+    "oxidation_temperature": 0,
+    "service_temperature": 0
   },
   "mechanical": {
-    "toughness": 1,
-    "yield_strength": 0.5,
+    "toughness": 0.1,
+    "yield_strength": 0.02,
     "friction": 0.03,
-    "abrasiveness": 0.05
+    "abrasiveness": 0
   },
   "molten": {
     "viscosity": 1,
-    "density": 1
+    "density": 1,
+    "shear_thickening": 0
   },
   "separation": {
-    "reflectivity": 0.5
+    "reflectivity": 0.1
   },
   "forms": {
     "block": "minecraft:ice",
@@ -31,5 +40,8 @@
   },
   "perks": {
     "chill": 1
-  }
+  },
+  "corrosion_resistance": 0.8,
+  "toxicity": 0,
+  "enchantability": 5
 }

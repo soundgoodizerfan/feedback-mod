@@ -10,6 +10,11 @@
       "toxin": 0.08
     }
   },
-  "exclude": ["block", "rod"],
-  "hardness": 0.1
+  "exclude": [
+    "block",
+    "rod"
+  ],
+  "hardness": 0.1,
+  "parent": "_kind_animal",
+  "toxicity": 0.8
 }

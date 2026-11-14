@@ -1,32 +1,39 @@
 {
   "color": "#7a6a5c",
   "kind": "metal",
-  "hardness": 3,
+  "hardness": 5.89,
   "density": 5,
   "min_temperature": 900,
   "max_temperature": 1500,
   "thermal": {
-    "melting_point": 1600,
-    "boiling_point": 2862,
-    "cooling_rate": 1.5,
-    "conductivity": 0.008,
+    "melting_point": 1500,
+    "boiling_point": 2860,
+    "cooling_rate": 2.09,
+    "conductivity": 0.00374,
     "oxidation_temperature": 570,
-    "service_temperature": 400
+    "service_temperature": 400,
+    "specific_heat": 0.5,
+    "latent_heat_fusion": 200,
+    "latent_heat_vaporisation": 6000,
+    "anneal_temperature": 436
   },
   "mechanical": {
-    "toughness": 10,
+    "toughness": 20,
     "ductility": 2,
     "friction": 0.7,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.177,
+    "yield_strength": 0.8,
+    "work_hardening": 0.589
   },
   "molten": {
     "viscosity": 6,
-    "density": 6.98
+    "density": 6.98,
+    "shear_thickening": 0
   },
   "separation": {
     "magnetic": true,
     "curie_temperature": 770,
-    "reflectivity": 0.2
+    "reflectivity": 0.4
   },
   "forms": {
     "bloom": "feedback:iron_bloom"
@@ -76,5 +83,14 @@
   ],
   "bears": {
     "feedback:wrought_iron": 0.7
-  }
+  },
+  "corrosion_resistance": 0.2,
+  "toxicity": 0,
+  "enchantability": 8,
+  "electrical": {
+    "conductivity": 0.03,
+    "drop": 1.67,
+    "electrode_potential": -0.44
+  },
+  "ampacity": 0.204
 }

@@ -43,6 +43,7 @@ If there's nowhere for the fluid to go in front, it doesn't pump.
 ## Notes
 
 - Pumping **up** adds a lift load on top of the flat load: 6 Su with a standard impeller, more with an axial one, less with a screw. Level and downward cost nothing extra.
+- **Soul oil** thickens the faster it is pushed: a pump turned fast on it moves less than its speed says and labours, wearing as it does when it runs against a closed line. Turn it slowly. The material's *Shear thickening* figure ([Materials](Materials.md#heat-and-other-figures)) says how much.
 - It has no switch. Put a [Clutch](Clutch.md) on its shaft.
 
 ## Attunements

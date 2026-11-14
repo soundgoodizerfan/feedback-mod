@@ -4,18 +4,27 @@
   "traits": [
     "sticky"
   ],
-  "hardness": 0.3,
+  "hardness": 4.91,
   "density": 1.9,
   "thermal": {
-    "cooling_rate": 0.9,
-    "conductivity": 0.00025
+    "cooling_rate": 2.37,
+    "conductivity": 0.0002,
+    "melting_point": 1400,
+    "specific_heat": 0.9,
+    "latent_heat_fusion": 300,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 1400,
+    "service_temperature": 840
   },
   "mechanical": {
     "friction": 0.9,
-    "abrasiveness": 0.3
+    "abrasiveness": 0.147,
+    "yield_strength": 0.02,
+    "toughness": 0.2
   },
   "separation": {
-    "reflectivity": 0.15
+    "reflectivity": 0.1
   },
   "forms": {
     "raw": "feedback:red_mud"
@@ -31,5 +40,13 @@
     "crushed",
     "concentrate",
     "tailings"
-  ]
+  ],
+  "corrosion_resistance": 0.8,
+  "toxicity": 0.3,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.71,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }

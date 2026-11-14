@@ -3,5 +3,5 @@
   "to": "large_shot",
   "operation": "blow",
   "base": 4,
-  "slope": 1.3
+  "slope": 0.85
 }

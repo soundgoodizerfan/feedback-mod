@@ -4,22 +4,37 @@
   "exclude": [
     "ingot"
   ],
-  "hardness": 2.5,
+  "hardness": 19.6,
   "density": 1.7,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 0.003,
-    "melting_point": 740
+    "cooling_rate": 1.38,
+    "conductivity": 0.00015,
+    "melting_point": 743,
+    "specific_heat": 1.6,
+    "latent_heat_fusion": 130,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 743,
+    "service_temperature": 446
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 0.3,
     "friction": 0.4,
-    "abrasiveness": 0.1
+    "abrasiveness": 0.37,
+    "yield_strength": 0.1
   },
   "separation": {
-    "reflectivity": 0.8
+    "reflectivity": 0.4
   },
   "bears": {
     "feedback:boron": 0.2
-  }
+  },
+  "corrosion_resistance": 0.6,
+  "toxicity": 0.5,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.53,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

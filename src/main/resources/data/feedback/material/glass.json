@@ -4,24 +4,31 @@
   "traits": [
     "transparent"
   ],
-  "hardness": 28,
+  "hardness": 54.0,
   "density": 2.5,
   "thermal": {
     "melting_point": 1400,
-    "cooling_rate": 1,
-    "conductivity": 0.00025,
+    "cooling_rate": 2.02,
+    "conductivity": 0.000249,
     "anneal_temperature": 550,
-    "service_temperature": 500
+    "service_temperature": 500,
+    "specific_heat": 0.84,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1400
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 0.75,
     "friction": 0.4,
-    "abrasiveness": 0.6,
-    "hardenable": true
+    "abrasiveness": 0.533,
+    "hardenable": true,
+    "yield_strength": 0.5
   },
   "molten": {
     "viscosity": 10000,
-    "density": 2.3
+    "density": 2.3,
+    "shear_thickening": 0
   },
   "separation": {
     "reflectivity": 0.08
@@ -67,9 +74,15 @@
     "ingot": "feedback:glass_ingot",
     "tubing": "feedback:glass_tubing"
   },
-  "exclude": ["plate", "rod", "lens", "fibre"],
+  "exclude": [
+    "plate",
+    "rod",
+    "lens",
+    "fibre"
+  ],
   "enchantability": 2,
   "electrical": {
     "insulation": "hv"
-  }
+  },
+  "toxicity": 0
 }

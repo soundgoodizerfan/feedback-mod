@@ -17,7 +17,7 @@ Put meltable things in a hot crucible and they melt into its tank once they reac
 | Nether Quartz | Molten Quartz Glass (casts into a Quartz Glass ingot) |
 | Scrap, Swarf or Dust of any metal with a molten form | Molten metal (scrap and swarf give 36 mB) |
 
-JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1000, cast iron 1200, glass 1400, iron 1538, wrought iron 1600, quartz glass 1650. An ingot makes one ingot's worth, **144 mB**. An ore makes only part of its metal, and more of it the finer the stage it is melted at ([Ore Processing](Ore_Processing.md#how-much-metal-each-stage-gives)).
+JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 1064, copper 1085, cast iron 1200, glass 1400, wrought iron 1500, iron 1538, quartz glass 1710. An ingot makes one ingot's worth, **144 mB**. An ore makes only part of its metal, and more of it the finer the stage it is melted at ([Ore Processing](Ore_Processing.md#how-much-metal-each-stage-gives)).
 
 Melting takes time. A vessel melts one piece at a time: about half a second for an ingot, nine times that for a block, a fraction of it for dust, and the finer the form the sooner it is done. A crucible's tank holds 1296 mB, nine ingots. If the tank is full, anything else that melts is lost.
 

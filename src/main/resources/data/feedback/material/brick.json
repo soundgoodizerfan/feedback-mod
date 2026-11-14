@@ -3,22 +3,27 @@
   "traits": [
     "porous"
   ],
-  "hardness": 15,
+  "hardness": 49.1,
   "density": 1.9,
   "thermal": {
     "melting_point": 1600,
-    "cooling_rate": 0.8,
+    "cooling_rate": 2.46,
     "conductivity": 0.000175,
-    "service_temperature": 1000
+    "service_temperature": 1000,
+    "specific_heat": 0.84,
+    "latent_heat_fusion": 400,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1600
   },
   "mechanical": {
-    "toughness": 4,
-    "yield_strength": 1,
+    "toughness": 1,
+    "yield_strength": 0.2,
     "friction": 0.7,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.518
   },
   "separation": {
-    "reflectivity": 0.25
+    "reflectivity": 0.2
   },
   "corrosion_resistance": 0.9,
   "forms": {
@@ -38,5 +43,12 @@
     "sulfur_tolerance": 2.0,
     "regeneration_temperature": 450,
     "sinter_temperature": 700
-  }
+  },
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.71,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

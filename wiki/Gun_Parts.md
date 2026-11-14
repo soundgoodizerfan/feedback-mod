@@ -10,23 +10,23 @@ Every metal has these part forms. Each is made by one step on a machine, like an
 
 | Part | Made from | By | Work (Fu) | Steel |
 | --- | --- | --- | --- | --- |
-| **Gun Barrel** | Turned Rod | [Drill Press](Drill_Press.md) | 6 + 1.5 × hardness | 28.5 |
-| **Receiver** | Ingot | Drill Press | 8 + 2 × hardness | 38 |
-| **Slide** | Plate | [Grinding Wheel](Grinding_Wheel.md) | 6 + 1.5 × hardness | 28.5 |
-| **Bolt** | Rod | Grinding Wheel | 6 + 1.5 × hardness | 28.5 |
-| **Trigger Group** | Drilled Plate | Grinding Wheel | 4 + hardness | 19 |
-| **Grip** | Ingot | [Lathe](Lathe.md) | 4 + hardness | 19 |
-| **Sight** | Plate | Rolling Mill | 4 + hardness | 19 |
-| **Belt Feed** | Plate | Rolling Mill | 4 + hardness | 19 |
-| **Box Feed** | Plate | Rolling Mill | 4 + hardness | 19 |
-| **Cylinder** | Ground Ingot | Drill Press | 8 + 2 × hardness | 38 |
-| **Magazine Tube** | Rod | Drill Press | 6 + 1.5 × hardness | 28.5 |
-| **Suppressor** | Cylinder | Lathe | 4 + hardness | 19 |
-| **Muzzle Brake** | Magazine Tube | Drill Press | 4 + hardness | 19 |
-| **Relief Vent** | Nugget | Drill Press | 4 + hardness | 19 |
-| **Barrel Shroud** | Drilled Plate | [Rolling Mill](Rolling_Mill.md) | 4 + hardness | 19 |
+| **Gun Barrel** | Turned Rod | [Drill Press](Drill_Press.md) | 6 + 0.98 × hardness | 20.4 |
+| **Receiver** | Ingot | Drill Press | 8 + 1.3 × hardness | 27.1 |
+| **Slide** | Plate | [Grinding Wheel](Grinding_Wheel.md) | 6 + 0.98 × hardness | 20.4 |
+| **Bolt** | Rod | Grinding Wheel | 6 + 0.98 × hardness | 20.4 |
+| **Trigger Group** | Drilled Plate | Grinding Wheel | 4 + 0.65 × hardness | 13.6 |
+| **Grip** | Ingot | [Lathe](Lathe.md) | 4 + 0.65 × hardness | 13.6 |
+| **Sight** | Plate | Rolling Mill | 4 + 0.65 × hardness | 13.6 |
+| **Belt Feed** | Plate | Rolling Mill | 4 + 0.65 × hardness | 13.6 |
+| **Box Feed** | Plate | Rolling Mill | 4 + 0.65 × hardness | 13.6 |
+| **Cylinder** | Ground Ingot | Drill Press | 8 + 1.3 × hardness | 27.1 |
+| **Magazine Tube** | Rod | Drill Press | 6 + 0.98 × hardness | 20.4 |
+| **Suppressor** | Cylinder | Lathe | 4 + 0.65 × hardness | 13.6 |
+| **Muzzle Brake** | Magazine Tube | Drill Press | 4 + 0.65 × hardness | 13.6 |
+| **Relief Vent** | Nugget | Drill Press | 4 + 0.65 × hardness | 13.6 |
+| **Barrel Shroud** | Drilled Plate | [Rolling Mill](Rolling_Mill.md) | 4 + 0.65 × hardness | 13.6 |
 
-The cutting machines also have to be **harder than the metal**: the drill bit is 18, the lathe bit 20, the grinding wheel 30. So hardened steel (25) parts need a grinding wheel for every step, which rules out anything drilled or turned. **Netherite (40) is harder than every cutting tool**, so netherite parts can't be machined yet.
+The cutting machines also have to be **harder than the metal**: the drill bit is 78, the lathe bit 150, the grinding wheel 196. So hardened steel (68.7) parts can be drilled, turned and ground, but netherite (128) is past the drill bit and tungsten carbide (157) past the lathe bit too, so only the grinding wheel cuts them, which rules out anything drilled.
 
 ### Grips from bone and wood
 
@@ -69,7 +69,7 @@ The **wall** is what's left between the bore and the outside: (outside − bore)
 
 The machines don't know what you're aiming for. Drill until the wall is under **0.5 mm**, or grind it shorter than **5 cm**, and the barrel is **swarf**.
 
-Work per cut is the machine's strength (St) divided by the metal's hardness. For example, a fast drill feed (22 St) on steel (15) is about 1.5 Fu a push, so each push widens the bore by about 0.15 mm.
+Work per cut is the machine's strength (St) divided by the metal's hardness. For example, a fast drill feed (48.4 St) on steel (14.7) is about 3.3 Fu a push, so each push widens the bore by about 0.33 mm.
 
 **Without [Calipers](Instruments.md#calipers)** a barrel just says *"A bored barrel. Calipers would say how wide."* With calipers in your inventory you get its bore, wall and length to 0.1 mm.
 
@@ -149,29 +149,29 @@ Add a fitting to a finished gun on the [Fit tab](Engineering_Table.md#fit-tab) o
 
 ## The chamber
 
-How much pressure a chamber holds is the barrel metal's **strength** times the barrel's **wall**, divided by **half the bore**:
+How much pressure a chamber holds is the barrel metal's **yield strength** times the barrel's **wall**, divided by **half the bore**:
 
-> rating (Pu) = strength × wall (mm) ÷ (bore (mm) ÷ 2)
+> rating (Pu) = yield strength × wall (mm) ÷ (bore (mm) ÷ 2)
 
-A standard round of gunpowder makes **3 Pu**. So a 9 mm chamber with a 3 mm wall holds:
+A standard round of gunpowder makes **3 Pu**; a chamber rated under the pressure is damaged by it, the further under the worse. A 9 mm chamber with a 3 mm wall holds:
 
-| Barrel metal | Strength | 9 mm, 3 mm wall | |
-| --- | --- | --- | --- |
-| Netherite | 50 | 33 Pu | |
-| Hardened Steel | 35 | 23 Pu | |
-| Steel | 15 | 10 Pu | |
-| Iron | 8 | 5.3 Pu | |
-| Bronze, Cast Iron | 6 | 4 Pu | |
-| Brass | 5 | 3.3 Pu | barely |
-| Copper | 4 | 2.7 Pu | damaged by a standard round |
-| Zinc | 3 | 2 Pu | damaged |
-| Gold | 2 | 1.3 Pu | badly damaged |
-| Tin | 1 | 0.7 Pu | wrecked almost at once |
-| Lead | 0.5 | 0.3 Pu | wrecked on the first shot. Lead is for bullets |
+| Barrel metal | Yield strength | 9 mm, 3 mm wall |
+| --- | --- | --- |
+| Netherite | 20 | 13.3 Pu |
+| Hardened Steel | 15 | 10 Pu |
+| Steel | 2.5 | 1.7 Pu |
+| Iron | 1.5 | 1 Pu |
+| Bronze, Cast Iron | 2 | 1.3 Pu |
+| Brass | 1.25 | 0.8 Pu |
+| Copper | 0.7 | 0.5 Pu |
+| Zinc | 1 | 0.7 Pu |
+| Gold | 0.3 | 0.2 Pu |
+| Tin | 0.15 | 0.1 Pu |
+| Lead | 0.12 | 0.1 Pu |
 
 Halving the bore doubles the rating; so does going from a 1.5 mm wall to 3 mm. The other parts don't affect the chamber: they add weight and their own metal. The action then scales it: a bolt's locking lugs rate the same steel 25% higher, a pump or self-loading action holds it as is, a lever rates it 25% lower and a break action 40% lower, so a break gun takes shot and low-pressure rounds while a bolt rifle takes the hot ones.
 
-**The receiver.** On a bolt, lever, pump, break or self-loading gun (any gun without a slide), the receiver holds the breech shut, so it caps the rating at **half its metal's strength**, whatever the barrel could take. Steel and other strong metals never reach the cap; a polymer or soft-metal receiver (lead, tin, polyethylene) holds only weak loads, and the chamber figure turns red when a round is over it. A slide pistol is exempt: the slide carries the breech, and the receiver takes none of the pressure.
+**The receiver.** On a bolt, lever, pump, break or self-loading gun (any gun without a slide), the receiver holds the breech shut, so it caps the rating at **half its metal's yield strength**, whatever the barrel could take. A stronger receiver metal lifts the cap; a polymer or soft-metal receiver (lead, tin, polyethylene) holds only weak loads, and the chamber figure turns red when a round is over it. A slide pistol is exempt: the slide carries the breech, and the receiver takes none of the pressure.
 
 **A softening receiver.** Every receiver material has a service temperature, and the barrel's heat reaches the receiver. Polyethylene softens at **80 Tu**. Each shot fired with the barrel above the receiver's service temperature wears the gun faster, more the further over it runs, so a plastic frame wants a cool barrel.
 

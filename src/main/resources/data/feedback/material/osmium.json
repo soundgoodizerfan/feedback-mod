@@ -5,32 +5,41 @@
   "perks": {
     "toxic": 2
   },
-  "hardness": 9,
+  "hardness": 39.2,
   "density": 22.59,
   "thermal": {
     "melting_point": 3033,
     "boiling_point": 5012,
-    "cooling_rate": 1,
-    "conductivity": 0.02,
-    "service_temperature": 3000
+    "cooling_rate": 1.81,
+    "conductivity": 0.0219,
+    "service_temperature": 3000,
+    "specific_heat": 0.13,
+    "latent_heat_fusion": 31,
+    "latent_heat_vaporisation": 3300,
+    "oxidation_temperature": 3033,
+    "anneal_temperature": 1049
   },
   "mechanical": {
-    "toughness": 20,
-    "yield_strength": 60,
+    "toughness": 10,
+    "yield_strength": 6.0,
     "friction": 0.6,
-    "abrasiveness": 0.4
+    "abrasiveness": 0.482,
+    "ductility": 3,
+    "work_hardening": 3.92
   },
   "separation": {
     "magnetic": false,
-    "reflectivity": 0.5
+    "reflectivity": 0.7
   },
-  "corrosion_resistance": 0.8,
+  "corrosion_resistance": 1.0,
   "enchantability": 3,
   "forms": {
     "sponge": "feedback:osmium_sponge",
     "dust": "feedback:osmium_powder",
     "green_compact": "feedback:osmium_green_compact",
-    "slug": "minecraft:heavy_core"
+    "slug": "minecraft:heavy_core",
+    "heavy_core": "minecraft:heavy_core",
+    "mace": "minecraft:mace"
   },
   "exclude": [
     "barrel_shroud",
@@ -69,5 +78,17 @@
     "trigger_group",
     "turned_rod",
     "wire"
-  ]
+  ],
+  "toxicity": 2.8,
+  "molten": {
+    "viscosity": 7,
+    "density": 20.3,
+    "shear_thickening": 0
+  },
+  "electrical": {
+    "conductivity": 0.14,
+    "drop": 0.357,
+    "electrode_potential": 0.85
+  },
+  "ampacity": 0.629
 }

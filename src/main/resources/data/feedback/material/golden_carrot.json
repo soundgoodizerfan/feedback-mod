@@ -18,5 +18,6 @@
       "sobering": 0.06,
       "night_sight": 0.08
     }
-  }
+  },
+  "parent": "_kind_vegetable"
 }

@@ -1,21 +1,30 @@
 {
   "color": "#e8e6df",
   "kind": "mineral",
-  "exclude": ["ingot"],
-  "hardness": 2,
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 2.45,
   "density": 2.1,
   "thermal": {
-    "melting_point": 607,
-    "cooling_rate": 1,
-    "conductivity": 0.002
+    "melting_point": 334,
+    "cooling_rate": 1.78,
+    "conductivity": 0.000125,
+    "boiling_point": 400,
+    "specific_heat": 0.95,
+    "latent_heat_fusion": 100,
+    "latent_heat_vaporisation": 1500,
+    "oxidation_temperature": 334,
+    "service_temperature": 200
   },
   "mechanical": {
-    "toughness": 1,
+    "toughness": 0.3,
     "friction": 0.3,
-    "abrasiveness": 0.1
+    "abrasiveness": 0.0359,
+    "yield_strength": 0.05
   },
   "separation": {
-    "reflectivity": 0.6
+    "reflectivity": 0.4
   },
   "combustion": {
     "oxygen_balance": 2
@@ -24,5 +33,13 @@
     "lump": "feedback:saltpetre",
     "ore": "feedback:saltpetre_ore",
     "deepslate_ore": "feedback:deepslate_saltpetre_ore"
-  }
+  },
+  "corrosion_resistance": 0.4,
+  "toxicity": 0.5,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.89,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

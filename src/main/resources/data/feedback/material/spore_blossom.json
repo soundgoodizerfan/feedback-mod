@@ -15,5 +15,7 @@
       "type": "spiral",
       "turns": 2
     }
-  }
+  },
+  "parent": "_kind_flower",
+  "toxicity": 0.2
 }

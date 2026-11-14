@@ -5,46 +5,59 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 15,
+  "hardness": 14.7,
   "density": 7.85,
   "min_temperature": 900,
   "max_temperature": 1100,
   "thermal": {
     "melting_point": 1450,
-    "boiling_point": 2862,
-    "cooling_rate": 1.5,
+    "boiling_point": 2860,
+    "cooling_rate": 1.38,
     "conductivity": 0.0125,
     "oxidation_temperature": 570,
     "anneal_temperature": 720,
-    "service_temperature": 550
+    "service_temperature": 550,
+    "specific_heat": 0.49,
+    "latent_heat_fusion": 247,
+    "latent_heat_vaporisation": 6090
   },
   "mechanical": {
-    "toughness": 60,
+    "toughness": 50,
     "ductility": 5,
-    "work_hardening": 1,
-    "yield_strength": 15,
+    "work_hardening": 0.98,
+    "yield_strength": 2.5,
     "friction": 0.6,
-    "abrasiveness": 0.4,
+    "abrasiveness": 0.324,
     "hardenable": true
   },
   "molten": {
     "viscosity": 6,
-    "density": 7
+    "density": 7,
+    "shear_thickening": 0
   },
   "separation": {
     "magnetic": true,
     "curie_temperature": 770,
-    "reflectivity": 0.55
+    "reflectivity": 0.6
   },
   "electrical": {
     "drop": 0.5,
-    "core_loss": 0.04
+    "core_loss": 0.04,
+    "conductivity": 0.1,
+    "electrode_potential": -0.44
   },
-  "ampacity": 0.1,
-  "corrosion_resistance": 0.3,
+  "ampacity": 0.366,
+  "corrosion_resistance": 0.35,
   "forms": {
     "ingot": "feedback:steel_ingot"
   },
   "enchantability": 10,
-  "attuning": {"temperature": 720, "lock": 500, "coercive": 0.45, "loop_width": 0.2, "lag": 10}
+  "attuning": {
+    "temperature": 720,
+    "lock": 500,
+    "coercive": 0.45,
+    "loop_width": 0.2,
+    "lag": 10
+  },
+  "toxicity": 0
 }

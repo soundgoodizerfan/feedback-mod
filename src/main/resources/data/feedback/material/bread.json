@@ -18,5 +18,6 @@
       "fortifying": 0.02,
       "hearth": 0.03
     }
-  }
+  },
+  "parent": "_kind_dough"
 }

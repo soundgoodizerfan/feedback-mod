@@ -5,22 +5,27 @@
     "flammable",
     "fibrous"
   ],
-  "hardness": 1,
+  "hardness": 3.92,
   "density": 0.7,
   "thermal": {
-    "cooling_rate": 1,
-    "conductivity": 5e-05,
+    "cooling_rate": 2.03,
+    "conductivity": 3.74e-05,
     "oxidation_temperature": 300,
-    "service_temperature": 150
+    "service_temperature": 150,
+    "melting_point": 300,
+    "specific_heat": 1.4,
+    "latent_heat_fusion": 100,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800
   },
   "mechanical": {
-    "toughness": 25,
-    "yield_strength": 6,
+    "toughness": 3,
+    "yield_strength": 0.6,
     "friction": 0.4,
-    "abrasiveness": 0.1
+    "abrasiveness": 0.111
   },
   "separation": {
-    "reflectivity": 0.5
+    "reflectivity": 0.4
   },
   "corrosion_resistance": 0.3,
   "forms": {
@@ -33,5 +38,11 @@
   "enchantability": 12,
   "exclude": [
     "paper_case"
-  ]
+  ],
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 0.63,
+    "shear_thickening": 0
+  }
 }

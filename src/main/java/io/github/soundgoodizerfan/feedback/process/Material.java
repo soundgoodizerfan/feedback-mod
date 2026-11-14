@@ -20,7 +20,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
+import io.github.soundgoodizerfan.feedback.core.unit.LatentHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Qu;
+import io.github.soundgoodizerfan.feedback.core.unit.SpecificHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Ru;
@@ -38,12 +40,14 @@ import net.minecraft.world.item.Item;
  * What a substance <em>is</em>, as a table of figures. Everything about how it can be worked is
  * computed from these on reload by {@link FormTable}; no recipe names a material.
  *
- * <h2>A bag of values, checked only by whoever needs one</h2>
- * Hardness is the only value every material has, because {@code Fu per blow = St / hardness}
- * needs it. Anything else (a hot-working window today; melting point, thermal mass, cooling rate
- * later) is optional and costs nothing until a system asks. This is the shape GregTech's
- * {@code Material} uses -- a map of optional typed properties, null-checked by the consumer --
- * minus its flag layer, which a form's existence in {@link #forms} makes redundant.
+ * <h2>Every figure for its phase, in every file</h2>
+ * The world resolves on truth, not measurement, so a file that lacks a figure its phase has is unfinished
+ * (author 2026-11-13); {@code scripts/check_material_complete.py} lists such files. The codec stays tolerant
+ * (every field but hardness is optional) so a datapack material loads while it is being written, and a shared
+ * kind template ({@code "template": true}, named as {@code parent}) supplies the figures a family has in common.
+ * A behaviour block (combustion, neutron, catalyst, potion) is omitted only when the thing truly has none of it.
+ * This is the shape GregTech's {@code Material} uses, minus its flag layer, which a form's existence in
+ * {@link #forms} makes redundant.
  *
  * <h2>Hardness belongs to the state, so hardened steel is its own material</h2>
  * Quenched steel is harder than steel, and removal reads hardness from the material. Rather than
@@ -98,12 +102,11 @@ import net.minecraft.world.item.Item;
  *                       the client then averages the texture of its ingot or block item, and
  *                       failing that takes its kind's grey. Only the client ever draws it.
  *
- * <h2>Most of these figures have no reader yet</h2>
- * Everything from {@code kind} down was entered ahead of any system that reads it, so the table is
- * ready when one arrives. Absent means nobody has measured
- * it, never zero. The numbers are placeholders (§19): real-world values where the real world has
- * one, rounded, with Tu read as degrees Celsius -- tin, lead and zinc already melt at their real
- * figures -- except where an existing table already said otherwise, which wins.
+ * <h2>Units come from their definitions</h2>
+ * {@code Tu} is degrees Celsius, density is kg/L, heat figures are kJ-based ({@code FTuning.JOULES_PER_WORK}),
+ * thermal conductivity is real W/(m K) over 4010 (copper 0.1), hardness is 0.1 GPa Vickers per {@code St}, yield
+ * 100 MPa per {@code St}, toughness 1 MPa sqrt(m) per {@code St}. {@code docs/material_figures.md} gives every figure's
+ * real definition and what reads it.
  *
  * <h2>Generated items</h2>
  * Items are registered before a datapack exists, so {@link FormItems} reads the mod's own
@@ -127,7 +130,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst,
                        Optional<Potion> potion, Optional<XpCapacity> xpStore,
-                       Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron, Optional<Integer> fastener) {
+                       Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron, Optional<Integer> fastener,
+                       Optional<Float> toxicity) {
 
     /**
      * How a material meets neutrons in a reactor core (fission spec 2.5): {@code fissile} is what a rod of it gives per neutron
@@ -325,6 +329,29 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
+     * The temperature at which stuff made of it fails in a fire: what burns (organic, polymer, plant and food kinds, anything with
+     * a {@code combustion} block) burns up at its oxidation temperature; metal, ceramic, mineral and the rest hold until they melt or
+     * decompose, so iron scales in lava rather than burning away (author 2026-11-13).
+     */
+    public Optional<Tu> failureTemperature() {
+        boolean burns = combustion.isPresent() || kind.map(k -> switch (k) {
+            case ORGANIC, POLYMER, FLOWER, HERB, GRAIN, VEGETABLE, FRUIT, FUNGUS, ANIMAL, SEAFOOD, DOUGH, DISH -> true;
+            default -> false;
+        }).orElse(false);
+        return burns ? thermal.oxidationTemperature().or(thermal::meltingPoint) : thermal.meltingPoint().or(thermal::oxidationTemperature);
+    }
+
+    /** Whether stuff made of it survives lava: its failure temperature is above lava's fire. Such an item is {@code fire_resistant}, as vanilla netherite is. */
+    public boolean survivesLava() {
+        return failureTemperature().map(t -> t.value() > ThermalTuning.FIRE_TU_LAVA.value()).orElse(false);
+    }
+
+    /** How fast a loose workpiece of it sheds heat: its figure, else the stock rate for anything that states none. */
+    public TuRate looseCooling() {
+        return thermal.coolingRate().orElse(ThermalTuning.ITEM_COOLING_TU_PER_TICK);
+    }
+
+    /**
      * The hottest an electrode of this material can run, or empty if it cannot be one: graphite sublimes
      * ({@code sublimation_temperature}); a conducting metal (one with an ampacity) boils.
      */
@@ -346,13 +373,18 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param oxidationTemperature above this, held in air, it scales (metal) or burns (organic).
      * @param annealTemperature    heating past this undoes work hardening.
      * @param serviceTemperature   the hottest a machine body of it may run before it softens and wears.
+     * @param specificHeat         Work to warm one Mu by one Tu (real kJ/(kg K)); a body's thermal mass is this times its mass.
+     * @param latentHeatFusion     Work per Mu a melt or freeze absorbs or gives up at the melting point, the temperature holding.
+     * @param latentHeatVaporisation Work per Mu a boil or condensation absorbs or gives up at the boiling point.
      */
     public record Thermal(Optional<Tu> meltingPoint, Optional<Tu> boilingPoint, Optional<TuRate> coolingRate,
                           Optional<Conductance> conductivity, Optional<Tu> oxidationTemperature,
                           Optional<Tu> annealTemperature, Optional<Tu> serviceTemperature,
-                          Optional<Tu> sublimationTemperature) {
+                          Optional<Tu> sublimationTemperature, Optional<SpecificHeat> specificHeat,
+                          Optional<LatentHeat> latentHeatFusion, Optional<LatentHeat> latentHeatVaporisation) {
         static final Thermal NONE = new Thermal(Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Thermal> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(Tu::new).optionalFieldOf("melting_point").forGetter(Thermal::meltingPoint),
@@ -362,7 +394,10 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Units.codec(Tu::new).optionalFieldOf("oxidation_temperature").forGetter(Thermal::oxidationTemperature),
                 Units.codec(Tu::new).optionalFieldOf("anneal_temperature").forGetter(Thermal::annealTemperature),
                 Units.codec(Tu::new).optionalFieldOf("service_temperature").forGetter(Thermal::serviceTemperature),
-                Units.codec(Tu::new).optionalFieldOf("sublimation_temperature").forGetter(Thermal::sublimationTemperature)
+                Units.codec(Tu::new).optionalFieldOf("sublimation_temperature").forGetter(Thermal::sublimationTemperature),
+                Units.codec(SpecificHeat::new).optionalFieldOf("specific_heat").forGetter(Thermal::specificHeat),
+                Units.codec(LatentHeat::new).optionalFieldOf("latent_heat_fusion").forGetter(Thermal::latentHeatFusion),
+                Units.codec(LatentHeat::new).optionalFieldOf("latent_heat_vaporisation").forGetter(Thermal::latentHeatVaporisation)
         ).apply(instance, Thermal::new));
     }
 
@@ -419,13 +454,16 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param viscosity relative to water (1). §3 names viscosity as not yet earning its place; it is
      *                  recorded for a misrun in a mold, and stays unread until that is a decision.
      * @param density   liquid density -- slag floats off a heavier melt.
+     * @param shearThickening how much its viscosity multiplies by at the reference flow ({@code FTuning.SHEAR_REFERENCE_MB_PER_TICK}):
+     *                  0 is Newtonian (water), above 0 it stiffens the faster it is pushed (cornstarch in water; soul oil).
      */
-    public record Molten(Optional<Float> viscosity, Optional<Density> density) {
-        static final Molten NONE = new Molten(Optional.empty(), Optional.empty());
+    public record Molten(Optional<Float> viscosity, Optional<Density> density, Optional<Float> shearThickening) {
+        static final Molten NONE = new Molten(Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Molten> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("viscosity").forGetter(Molten::viscosity),
-                Units.codec(Density::new).optionalFieldOf("density").forGetter(Molten::density)
+                Units.codec(Density::new).optionalFieldOf("density").forGetter(Molten::density),
+                Codec.floatRange(0f, Float.MAX_VALUE).optionalFieldOf("shear_thickening").forGetter(Molten::shearThickening)
         ).apply(instance, Molten::new));
     }
 
@@ -630,12 +668,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.luminance(), m.phosphor(), m.neutron(), m.fastener()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.neutron(), new Extras(m.luminance(), m.phosphor(), m.fastener(), m.toxicity())))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron(), tail.fastener())));
+            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food().map(f -> f.heated(thermal.specificHeat())), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron(), tail.fastener(), tail.toxicity())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -652,7 +690,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                         Optional<Integer> color,
                         Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                         Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion, Optional<XpCapacity> xpStore,
-                        Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron, Optional<Integer> fastener) {
+                        Optional<Neutron> neutron, Extras extras) {
+        Optional<Integer> luminance() { return extras.luminance(); }
+        boolean phosphor() { return extras.phosphor(); }
+        Optional<Integer> fastener() { return extras.fastener(); }
+        Optional<Float> toxicity() { return extras.toxicity(); }
+
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -666,11 +709,24 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Catalyst.CODEC.optionalFieldOf("catalyst").forGetter(Tail::catalyst),
                 Potion.CODEC.optionalFieldOf("potion").forGetter(Tail::potion),
                 XpCapacity.CODEC.optionalFieldOf("xp_store").forGetter(Tail::xpStore),
-                Codec.intRange(0, 15).optionalFieldOf("luminance").forGetter(Tail::luminance),
-                Codec.BOOL.optionalFieldOf("phosphor", false).forGetter(Tail::phosphor),
                 Neutron.CODEC.optionalFieldOf("neutron").forGetter(Tail::neutron),
-                Codec.intRange(1, 5).optionalFieldOf("fastener").forGetter(Tail::fastener)
+                Extras.CODEC.forGetter(Tail::extras)
         ).apply(instance, Tail::new));
+    }
+
+    /**
+     * The last small keys, grouped only because a record codec stops at sixteen; the JSON keeps them top level.
+     *
+     * @param toxicity how harmful it is swallowed: a log-compressed index of the real oral LD50 in mg/kg (author 2026-11-13);
+     *                 0 is harmless to eat, higher is deadlier. The index and its constants are in {@code docs/material_figures.md}.
+     */
+    private record Extras(Optional<Integer> luminance, boolean phosphor, Optional<Integer> fastener, Optional<Float> toxicity) {
+        static final com.mojang.serialization.MapCodec<Extras> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                Codec.intRange(0, 15).optionalFieldOf("luminance").forGetter(Extras::luminance),
+                Codec.BOOL.optionalFieldOf("phosphor", false).forGetter(Extras::phosphor),
+                Codec.intRange(1, 5).optionalFieldOf("fastener").forGetter(Extras::fastener),
+                Codec.floatRange(0f, Float.MAX_VALUE).optionalFieldOf("toxicity").forGetter(Extras::toxicity)
+        ).apply(instance, Extras::new));
     }
 
     /**
@@ -704,6 +760,18 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 .validate(q -> q.value() >= 0f && q.value() <= ProcessTuning.FOOD_QU_PER_STRENGTH + 1e-6f
                         ? DataResult.success(q) : DataResult.error(() -> "amount " + q.value() + " Qu is not within 0 to " + ProcessTuning.FOOD_QU_PER_STRENGTH))
                 .xmap(q -> q.value() / ProcessTuning.FOOD_QU_PER_STRENGTH, strength -> new Qu(strength * ProcessTuning.FOOD_QU_PER_STRENGTH));
+
+        /**
+         * This food with its heft scaled by its specific heat against a wet food's ({@code FTuning.FOOD_REFERENCE_SPECIFIC_HEAT}): the
+         * file states how big a piece is, the material states how much heat that piece takes, and a dry grain warms and dries faster
+         * than a wet cut of the same size.
+         */
+        public Food heated(Optional<SpecificHeat> cp) {
+            if (cp.isEmpty())
+                return this;
+            float heft = Math.max(0.2f, Math.min(10f, mass * cp.get().workPerMuPerTu() / FTuning.FOOD_REFERENCE_SPECIFIC_HEAT));
+            return new Food(moisture, pathogen, toxin, charTemperature, fat, fibre, compounds, perks, shelf, heft);
+        }
 
         /** A strength (the held figure) as the Qu it stands for, for display. */
         public static Qu qu(float strength) {

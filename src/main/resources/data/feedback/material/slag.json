@@ -1,18 +1,37 @@
 {
   "color": "#6e6a66",
   "kind": "mineral",
-  "hardness": 3,
+  "hardness": 39.2,
   "density": 2.6,
   "thermal": {
     "melting_point": 1300,
-    "cooling_rate": 1,
-    "conductivity": 0.001
+    "cooling_rate": 1.82,
+    "conductivity": 0.000249,
+    "specific_heat": 0.9,
+    "latent_heat_fusion": 300,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1300,
+    "service_temperature": 780
   },
   "mechanical": {
     "friction": 0.6,
-    "abrasiveness": 0.5
+    "abrasiveness": 0.482,
+    "yield_strength": 0.4,
+    "toughness": 0.8
   },
   "forms": {
     "ingot": "feedback:silicate_slag"
-  }
+  },
+  "corrosion_resistance": 0.8,
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "toxicity": 0.1,
+  "molten": {
+    "viscosity": 100,
+    "density": 2.34,
+    "shear_thickening": 0
+  },
+  "enchantability": 5
 }

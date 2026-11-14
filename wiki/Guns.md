@@ -203,11 +203,11 @@ This is **gun-fu**, and the moves are learned in the [Brute skill tree](Skills.m
 
 ### Hardness: glass, glancing, armor
 
-What the **bullet** is made of matters when it hits something hard. Hardness figures are on the [Materials](Materials.md) page: lead 0.3, copper 1, iron 6, steel 15.
+What the **bullet** is made of matters when it hits something hard. Hardness figures are on the [Materials](Materials.md) page: lead 0.49, copper 3.92, iron 7.85, steel 14.7.
 
 - **Glass, ice and other brittle blocks** break if the bullet hits with enough momentum, and it carries on, a little slower. A pistol round has plenty. Stone, wood and anything tougher don't break. Protected areas and adventure mode stop this.
 - A bullet **softer than the face it hits**, coming in at a shallow angle (more than about 70° from head-on), **glances off** with half its energy. It can glance twice.
-- **Armor** is rated by what it's made of: leather 0.3, gold 0.5, iron 6, netherite 40, diamond 100. A bullet **harder** than the hardest piece someone wears puts a share of the hit straight through, ignoring the armor: **1 − (armor ÷ bullet)**. A steel bullet against iron armor puts 60% through. A bullet no harder than the armor is stopped by it like any hit. Lead never pierces anything but bare skin.
+- **Armor** is rated by what it's made of: leather 0.79, gold 2.45, iron 7.85, netherite 128, diamond 981. A bullet **harder** than the hardest piece someone wears puts a share of the hit straight through, ignoring the armor: **1 − (armor ÷ bullet)**. A steel bullet against iron armor puts 47% through. A bullet no harder than the armor is stopped by it like any hit. Lead never pierces anything but bare skin.
 
 ## Heat
 

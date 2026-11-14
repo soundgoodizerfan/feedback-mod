@@ -68,28 +68,44 @@
     "dust",
     "drilled_plate"
   ],
-  "hardness": 4,
+  "hardness": 3.92,
   "density": 6.5,
   "thermal": {
     "melting_point": 1100,
-    "cooling_rate": 1.5,
-    "conductivity": 0.02,
+    "cooling_rate": 2.72,
+    "conductivity": 0.0748,
     "anneal_temperature": 600,
-    "service_temperature": 800
+    "service_temperature": 800,
+    "specific_heat": 0.3,
+    "latent_heat_fusion": 150,
+    "latent_heat_vaporisation": 4000,
+    "boiling_point": 500,
+    "oxidation_temperature": 1100
   },
   "mechanical": {
     "toughness": 30,
     "ductility": 4,
-    "yield_strength": 4,
+    "yield_strength": 0.4,
     "friction": 0.4,
-    "abrasiveness": 0.1
+    "abrasiveness": 0.111,
+    "work_hardening": 0.392
   },
   "separation": {
-    "reflectivity": 0.7
+    "reflectivity": 0.5
   },
   "electrical": {
     "drop": 0.0,
-    "quench_drop": 0.6
+    "quench_drop": 0.6,
+    "electrode_potential": 0,
+    "conductivity": 100
   },
-  "ampacity": 6.25
+  "ampacity": 6.25,
+  "corrosion_resistance": 0.5,
+  "toxicity": 1.2,
+  "molten": {
+    "viscosity": 5,
+    "density": 5.85,
+    "shear_thickening": 0
+  },
+  "enchantability": 8
 }

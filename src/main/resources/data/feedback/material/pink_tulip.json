@@ -15,5 +15,6 @@
       "type": "arc",
       "bulge": 0.3
     }
-  }
+  },
+  "parent": "_kind_flower"
 }

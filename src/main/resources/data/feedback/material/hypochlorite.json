@@ -4,6 +4,20 @@
   "density": 1.1,
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 0.0006
-  }
+    "conductivity": 0.000145,
+    "melting_point": -6,
+    "boiling_point": 101,
+    "specific_heat": 3.9,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 2200
+  },
+  "molten": {
+    "viscosity": 1.2,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.8,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0
 }

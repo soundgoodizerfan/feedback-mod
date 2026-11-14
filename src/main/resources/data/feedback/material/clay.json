@@ -1,22 +1,38 @@
 {
   "kind": "granular",
-  "hardness": 0.2,
+  "hardness": 0.981,
   "density": 1.7,
   "thermal": {
-    "melting_point": 1300,
-    "cooling_rate": 1,
-    "conductivity": 0.00025
+    "melting_point": 1500,
+    "cooling_rate": 2.91,
+    "conductivity": 0.000324,
+    "specific_heat": 0.9,
+    "latent_heat_fusion": 300,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 1500,
+    "service_temperature": 900
   },
   "mechanical": {
     "ductility": 20,
     "friction": 0.5,
-    "abrasiveness": 0.2
+    "abrasiveness": 0,
+    "yield_strength": 0.01,
+    "toughness": 0.1
   },
   "separation": {
-    "reflectivity": 0.5
+    "reflectivity": 0.3
   },
   "forms": {
     "ball": "minecraft:clay_ball",
     "block": "minecraft:clay"
-  }
+  },
+  "corrosion_resistance": 0.8,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.53,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }

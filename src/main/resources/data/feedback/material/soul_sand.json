@@ -3,22 +3,38 @@
   "traits": [
     "porous"
   ],
-  "hardness": 3,
+  "hardness": 0.491,
   "density": 1.4,
   "thermal": {
-    "melting_point": 1200,
-    "cooling_rate": 0.9,
-    "conductivity": 7.5e-05
+    "melting_point": 1300,
+    "cooling_rate": 2.07,
+    "conductivity": 7.48e-05,
+    "specific_heat": 1,
+    "latent_heat_fusion": 250,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "oxidation_temperature": 1300,
+    "service_temperature": 780
   },
   "mechanical": {
     "friction": 1,
-    "abrasiveness": 0.5
+    "abrasiveness": 0,
+    "yield_strength": 0.005,
+    "toughness": 0.1
   },
   "separation": {
-    "reflectivity": 0.15
+    "reflectivity": 0.1
   },
   "forms": {
     "block": "minecraft:soul_sand",
     "soil": "minecraft:soul_soil"
-  }
+  },
+  "corrosion_resistance": 0.6,
+  "toxicity": 0.2,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.26,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
 }
