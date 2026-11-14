@@ -16,11 +16,11 @@ Draw a **metal plate** through a [Wire Drawer](Wire_Drawer.md) to make a **case*
 
 | Case | Holds |
 | --- | --- |
-| Steel | 1.9 Pu |
-| Wrought Iron | 1.5 Pu |
-| Bronze | 1.5 Pu |
-| Brass | 0.9 Pu |
-| Copper | 0.5 Pu |
+| Steel | 9 Pu |
+| Wrought Iron | 7.5 Pu |
+| Bronze | 7.5 Pu |
+| Brass | 4.5 Pu |
+| Copper | 2.6 Pu |
 
 A case weaker than the pressure inside it can hurt you even if the gun is fine. The press shows this before you seat anything. A **Rolled Paper Case** stands in for a metal one and holds almost nothing: see [Paper cases](Reloading_Press.md#paper-cases).
 

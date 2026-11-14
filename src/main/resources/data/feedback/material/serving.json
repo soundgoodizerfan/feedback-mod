@@ -4,7 +4,7 @@
   "traits": [
     "broth"
   ],
-  "hardness": 0.02,
+  "hardness": 1,
   "forms": {
     "raw": "feedback:meal"
   },

@@ -10,45 +10,45 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 
 | Metal | Hardness | Density | Yield strength | Melts at | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Lead | 0.49 | 11.3 | 0.12 | 327 Tu | Dense: the classic bullet metal. Useless for guns. |
-| Silver | 2.45 | 10.5 | 0.55 | 962 Tu | Soft and bright; the best conductor. Its [smite](Material_Perks.md) hurts the undead. |
-| Gold | 2.45 | 19.3 | 0.3 | 1064 Tu | Soft and dense. |
-| Tin | 0.98 | 7.3 | 0.15 | 232 Tu | For bronze. |
-| Copper | 3.92 | 9.0 | 0.7 | 1085 Tu | The first metal you'll work. Wire, cable, plates, foil. |
-| Zinc | 3.43 | 7.1 | 1 | 420 Tu | For brass and the [Galvanic Cell](Galvanic_Cell.md). |
-| Brass | 7.85 | 8.5 | 1.25 | 930 Tu | 65% copper, 35% zinc. Good cartridge cases. |
-| Bronze | 9.81 | 8.8 | 2 | 1000 Tu | 90% copper, 10% tin. |
-| Iron | 7.85 | 7.87 | 1.5 | 1538 Tu | **Magnetic.** Pure iron. Softer and weaker than wrought iron. |
-| Wrought Iron | 9.81 | 7.8 | 2 | 1500 Tu | **Magnetic.** Vanilla's iron: soft, tough, worked cold. Made by hammering the slag out of a bloom ([Making Wrought Iron](Making_Wrought_Iron.md)). |
-| Cast Iron | 19.6 | 7.2 | 2 | 1200 Tu | **Magnetic.** Too brittle for plates, rods or wire; good for steelmaking. |
-| Steel | 14.7 | 7.85 | 2.5 | 1450 Tu | **Magnetic.** Only moves between **900 and 1100 Tu**. See [Making Steel](Steel.md). |
-| Hardened Steel | 68.7 | 7.85 | 15 | 1450 Tu | **Magnetic.** No blow moves it; only a drill bit, a lathe bit or the [Grinding Wheel](Grinding_Wheel.md) cuts it. |
-| Tempered Steel | 44.1 | 7.85 | 11 | 1450 Tu | **Magnetic.** [Tempered](Heat_Treatment.md#tempering) hardened steel: tough again. Worked cold, never hot. Springs, blades, gun parts. |
-| Chromium | 19.6 | 7.19 | 3 | 1907 Tu | Hard and stainless. For stainless steel and the redstone alloy. |
-| Nickel | 8.83 | 8.91 | 0.7 | 1455 Tu | **Magnetic.** For stainless steel and cermet. |
-| Cobalt | 17.7 | 8.9 | 2.5 | 1495 Tu | **Magnetic.** The binder in cermet. |
-| Manganese | 19.6 | 7.21 | 2 | 1246 Tu | Brittle alone. For manganese steel. |
-| Aluminum | 2.45 | 2.7 | 0.35 | 660 Tu | Light and soft; conducts well for its weight. Made from bauxite by [electrolysis](Making_Aluminum.md). |
-| Titanium | 14.7 | 4.51 | 4 | 1668 Tu | Light, strong, stands the heat. For cermet. |
-| Tungsten | 34.3 | 19.25 | 7.5 | 3422 Tu | The highest melting point of any metal. |
-| Thorium | 3.92 | 11.7 | 1 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
-| Stainless Steel | 19.6 | 7.9 | 2.9 | 1400 Tu | Steel with chromium and nickel. Barely corrodes. |
-| Manganese Steel | 21.6 | 7.8 | 3.5 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
-| Tungsten Carbide | 157 | 15.6 | 20 | 2870 Tu | Hard and brittle. Sintered from powder with cobalt ([Furnaces](Furnaces.md#sintering)). |
-| Titanium Carbide | 294 | 4.9 | 15 | 3160 Tu | Titanium baked with graphite. Hard and brittle. The grain in cermet. |
-| Thorium-Tungsten | 32.4 | 19 | 7 | 3380 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
-| Cermet | 177 | 6 | 20 | 1380 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder, sintered from powder ([Furnaces](Furnaces.md#sintering)). |
-| Redstone-Chromium | 29.4 | 4.5 | 3 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
-| Uranium | 19.6 | 19.1 | 2 | 1132 Tu | **Radioactive.** Nearly as dense as gold and tungsten. See [Uranium](#uranium). |
-| [Osmium](Heavy_Core.md) | 39.2 | 22.6 | 6 | 3033 Tu | The densest metal. Its only forms are powder, sponge, compact and the [Heavy Core](Heavy_Core.md). |
-| [Netherite](Netherite.md) | 128 | 7.5 | 20 | 1380 Tu | **Magnetic.** Harder than a drill bit; only a lathe bit or a grinding wheel cuts it. |
-| Cast Netherite | 83.4 | 7.5 | 12 | 1380 Tu | **Magnetic.** The ingot before soul quenching ([Netherite](Netherite.md#soul-quenching)). |
+| Lead | 0.5 | 11.3 | 0.5 | 327 Tu | Dense: the classic bullet metal. Useless for guns. |
+| Silver | 2.5 | 10.5 | 3 | 962 Tu | Soft and bright; the best conductor. Its [smite](Material_Perks.md) hurts the undead. |
+| Gold | 2.5 | 19.3 | 1.5 | 1064 Tu | Soft and dense. |
+| Tin | 1 | 7.3 | 1 | 232 Tu | For bronze. |
+| Copper | 4 | 9.0 | 3.5 | 1085 Tu | The first metal you'll work. Wire, cable, plates, foil. |
+| Zinc | 3.5 | 7.1 | 5 | 420 Tu | For brass and the [Galvanic Cell](Galvanic_Cell.md). |
+| Brass | 8 | 8.5 | 6 | 930 Tu | 65% copper, 35% zinc. Good cartridge cases. |
+| Bronze | 10 | 8.8 | 10 | 1000 Tu | 90% copper, 10% tin. |
+| Iron | 8 | 7.87 | 7.5 | 1538 Tu | **Magnetic.** Pure iron. Softer and weaker than wrought iron. |
+| Wrought Iron | 10 | 7.8 | 10 | 1500 Tu | **Magnetic.** Vanilla's iron: soft, tough, worked cold. Made by hammering the slag out of a bloom ([Making Wrought Iron](Making_Wrought_Iron.md)). |
+| Cast Iron | 20 | 7.2 | 10 | 1200 Tu | **Magnetic.** Too brittle for plates, rods or wire; good for steelmaking. |
+| Steel | 15 | 7.85 | 12 | 1450 Tu | **Magnetic.** Only moves between **900 and 1100 Tu**. See [Making Steel](Steel.md). |
+| Hardened Steel | 69 | 7.85 | 75 | 1450 Tu | **Magnetic.** No blow moves it; only a drill bit, a lathe bit or the [Grinding Wheel](Grinding_Wheel.md) cuts it. |
+| Tempered Steel | 44 | 7.85 | 55 | 1450 Tu | **Magnetic.** [Tempered](Heat_Treatment.md#tempering) hardened steel: tough again. Worked cold, never hot. Springs, blades, gun parts. |
+| Chromium | 20 | 7.19 | 15 | 1907 Tu | Hard and stainless. For stainless steel and the redstone alloy. |
+| Nickel | 9 | 8.91 | 3.5 | 1455 Tu | **Magnetic.** For stainless steel and cermet. |
+| Cobalt | 18 | 8.9 | 12 | 1495 Tu | **Magnetic.** The binder in cermet. |
+| Manganese | 20 | 7.21 | 10 | 1246 Tu | Brittle alone. For manganese steel. |
+| Aluminum | 2.5 | 2.7 | 2 | 660 Tu | Light and soft; conducts well for its weight. Made from bauxite by [electrolysis](Making_Aluminum.md). |
+| Titanium | 15 | 4.51 | 20 | 1668 Tu | Light, strong, stands the heat. For cermet. |
+| Tungsten | 34 | 19.25 | 38 | 3422 Tu | The highest melting point of any metal. |
+| Thorium | 4 | 11.7 | 5 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
+| Stainless Steel | 20 | 7.9 | 14 | 1400 Tu | Steel with chromium and nickel. Barely corrodes. |
+| Manganese Steel | 22 | 7.8 | 18 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
+| Tungsten Carbide | 157 | 15.6 | 100 | 2870 Tu | Hard and brittle. Sintered from powder with cobalt ([Furnaces](Furnaces.md#sintering)). |
+| Titanium Carbide | 294 | 4.9 | 75 | 3160 Tu | Titanium baked with graphite. Hard and brittle. The grain in cermet. |
+| Thorium-Tungsten | 32 | 19 | 35 | 3380 Tu | Tungsten with a little thorium. Stands 2800 Tu. |
+| Cermet | 177 | 6 | 100 | 1380 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder, sintered from powder ([Furnaces](Furnaces.md#sintering)). |
+| Redstone-Chromium | 29 | 4.5 | 15 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
+| Uranium | 20 | 19.1 | 10 | 1132 Tu | **Radioactive.** Nearly as dense as gold and tungsten. See [Uranium](#uranium). |
+| [Osmium](Heavy_Core.md) | 39 | 22.6 | 30 | 3033 Tu | The densest metal. Its only forms are powder, sponge, compact and the [Heavy Core](Heavy_Core.md). |
+| [Netherite](Netherite.md) | 130 | 7.5 | 100 | 1380 Tu | **Magnetic.** Harder than a drill bit; only a lathe bit or a grinding wheel cuts it. |
+| Cast Netherite | 83 | 7.5 | 60 | 1380 Tu | **Magnetic.** The ingot before soul quenching ([Netherite](Netherite.md#soul-quenching)). |
 
 What the columns mean in play:
 
-- **Hardness** (real Vickers hardness, 1 St per 0.1 GPa: copper about 3.9, iron 7.8, steel 14.7) decides what can shape a metal. A blow weaker than the hardness, or a cutting tool not harder than the metal, does nothing at all. Above that, each blow does **strength of the blow ÷ hardness** in work. See [Metalworking](Metalworking.md). It also decides what a bullet goes through: see [Guns](Guns.md#hardness-glass-glancing-armor).
+- **Hardness** (real Vickers hardness, 1 St per 0.1 GPa: copper 4, iron 8, steel 15, netherite 130) decides what can shape a metal. A blow weaker than the hardness, or a cutting tool not harder than the metal, does nothing at all. Above that, each blow does **strength of the blow ÷ hardness** in work. See [Metalworking](Metalworking.md). It also decides what a bullet goes through: see [Guns](Guns.md#hardness-glass-glancing-armor).
 - **Density** (kg per liter, water is 1) decides how heavy things are: bullets, guns, engines and vehicle plates. Dense bullets keep their energy.
-- **Yield strength** decides how much pressure a gun chamber or a cartridge case holds, and how fast an engine can rev. A 9 mm chamber with a 3 mm wall holds 0.67 × yield strength in Pu. See [Gun Parts](Gun_Parts.md#the-chamber).
+- **Yield strength** (1 St is 20 MPa: steel 12 is 240 MPa) decides how much pressure a gun chamber or a cartridge case holds, and how fast an engine can rev. A 9 mm chamber with a 3 mm wall holds 0.67 × yield strength in Pu. See [Gun Parts](Gun_Parts.md#the-chamber).
 - **Melting point** is where a crucible melts it, and where a [Fuse](Fuse.md) wire or a pair of [tongs](Hazards.md#tongs) gives out. Stuff that melts above lava's 1200 Tu is fire resistant ([Lava](Lava.md)).
 - **Magnetic** metals are pulled by the [Electromagnet](Electromagnet.md).
 
@@ -70,15 +70,15 @@ Not everything is metal. A few others matter for parts and protection:
 
 | Material | Hardness | Grip friction | Stands | Used for |
 | --- | --- | --- | --- | --- |
-| Wood | 2.45 | 0.4 | 150 Tu | grips turned from a stick |
-| Bamboo | 3.92 | 0.4 | 150 Tu | grips turned from a stalk |
-| Bone | 6.87 | 0.5 | 200 Tu | grips turned from a bone |
-| Leather | 0.79 | | 100 Tu | gloves |
+| Wood | 2.5 | 0.4 | 150 Tu | grips turned from a stick |
+| Bamboo | 4 | 0.4 | 150 Tu | grips turned from a stalk |
+| Bone | 7 | 0.5 | 200 Tu | grips turned from a bone |
+| Leather | 1 | | 100 Tu | gloves |
 | Diamond | 981 | | | armor: nothing pierces it; can be [grown](#synthetic-diamond) |
-| Feather Down | | | | animal, fibrous; a very light, warm [bed](Bed.md) padding: see [below](#feather-down-and-rabbit-hide) |
-| Rabbit Hide | 0.2 | | 100 Tu | animal, fibrous; a warm, tough [bed](Bed.md) padding |
-| Ghast Bladder | 0.1 | | | animal; the skin of a bladder [gas cell](Gas_Cell.md) |
-| Coated Cloth | 0.49 | | | cloth coated in slime; the skin of a coated cloth [gas cell](Gas_Cell.md) |
+| Feather Down | 1 | | | animal, fibrous; a very light, warm [bed](Bed.md) padding: see [below](#feather-down-and-rabbit-hide) |
+| Rabbit Hide | 1 | | 100 Tu | animal, fibrous; a warm, tough [bed](Bed.md) padding |
+| Ghast Bladder | 1 | | | animal; the skin of a bladder [gas cell](Gas_Cell.md) |
+| Coated Cloth | 0.5 | | | cloth coated in slime; the skin of a coated cloth [gas cell](Gas_Cell.md) |
 | Silicon, glasses, graphite, polymers | | | | sections below |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armor](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.

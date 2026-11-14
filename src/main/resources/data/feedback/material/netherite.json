@@ -6,7 +6,7 @@
     "alloy",
     "fireproof"
   ],
-  "hardness": 128.0,
+  "hardness": 130,
   "density": 7.5,
   "thermal": {
     "melting_point": 1380,
@@ -23,8 +23,8 @@
   "mechanical": {
     "toughness": 12,
     "ductility": 4,
-    "work_hardening": 4.8,
-    "yield_strength": 20.0,
+    "work_hardening": 5,
+    "yield_strength": 100,
     "friction": 0.6,
     "abrasiveness": 0.671
   },

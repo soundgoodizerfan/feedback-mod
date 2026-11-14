@@ -7,7 +7,7 @@
     "luminous",
     "paste"
   ],
-  "hardness": 14.7,
+  "hardness": 15,
   "density": 4,
   "thermal": {
     "cooling_rate": 1.52,
@@ -24,7 +24,7 @@
     "toughness": 0.5,
     "friction": 0.5,
     "abrasiveness": 0.324,
-    "yield_strength": 0.1
+    "yield_strength": 0.5
   },
   "separation": {
     "reflectivity": 0.3

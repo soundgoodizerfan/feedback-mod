@@ -1,6 +1,6 @@
 {
   "kind": "granular",
-  "hardness": 29.4,
+  "hardness": 29,
   "density": 1.8,
   "thermal": {
     "melting_point": 1250,
@@ -16,8 +16,8 @@
   "mechanical": {
     "friction": 0.6,
     "abrasiveness": 0.436,
-    "yield_strength": 0.01,
-    "toughness": 0.1
+    "yield_strength": 0.5,
+    "toughness": 0.5
   },
   "separation": {
     "reflectivity": 0.25

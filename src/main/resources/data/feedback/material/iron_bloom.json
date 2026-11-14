@@ -1,7 +1,7 @@
 {
   "color": "#7a6a5c",
   "kind": "metal",
-  "hardness": 5.89,
+  "hardness": 6,
   "density": 5,
   "min_temperature": 900,
   "max_temperature": 1500,
@@ -22,8 +22,8 @@
     "ductility": 2,
     "friction": 0.7,
     "abrasiveness": 0.177,
-    "yield_strength": 0.8,
-    "work_hardening": 0.589
+    "yield_strength": 4,
+    "work_hardening": 1
   },
   "molten": {
     "viscosity": 6,

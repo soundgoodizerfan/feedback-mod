@@ -5,7 +5,7 @@
     "starchy",
     "kneadable"
   ],
-  "hardness": 0.05,
+  "hardness": 1,
   "forms": {
     "raw": "feedback:dough",
     "cooked": "feedback:loaf"

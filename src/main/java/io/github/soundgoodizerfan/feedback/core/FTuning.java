@@ -59,7 +59,7 @@ public final class FTuning {
      * <p>Steel stays out of reach by hand with no rule about hands anywhere: its hardness is 15, over
      * every swing below, so nothing lands -- philosophy 8's hard gate, a genuine impossibility.
      */
-    public static final St HAND_SWING_BLOW_ST = new St(6.6f);
+    public static final St HAND_SWING_BLOW_ST = new St(7f);
 
     /**
      * Bottoms of the condition bands, descending -- how battered a machine looks, in words.

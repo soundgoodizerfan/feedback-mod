@@ -1,6 +1,6 @@
 {
   "kind": "fluid",
-  "hardness": 0.1,
+  "hardness": 1,
   "density": 1.14,
   "thermal": {
     "cooling_rate": 1,

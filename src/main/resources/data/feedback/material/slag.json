@@ -1,7 +1,7 @@
 {
   "color": "#6e6a66",
   "kind": "mineral",
-  "hardness": 39.2,
+  "hardness": 39,
   "density": 2.6,
   "thermal": {
     "melting_point": 1300,
@@ -17,8 +17,8 @@
   "mechanical": {
     "friction": 0.6,
     "abrasiveness": 0.482,
-    "yield_strength": 0.4,
-    "toughness": 0.8
+    "yield_strength": 2,
+    "toughness": 1
   },
   "forms": {
     "ingot": "feedback:silicate_slag"

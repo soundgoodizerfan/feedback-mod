@@ -4,7 +4,7 @@
   "traits": [
     "transparent"
   ],
-  "hardness": 58.9,
+  "hardness": 59,
   "density": 2.2,
   "thermal": {
     "melting_point": 1450,
@@ -19,11 +19,11 @@
     "oxidation_temperature": 1450
   },
   "mechanical": {
-    "toughness": 0.8,
+    "toughness": 1,
     "friction": 0.4,
     "abrasiveness": 0.547,
     "hardenable": true,
-    "yield_strength": 0.7
+    "yield_strength": 3.5
   },
   "molten": {
     "viscosity": 10000,

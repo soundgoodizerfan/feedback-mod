@@ -40,8 +40,8 @@ The wheel **heats whatever it's grinding**, 0.4 Tu for every Fu it grinds. Enoug
 
 Every other machine wears only when misused. A grinding wheel is different: **it wears every time it cuts**, because the grit is being used up.
 
-- **Coarse** (35.2 St) cuts fast and wears the wheel fast: a wheel lasts **250 Fu** of grinding.
-- **Fine** (13.2 St) cuts slower and makes the wheel last longer: about **670 Fu**.
+- **Coarse** (35 St) cuts fast and wears the wheel fast: a wheel lasts **250 Fu** of grinding.
+- **Fine** (13 St) cuts slower and makes the wheel last longer: about **670 Fu**.
 
 A fully worn (bald) wheel **can't cut anything at all**. Breaking and replacing it doesn't help, because the wear goes with the item. Craft a new one.
 

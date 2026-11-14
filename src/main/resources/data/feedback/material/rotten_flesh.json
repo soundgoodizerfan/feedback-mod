@@ -10,7 +10,7 @@
     "moisture": 0.6,
     "toxin": 0.08
   },
-  "hardness": 0.1,
+  "hardness": 1,
   "parent": "_kind_animal",
   "toxicity": 0.6
 }

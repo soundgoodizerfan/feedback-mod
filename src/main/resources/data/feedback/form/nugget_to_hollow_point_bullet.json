@@ -3,5 +3,5 @@
   "to": "hollow_point_bullet",
   "operation": "blow",
   "base": 6,
-  "slope": 1.17
+  "slope": 1.0
 }

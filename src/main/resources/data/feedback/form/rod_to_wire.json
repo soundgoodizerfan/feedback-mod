@@ -3,5 +3,5 @@
   "to": "wire",
   "operation": "draw",
   "base": 6.4,
-  "slope": 1.02
+  "slope": 1.0
 }

@@ -1,7 +1,7 @@
 {
   "color": "#6e6a66",
   "kind": "granular",
-  "hardness": 49.1,
+  "hardness": 49,
   "density": 2.6,
   "thermal": {
     "cooling_rate": 1.82,
@@ -17,8 +17,8 @@
   "mechanical": {
     "friction": 0.6,
     "abrasiveness": 0.518,
-    "yield_strength": 0.3,
-    "toughness": 0.8
+    "yield_strength": 1.5,
+    "toughness": 1
   },
   "forms": {
     "raw": "feedback:silicate_slag"

@@ -1,7 +1,7 @@
 {
   "color": "#9b2f2f",
   "kind": "crystal",
-  "hardness": 29.4,
+  "hardness": 29,
   "density": 6.1,
   "thermal": {
     "cooling_rate": 1.82,
@@ -18,7 +18,7 @@
     "toughness": 1,
     "friction": 0.4,
     "abrasiveness": 0.436,
-    "yield_strength": 0.3
+    "yield_strength": 1.5
   },
   "separation": {
     "reflectivity": 0.25,

@@ -1,6 +1,6 @@
 {
   "kind": "granular",
-  "hardness": 98.1,
+  "hardness": 98,
   "density": 1.6,
   "thermal": {
     "melting_point": 1700,
@@ -16,8 +16,8 @@
   "mechanical": {
     "friction": 0.6,
     "abrasiveness": 0.629,
-    "yield_strength": 0.01,
-    "toughness": 0.1
+    "yield_strength": 0.5,
+    "toughness": 0.5
   },
   "molten": {
     "viscosity": 100000,

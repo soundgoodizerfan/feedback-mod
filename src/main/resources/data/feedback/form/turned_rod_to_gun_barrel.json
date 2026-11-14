@@ -3,5 +3,5 @@
   "to": "gun_barrel",
   "operation": "drill",
   "base": 6,
-  "slope": 0.98
+  "slope": 1.0
 }

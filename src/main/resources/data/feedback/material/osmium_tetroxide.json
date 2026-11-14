@@ -3,7 +3,7 @@
   "perks": {
     "toxic": 2
   },
-  "hardness": 0.1,
+  "hardness": 1,
   "density": 4.9,
   "thermal": {
     "cooling_rate": 1,

@@ -1,7 +1,7 @@
 {
   "color": "#9fd08a",
   "kind": "metal",
-  "hardness": 19.6,
+  "hardness": 20,
   "density": 19.1,
   "traits": [
     "luminous"
@@ -21,8 +21,8 @@
   "mechanical": {
     "toughness": 30,
     "ductility": 6,
-    "work_hardening": 1.31,
-    "yield_strength": 2.0,
+    "work_hardening": 1.5,
+    "yield_strength": 10,
     "friction": 0.5,
     "abrasiveness": 0.37
   },

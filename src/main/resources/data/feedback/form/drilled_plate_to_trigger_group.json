@@ -3,5 +3,5 @@
   "to": "trigger_group",
   "operation": "grind",
   "base": 4,
-  "slope": 0.65
+  "slope": 0.5
 }

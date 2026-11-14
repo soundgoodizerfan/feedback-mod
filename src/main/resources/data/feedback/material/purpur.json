@@ -4,7 +4,7 @@
     "dust",
     "ingot"
   ],
-  "hardness": 29.4,
+  "hardness": 29,
   "density": 2,
   "thermal": {
     "melting_point": 1200,
@@ -19,7 +19,7 @@
   },
   "mechanical": {
     "toughness": 1,
-    "yield_strength": 0.4,
+    "yield_strength": 2,
     "friction": 0.7,
     "abrasiveness": 0.436
   },

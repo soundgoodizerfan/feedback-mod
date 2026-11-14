@@ -1,7 +1,7 @@
 {
   "color": "#7f7f7f",
   "kind": "mineral",
-  "hardness": 49.1,
+  "hardness": 49,
   "density": 2.7,
   "thermal": {
     "melting_point": 1250,
@@ -16,7 +16,7 @@
   },
   "mechanical": {
     "toughness": 1.5,
-    "yield_strength": 1.0,
+    "yield_strength": 5,
     "friction": 0.7,
     "abrasiveness": 0.518
   },

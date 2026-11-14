@@ -4,7 +4,7 @@
   "traits": [
     "pastry"
   ],
-  "hardness": 0.05,
+  "hardness": 1,
   "forms": {
     "raw": "feedback:pastry_dough",
     "cooked": "feedback:pastry_shell"

@@ -9,7 +9,7 @@
     "leak": 0
   },
   "kind": "crystal",
-  "hardness": 78.5,
+  "hardness": 78,
   "density": 3,
   "thermal": {
     "cooling_rate": 2.04,
@@ -26,7 +26,7 @@
     "toughness": 2,
     "friction": 0.4,
     "abrasiveness": 0.593,
-    "yield_strength": 0.6
+    "yield_strength": 3
   },
   "separation": {
     "reflectivity": 0.3

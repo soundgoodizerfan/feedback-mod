@@ -5,7 +5,7 @@
   "traits": [
     "solder"
   ],
-  "hardness": 0.981,
+  "hardness": 1,
   "density": 7.29,
   "thermal": {
     "melting_point": 232,
@@ -22,8 +22,8 @@
   "mechanical": {
     "toughness": 100,
     "ductility": 15,
-    "work_hardening": 0.164,
-    "yield_strength": 0.15,
+    "work_hardening": 0.5,
+    "yield_strength": 1,
     "friction": 0.5,
     "abrasiveness": 0
   },

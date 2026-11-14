@@ -280,9 +280,9 @@ public final class MachineTuning {
      * hardness of 15; slow does not, which is a genuine hard gate rather than a slower route --
      * steel wire is only reachable by accepting the risk, not by waiting it out.
      */
-    public static final St WIRE_DRAWER_ST_SLOW = new St(13.2f);
+    public static final St WIRE_DRAWER_ST_SLOW = new St(13f);
 
-    public static final St WIRE_DRAWER_ST_FAST = new St(39.6f);
+    public static final St WIRE_DRAWER_ST_FAST = new St(40f);
 
     /** Invented. Chance per landed fast draw that the wire snaps outright (a draw lands about
      * four times a second at 32 RPM, so this is roughly the old 1%-per-tick rate). A
@@ -342,7 +342,7 @@ public final class MachineTuning {
      * possible against impossible, unlike the Wire Drawer's pair. */
     public static final St DRILL_PRESS_ST_SLOW = new St(22f);
 
-    public static final St DRILL_PRESS_ST_FAST = new St(48.4f);
+    public static final St DRILL_PRESS_ST_FAST = new St(48f);
 
     /** Invented. Chance per fast-feed push that the bit binds -- a wasted push and a warning
      * sound, not damage to the machine body or the workpiece (§7: a hard gate on the fast setting
@@ -360,9 +360,9 @@ public final class MachineTuning {
     /** Invented. Light/heavy pass -- same shape as every other discrete throw in the mod: heavy
      * cuts faster and coarser, light is slower and controllable. Neither risks the bit; only
      * cutting a material the bit's own rating cannot clear wears it (see {@link #LATHE_BIT_WEAR_PER_ST}). */
-    public static final St LATHE_ST_LIGHT = new St(17.6f);
+    public static final St LATHE_ST_LIGHT = new St(18f);
 
-    public static final St LATHE_ST_HEAVY = new St(39.6f);
+    public static final St LATHE_ST_HEAVY = new St(40f);
 
     public static final Su LATHE_LOAD_SU = new Su(40f);
 
@@ -384,9 +384,9 @@ public final class MachineTuning {
 
     /** Invented. Coarse/fine grit -- coarse removes faster and wears the wheel faster; fine is
      * slower on both counts. Discrete, per §3, not a continuous grit number. */
-    public static final St GRINDING_WHEEL_ST_COARSE = new St(35.2f);
+    public static final St GRINDING_WHEEL_ST_COARSE = new St(35f);
 
-    public static final St GRINDING_WHEEL_ST_FINE = new St(13.2f);
+    public static final St GRINDING_WHEEL_ST_FINE = new St(13f);
 
     public static final Su GRINDING_WHEEL_LOAD_SU = new Su(45f);
 

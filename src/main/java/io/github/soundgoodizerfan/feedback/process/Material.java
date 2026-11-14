@@ -105,7 +105,7 @@ import net.minecraft.world.item.Item;
  * <h2>Units come from their definitions</h2>
  * {@code Tu} is degrees Celsius, density is kg/L, heat figures are kJ-based ({@code FTuning.JOULES_PER_WORK}),
  * thermal conductivity is real W/(m K) over 4010 (copper 0.1), hardness is 0.1 GPa Vickers per {@code St}, yield
- * 100 MPa per {@code St}, toughness 1 MPa sqrt(m) per {@code St}. {@code docs/material_figures.md} gives every figure's
+ * 20 MPa per {@code St}, toughness 1 MPa sqrt(m) per {@code St}. {@code docs/material_figures.md} gives every figure's
  * real definition and what reads it.
  *
  * <h2>Generated items</h2>

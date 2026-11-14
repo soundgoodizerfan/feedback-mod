@@ -3,5 +3,5 @@
   "to": "green_compact",
   "operation": "blow",
   "base": 4,
-  "slope": 0.33
+  "slope": 0.5
 }

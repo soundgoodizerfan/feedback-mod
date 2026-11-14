@@ -7,7 +7,7 @@
     "concentrate",
     "tailings"
   ],
-  "hardness": 78.5,
+  "hardness": 78,
   "density": 19.5,
   "thermal": {
     "cooling_rate": 2.09,
@@ -24,7 +24,7 @@
     "toughness": 8,
     "friction": 0.4,
     "abrasiveness": 0.593,
-    "yield_strength": 6.0
+    "yield_strength": 30
   },
   "separation": {
     "reflectivity": 0.7

@@ -1,6 +1,6 @@
 {
   "parent": "steel",
-  "hardness": 44.1,
+  "hardness": 44,
   "thermal": {
     "conductivity": 0.0115,
     "service_temperature": 400,
@@ -9,7 +9,7 @@
   "mechanical": {
     "toughness": 45,
     "ductility": 2,
-    "yield_strength": 11.0,
+    "yield_strength": 55,
     "abrasiveness": 0.501,
     "work_hardening": 0,
     "hardenable": null

@@ -4,7 +4,7 @@
   "traits": [
     "corrosive"
   ],
-  "hardness": 0.1,
+  "hardness": 1,
   "density": 1.3,
   "composition": {
     "feedback:titanium": 0.4,

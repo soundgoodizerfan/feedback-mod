@@ -4,7 +4,7 @@
   "traits": [
     "transparent"
   ],
-  "hardness": 981.0,
+  "hardness": 981,
   "density": 3.51,
   "thermal": {
     "melting_point": 3550,
@@ -21,7 +21,7 @@
     "toughness": 3,
     "friction": 0.1,
     "abrasiveness": 1.0,
-    "yield_strength": 20.0
+    "yield_strength": 100
   },
   "separation": {
     "reflectivity": 0.17

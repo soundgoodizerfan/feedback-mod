@@ -32,10 +32,10 @@ Rods come from the [Rolling Mill](Rolling_Mill.md). Copper wire is used all over
 
 ## Slow vs. fast
 
-- **Slow** (13.2 St) is gentle and completely safe, and it's all copper needs. It **can't** draw steel (hardness 14.7) at all.
-- **Fast** (39.6 St) pulls hard enough to draw **steel**. But every draw that actually moves the metal has a **5%** chance of **snapping the wire**, and then the workpiece is **gone**. You'll hear it go.
+- **Slow** (13 St) is gentle and completely safe, and it's all copper needs. It **can't** draw steel (hardness 15) at all.
+- **Fast** (40 St) pulls hard enough to draw **steel**. But every draw that actually moves the metal has a **5%** chance of **snapping the wire**, and then the workpiece is **gone**. You'll hear it go.
 
-Steel wire is only possible on fast, so you have to accept losing the odd piece. A steel rod takes about 8 draws to become wire, so about one steel rod in three is lost along the way.
+Steel wire is only possible on fast, so you have to accept losing the odd piece. A steel rod takes about 7 draws to become wire, so about one steel rod in three is lost along the way.
 
 The drawer is a **30 Su** load.
 

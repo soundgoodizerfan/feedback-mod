@@ -128,7 +128,7 @@ Those figures are for a standard round: the standard charge for the bore (four g
 
 **Every 33 Work of energy a bullet still carries when it hits is 1 damage** (half a heart). The tooltip's muzzle energy is that figure at point-blank range.
 
-The tooltip lists a gun's muzzle energy, and the damage is that energy divided as above. A maximum charge in a steel case roughly doubles the energy of a standard one. A brass case is rated 3.75 Pu, so a maximum charge in one is over its pressure and hurts the shooter (see [Overpressure](#overpressure)).
+The tooltip lists a gun's muzzle energy, and the damage is that energy divided as above. A maximum charge in a steel case roughly doubles the energy of a standard one. A brass case is rated 4.5 Pu, and a maximum charge makes 6 Pu, so it is over the case's rating (see [Overpressure](#overpressure)).
 
 Gunpowder burns slowly and a short barrel wastes most of it, which is why a short barrel is so much weaker. A longer barrel hits harder, up to a ceiling the powder charge sets; a wider bore holds more powder and raises the ceiling. See [Ammunition](Ammunition.md#gunpowder).
 
@@ -203,11 +203,11 @@ This is **gun-fu**, and the moves are learned in the [Brute skill tree](Skills.m
 
 ### Hardness: glass, glancing, armor
 
-What the **bullet** is made of matters when it hits something hard. Hardness figures are on the [Materials](Materials.md) page: lead 0.49, copper 3.92, iron 7.85, steel 14.7.
+What the **bullet** is made of matters when it hits something hard. Hardness figures are on the [Materials](Materials.md) page: lead 0.5, copper 4, iron 8, steel 15.
 
 - **Glass, ice and other brittle blocks** break if the bullet hits with enough momentum, and it carries on, a little slower. A pistol round has plenty. Stone, wood and anything tougher don't break. Protected areas and adventure mode stop this.
 - A bullet **softer than the face it hits**, coming in at a shallow angle (more than about 70° from head-on), **glances off** with half its energy. It can glance twice.
-- **Armor** is rated by what it's made of: leather 0.79, gold 2.45, iron 7.85, netherite 128, diamond 981. A bullet **harder** than the hardest piece someone wears puts a share of the hit straight through, ignoring the armor: **1 − (armor ÷ bullet)**. A steel bullet against iron armor puts 47% through. A bullet no harder than the armor is stopped by it like any hit. Lead never pierces anything but bare skin.
+- **Armor** is rated by what it's made of: leather 1, gold 2.5, iron 8, netherite 130, diamond 981. A bullet **harder** than the hardest piece someone wears puts a share of the hit straight through, ignoring the armor: **1 − (armor ÷ bullet)**. A steel bullet against iron armor puts 47% through. A bullet no harder than the armor is stopped by it like any hit. Lead never pierces anything but bare skin.
 
 ## Heat
 
@@ -232,7 +232,7 @@ The bore wears a little with every shot, faster when the barrel is hot. The tool
 
 ## Overpressure
 
-Every gun's chamber has a **rating**: the pressure it holds. It's the barrel metal's strength times the wall, divided by half the bore (see [Gun Parts](Gun_Parts.md#the-chamber)). A steel 9 mm with a standard wall holds **10 Pu**; a standard gunpowder round makes **3 Pu**.
+Every gun's chamber has a **rating**: the pressure it holds. It's the barrel metal's strength times the wall, divided by half the bore (see [Gun Parts](Gun_Parts.md#the-chamber)). A steel 9 mm with a 3 mm wall holds **8 Pu**; a standard gunpowder round makes **3 Pu**.
 
 Load a round that makes more pressure than the rating, and every shot **damages the gun**: **15% for each whole rating over** (a round at 1.5× the rating costs 7.5% a shot). The tooltip shows *Damaged by overpressure* as a percentage. At 100% the gun is **Spent**: *"the chamber has let go."* It stays in your inventory but will never fire again.
 

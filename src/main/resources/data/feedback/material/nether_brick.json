@@ -3,7 +3,7 @@
   "traits": [
     "fireproof"
   ],
-  "hardness": 54.0,
+  "hardness": 54,
   "density": 2,
   "thermal": {
     "melting_point": 1650,
@@ -18,7 +18,7 @@
   },
   "mechanical": {
     "toughness": 1,
-    "yield_strength": 0.25,
+    "yield_strength": 1,
     "friction": 0.7,
     "abrasiveness": 0.533
   },

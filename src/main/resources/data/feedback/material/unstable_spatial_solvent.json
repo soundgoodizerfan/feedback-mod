@@ -4,7 +4,7 @@
   "traits": [
     "spatial"
   ],
-  "hardness": 0.1,
+  "hardness": 1,
   "density": 1.1,
   "thermal": {
     "boiling_point": 120,

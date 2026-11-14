@@ -1,7 +1,7 @@
 {
   "color": "#4a4f5c",
   "kind": "metalloid",
-  "hardness": 98.1,
+  "hardness": 98,
   "density": 2.33,
   "thermal": {
     "melting_point": 1414,
@@ -18,7 +18,7 @@
     "toughness": 1,
     "ductility": 0.1,
     "work_hardening": 0,
-    "yield_strength": 3.0,
+    "yield_strength": 15,
     "friction": 0.4,
     "abrasiveness": 0.629
   },

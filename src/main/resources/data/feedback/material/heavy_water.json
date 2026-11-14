@@ -1,7 +1,7 @@
 {
   "color": "#d8ecf4",
   "kind": "fluid",
-  "hardness": 0.1,
+  "hardness": 1,
   "density": 1.1,
   "thermal": {
     "melting_point": 3.8,

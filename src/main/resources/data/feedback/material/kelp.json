@@ -21,7 +21,7 @@
       "breathing": 0.06
     }
   },
-  "hardness": 0.1,
+  "hardness": 1,
   "potion": {
     "family": "sedative",
     "heading": 275,

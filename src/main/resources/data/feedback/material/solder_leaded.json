@@ -5,7 +5,7 @@
     "alloy",
     "solder"
   ],
-  "hardness": 1.47,
+  "hardness": 1.5,
   "density": 9.0,
   "thermal": {
     "melting_point": 183,
@@ -22,8 +22,8 @@
   "mechanical": {
     "toughness": 60,
     "ductility": 15,
-    "work_hardening": 0.294,
-    "yield_strength": 0.3,
+    "work_hardening": 0.5,
+    "yield_strength": 1.5,
     "friction": 0.5,
     "abrasiveness": 0
   },

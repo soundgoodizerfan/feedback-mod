@@ -3,5 +3,5 @@
   "to": "coin",
   "operation": "turn",
   "base": 5,
-  "slope": 0.98
+  "slope": 1.0
 }

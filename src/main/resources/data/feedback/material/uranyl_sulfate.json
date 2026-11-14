@@ -7,7 +7,7 @@
   "perks": {
     "toxic": 2
   },
-  "hardness": 0.1,
+  "hardness": 1,
   "density": 1.4,
   "composition": {
     "feedback:uranium": 0.4,

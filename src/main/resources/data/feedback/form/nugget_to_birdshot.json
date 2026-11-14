@@ -3,5 +3,5 @@
   "to": "birdshot",
   "operation": "blow",
   "base": 3,
-  "slope": 0.78
+  "slope": 1.0
 }

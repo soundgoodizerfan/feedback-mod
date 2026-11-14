@@ -3,7 +3,7 @@
   "traits": [
     "flammable"
   ],
-  "hardness": 1.47,
+  "hardness": 1.5,
   "density": 1.2,
   "thermal": {
     "cooling_rate": 1.61,
@@ -19,8 +19,8 @@
   "mechanical": {
     "friction": 0.4,
     "abrasiveness": 0,
-    "yield_strength": 0.05,
-    "toughness": 0.2
+    "yield_strength": 0.5,
+    "toughness": 0.5
   },
   "separation": {
     "reflectivity": 0.4

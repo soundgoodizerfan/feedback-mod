@@ -22,7 +22,7 @@ Ancient debris, netherite scrap, Worn Netherite Bits, netherite ingots, netherit
 
 Any piece of netherite gear (sword, pickaxe, axe, shovel, hoe, helmet, chestplate, leggings or boots) melts for **144 mB**, the netherite ingot in it. The diamond is lost.
 
-Cast the melt in a [Casting Basin](Casting_Basin.md) to a **Cast Netherite Ingot**. It is a magnetic, fireproof alloy of hardness **83.4**, short of netherite's 128.
+Cast the melt in a [Casting Basin](Casting_Basin.md) to a **Cast Netherite Ingot**. It is a magnetic, fireproof alloy of hardness **83**, short of netherite's 130.
 
 ## Soul quenching
 
@@ -32,7 +32,7 @@ A Cast Netherite Ingot becomes netherite only by quenching in soul oil.
 2. Heat the Cast Netherite Ingot to **1200 Tu** or more.
 3. Right-click the tank with the hot ingot in hand.
 
-The ingot comes out as a vanilla **netherite ingot** (hardness **128**) and the tank loses 50 mB of soul oil. A cooler ingot is not transformed. Carry hot pieces with [tongs or gloves](Hazards.md#tongs).
+The ingot comes out as a vanilla **netherite ingot** (hardness **130**) and the tank loses 50 mB of soul oil. A cooler ingot is not transformed. Carry hot pieces with [tongs or gloves](Hazards.md#tongs).
 
 ## Synthesis
 

@@ -5,7 +5,7 @@
   "neutron": {
     "absorption": 0.4
   },
-  "hardness": 34.3,
+  "hardness": 34,
   "density": 19.25,
   "thermal": {
     "melting_point": 3422,
@@ -22,8 +22,8 @@
   "mechanical": {
     "toughness": 10,
     "ductility": 1,
-    "work_hardening": 3.66,
-    "yield_strength": 7.5,
+    "work_hardening": 3.5,
+    "yield_strength": 38,
     "friction": 0.5,
     "abrasiveness": 0.46
   },

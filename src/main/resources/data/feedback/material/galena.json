@@ -1,7 +1,7 @@
 {
   "color": "#8a8f99",
   "kind": "crystal",
-  "hardness": 7.36,
+  "hardness": 7.5,
   "density": 7.5,
   "thermal": {
     "melting_point": 1115,
@@ -15,10 +15,10 @@
     "service_temperature": 669
   },
   "mechanical": {
-    "toughness": 0.8,
+    "toughness": 1,
     "friction": 0.3,
     "abrasiveness": 0.213,
-    "yield_strength": 0.1
+    "yield_strength": 0.5
   },
   "electrical": {
     "rectifying": 1.0

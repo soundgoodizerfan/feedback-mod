@@ -5,7 +5,7 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 14.7,
+  "hardness": 15,
   "density": 7.85,
   "min_temperature": 900,
   "max_temperature": 1100,
@@ -24,8 +24,8 @@
   "mechanical": {
     "toughness": 50,
     "ductility": 5,
-    "work_hardening": 0.98,
-    "yield_strength": 2.5,
+    "work_hardening": 1,
+    "yield_strength": 12,
     "friction": 0.6,
     "abrasiveness": 0.324,
     "hardenable": true

@@ -14,22 +14,22 @@ Getting the item out **at the right moment** is the game. Instruments, gearing, 
 
 Three things decide what a blow does:
 
-- **Strength (St)**: how hard one blow lands. It's printed on every machine and depends on how you've geared it. A [Hammer](Hammer.md) swings 2.2, 6.6 or 11 St (15.4 with Strength), as you choose; a [Mechanical Hammer](Mechanical_Hammer.md) lands an eighth of its head's ceiling on a long throw and half on a short one.
-- **Hardness**: a property of the metal. Copper is 3.92, iron 7.85, steel 14.7. JEI shows it on every metalworking page, and so does [Materials](Materials.md).
-- **Work (Fu)**: how much shaping the piece has taken so far. Each step (ingot → plate, plate → foil…) needs a set amount: a fixed figure plus a bit more per point of hardness. A copper plate is about 19 Fu, copper foil about 12 more; a steel plate is about 42.
+- **Strength (St)**: how hard one blow lands. It's printed on every machine and depends on how you've geared it. A [Hammer](Hammer.md) swings 2, 7 or 11 St (15 with Strength), as you choose; a [Mechanical Hammer](Mechanical_Hammer.md) lands an eighth of its head's ceiling on a long throw and half on a short one.
+- **Hardness**: a property of the metal, counted in St (1 St per 0.1 GPa of Vickers hardness): copper is 4, iron 8, steel 15, netherite 130. JEI shows it on every metalworking page, and so does [Materials](Materials.md).
+- **Work (Fu)**: how much shaping the piece has taken so far. Each step (ingot → plate, plate → foil…) needs a set amount: a fixed figure plus a bit more per point of hardness. A copper plate is about 19 Fu, copper foil about 13 more; a steel plate is about 41.
 
 The rules:
 
-1. **A blow weaker than the metal's hardness does nothing at all.** It's not slow, it's impossible. A hammer swung by hand (15.4 St at the very most) will never shape cast iron (19.6), however long you swing.
-2. **Each blow does strength ÷ hardness in work**, rounded, never less than 1. A 6.6 St swing on copper (3.92) is 2 Fu; a 29.4 St blow on steel (14.7) is 2.
+1. **A blow weaker than the metal's hardness does nothing at all.** It's not slow, it's impossible. A hammer swung by hand (15 St at the very most) will never shape cast iron (20), however long you swing.
+2. **Each blow does strength ÷ hardness in work**, rounded, never less than 1. A 7 St swing on copper (4) is 2 Fu; a 30 St blow on steel (15) is 2.
 3. **Extra work carries over.** If a blow does more than the step needs, the leftover goes straight into the *next* step. A hard enough blow on a soft enough metal can skip past the thing you wanted entirely.
 
-That last rule is why strength is a choice and not just "more is better". Lead, with an 11.6 Fu plate and 7.6 Fu of foil after it:
+That last rule is why strength is a choice and not just "more is better". Lead, with a 12 Fu plate and 8 Fu of foil after it:
 
 | Blow | Per blow | Plate after | Foil after |
 | --- | --- | --- | --- |
-| Tap, 2.2 St | 4 Fu | blow 3 | blow 5 |
-| Blow, 6.6 St | 13 Fu | blow 1 | blow 2 |
+| Tap, 2 St | 4 Fu | blow 3 | blow 5 |
+| Blow, 7 St | 14 Fu | blow 1 | blow 2 |
 | Heavy blow, 11 St | 22 Fu | blow 1 | blow 1: the same blow |
 
 On a **heavy blow** the blow that makes the plate carries 10 Fu over, and the foil is already done: you never see a plate. With a **tap** you get a plate on the third blow and a blow or two to grab it.

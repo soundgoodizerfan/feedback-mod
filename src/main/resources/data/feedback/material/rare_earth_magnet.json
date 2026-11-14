@@ -4,7 +4,7 @@
   "traits": [
     "alloy"
   ],
-  "hardness": 58.9,
+  "hardness": 59,
   "density": 7.4,
   "thermal": {
     "melting_point": 1185,
@@ -21,8 +21,8 @@
   "mechanical": {
     "toughness": 4,
     "ductility": 0.5,
-    "work_hardening": 0.841,
-    "yield_strength": 0.8,
+    "work_hardening": 1,
+    "yield_strength": 4,
     "friction": 0.5,
     "abrasiveness": 0.547
   },

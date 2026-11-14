@@ -3,7 +3,7 @@
   "traits": [
     "sticky"
   ],
-  "hardness": 0.1,
+  "hardness": 0.5,
   "forms": {
     "raw": "minecraft:magma_cream"
   },
@@ -30,8 +30,8 @@
     "cooling_rate": 1.45
   },
   "mechanical": {
-    "yield_strength": 0,
-    "toughness": 0,
+    "yield_strength": 0.5,
+    "toughness": 0.5,
     "abrasiveness": 0,
     "friction": 0.5
   },

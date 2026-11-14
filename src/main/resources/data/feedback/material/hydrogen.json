@@ -3,7 +3,7 @@
   "traits": [
     "flammable"
   ],
-  "hardness": 0.1,
+  "hardness": 1,
   "density": 9e-05,
   "thermal": {
     "cooling_rate": 1,

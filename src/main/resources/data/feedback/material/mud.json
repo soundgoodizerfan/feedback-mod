@@ -3,7 +3,7 @@
   "traits": [
     "sticky"
   ],
-  "hardness": 0.196,
+  "hardness": 0.5,
   "density": 1.8,
   "thermal": {
     "cooling_rate": 1.18,
@@ -19,8 +19,8 @@
   "mechanical": {
     "friction": 0.9,
     "abrasiveness": 0,
-    "yield_strength": 0.002,
-    "toughness": 0.1
+    "yield_strength": 0.5,
+    "toughness": 0.5
   },
   "separation": {
     "reflectivity": 0.1

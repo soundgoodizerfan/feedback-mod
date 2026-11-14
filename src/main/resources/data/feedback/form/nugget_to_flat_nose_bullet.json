@@ -3,5 +3,5 @@
   "to": "flat_nose_bullet",
   "operation": "blow",
   "base": 4.5,
-  "slope": 0.98
+  "slope": 1.0
 }

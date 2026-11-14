@@ -5,11 +5,11 @@
     "dust",
     "ingot"
   ],
-  "hardness": 4.91,
+  "hardness": 5,
   "density": 0.8,
   "mechanical": {
     "toughness": 2,
-    "yield_strength": 0.2,
+    "yield_strength": 1,
     "friction": 0.4,
     "abrasiveness": 0.147
   },

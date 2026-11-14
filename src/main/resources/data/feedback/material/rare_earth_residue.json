@@ -1,7 +1,7 @@
 {
   "color": "#9a8a70",
   "kind": "granular",
-  "hardness": 9.81,
+  "hardness": 10,
   "density": 2.4,
   "thermal": {
     "cooling_rate": 2.21,
@@ -17,8 +17,8 @@
   "mechanical": {
     "friction": 0.7,
     "abrasiveness": 0.259,
-    "yield_strength": 0.05,
-    "toughness": 0.3
+    "yield_strength": 0.5,
+    "toughness": 0.5
   },
   "separation": {
     "reflectivity": 0.2

@@ -6,7 +6,7 @@
     "shard",
     "substrate"
   ],
-  "hardness": 78.5,
+  "hardness": 78,
   "density": 1.5,
   "thermal": {
     "cooling_rate": 4.09,
@@ -23,7 +23,7 @@
     "toughness": 2,
     "friction": 0.3,
     "abrasiveness": 0.593,
-    "yield_strength": 0.6
+    "yield_strength": 3
   },
   "separation": {
     "reflectivity": 0.4

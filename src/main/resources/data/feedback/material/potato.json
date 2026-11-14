@@ -21,7 +21,7 @@
       "hearth": 0.03
     }
   },
-  "hardness": 0.1,
+  "hardness": 1,
   "potion": {
     "family": "mineral",
     "heading": 305,

@@ -7,7 +7,7 @@
     "italian",
     "east_asian"
   ],
-  "hardness": 0.05,
+  "hardness": 1,
   "forms": {
     "raw": "feedback:noodles",
     "cooked": "feedback:cooked_noodles"

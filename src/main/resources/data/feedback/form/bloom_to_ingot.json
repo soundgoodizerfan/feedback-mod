@@ -3,7 +3,7 @@
   "to": "ingot",
   "operation": "blow",
   "base": 60,
-  "slope": 3.9,
+  "slope": 4.0,
   "into": "feedback:wrought_iron",
   "byproduct": {
     "id": "feedback:bloomery_slag",

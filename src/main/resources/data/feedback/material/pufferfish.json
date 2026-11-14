@@ -14,7 +14,7 @@
       "sedative": 0.02
     }
   },
-  "hardness": 0.1,
+  "hardness": 1,
   "parent": "_kind_seafood",
   "toxicity": 3.0
 }

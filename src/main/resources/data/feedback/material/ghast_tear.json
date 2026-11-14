@@ -3,7 +3,7 @@
   "traits": [
     "saline"
   ],
-  "hardness": 0.981,
+  "hardness": 1,
   "forms": {
     "raw": "minecraft:ghast_tear"
   },
@@ -31,8 +31,8 @@
     "cooling_rate": 1.25
   },
   "mechanical": {
-    "yield_strength": 0.02,
-    "toughness": 0.2,
+    "yield_strength": 0.5,
+    "toughness": 0.5,
     "abrasiveness": 0,
     "friction": 0.6
   },

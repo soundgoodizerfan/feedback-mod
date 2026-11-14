@@ -9,7 +9,7 @@
   "traits": [
     "rollable"
   ],
-  "hardness": 0.5,
+  "hardness": 1,
   "density": 1,
   "thermal": {
     "cooling_rate": 1,

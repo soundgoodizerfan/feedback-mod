@@ -68,7 +68,7 @@
     "dust",
     "drilled_plate"
   ],
-  "hardness": 3.92,
+  "hardness": 4,
   "density": 6.5,
   "thermal": {
     "melting_point": 1100,
@@ -85,10 +85,10 @@
   "mechanical": {
     "toughness": 30,
     "ductility": 4,
-    "yield_strength": 0.4,
+    "yield_strength": 2,
     "friction": 0.4,
     "abrasiveness": 0.111,
-    "work_hardening": 0.392
+    "work_hardening": 1
   },
   "separation": {
     "reflectivity": 0.5

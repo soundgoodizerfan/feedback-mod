@@ -1,7 +1,7 @@
 {
   "color": "#c8d8e0",
   "kind": "fluid",
-  "hardness": 0.1,
+  "hardness": 1,
   "density": 1.02,
   "thermal": {
     "cooling_rate": 1,

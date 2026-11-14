@@ -1,7 +1,7 @@
 {
   "color": "#5fb3a5",
   "kind": "crystal",
-  "hardness": 49.1,
+  "hardness": 49,
   "density": 2.8,
   "thermal": {
     "melting_point": 1600,
@@ -18,7 +18,7 @@
     "toughness": 1,
     "friction": 0.6,
     "abrasiveness": 0.518,
-    "yield_strength": 0.5
+    "yield_strength": 2.5
   },
   "separation": {
     "reflectivity": 0.15

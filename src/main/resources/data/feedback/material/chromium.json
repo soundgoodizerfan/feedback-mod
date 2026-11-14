@@ -2,7 +2,7 @@
   "fastener": 3,
   "color": "#c4c9cf",
   "kind": "metal",
-  "hardness": 19.6,
+  "hardness": 20,
   "density": 7.19,
   "thermal": {
     "melting_point": 1907,
@@ -19,8 +19,8 @@
   "mechanical": {
     "toughness": 3,
     "ductility": 3,
-    "work_hardening": 1.09,
-    "yield_strength": 3.0,
+    "work_hardening": 1,
+    "yield_strength": 15,
     "friction": 0.5,
     "abrasiveness": 0.37
   },

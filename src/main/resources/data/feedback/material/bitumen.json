@@ -1,7 +1,7 @@
 {
   "color": "#1c1a18",
   "kind": "polymer",
-  "hardness": 0.491,
+  "hardness": 0.5,
   "density": 1.05,
   "thermal": {
     "melting_point": 100,
@@ -15,9 +15,9 @@
     "oxidation_temperature": 100
   },
   "mechanical": {
-    "toughness": 0.1,
+    "toughness": 0.5,
     "ductility": 20,
-    "yield_strength": 0.01,
+    "yield_strength": 0.5,
     "friction": 0.5,
     "abrasiveness": 0
   },

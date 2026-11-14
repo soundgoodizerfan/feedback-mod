@@ -1,7 +1,7 @@
 {
   "color": "#f2f2f0",
   "kind": "ceramic",
-  "hardness": 177.0,
+  "hardness": 177,
   "density": 3.95,
   "thermal": {
     "melting_point": 2072,
@@ -18,7 +18,7 @@
     "toughness": 4,
     "friction": 0.4,
     "abrasiveness": 0.724,
-    "yield_strength": 3.0
+    "yield_strength": 15
   },
   "separation": {
     "reflectivity": 0.75

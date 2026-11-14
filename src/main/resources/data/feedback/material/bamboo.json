@@ -5,7 +5,7 @@
     "flammable",
     "fibrous"
   ],
-  "hardness": 3.92,
+  "hardness": 4,
   "density": 0.7,
   "thermal": {
     "cooling_rate": 2.03,
@@ -20,7 +20,7 @@
   },
   "mechanical": {
     "toughness": 3,
-    "yield_strength": 0.6,
+    "yield_strength": 3,
     "friction": 0.4,
     "abrasiveness": 0.111
   },

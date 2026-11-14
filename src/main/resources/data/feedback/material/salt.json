@@ -4,7 +4,7 @@
     "seasoning",
     "saline"
   ],
-  "hardness": 1.96,
+  "hardness": 2,
   "density": 2.16,
   "thermal": {
     "melting_point": 801,
@@ -20,7 +20,7 @@
   "mechanical": {
     "friction": 0.5,
     "abrasiveness": 0,
-    "yield_strength": 0.05,
+    "yield_strength": 0.5,
     "toughness": 0.5
   },
   "separation": {

@@ -75,8 +75,8 @@ How hard the hammer hits depends on the seated head, the linkage's **throw** and
 The ceiling is the St on the seated hammer's tooltip. A heavier or harder head lifts all three; a light or soft one lowers them (see [Hammer](Hammer.md#in-machines)).
 
 - **Long throw**: gentle. Use it for soft metals like copper, where you want to stop at plate.
-- **Short throw**: four times harder. It overshoots soft metals, but you need it for harder ones: iron (7.85) and cast iron (19.6).
-- **Gearing down** (slower shaft, more force) multiplies the blow. A large cog driven by a small one doubles it. That's how you reach **steel** (hardness 14.7): the blow has to reach past 14.7 St, which takes a heavy hammer on a short throw geared down. Steel also has to be between **900 and 1100 Tu** while you hit it.
+- **Short throw**: four times harder. It overshoots soft metals, but you need it for harder ones: iron (8) and cast iron (20).
+- **Gearing down** (slower shaft, more force) multiplies the blow. A large cog driven by a small one doubles it. That's how you reach **steel** (hardness 15): the blow has to reach 15 St, which takes a heavy hammer on a short throw geared down. Steel also has to be between **900 and 1100 Tu** while you hit it.
 
 Gearing up past the head's ceiling doesn't make it hit harder. The extra force goes into the head and wears it.
 

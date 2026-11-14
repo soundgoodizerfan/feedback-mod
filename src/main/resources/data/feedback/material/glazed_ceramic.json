@@ -1,7 +1,7 @@
 {
   "kind": "ceramic",
   "traits": [],
-  "hardness": 68.7,
+  "hardness": 69,
   "density": 2.4,
   "thermal": {
     "melting_point": 1650,
@@ -16,7 +16,7 @@
   },
   "mechanical": {
     "toughness": 1.5,
-    "yield_strength": 0.5,
+    "yield_strength": 2.5,
     "friction": 0.7,
     "abrasiveness": 0.572
   },

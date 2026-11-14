@@ -6,7 +6,7 @@
     "fibrous",
     "sticky"
   ],
-  "hardness": 0.491,
+  "hardness": 0.5,
   "density": 1.4,
   "thermal": {
     "cooling_rate": 0.834,
@@ -20,7 +20,7 @@
     "service_temperature": 150
   },
   "mechanical": {
-    "yield_strength": 0.3,
+    "yield_strength": 1.5,
     "friction": 0.8,
     "abrasiveness": 0,
     "permeability": 0.03,

@@ -5,7 +5,7 @@
   "perks": {
     "toxic": 2
   },
-  "hardness": 39.2,
+  "hardness": 39,
   "density": 22.59,
   "thermal": {
     "melting_point": 3033,
@@ -21,11 +21,11 @@
   },
   "mechanical": {
     "toughness": 10,
-    "yield_strength": 6.0,
+    "yield_strength": 30,
     "friction": 0.6,
     "abrasiveness": 0.482,
     "ductility": 3,
-    "work_hardening": 3.92
+    "work_hardening": 4
   },
   "separation": {
     "magnetic": false,

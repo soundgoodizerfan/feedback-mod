@@ -4,7 +4,7 @@
   "exclude": [
     "ingot"
   ],
-  "hardness": 34.3,
+  "hardness": 34,
   "density": 4.8,
   "thermal": {
     "cooling_rate": 1.9,
@@ -21,7 +21,7 @@
     "toughness": 1,
     "friction": 0.4,
     "abrasiveness": 0.46,
-    "yield_strength": 0.4
+    "yield_strength": 2
   },
   "separation": {
     "reflectivity": 0.5,

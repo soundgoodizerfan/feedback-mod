@@ -3,7 +3,7 @@
   "exclude": [
     "ingot"
   ],
-  "hardness": 58.9,
+  "hardness": 59,
   "density": 2.85,
   "thermal": {
     "melting_point": 1250,
@@ -18,7 +18,7 @@
   },
   "mechanical": {
     "toughness": 1.5,
-    "yield_strength": 1.5,
+    "yield_strength": 7.5,
     "friction": 0.7,
     "abrasiveness": 0.547
   },

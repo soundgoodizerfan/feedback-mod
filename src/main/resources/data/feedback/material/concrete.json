@@ -1,6 +1,6 @@
 {
   "kind": "ceramic",
-  "hardness": 19.6,
+  "hardness": 20,
   "density": 2.4,
   "thermal": {
     "melting_point": 1200,
@@ -15,7 +15,7 @@
   },
   "mechanical": {
     "toughness": 0.5,
-    "yield_strength": 0.3,
+    "yield_strength": 1.5,
     "friction": 0.7,
     "abrasiveness": 0.37
   },

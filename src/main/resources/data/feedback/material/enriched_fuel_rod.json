@@ -4,7 +4,7 @@
   "traits": [
     "assembly"
   ],
-  "hardness": 29.4,
+  "hardness": 29,
   "density": 10,
   "thermal": {
     "melting_point": 1850,
@@ -39,12 +39,12 @@
     "block"
   ],
   "mechanical": {
-    "yield_strength": 4.0,
+    "yield_strength": 20,
     "toughness": 30,
     "abrasiveness": 0.436,
     "friction": 0.5,
     "ductility": 3,
-    "work_hardening": 2.94
+    "work_hardening": 3
   },
   "corrosion_resistance": 0.9,
   "separation": {

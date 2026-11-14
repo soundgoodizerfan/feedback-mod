@@ -4,7 +4,7 @@
     "vegetal",
     "fibrous"
   ],
-  "hardness": 0.1,
+  "hardness": 1,
   "forms": {
     "raw": "minecraft:cactus"
   },

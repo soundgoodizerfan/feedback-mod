@@ -3,5 +3,5 @@
   "to": "bullet",
   "operation": "blow",
   "base": 4,
-  "slope": 0.98
+  "slope": 1.0
 }

@@ -24,7 +24,7 @@ Shape a **Hammer Head** (ingots, blocks, gems, planks or cobblestone) at a bench
 
 Put the hammer and **one** workpiece anywhere in a crafting grid. The output slot shows what that piece will be **after one more blow**. Take it, and that's one swing: the hammer loses a little durability and the piece takes one blow's worth of work.
 
-Keep swinging and watch the result change. An ordinary swing lands **6.6 St**, which is 2 Fu on copper: a copper ingot becomes a **Copper Plate** on the tenth swing, **Copper Foil** on the sixteenth, then **Copper Scrap**.
+Keep swinging and watch the result change. An ordinary swing lands **7 St**, which is 2 Fu on copper: a copper ingot becomes a **Copper Plate** on the tenth swing, **Copper Foil** on the sixteenth, then **Copper Scrap**.
 
 ## At the benches
 
@@ -44,10 +44,10 @@ Hold the hammer, **sneak and scroll** to pick a swing. The hammer's tooltip says
 
 | Swing | Strength | Good for |
 | --- | --- | --- |
-| **Tap** | 2.2 St | Finishing, and very soft metals like lead and tin |
-| **Blow** | 6.6 St | Copper, zinc, silver, gold (the default) |
+| **Tap** | 2 St | Finishing, and very soft metals like lead and tin |
+| **Blow** | 7 St | Copper, zinc, silver, gold (the default) |
 | **Heavy blow** | 11 St | Brass, bronze and iron |
-| **Mighty blow** | 15.4 St | Hot steel. Only while you have the **Strength** effect; it drops back to a heavy blow when that wears off |
+| **Mighty blow** | 15 St | Hot steel. Only while you have the **Strength** effect; it drops back to a heavy blow when that wears off |
 
 Harder isn't better. A heavy blow on lead is 22 Fu at a time, so it's easy to swing straight past the plate.
 
@@ -57,11 +57,11 @@ Shift-clicking the output is the same as taking it: **one swing**, and the piece
 
 ## What it can work
 
-A swing only moves metal at least as soft as it is strong. A tap (2.2 St) shapes **tin (0.98) and lead (0.49)**. An ordinary blow (6.6 St) adds **copper (3.92), zinc (3.43), silver and gold (2.45)**, and can hammer **nuggets into bullets** (see [Ammunition](Ammunition.md)). A heavy blow (11 St) adds **brass and iron (7.85), nickel (8.83), bronze and wrought iron (9.81)**; a mighty blow adds **steel (14.7)**.
+A swing only moves metal at least as soft as it is strong. A tap (2 St) shapes **tin (1) and lead (0.5)**. An ordinary blow (7 St) adds **copper (4), zinc (3.5), silver and gold (2.5)**, and can hammer **nuggets into bullets** (see [Ammunition](Ammunition.md)). A heavy blow (11 St) adds **brass and iron (8), nickel (9), bronze and wrought iron (10)**; a mighty blow adds **steel (15)**.
 
-Steel answers only to a mighty blow, and only inside its working window of 900 to 1100 Tu ([Metalworking](Metalworking.md#hot-metal)). Cast iron (19.6) and anything harder are out of reach by hand; they need a [Mechanical Hammer](Mechanical_Hammer.md) with the right gearing.
+Steel answers only to a mighty blow, and only inside its working window of 900 to 1100 Tu ([Metalworking](Metalworking.md#hot-metal)). Cast iron (20) and anything harder are out of reach by hand; they need a [Mechanical Hammer](Mechanical_Hammer.md) with the right gearing.
 
-Very soft metals move a lot with each blow: 6.6 St on lead (0.49) is 13 Fu a swing. Tap lead: 4 Fu.
+Very soft metals move a lot with each blow: 7 St on lead (0.5) is 14 Fu a swing. Tap lead: 4 Fu.
 
 ## Wear
 

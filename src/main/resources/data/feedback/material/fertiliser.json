@@ -1,7 +1,7 @@
 {
   "color": "#e8e4d0",
   "kind": "granular",
-  "hardness": 1.47,
+  "hardness": 1.5,
   "density": 1.77,
   "thermal": {
     "cooling_rate": 1.17,
@@ -17,8 +17,8 @@
   "mechanical": {
     "friction": 0.5,
     "abrasiveness": 0,
-    "yield_strength": 0.03,
-    "toughness": 0.2
+    "yield_strength": 0.5,
+    "toughness": 0.5
   },
   "forms": {
     "raw": "feedback:fertiliser"

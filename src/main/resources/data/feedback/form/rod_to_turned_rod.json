@@ -3,5 +3,5 @@
   "to": "turned_rod",
   "operation": "turn",
   "base": 0,
-  "slope": 0.65
+  "slope": 0.5
 }

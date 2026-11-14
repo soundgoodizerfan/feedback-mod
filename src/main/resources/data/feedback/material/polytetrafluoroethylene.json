@@ -1,7 +1,7 @@
 {
   "color": "#f2f2ee",
   "kind": "polymer",
-  "hardness": 0.491,
+  "hardness": 0.5,
   "density": 2.2,
   "thermal": {
     "cooling_rate": 1.21,
@@ -17,7 +17,7 @@
   "mechanical": {
     "toughness": 2,
     "ductility": 15,
-    "yield_strength": 0.1,
+    "yield_strength": 0.5,
     "friction": 0.05,
     "abrasiveness": 0
   },

@@ -10,23 +10,23 @@ Every metal has these part forms. Each is made by one step on a machine, like an
 
 | Part | Made from | By | Work (Fu) | Steel |
 | --- | --- | --- | --- | --- |
-| **Gun Barrel** | Turned Rod | [Drill Press](Drill_Press.md) | 6 + 0.98 × hardness | 20.4 |
-| **Receiver** | Ingot | Drill Press | 8 + 1.3 × hardness | 27.1 |
-| **Slide** | Plate | [Grinding Wheel](Grinding_Wheel.md) | 6 + 0.98 × hardness | 20.4 |
-| **Bolt** | Rod | Grinding Wheel | 6 + 0.98 × hardness | 20.4 |
-| **Trigger Group** | Drilled Plate | Grinding Wheel | 4 + 0.65 × hardness | 13.6 |
-| **Grip** | Ingot | [Lathe](Lathe.md) | 4 + 0.65 × hardness | 13.6 |
-| **Sight** | Plate | Rolling Mill | 4 + 0.65 × hardness | 13.6 |
-| **Belt Feed** | Plate | Rolling Mill | 4 + 0.65 × hardness | 13.6 |
-| **Box Feed** | Plate | Rolling Mill | 4 + 0.65 × hardness | 13.6 |
-| **Cylinder** | Ground Ingot | Drill Press | 8 + 1.3 × hardness | 27.1 |
-| **Magazine Tube** | Rod | Drill Press | 6 + 0.98 × hardness | 20.4 |
-| **Suppressor** | Cylinder | Lathe | 4 + 0.65 × hardness | 13.6 |
-| **Muzzle Brake** | Magazine Tube | Drill Press | 4 + 0.65 × hardness | 13.6 |
-| **Relief Vent** | Nugget | Drill Press | 4 + 0.65 × hardness | 13.6 |
-| **Barrel Shroud** | Drilled Plate | [Rolling Mill](Rolling_Mill.md) | 4 + 0.65 × hardness | 13.6 |
+| **Gun Barrel** | Turned Rod | [Drill Press](Drill_Press.md) | 6 + hardness | 21 |
+| **Receiver** | Ingot | Drill Press | 8 + 1.5 × hardness | 31 |
+| **Slide** | Plate | [Grinding Wheel](Grinding_Wheel.md) | 6 + hardness | 21 |
+| **Bolt** | Rod | Grinding Wheel | 6 + hardness | 21 |
+| **Trigger Group** | Drilled Plate | Grinding Wheel | 4 + 0.5 × hardness | 12 |
+| **Grip** | Ingot | [Lathe](Lathe.md) | 4 + 0.5 × hardness | 12 |
+| **Sight** | Plate | Rolling Mill | 4 + 0.5 × hardness | 12 |
+| **Belt Feed** | Plate | Rolling Mill | 4 + 0.5 × hardness | 12 |
+| **Box Feed** | Plate | Rolling Mill | 4 + 0.5 × hardness | 12 |
+| **Cylinder** | Ground Ingot | Drill Press | 8 + 1.5 × hardness | 31 |
+| **Magazine Tube** | Rod | Drill Press | 6 + hardness | 21 |
+| **Suppressor** | Cylinder | Lathe | 4 + 0.5 × hardness | 12 |
+| **Muzzle Brake** | Magazine Tube | Drill Press | 4 + 0.5 × hardness | 12 |
+| **Relief Vent** | Nugget | Drill Press | 4 + 0.5 × hardness | 12 |
+| **Barrel Shroud** | Drilled Plate | [Rolling Mill](Rolling_Mill.md) | 4 + 0.5 × hardness | 12 |
 
-The cutting machines also have to be **harder than the metal**: the drill bit is 78, the lathe bit 150, the grinding wheel 196. So hardened steel (68.7) parts can be drilled, turned and ground, but netherite (128) is past the drill bit and tungsten carbide (157) past the lathe bit too, so only the grinding wheel cuts them, which rules out anything drilled.
+The cutting machines also have to be **harder than the metal**: the drill bit is 78, the lathe bit 150, the grinding wheel 196. So hardened steel (69) parts can be drilled, turned and ground, but netherite (130) is past the drill bit and tungsten carbide (157) past the lathe bit too, so only the grinding wheel cuts them, which rules out anything drilled.
 
 ### Grips from bone and wood
 
@@ -34,9 +34,9 @@ A grip carries no load, so it doesn't have to be a strong metal. The lathe also 
 
 | From | Grip | Work (Fu) | Grip friction |
 | --- | --- | --- | --- |
-| Stick | Wood | 2.5 | 0.4 |
-| Bamboo | Bamboo | 3 | 0.4 |
-| Bone | Bone | 5 | 0.5 |
+| Stick | Wood | 3 | 0.4 |
+| Bamboo | Bamboo | 4 | 0.4 |
+| Bone | Bone | 6 | 0.5 |
 
 A plastic or rubber ingot turns into a grip as well, with the friction of its material (synthetic rubber 1.2, polyethylene 0.3).
 
@@ -69,7 +69,7 @@ The **wall** is what's left between the bore and the outside: (outside − bore)
 
 The machines don't know what you're aiming for. Drill until the wall is under **0.5 mm**, or grind it shorter than **5 cm**, and the barrel is **swarf**.
 
-Work per cut is the machine's strength (St) divided by the metal's hardness. For example, a fast drill feed (48.4 St) on steel (14.7) is about 3.3 Fu a push, so each push widens the bore by about 0.33 mm.
+Work per cut is the machine's strength (St) divided by the metal's hardness. For example, a fast drill feed (48 St) on steel (15) is 3 Fu a push, so each push widens the bore by 0.3 mm.
 
 **Without [Calipers](Instruments.md#calipers)** a barrel just says *"A bored barrel. Calipers would say how wide."* With calipers in your inventory you get its bore, wall and length to 0.1 mm.
 
@@ -157,17 +157,18 @@ A standard round of gunpowder makes **3 Pu**; a chamber rated under the pressure
 
 | Barrel metal | Yield strength | 9 mm, 3 mm wall |
 | --- | --- | --- |
-| Netherite | 20 | 13.3 Pu |
-| Hardened Steel | 15 | 10 Pu |
-| Steel | 2.5 | 1.7 Pu |
-| Iron | 1.5 | 1 Pu |
-| Bronze, Cast Iron | 2 | 1.3 Pu |
-| Brass | 1.25 | 0.8 Pu |
-| Copper | 0.7 | 0.5 Pu |
-| Zinc | 1 | 0.7 Pu |
-| Gold | 0.3 | 0.2 Pu |
-| Tin | 0.15 | 0.1 Pu |
-| Lead | 0.12 | 0.1 Pu |
+| Netherite | 100 | 66.7 Pu |
+| Hardened Steel | 75 | 50 Pu |
+| Tempered Steel | 55 | 36.7 Pu |
+| Steel | 12 | 8 Pu |
+| Iron | 7.5 | 5 Pu |
+| Wrought Iron, Bronze, Cast Iron | 10 | 6.7 Pu |
+| Brass | 6 | 4 Pu |
+| Zinc | 5 | 3.3 Pu |
+| Copper | 3.5 | 2.3 Pu |
+| Gold | 1.5 | 1 Pu |
+| Tin | 1 | 0.7 Pu |
+| Lead | 0.5 | 0.3 Pu |
 
 Halving the bore doubles the rating; so does going from a 1.5 mm wall to 3 mm. The other parts don't affect the chamber: they add weight and their own metal. The action then scales it: a bolt's locking lugs rate the same steel 25% higher, a pump or self-loading action holds it as is, a lever rates it 25% lower and a break action 40% lower, so a break gun takes shot and low-pressure rounds while a bolt rifle takes the hot ones.
 

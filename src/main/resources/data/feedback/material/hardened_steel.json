@@ -1,7 +1,7 @@
 {
   "color": "#6e7783",
   "parent": "steel",
-  "hardness": 68.7,
+  "hardness": 69,
   "thermal": {
     "conductivity": 0.0112,
     "service_temperature": 250,
@@ -10,7 +10,7 @@
   "mechanical": {
     "toughness": 20,
     "ductility": 0,
-    "yield_strength": 15.0,
+    "yield_strength": 75,
     "abrasiveness": 0.572,
     "work_hardening": 0,
     "hardenable": null

@@ -1,7 +1,7 @@
 {
   "color": "#a08fa0",
   "kind": "metal",
-  "hardness": 19.6,
+  "hardness": 20,
   "density": 7.21,
   "thermal": {
     "melting_point": 1246,
@@ -18,8 +18,8 @@
   "mechanical": {
     "toughness": 4,
     "ductility": 1,
-    "work_hardening": 1.96,
-    "yield_strength": 2.0,
+    "work_hardening": 2,
+    "yield_strength": 10,
     "friction": 0.5,
     "abrasiveness": 0.37
   },
