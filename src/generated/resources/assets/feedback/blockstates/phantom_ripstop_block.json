@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "feedback:block/phantom_ripstop_block"
+    }
+  }
+}

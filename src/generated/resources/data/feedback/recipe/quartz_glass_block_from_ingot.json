@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:quartz_glass_ingot"
+    },
+    {
+      "item": "feedback:quartz_glass_ingot"
+    },
+    {
+      "item": "feedback:quartz_glass_ingot"
+    },
+    {
+      "item": "feedback:quartz_glass_ingot"
+    },
+    {
+      "item": "feedback:quartz_glass_ingot"
+    },
+    {
+      "item": "feedback:quartz_glass_ingot"
+    },
+    {
+      "item": "feedback:quartz_glass_ingot"
+    },
+    {
+      "item": "feedback:quartz_glass_ingot"
+    },
+    {
+      "item": "feedback:quartz_glass_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:quartz_glass_block"
+  }
+}

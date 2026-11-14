@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:silica_aerogel_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:silica_aerogel_ingot"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:platinum_ingot"
+    },
+    {
+      "item": "feedback:platinum_ingot"
+    },
+    {
+      "item": "feedback:platinum_ingot"
+    },
+    {
+      "item": "feedback:platinum_ingot"
+    },
+    {
+      "item": "feedback:platinum_ingot"
+    },
+    {
+      "item": "feedback:platinum_ingot"
+    },
+    {
+      "item": "feedback:platinum_ingot"
+    },
+    {
+      "item": "feedback:platinum_ingot"
+    },
+    {
+      "item": "feedback:platinum_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:platinum_block"
+  }
+}

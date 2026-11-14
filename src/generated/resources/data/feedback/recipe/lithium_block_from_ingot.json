@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:lithium_ingot"
+    },
+    {
+      "item": "feedback:lithium_ingot"
+    },
+    {
+      "item": "feedback:lithium_ingot"
+    },
+    {
+      "item": "feedback:lithium_ingot"
+    },
+    {
+      "item": "feedback:lithium_ingot"
+    },
+    {
+      "item": "feedback:lithium_ingot"
+    },
+    {
+      "item": "feedback:lithium_ingot"
+    },
+    {
+      "item": "feedback:lithium_ingot"
+    },
+    {
+      "item": "feedback:lithium_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:lithium_block"
+  }
+}

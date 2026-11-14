@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:lumen_glass_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:lumen_glass_ingot"
+  }
+}

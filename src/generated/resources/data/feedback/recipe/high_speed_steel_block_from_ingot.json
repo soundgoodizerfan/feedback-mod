@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    },
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    },
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    },
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    },
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    },
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    },
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    },
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    },
+    {
+      "item": "feedback:high_speed_steel_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:high_speed_steel_block"
+  }
+}

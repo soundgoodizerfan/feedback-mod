@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:palladium_nugget"
+    },
+    {
+      "item": "feedback:palladium_nugget"
+    },
+    {
+      "item": "feedback:palladium_nugget"
+    },
+    {
+      "item": "feedback:palladium_nugget"
+    },
+    {
+      "item": "feedback:palladium_nugget"
+    },
+    {
+      "item": "feedback:palladium_nugget"
+    },
+    {
+      "item": "feedback:palladium_nugget"
+    },
+    {
+      "item": "feedback:palladium_nugget"
+    },
+    {
+      "item": "feedback:palladium_nugget"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:palladium_ingot"
+  }
+}

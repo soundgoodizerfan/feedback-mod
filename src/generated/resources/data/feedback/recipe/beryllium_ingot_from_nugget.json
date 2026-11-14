@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:beryllium_nugget"
+    },
+    {
+      "item": "feedback:beryllium_nugget"
+    },
+    {
+      "item": "feedback:beryllium_nugget"
+    },
+    {
+      "item": "feedback:beryllium_nugget"
+    },
+    {
+      "item": "feedback:beryllium_nugget"
+    },
+    {
+      "item": "feedback:beryllium_nugget"
+    },
+    {
+      "item": "feedback:beryllium_nugget"
+    },
+    {
+      "item": "feedback:beryllium_nugget"
+    },
+    {
+      "item": "feedback:beryllium_nugget"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:beryllium_ingot"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:carbon_fibre_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:carbon_fibre_ingot"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "feedback:block/electrum_block"
+    }
+  }
+}

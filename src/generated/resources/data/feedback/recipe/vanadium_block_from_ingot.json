@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:vanadium_ingot"
+    },
+    {
+      "item": "feedback:vanadium_ingot"
+    },
+    {
+      "item": "feedback:vanadium_ingot"
+    },
+    {
+      "item": "feedback:vanadium_ingot"
+    },
+    {
+      "item": "feedback:vanadium_ingot"
+    },
+    {
+      "item": "feedback:vanadium_ingot"
+    },
+    {
+      "item": "feedback:vanadium_ingot"
+    },
+    {
+      "item": "feedback:vanadium_ingot"
+    },
+    {
+      "item": "feedback:vanadium_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:vanadium_block"
+  }
+}

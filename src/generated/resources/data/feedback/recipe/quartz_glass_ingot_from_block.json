@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:quartz_glass_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:quartz_glass_ingot"
+  }
+}

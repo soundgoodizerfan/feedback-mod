@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:ceramic_steel_armour_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:ceramic_steel_armour_ingot"
+  }
+}

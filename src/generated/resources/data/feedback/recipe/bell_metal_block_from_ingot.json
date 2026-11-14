@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:bell_metal_ingot"
+    },
+    {
+      "item": "feedback:bell_metal_ingot"
+    },
+    {
+      "item": "feedback:bell_metal_ingot"
+    },
+    {
+      "item": "feedback:bell_metal_ingot"
+    },
+    {
+      "item": "feedback:bell_metal_ingot"
+    },
+    {
+      "item": "feedback:bell_metal_ingot"
+    },
+    {
+      "item": "feedback:bell_metal_ingot"
+    },
+    {
+      "item": "feedback:bell_metal_ingot"
+    },
+    {
+      "item": "feedback:bell_metal_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:bell_metal_block"
+  }
+}

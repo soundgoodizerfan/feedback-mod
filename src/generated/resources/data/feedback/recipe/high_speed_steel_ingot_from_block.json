@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:high_speed_steel_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "feedback:high_speed_steel_ingot"
+  }
+}

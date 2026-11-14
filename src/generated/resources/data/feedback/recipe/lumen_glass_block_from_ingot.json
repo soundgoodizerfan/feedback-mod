@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:lumen_glass_ingot"
+    },
+    {
+      "item": "feedback:lumen_glass_ingot"
+    },
+    {
+      "item": "feedback:lumen_glass_ingot"
+    },
+    {
+      "item": "feedback:lumen_glass_ingot"
+    },
+    {
+      "item": "feedback:lumen_glass_ingot"
+    },
+    {
+      "item": "feedback:lumen_glass_ingot"
+    },
+    {
+      "item": "feedback:lumen_glass_ingot"
+    },
+    {
+      "item": "feedback:lumen_glass_ingot"
+    },
+    {
+      "item": "feedback:lumen_glass_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:lumen_glass_block"
+  }
+}

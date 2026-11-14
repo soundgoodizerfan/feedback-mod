@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:natural_rubber_ingot"
+    },
+    {
+      "item": "feedback:natural_rubber_ingot"
+    },
+    {
+      "item": "feedback:natural_rubber_ingot"
+    },
+    {
+      "item": "feedback:natural_rubber_ingot"
+    },
+    {
+      "item": "feedback:natural_rubber_ingot"
+    },
+    {
+      "item": "feedback:natural_rubber_ingot"
+    },
+    {
+      "item": "feedback:natural_rubber_ingot"
+    },
+    {
+      "item": "feedback:natural_rubber_ingot"
+    },
+    {
+      "item": "feedback:natural_rubber_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:natural_rubber_block"
+  }
+}

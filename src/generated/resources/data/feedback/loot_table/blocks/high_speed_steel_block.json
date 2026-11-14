@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "feedback:high_speed_steel_block"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "feedback:blocks/high_speed_steel_block"
+}
