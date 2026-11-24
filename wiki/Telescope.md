@@ -28,6 +28,20 @@ Hold right click to look through it. The view narrows by the **magnification** i
 - **Blur** has two causes. A tube whose length is not the sum of the two focal lengths puts the lenses out of focus; the further off, the more haze. A wide objective of glass that bends light weakly blurs too: the weakness is the lens width over its focal length, over the refractive index less one. A longer focal length, a narrower lens or a material with a higher index lowers it.
 - The tube's metal sets the mass.
 
+## Sighting a planet
+
+Three faint, unnamed points in the Overworld night sky ride the turning of the stars but drift among them from day to day: an acid cloud world, a frozen moon and a crystal world. They return every 23, 11 and 37 days, so each is up on some nights and not on others. To the eye they stay points.
+
+Look through the telescope on a clear night (no rain or thunder) with open sky overhead, and keep the planet in the middle third of the view. A telescope strong and sharp enough resolves it as a lit disc; a poorer one shows only a haze, and nothing locks. The blur must stay under 0.3, and the magnification must reach:
+
+| Planet | Magnification |
+| --- | --- |
+| Acid cloud world | 8x |
+| Crystal world | 12x |
+| Frozen moon | 16x |
+
+Your first resolved sighting plays a chime, earns the **A Light That Wanders** advancement ([Ages](Ages.md)) and gives you a finished Aerospace Treatise IV: The Wandering Lights ([Treatise](Treatise.md)).
+
 Because the tube length is its own axis, match it to the lenses: for a 300 mm objective and a 30 mm eyepiece, a 330 mm tube.
 
 See also [Optics](Optics.md) for lenses and the pyrometer.

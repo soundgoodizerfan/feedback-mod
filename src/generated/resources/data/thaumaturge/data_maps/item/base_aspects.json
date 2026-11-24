@@ -43980,6 +43980,16 @@
         "aspect": "thaumaturge:desiderium"
       }
     ],
+    "feedback:treatise_aerospace_4": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:cognitio"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:desiderium"
+      }
+    ],
     "feedback:treatise_binder": [
       {
         "amount": 4,

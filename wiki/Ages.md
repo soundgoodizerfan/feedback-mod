@@ -27,7 +27,7 @@ Each science's first study hangs on the age that provides its tools. Once the ag
 | Iron | electricity, heat and blaze, XP and sculk |
 | Steel | chemistry, ender |
 | Machine | radiation, flight |
-| Alloy | fission |
+| Alloy | fission, space (a telescope sighting of a planet) |
 
 ## Treatises
 

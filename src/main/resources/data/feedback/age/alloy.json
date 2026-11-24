@@ -18,6 +18,7 @@
   ],
   "volumes": [
     "aerospace:3",
+    "aerospace:4",
     "robotics:2",
     "nuclear:1"
   ]

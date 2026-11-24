@@ -252,6 +252,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.BeltRunPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.BeltRunPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.BeltRunPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.SightingPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SightingPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SightingPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GapMapPayloads.Request.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GapMapPayloads.Request.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GapMapPayloads.Request::handle)

@@ -16,6 +16,7 @@ Each school has one item per volume. Every volume is a subject of its own: holdi
 | Aerospace Treatise I: Propellers | propeller | |
 | Aerospace Treatise II: Thrusters | thruster | |
 | Aerospace Treatise III: Jets | [jet](Jet.md) | |
+| Aerospace Treatise IV: The Wandering Lights | | |
 | Robotics Treatise I: Suit Modules | suit module, and the servo, gauge, sensor head, battery bay and upgrade fittings of armor ([Exosuit](Exosuit.md)) | |
 | Robotics Treatise II: Robots | [robot](Robots.md) | [Robot Arm](Robots.md#robot-arm), [Robot Beacon](Robots.md#robot-beacon), [Robot Dock](Robots.md#robot-dock), [Radio Mast](Radio_Mast.md), [Tether Reel](Tether_Reel.md), Tether Cable, [Auto Engineer](Auto_Engineer.md) |
 | Chemical Treatise I: Pressure Vessels | pressure vessel, boiler, gas tank | [Mixer](Mixer.md), [Vacuum Pump](Pneumatic_Tube.md#vacuum-pump), [Flare Stack](Flare_Stack.md) |

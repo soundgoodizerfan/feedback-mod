@@ -144,6 +144,7 @@ Some **parts** and **shapes** belong to a school too (the servos of a powered su
 | Aerospace I | propeller |
 | Aerospace II | thruster |
 | Aerospace III | jet |
+| Aerospace IV | none |
 | Robotics I | suit module |
 | Robotics II | robot |
 | Chemical I | pressure vessel, boiler, gas tank |

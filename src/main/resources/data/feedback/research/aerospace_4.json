@@ -1,0 +1,112 @@
+{
+  "school": "aerospace",
+  "volume": 4,
+  "title": "A light that wanders",
+  "concepts": {
+    "star": {
+      "label": "A star",
+      "traits": [
+        "bright",
+        "fixed",
+        "far"
+      ]
+    },
+    "planet": {
+      "label": "A planet",
+      "traits": [
+        "bright",
+        "course",
+        "far"
+      ]
+    },
+    "sun": {
+      "label": "The sun",
+      "traits": [
+        "bright",
+        "pull",
+        "round"
+      ]
+    },
+    "orbit": {
+      "label": "An orbit",
+      "traits": [
+        "course",
+        "pull",
+        "cycle"
+      ]
+    },
+    "gravity": {
+      "label": "Gravity",
+      "traits": [
+        "pull",
+        "weigh"
+      ]
+    },
+    "period": {
+      "label": "A period",
+      "traits": [
+        "cycle",
+        "time"
+      ]
+    },
+    "parallax": {
+      "label": "Parallax",
+      "traits": [
+        "bearing",
+        "far"
+      ]
+    },
+    "telescope": {
+      "label": "A telescope",
+      "traits": [
+        "bearing",
+        "far",
+        "bright"
+      ]
+    },
+    "night_sky": {
+      "label": "The night sky",
+      "traits": [
+        "fixed",
+        "turn",
+        "bright"
+      ]
+    },
+    "window": {
+      "label": "A transfer window",
+      "traits": [
+        "time",
+        "course",
+        "cycle"
+      ]
+    },
+    "earth": {
+      "label": "This world",
+      "traits": [
+        "turn",
+        "round",
+        "weigh"
+      ]
+    }
+  },
+  "start": "star",
+  "goal": "planet",
+  "replay": [
+    "The stars keep their places and the whole sky turns past them once a night.",
+    "One bright light does not keep its place: from night to night it slides against the stars.",
+    "It is a world on its own path round the sun, and where it stands depends on where both of you are on your paths."
+  ],
+  "question": "Why does a planet wander among the stars?",
+  "options": [
+    "The stars drift and the planet stands still",
+    "It follows its own path round the sun, so its bearing from this world keeps changing",
+    "It is a star that is closer and burns out by day"
+  ],
+  "answer": 1,
+  "eureka": {
+    "kind": "crafted",
+    "item": "feedback:telescope",
+    "threshold": 1,
+    "ink": 2
+  }
+}
