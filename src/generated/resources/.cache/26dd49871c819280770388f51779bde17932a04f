@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-23T09:45:12.226398318	Tags for minecraft:fluid mod id feedback
+// 1.21.1	2026-11-24T16:06:40.537610057	Tags for minecraft:fluid mod id feedback
 5ae7af34ed7ee675d2dc65d80ea3c8397e250dfd data/c/tags/fluid/acetaldehyde.json
 c203a55f68fcb3630c88c0f962262cf2dc8345a3 data/c/tags/fluid/air.json
 1902902e70065592c2e3734fc2d5ce39c1036b7e data/c/tags/fluid/alkaline_water.json
@@ -82,12 +82,14 @@ f2d1b1f7a9f7127584d332c14cdde6dfb5f4bc0f data/c/tags/fluid/molten_cupronickel.js
 d7f9793d6e6fc7e1ef89b950130d1d6c9fb3eeb2 data/c/tags/fluid/molten_essentia.json
 5878f3830934a4f5c054c42064354f8781598733 data/c/tags/fluid/molten_galinstan.json
 7217214b4c849454ea7f1deede49a8fb96e6ba95 data/c/tags/fluid/molten_gallium.json
+fad0c64f74cf4842d437c7691a917ba5a528226b data/c/tags/fluid/molten_garnet.json
 f6e31488f5381c11e06f5c48c696f62bce4a0203 data/c/tags/fluid/molten_glass.json
 ee8f7446440ef2bfe1b54ec6e9020da318f844da data/c/tags/fluid/molten_gold.json
 d78c5a4fe3b1d237fe6867634354d694bdc03157 data/c/tags/fluid/molten_high_speed_steel.json
 775b37ae0fe300d3a0164d77121aca280349bd53 data/c/tags/fluid/molten_indium.json
 c5868a340c4036e4fc2543429730cafc57d513f9 data/c/tags/fluid/molten_invar.json
 3ee45ac7d3a8755983fe9fb5dd0fe0088f0321a2 data/c/tags/fluid/molten_iron.json
+bbae6536292b746a176cc65bc6566bc63fe018bc data/c/tags/fluid/molten_jade.json
 84bf07f8f9db724ce3a3b8ea9b5f92b377e7bf4c data/c/tags/fluid/molten_lead.json
 c85e9bb67e5bdc45e339ad11c5e52574226fade4 data/c/tags/fluid/molten_lithium.json
 bdc80eb13cd6c10ce05d15dfe1f1421d2d8ea7da data/c/tags/fluid/molten_lumen_glass.json
@@ -104,6 +106,7 @@ b0f19ef759674248c0355428da9dcb7edfe0ee3b data/c/tags/fluid/molten_nichrome.json
 79f23fc6fcee49f4b2fa221f80ecfc2d2b20c3c4 data/c/tags/fluid/molten_platinum.json
 1bf6ff0b51947aaa05dbb6cdb9cb10a8188998e4 data/c/tags/fluid/molten_quartz_glass.json
 369a137b4775e7f6d2f641d05d187d34ce5cbb5a data/c/tags/fluid/molten_redstone_chromium.json
+0bfb14ed59a9d45f73ef89311cb5e1d53da76c7a data/c/tags/fluid/molten_ruby.json
 853adbe505a1d3f2d61539455e0b4d915e088c48 data/c/tags/fluid/molten_shakudo.json
 0056e6d3b53c61d841c6e6a74ef26cb9d4c1de39 data/c/tags/fluid/molten_silica_glass.json
 a2fdcb387bce27cd00f617efe71b19ba1a8fd4f4 data/c/tags/fluid/molten_silicon.json
@@ -124,6 +127,7 @@ fa19b5766d020d38eb936f480590a3f06525d626 data/c/tags/fluid/molten_tin.json
 e21a817de604ddcf92afd8c5a4b86e6df19d3441 data/c/tags/fluid/molten_titanium.json
 d5a41b9426f62d73493b433fa54227d5b8c3430b data/c/tags/fluid/molten_titanium_6al_4v.json
 ae84a2cf5c2f6583b929fbdda50f75eb69909fc3 data/c/tags/fluid/molten_titanium_carbide.json
+aa9cc50ddb0e5b501141c198e798d41048443a7b data/c/tags/fluid/molten_tourmaline.json
 65ea3ab1c3f4f175d2bfe77019ed096eaa296282 data/c/tags/fluid/molten_tungsten.json
 fd5c97aa032743da455cf9073c7609459b684e2c data/c/tags/fluid/molten_tungsten_carbide.json
 cad15ec2ed1ea9c21fa9ba23b4b9988f27554009 data/c/tags/fluid/molten_uranium.json
