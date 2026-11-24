@@ -127,7 +127,7 @@ final class ForgePanel implements WorkPanel {
     /** Begin the pattern of shape {@code index} on the stock in the centre, if the stock, the hammer and the heat allow it. */
     boolean start(PartBenchShaping.Option option, int index) {
         var level = host.level();
-        if (phase != Phase.NONE || !host.menu().hasHammer())
+        if (phase != Phase.NONE || !(host.menu().hasHammer() || host.menu().machine()))
             return false;
         var stock = PartBenchShaping.check(host.menu().station(), option, host.menu().stock(), ClientMaterials.on(level), level,
                 index == host.menu().picked() ? host.menu().aimScale(option) : 1f);

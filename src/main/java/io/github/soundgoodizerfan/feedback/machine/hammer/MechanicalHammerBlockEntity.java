@@ -102,6 +102,48 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         return true;
     }
 
+    // --- a pattern in play ---------------------------------------------------------------------
+
+    /** The part the hammer is forging and for whom: it is handed over when its last note has landed ({@link #finish}). */
+    private ItemStack pending = ItemStack.EMPTY;
+    private java.util.UUID pendingFor;
+    private int pendingFlaw, pendingWasted;
+
+    /** Whether a pattern is being played: the hammer takes no second job until it lands the last note. */
+    public boolean busy() {
+        return !pending.isEmpty();
+    }
+
+    /** Starts a pattern: {@code made} is handed to {@code who} {@code ticks} from now, when the block's scheduled tick calls {@link #finish}. */
+    public void queue(ItemStack made, java.util.UUID who, int flaw, int wasted, int ticks) {
+        pending = made;
+        pendingFor = who;
+        pendingFlaw = flaw;
+        pendingWasted = wasted;
+        if (level != null)
+            level.scheduleTick(worldPosition, getBlockState().getBlock(), Math.max(1, ticks));
+        setChanged();
+    }
+
+    /** The last note has landed: the part goes to the person who started it (the floor beside the hammer if they have gone), with the result line. */
+    public void finish(net.minecraft.server.level.ServerLevel server) {
+        if (pending.isEmpty())
+            return;
+        ItemStack made = pending;
+        pending = ItemStack.EMPTY;
+        var who = pendingFor == null ? null : server.getServer().getPlayerList().getPlayer(pendingFor);
+        if (who != null && who.distanceToSqr(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5) < 24 * 24) {
+            who.getInventory().placeItemBackInInventory(made);
+            net.minecraft.network.chat.Component said = net.minecraft.network.chat.Component.translatable("forge.feedback.result." + pendingFlaw, made.getHoverName());
+            if (pendingWasted > 0)
+                said = said.copy().append(" ").append(net.minecraft.network.chat.Component.translatable("forge.feedback.wasted", pendingWasted));
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(who, said, 80);
+        } else
+            net.minecraft.world.level.block.Block.popResource(server, worldPosition.above(), made);
+        server.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.ANVIL_USE, net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 1.2f);
+        setChanged();
+    }
+
     @Override
     public HeadSlot getHead() {
         return head;
@@ -290,6 +332,13 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         super.saveAdditional(tag, registries);
         tag.put("Workpiece", workpiece.saveOptional(registries));
         head.save(tag, registries);
+        if (!pending.isEmpty()) {
+            tag.put("Pending", pending.saveOptional(registries));
+            if (pendingFor != null)
+                tag.putUUID("PendingFor", pendingFor);
+            tag.putInt("PendingFlaw", pendingFlaw);
+            tag.putInt("PendingWasted", pendingWasted);
+        }
     }
 
     @Override
@@ -297,6 +346,10 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         super.loadAdditional(tag, registries);
         workpiece = ItemStack.parseOptional(registries, tag.getCompound("Workpiece"));
         head.load(tag, registries);
+        pending = tag.contains("Pending") ? ItemStack.parseOptional(registries, tag.getCompound("Pending")) : ItemStack.EMPTY;
+        pendingFor = tag.hasUUID("PendingFor") ? tag.getUUID("PendingFor") : null;
+        pendingFlaw = tag.getInt("PendingFlaw");
+        pendingWasted = tag.getInt("PendingWasted");
     }
 
     @Override

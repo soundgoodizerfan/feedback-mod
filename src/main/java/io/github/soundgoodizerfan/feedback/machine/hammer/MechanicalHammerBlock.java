@@ -54,6 +54,13 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
         return s;
     }
 
+    /** A pattern's last note is due: hand over the part ({@link MechanicalHammerBlockEntity#queue}). */
+    @Override
+    protected void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
+        if (level.getBlockEntity(pos) instanceof MechanicalHammerBlockEntity hammer)
+            hammer.finish(level);
+    }
+
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;

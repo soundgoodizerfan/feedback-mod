@@ -101,6 +101,9 @@ public final class ForgeRhythm {
         return Math.max(6, Math.min(10, 6 + Math.round(material.hardness().value() / 10f)));
     }
 
+    /** Ticks after the last note before a machine hands the part over: the head settling and the part being drawn out. */
+    public static final int LEAD_OUT_TICKS = 10;
+
     /** The tick a note is due: after the count-in. */
     public static int noteTick(int index, int step) {
         return (COUNT_IN + index) * step;

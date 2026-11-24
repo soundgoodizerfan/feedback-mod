@@ -1405,15 +1405,15 @@ public class PartBenchMenu extends AbstractContainerMenu {
      * noise floor is drawn from the game time as well as the blows, so no two runs are the same part).
      * It cannot reheat the part, so a pattern that outlasts the heat leaves dead notes like any other, and
      * a blow it cannot land wears the head ({@link MechanicalHammerBlockEntity#absorb}), not the hand
-     * hammer. The result is handed over at once. Needs the table's hammer slot filled as the hand route does,
-     * which is {@code [OPEN]} (spec 4.1).
+     * hammer. The part is the hammer's until the pattern's last note has landed (its notes times the stock's
+     * step) and is handed over then; it needs no hand hammer in the table's slot, only a driven head.
      */
     private void machineForge(ServerPlayer server) {
         Level level = server.level();
         int index = pick.get();
         MechanicalHammerBlockEntity machine = machineBeside();
         Optional<PartBenchShaping.Stock> stock = forgeable(level, index);
-        if (machine == null || stock.isEmpty())
+        if (machine == null || machine.busy() || stock.isEmpty())
             return;
         PartBenchShaping.Option option = optionAt(level, index);
         Material material = stock.get().what().material();
@@ -1437,12 +1437,22 @@ public class PartBenchMenu extends AbstractContainerMenu {
         ForgeRhythm.Result result = ForgeRhythm.judge(rhythm, step, hits, live, noise);
         ForgeRhythm.Work work = ForgeRhythm.work(rhythm, strikes, material, hits, live, noise);
         machine.absorb(work.absorbed());
-        complete(server, option, stock.get(), result, work, 0);
+        // The pattern takes as long as its notes do: the part is the hammer's until the last one has landed.
+        int last = 0;
+        for (ForgeRhythm.Hit h : hits)
+            last = Math.max(last, h.tick());
+        complete(server, option, stock.get(), result, work, 0, machine, last + ForgeRhythm.LEAD_OUT_TICKS);
     }
 
     /** Make the part the playing earned and hand it over; {@code hammerPoints} come off the hand hammer. */
     private void complete(ServerPlayer server, PartBenchShaping.Option option, PartBenchShaping.Stock stock,
                           ForgeRhythm.Result result, ForgeRhythm.Work work, int hammerPoints) {
+        complete(server, option, stock, result, work, hammerPoints, null, 0);
+    }
+
+    /** As above; with a {@code machine} the part is the hammer's for {@code ticks} (its pattern) and is handed over then. */
+    private void complete(ServerPlayer server, PartBenchShaping.Option option, PartBenchShaping.Stock stock,
+                          ForgeRhythm.Result result, ForgeRhythm.Work work, int hammerPoints, MechanicalHammerBlockEntity machine, int ticks) {
         Level level = server.level();
         Optional<ItemStack> part = PartBenchShaping.part(option, stock, result.flaw(), work.ratio(), built(level, option, work.ratio(), result.flaw()), level)
                 .map(s -> remembered(s, option));
@@ -1450,6 +1460,11 @@ public class PartBenchMenu extends AbstractContainerMenu {
             return;
         spend(PartBenchBlockEntity.TOOL, stock, server);
         ItemStack made = PartBenchShaping.finished(option, stock, part.get(), ClientMaterials.on(level), level);
+        if (machine != null) {
+            machine.queue(made, server.getUUID(), result.flaw(), work.wasted(), ticks);
+            refresh(true);
+            return;
+        }
         server.getInventory().placeItemBackInInventory(made);
         if (hammerPoints > 0)
             wearHammer(hammerPoints);
@@ -1603,7 +1618,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
     /** The stock, if shape {@code index} is a forged one and there is a hammer and exactly its stock. */
     private Optional<PartBenchShaping.Stock> forgeable(Level level, int index) {
         List<PartBenchShaping.Option> options = PartBenchShaping.options(shapes(level));
-        if (mode.get() != MODE_PART || !hasHammer() || index < 0 || index >= options.size() || !options.get(index).forged())
+        if (mode.get() != MODE_PART || !(hasHammer() || machineBeside() != null) || index < 0 || index >= options.size() || !options.get(index).forged())
             return Optional.empty();
         return PartBenchShaping.check(station, options.get(index), stock(), index == picked() ? extras(level) : List.of(), ClientMaterials.on(level), level, index == picked() ? aimScale(options.get(index)) : 1f);
     }
