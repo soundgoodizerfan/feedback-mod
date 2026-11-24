@@ -51,6 +51,28 @@ public final class AlloyMix {
         return solids;
     }
 
+    /** Shrinks the solids from {@code from} mB in all to {@code to}, each in proportion, the leftover mB to the biggest fractional parts. */
+    private void shrinkSolids(int from, int to) {
+        if (from <= 0)
+            return;
+        List<Map.Entry<ResourceLocation, Integer>> entries = new ArrayList<>(solids.entrySet());
+        double[] exact = new double[entries.size()];
+        int assigned = 0;
+        for (int i = 0; i < exact.length; i++) {
+            exact[i] = entries.get(i).getValue() * (double) to / from;
+            assigned += (int) exact[i];
+        }
+        Integer[] order = new Integer[exact.length];
+        for (int i = 0; i < order.length; i++)
+            order[i] = i;
+        Arrays.sort(order, Comparator.comparingDouble(i -> -(exact[i] - Math.floor(exact[i]))));
+        for (int i = 0; i < exact.length; i++)
+            entries.get(i).setValue((int) exact[i]);
+        for (int k = 0; k < to - assigned; k++)
+            entries.get(order[k]).setValue(entries.get(order[k]).getValue() + 1);
+        solids.values().removeIf(value -> value <= 0);
+    }
+
     public void add(Fluid fluid, int amount) {
         if (fluid == Fluids.EMPTY || amount <= 0)
             return;
@@ -63,9 +85,11 @@ public final class AlloyMix {
         int taken = Math.min(held, amount);
         if (taken <= 0)
             return 0;
-        if (taken == held)
+        if (taken == held) {
             content.remove(fluid);
-        else
+            if (content.isEmpty())
+                solids.clear();
+        } else
             content.put(fluid, held - taken);
         return taken;
     }
@@ -107,21 +131,17 @@ public final class AlloyMix {
         }
         // The suspended solids leave in proportion with the melt that carries them.
         if (!solids.isEmpty()) {
-            int fromSolids = Math.round(removedAmount * (total - fluidAmount()) / (float) total);
-            int left = total - fluidAmount() - fromSolids;
-            int before = total - fluidAmount();
-            if (before > 0)
-                solids.replaceAll((id, mb) -> Math.max(0, Math.round(mb * (left / (float) before))));
-            solids.values().removeIf(value -> value <= 0);
+            int fluids = fluidAmount();
+            int solidTotal = total - fluids;
+            int fromSolids = Math.round(removedAmount * solidTotal / (float) total);
+            shrinkSolids(solidTotal, solidTotal - fromSolids);
             removedAmount -= fromSolids;
-            total = fluidAmount();
-            if (removedAmount <= 0 || total <= 0) {
-                if (total <= 0)
-                    content.clear();
+            total = fluids;
+            if (removedAmount <= 0)
                 return;
-            }
             if (removedAmount >= total) {
                 content.clear();
+                solids.clear();
                 return;
             }
         }

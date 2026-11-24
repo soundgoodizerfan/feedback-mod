@@ -45,6 +45,7 @@ public final class MoltenMetals {
      * Materials that are liquid at room temperature: their fluid is a cool, dark, runny liquid held in vessels and buckets, not a glowing
      * melt, and a loose solid piece of one (frozen in a Cryocooler basin) melts back where it lies ({@code FormItem}).
      */
+    // Named here because fluids register before any datapack material is read, so the melting point cannot be asked for yet; FormItem reads the real melting point.
     public static final Set<String> LIQUID_AT_AMBIENT = Set.of("mercury", "galinstan");
 
     private static final DeferredRegister<FluidType> TYPES =

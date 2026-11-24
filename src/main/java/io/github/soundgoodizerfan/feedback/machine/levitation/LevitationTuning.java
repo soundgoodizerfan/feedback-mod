@@ -11,7 +11,7 @@ public final class LevitationTuning {
     /** Invented. Sable mass of one plate block (its data file {@code physics_block_properties/levitation_plate.json} says the same). */
     public static final double PLATE_SABLE_MASS = 0.04;
 
-    /** Density a plate's Sable mass figure is for: bismuth's. A plate of another stock weighs {@link #PLATE_SABLE_MASS} times its density over this. */
+    /** Density a plate's Sable mass figure is for: bismuth's (9.78 in its material file; a constant because this runs on the physics thread, which has no material lookup to spare). A plate of another stock weighs {@link #PLATE_SABLE_MASS} times its density over this. */
     public static final double PLATE_REFERENCE_DENSITY = 9.78;
 
     /** Invented. Lift at full field and full diamagnetism with the plate touching the magnet, in plate weights: itself and as much again. */

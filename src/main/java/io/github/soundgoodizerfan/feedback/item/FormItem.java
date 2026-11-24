@@ -44,7 +44,8 @@ public class FormItem extends Item {
     }
 
     /**
-     * A solid piece of a material that is liquid at the room it lies in (mercury, galinstan; frozen in a Cryocooler basin) melts back:
+     * A solid piece of a material that is liquid at the room it lies in (mercury and galinstan frozen in a Cryocooler basin; gallium in a warm biome; any
+     * material with a melting point under the local ambient and a {@code molten_} fluid) melts back:
      * once a second, on the ground, it spills as the fluid where it lay, a source block for a block's worth and else a flowing
      * level for each eighth of a bucket, a mere nugget going into the floor. In a pack or a chest it stays as it is.
      */
@@ -57,7 +58,7 @@ public class FormItem extends Item {
         if (m == null || m.thermal().meltingPoint().filter(mp -> mp.value() < AmbientTable.at(level).value()).isEmpty())
             return false;
         Fluid source = BuiltInRegistries.FLUID.get(ResourceLocation.fromNamespaceAndPath(material.getNamespace(), "molten_" + material.getPath()));
-        if (!(source instanceof FlowingFluid flowing) || source == net.minecraft.world.level.material.Fluids.EMPTY)
+        if (!(source instanceof FlowingFluid flowing))
             return false;
         int mb = FormItems.volume(form) * stack.getCount();
         BlockPos at = entity.blockPosition();

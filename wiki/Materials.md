@@ -43,7 +43,7 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 | Cadmium | 2 | 8.65 | 1 | 321 Tu | Soft and toxic. A byproduct of leaching sphalerite. |
 | Vanadium | 6.5 | 6.11 | 7.5 | 1910 Tu | Tough; stands 600 Tu. For high-speed steel and titanium 6Al-4V. Comes from vanadinite, which [aluminum reduces](Ore_Processing.md#leaching-and-winning). |
 | Indium | 0.1 | 7.31 | 0.2 | 157 Tu | Very soft and ductile, melts low. A byproduct of leaching sphalerite. For galinstan. |
-| Mercury | 0.2 | 13.53 | 0.1 | -38.8 Tu | **Liquid at room temperature** and toxic. Its items are the frozen metal. Comes from [roasting cinnabar](Ore_Processing.md#leaching-and-winning). Binds gold into [Gold Amalgam](Ore_Processing.md#gold-by-amalgam). Goes into the [Brewing Stand](Brewing_Stand.md#making-a-potion) as a toxin. |
+| Mercury | 0.2 | 13.53 | 0.1 | -38.8 Tu | **Liquid at room temperature** ([Casting](Casting.md#liquid-metals)) and toxic. Its items are the frozen metal. Comes from [roasting cinnabar](Ore_Processing.md#leaching-and-winning). Binds gold into [Gold Amalgam](Ore_Processing.md#gold-by-amalgam). Goes into the [Brewing Stand](Brewing_Stand.md#making-a-potion) as a toxin. |
 | Thorium | 4 | 11.7 | 5 | 1750 Tu | **Radioactive**, weaker than uranium. See [Thorium](#thorium). |
 | Stainless Steel | 20 | 7.9 | 14 | 1400 Tu | Steel with chromium and nickel. Barely corrodes. |
 | Manganese Steel | 22 | 7.8 | 18 | 1400 Tu | Steel with manganese. Hardens as it is worked. |
@@ -61,7 +61,7 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 | Babbitt | 2.5 | 7.34 | 1.5 | 350 Tu | Tin with antimony and copper. Slippery, at a grip friction of 0.3. |
 | Bell Metal | 20 | 8.8 | 15 | 990 Tu | Copper with a fifth tin. Gives the [Ring](Material_Perks.md) perk. |
 | Shakudo | 8 | 8.98 | 5 | 1075 Tu | Copper with a little gold. |
-| Galinstan | 0.2 | 6.44 | 0.1 | -19 Tu | Gallium, indium and tin. **Liquid at room temperature.** |
+| Galinstan | 0.2 | 6.44 | 0.1 | -19 Tu | Gallium, indium and tin. **Liquid at room temperature** ([Casting](Casting.md#liquid-metals)). |
 | Alnico | 44 | 7.3 | 8 | 1500 Tu | **Magnetic** below **890 Tu**. Iron, cobalt, nickel and aluminum. |
 | Redstone-Chromium | 29 | 4.5 | 15 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
 | Duralumin | 13.5 | 2.78 | 16 | 640 Tu | Aluminum hardened with a little copper, magnesium and manganese. Light and strong. |
@@ -189,11 +189,11 @@ Every wood species also has **Shavings**, a loose form: the sawdust the [Woodwor
 **Ruby**, **Jade**, **Garnet**, **Tourmaline** and **Beryl** are gems: their ore block drops the cut stone (*Ruby*, *Jade*, *Garnet*, *Tourmaline*, *Beryl*). They have no ingot. Ruby, Jade, Garnet and Tourmaline have no ore stage (crushed, concentrate, tailings); Beryl does, and is also an ore of beryllium ([Ore minerals](#ore-minerals)). Each is mined from its own vein ([Ore Deposits](Ore_Deposits.md#gems)).
 
 - **Ruby** is a hard, transparent crystal (hardness 200). It stands 1400 Tu and **glows under an electric current**.
-- **Jade** is not a crystal but a tough mineral (hardness 65), the toughest of the four.
+- **Jade** is not a crystal but a tough mineral (hardness 65), the toughest of the four (toughness 45).
 - **Garnet** is transparent and hard (hardness 120) but brittle. It is slightly toxic.
 - **Tourmaline** is transparent and **piezoelectric** (coupling 0.6): squeezed, it makes a voltage. It is also **pyroelectric** (coupling 1.0): a change of temperature makes a charge, which the [Pyroelectric Plate](Pyroelectric_Plate.md) senses. It is slightly toxic.
 
-Like other brittle stock they grind to dust in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust).
+Ruby, Jade, Garnet and Tourmaline melt like a metal, into **Molten Ruby**, **Molten Jade**, **Molten Garnet** and **Molten Tourmaline** ([Casting](Casting.md#melting)). Like other brittle stock they grind to dust in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust).
 
 Ruby, Garnet, Tourmaline, Beryl and Jade each also come as a cut stone, an item named for the gem (*Ruby*, *Garnet*, *Tourmaline*, *Beryl*, *Jade*), dropped by their ores. A cut stone is ground to dust or worked into crystal plate like other gems.
 
@@ -455,8 +455,10 @@ Three more are cooked from phenolic resin ([above](#phenolic-resin-and-its-plast
 | Composite | Made from | Heat | Notes |
 | --- | --- | --- | --- |
 | Micarta | 144 mB resin and 2 string | 140 to 190 Tu, best near 160; chars past 250 | Hardness 3, yield strength 5. Stands 130 Tu. Needs 1 Pu or more. |
-| Ceramic-Steel Armour | 50 mB resin, a steel plate and alumina | 140 to 190 Tu, best near 160; chars past 300 | Hardness 150, density 5.2, yield strength 40. Stands 600 Tu. Needs 1 Pu or more. |
-| Carbon-Carbon | 100 mB resin and a carbon fibre plate, in nitrogen | 1000 to 1400 Tu, best near 1200 | Light (density 1.8) and stands 2500 Tu. **Burns away in air** from 450 Tu. |
+| Ceramic-Steel Armour | 50 mB resin, a steel plate and a Sintered Alumina Tile | 140 to 190 Tu, best near 160; chars past 300 | Hardness 150, density 5.2, yield strength 40. Stands 600 Tu. Needs 1 Pu or more. |
+| Carbon-Carbon | 100 mB resin and a carbon fibre plate, in nitrogen, then 100 mB resin and the resulting Porous Carbon-Carbon plate (density 1.2) in nitrogen again | 1000 to 1400 Tu both passes, best near 1200 | Light (density 1.8) and stands 2500 Tu. **Burns away in air** from 450 Tu. |
+
+A **Sintered Alumina Tile** is alumina powder pressed in the [Mechanical Press](Mechanical_Press.md#pressing-powder) into an **Alumina Green Compact**, then sintered at 1450 to 1650 Tu in air; a compact that goes wrong comes out as a **Porous Sinter**. Alumina also comes as an **Alumina Slug**, its pressed form.
 
 Two more are laminated in a vessel, each a plate:
 

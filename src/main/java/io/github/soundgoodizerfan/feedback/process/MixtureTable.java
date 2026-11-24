@@ -25,6 +25,7 @@ public class MixtureTable extends SimpleJsonResourceReloadListener {
     private static final MixtureTable INSTANCE = new MixtureTable();
 
     private List<Mixture> entries = List.of();
+    private java.util.Set<net.minecraft.resources.ResourceLocation> dispersed = java.util.Set.of();
 
     private MixtureTable() {
         super(new GsonBuilder().create(), DIRECTORY);
@@ -41,19 +42,20 @@ public class MixtureTable extends SimpleJsonResourceReloadListener {
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad mixture row {}: {}", id, error))
                 .ifPresent(loaded::add));
         entries = List.copyOf(loaded);
-        Feedback.LOGGER.info("Loaded {} mixture rows", entries.size());
-    }
-
-    /** The materials some melt row names as a dispersed solid: stock of one stirred into a melt joins its ledger as a suspended solid. */
-    public java.util.Set<net.minecraft.resources.ResourceLocation> dispersed() {
-        java.util.Set<net.minecraft.resources.ResourceLocation> out = new java.util.HashSet<>();
+        java.util.Set<net.minecraft.resources.ResourceLocation> grit = new java.util.HashSet<>();
         for (Mixture row : entries)
             if (row.hasFluidResult())
                 row.parts().forEach((id, range) -> {
                     if (range.dispersed())
-                        out.add(id);
+                        grit.add(id);
                 });
-        return out;
+        dispersed = java.util.Set.copyOf(grit);
+        Feedback.LOGGER.info("Loaded {} mixture rows", entries.size());
+    }
+
+    /** The materials some melt row names as a dispersed solid: stock of one stirred into a melt joins its ledger as a suspended solid. Worked out when the rows load. */
+    public java.util.Set<net.minecraft.resources.ResourceLocation> dispersed() {
+        return dispersed;
     }
 
     public List<Mixture> entries() {

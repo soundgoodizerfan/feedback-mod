@@ -425,7 +425,8 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
             return;
         }
         // Grit stirred into a melt: stock of a material some melt row names as dispersed joins the ledger as a suspended solid, a piece at a time.
-        if (alloy.amount() > 0 && takesMelt()) {
+        if (alloy.amount() > 0 && level.getGameTime() % 10 == 0 && takesMelt()
+                && !io.github.soundgoodizerfan.feedback.process.MixtureTable.get().dispersed().isEmpty()) {
             var located = Material.find(MaterialTable.get().materials(), input.getItem());
             if (located.isPresent() && io.github.soundgoodizerfan.feedback.process.MixtureTable.get().dispersed().contains(located.get().id())) {
                 int mb = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(located.get().form());

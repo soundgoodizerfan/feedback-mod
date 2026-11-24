@@ -15,6 +15,7 @@ Put meltable things in a hot crucible and they melt into its tank once they reac
 | Tin, Zinc or Lead Ingot | Molten Tin / Zinc / Lead |
 | Sand or Red Sand | Molten Glass |
 | Nether Quartz | Molten Quartz Glass (casts into a Quartz Glass ingot) |
+| Ruby, Jade, Garnet or Tourmaline | Molten Ruby / Jade / Garnet / Tourmaline |
 | Scrap, Swarf or Dust of any metal with a molten form | Molten metal (scrap and swarf give 36 mB) |
 
 JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 1064, copper 1085, cast iron 1200, glass 1400, wrought iron 1500, iron 1538, quartz glass 1710. An ingot makes one ingot's worth, **144 mB**. An ore makes only part of its metal, and more of it the finer the stage it is melted at ([Ore Processing](Ore_Processing.md#how-much-metal-each-stage-gives)).
@@ -90,7 +91,7 @@ The first row is the Pickaxe, Axe and Shovel Head Molds; the second is the Hoe, 
 
 A [Casting Basin](Casting.md#casting-basin) under the crucible pours into up to four molds, or into an open pool, without the hand work.
 
-You can pour copper, gold, iron, wrought iron, cast iron, tin, zinc, lead, silver, antimony, vanadium, indium, mercury, bronze, brass, the other alloys above, glass, borosilicate glass, uranium glass and quartz glass. Plastic melts ([Polyethylene Melt, Soul Resin Melt, Polyester Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100, 150 and 255 Tu.
+You can pour copper, gold, iron, wrought iron, cast iron, tin, zinc, lead, silver, antimony, vanadium, indium, mercury, ruby, jade, garnet, tourmaline, bronze, brass, the other alloys above, glass, borosilicate glass, uranium glass and quartz glass. Plastic melts ([Polyethylene Melt, Soul Resin Melt, Polyester Melt](Materials.md#making-polymers)) pour into an Ingot Mold the same way and set at 100, 150 and 255 Tu.
 
 ## Casting Basin
 
@@ -134,7 +135,7 @@ Melt two metals into the **same crucible or furnace** in the right proportions a
 | **Beryllium copper** | about 98% copper, 2% beryllium |
 | **Invar** | about 64% iron, 36% nickel |
 | **Electrum** | about 3 parts gold to 1 part silver (75%) |
-| **Amethyst bronze** | about 92% bronze, 8% amethyst |
+| **Amethyst bronze** | about 92% bronze, 8% amethyst (6 to 10%; the amethyst is a solid, see below) |
 | **Constantan** | about 55% copper, 45% nickel |
 | **Cupronickel** | about 70% copper, 30% nickel |
 | **Alnico** | about 51% iron, 24% cobalt, 14% nickel, 8% aluminum, 3% copper |
@@ -153,6 +154,14 @@ The ratio has some leeway, but not much. If the mix is **off**, the tank looks *
 JEI's *Mixing* card lists every alloy with the share of each metal it needs, and both crucibles are catalysts of that card.
 
 [Furnaces](Furnaces.md) share the tank, so copper and tin make bronze in a furnace as in a crucible.
+
+### Solids stirred into a melt
+
+Some mixtures carry a **dispersed solid**: a part that does not melt at the pour. For amethyst bronze it is amethyst. Put the stock into a vessel that already holds the melt and it joins as a suspended solid. It counts by volume toward the alloy's window, fills the tank like any melt and leaves with the melt when you pour. JEI's *Mixing* card marks such a part "(solid, stirred in)".
+
+### Liquid metals
+
+Mercury and galinstan are liquid at room temperature. Their fluids are cool, dark and runny and give off no glow. A frozen piece of either, made in a casting basin chilled by a [Cryocooler](Cryocooler.md), melts back where it lies loose on the ground: a block's worth becomes a source block, a nugget runs into the floor, and anything else spreads as a flowing level for each eighth of a bucket. In a pack or a chest it stays frozen.
 
 Alloys that need a solid item beside the melt (the carbides) are made in the [Mixer](Mixer.md#alloying-with-heat). The Mixer can also alloy molten metals with no solid item, as the crucible does. Cermet is pressed and sintered instead, see [Furnaces](Furnaces.md#sintering).
 

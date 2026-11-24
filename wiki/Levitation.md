@@ -17,6 +17,7 @@ Place it up to 3 blocks above a powered Electromagnet (center to center). Jade s
 ### How it works
 
 - **Slippery surface.** The plate's surface friction is a block's ordinary 0.6 over no magnet. Over a powered magnet it rises toward ice's 0.98, more for a stronger field and a higher diamagnetism of its material.
+- **Weight.** A plate weighs what its material weighs, set against bismuth. A denser plate pulls its body down harder and needs more lift. It weighs the same with no magnet under it.
 - **Floating.** Inside a vehicle body (made on the [Lift](Vehicles.md#the-lift)) each plate is lifted by a springy force. At full field and full diamagnetism, with the plate touching the magnet, the lift is twice the plate's own weight, and it falls steadily to nothing 3 blocks up. A bare plate settles about a block above the magnet; a load pressed on it sits lower. The plate bounces a little before it settles. Sparks show while it floats.
 
 ## Levitation Sleeve
