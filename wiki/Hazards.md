@@ -128,6 +128,10 @@ A [Fluid Caster](Fluid_Caster.md#gases) throwing a toxic fluid hotter than its b
 
 Staying inside builds up exposure, and leaving lets it drain, twice as fast. First the eyes sting and the head swims (nausea); then the sight goes (blindness); then the lungs burn and you take slow damage. The damage stops with **one heart** left, so a cloud can be walked out of. A [Respirator](Respirator.md) worn in the Face slot cuts the poison from any fume to a fifth. A sealed vessel with room in its tank lets nothing out.
 
+### Leaking vessels
+
+A toxic fluid carried in a vessel that is not sealed, such as a Copper Bucket of it, leaks when the vessel is inside another container: in a worn [Backpack](Backpack.md), in a shulker box or bundle you carry, or in a chest, barrel or other block inventory near you. The container lets go a fume cloud, strong as the fluid is toxic. Respirator cylinders, [Fluid Caster](Fluid_Caster.md) tanks and potion bottles are sealed and never leak. A vessel loose in your inventory is not inside a container and lets nothing out.
+
 ## Thin air
 
 Where the air carries less than half of the breathable air at sea level (about y 192 in the Overworld, and everywhere in the [Gap](The_Gap.md)), your air bar drains. A breath sound, nausea and darkness come first, then the bar empties and you take damage. A [Respirator](Respirator.md) or the air of a sealed cabin (see [Air Valve](Air_Valve.md)) gives breath back.

@@ -58,3 +58,7 @@ A worn pack takes [attunements](Enchanting_Table.md#on-a-pack) on its parts, and
 ## Store slots
 
 A pack with a holster, loops, lashing, bandolier, lamp bracket or battery fitting has one extra row below its slots: holster 1, loops 3, lashing 1, bandolier 3, lamp bracket 1, battery fitting 1. Each store slot sits on a tinted pad that shows what it takes, and refuses anything else. What is in the stores counts toward the load.
+
+## Hazards
+
+An unsealed vessel of toxic fluid, such as a Copper Bucket, leaks a fume cloud around the wearer when it is carried in the pack; see [Leaking vessels](Hazards.md#leaking-vessels).

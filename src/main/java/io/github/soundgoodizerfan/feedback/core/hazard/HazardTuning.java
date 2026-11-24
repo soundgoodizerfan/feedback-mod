@@ -106,6 +106,9 @@ public final class HazardTuning {
 
     public static final float FUME_CLOUD_DAMAGE = 1f, FUME_CLOUD_DAMAGE_FLOOR_HEALTH = 2f;
 
+    /** Placeholder. Unsealed toxic fluid inside a container: ticks between looks, and chunks around each player searched for block containers. */
+    public static final int CONTAINER_LEAK_PERIOD_TICKS = 100, CONTAINER_LEAK_RADIUS_CHUNKS = 2;
+
 
     // --- radiation: every figure below is a placeholder ----------------------------
 
