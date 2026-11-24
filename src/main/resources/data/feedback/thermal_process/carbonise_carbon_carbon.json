@@ -10,7 +10,7 @@
   "required_tpu": 600,
   "spoil_temperature": 1600,
   "result": {
-    "id": "feedback:carbon_carbon_plate"
+    "id": "feedback:carbon_carbon_porous_plate"
   },
   "atmosphere": {
     "fluid": "feedback:nitrogen",

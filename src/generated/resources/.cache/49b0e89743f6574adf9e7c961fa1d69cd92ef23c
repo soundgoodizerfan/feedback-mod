@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-23T15:51:47.962524185	Item Models: feedback
+// 1.21.1	2026-11-24T16:14:44.615196311	Item Models: feedback
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/acacia_grip.json
 1cbe171cef7392663517643cbe471f06b808ce0b assets/feedback/models/item/acacia_shaving.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/alnico_birdshot.json
@@ -34,6 +34,7 @@ ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/alnico_rive
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/alumina_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
+73d35a858fd512ab4cac5ccac0bc93c0fabce327 assets/feedback/models/item/alumina_slug.json
 e3991f2d463c3b0cfad870541bc54976c80e4422 assets/feedback/models/item/alumina_substrate.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/aluminium_birdshot.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/aluminium_bullet.json
@@ -517,6 +518,9 @@ ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/cadmium_riv
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/calcite_dust.json
 818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/carbon_carbon_ingot.json
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/carbon_carbon_plate.json
+818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/carbon_carbon_porous_ingot.json
+261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/carbon_carbon_porous_plate.json
+4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/carbon_carbon_porous_rod.json
 4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/carbon_carbon_rod.json
 818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/carbon_fibre_ingot.json
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/carbon_fibre_plate.json

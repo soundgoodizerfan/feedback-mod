@@ -628,6 +628,20 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:alumina_slug": [
+      {
+        "amount": 54,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 27,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 90,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:alumina_substrate": [
       {
         "amount": 1,
@@ -8142,6 +8156,46 @@
       {
         "amount": 6,
         "aspect": "thaumaturge:fabrico"
+      }
+    ],
+    "feedback:carbon_carbon_porous_block": [
+      {
+        "amount": 45,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 32,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:carbon_carbon_porous_ingot": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:carbon_carbon_porous_plate": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:carbon_carbon_porous_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
       }
     ],
     "feedback:carbon_carbon_rod": [

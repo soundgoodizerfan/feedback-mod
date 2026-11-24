@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-23T09:45:12.195783846	Block States: feedback
+// 1.21.1	2026-11-24T16:14:44.610331833	Block States: feedback
 0a87f2bb026369e040cdeed32dd5071ea4e35b44 assets/feedback/blockstates/alnico_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/alnico_pipe.json
 4a4a4f3dba74d39a8a934c2874f25fc8932a02e5 assets/feedback/blockstates/alumina_deepslate_ore.json
@@ -53,6 +53,7 @@ ddeb084f0fa04c2bd3415871514285f6f6250ae8 assets/feedback/blockstates/bronze_bloc
 5d5a44679fcda0845a9df63de9a006f40a409a5f assets/feedback/blockstates/cadmium_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/cadmium_pipe.json
 f183cf6539469c2abcbd54f1887e05b3b73f5dbb assets/feedback/blockstates/carbon_carbon_block.json
+9a94e2079ce9346b7d66cae13271ca3c5100a6f5 assets/feedback/blockstates/carbon_carbon_porous_block.json
 1549fc93d8f8b736dd2b7bb57cd596eb537074db assets/feedback/blockstates/carbon_fibre_block.json
 1ed23c17b7d7b630883012d43846364f892da363 assets/feedback/blockstates/cast_iron_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/cast_iron_pipe.json
@@ -346,6 +347,7 @@ a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/brass_bloc
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/bronze_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/cadmium_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/carbon_carbon_block.json
+a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/carbon_carbon_porous_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/carbon_fibre_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/cast_iron_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/ceramic_steel_armour_block.json
@@ -585,6 +587,7 @@ a3097108dc1d038a5724eb58aa2a92d63c50a816 assets/feedback/models/item/brass_block
 5cde06720a169f9f43d388ba11d0e4b2386814f2 assets/feedback/models/item/cadmium_block.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/cadmium_pipe.json
 83318dff8100b132fae0c99fffc45862bcaac9fa assets/feedback/models/item/carbon_carbon_block.json
+574e02e5c59e2a5c296c381ff758efc6df429f39 assets/feedback/models/item/carbon_carbon_porous_block.json
 fa84269e1423a8e7725298972fa446f810d71e23 assets/feedback/models/item/carbon_fibre_block.json
 e8b0e74a1142946ea3d7793a269e21d7cf4903b6 assets/feedback/models/item/cast_iron_block.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/cast_iron_pipe.json

@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-23T15:51:47.979227204	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-24T16:14:44.633708056	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
@@ -1497,6 +1497,7 @@ d8a12938572263a8475784b373295dacec2e9207 data/c/tags/item/ingots/borosilicate_gl
 64c9667f46f6d7ff04b6600fc845abb8129f0210 data/c/tags/item/ingots/bronze.json
 f6d7d8f259bcbe05d911673566d46c0940989abb data/c/tags/item/ingots/cadmium.json
 edfe2f46b94899312ac91673995c5d6b383672c0 data/c/tags/item/ingots/carbon_carbon.json
+87ea926cc14fd658b95f24b46c64801eff87a350 data/c/tags/item/ingots/carbon_carbon_porous.json
 b533b67ea25548082ab1e49d14e4da27ac0a7695 data/c/tags/item/ingots/carbon_fibre.json
 14c27d6a700d5372714a7ea54c6484570acafc24 data/c/tags/item/ingots/cast_iron.json
 029767a803c968bc50fbc17cc04d2b3ea8553e3c data/c/tags/item/ingots/cast_netherite.json
@@ -2120,6 +2121,7 @@ bcf31cbaae2595a2679a72320da1ecd52b6f0bf2 data/c/tags/item/plates/boron.json
 8c17d8eaabc50f6cca4f72abf0bb2c040cbc26c9 data/c/tags/item/plates/bronze.json
 f186548fe2d2ccd153582cd6992e729235a2511c data/c/tags/item/plates/cadmium.json
 17a55852db0304cfa7f5a94e47caffe60fb591b7 data/c/tags/item/plates/carbon_carbon.json
+73f813940875ebb73cdf4739ae563cf266c11f27 data/c/tags/item/plates/carbon_carbon_porous.json
 51f914a9c33534ce00dd9fad3261d758c2088ab9 data/c/tags/item/plates/carbon_fibre.json
 fb32031f1df0f9c104b72e423d1c7e5099359f74 data/c/tags/item/plates/ceramic_steel_armour.json
 253646284363430844fa733ed4d02dcb0929ac7a data/c/tags/item/plates/cermet.json
@@ -2392,6 +2394,7 @@ e6f21e6da1cd0d05b4aaf0c5d5ae5c94f981e31a data/c/tags/item/rods/breeze_rod.json
 0199dfe90b64dfbaf030830991f2f58bc1be61ba data/c/tags/item/rods/bronze.json
 dae94a959c808418499b4929d7183ac3b9210e64 data/c/tags/item/rods/cadmium.json
 4fc0b66ee4e3d3e22ba55648d8da3fb92c66a9c7 data/c/tags/item/rods/carbon_carbon.json
+8b7fe559ea15c944b177bff8681733c774de2273 data/c/tags/item/rods/carbon_carbon_porous.json
 9c98f8b20071be1b918e794fc48c0087fb85e256 data/c/tags/item/rods/carbon_fibre.json
 cb46adc90ceeb526a257460fa0fb86dc98e4a19e data/c/tags/item/rods/ceramic_steel_armour.json
 9d722cada852cd00ec08b75609e82a4ca60e3063 data/c/tags/item/rods/cermet.json
@@ -2741,6 +2744,7 @@ ee37b4ff2be91c5cf21201a5cca9706b88bec700 data/c/tags/item/shavings/greatwood.jso
 0900fb7ec25adb45f986ac164651774de95b587b data/c/tags/item/shavings/silverwood.json
 eb489029d549d3bc5317a3ad21562037bd8a5973 data/c/tags/item/shavings/spruce.json
 8114229471de593e3f730182b45018fc8a483804 data/c/tags/item/shavings/wood.json
+f16c3720b3e1bec0904ac04174f1ad5f8929eda0 data/c/tags/item/slugs/alumina.json
 c732bf24768ee64196481851aa35018f2f5b18a0 data/c/tags/item/slugs/iridium.json
 bddaeed843834d86ca6d881b0649f158787850f0 data/c/tags/item/slugs/osmium.json
 4f5c191478e964c5edc82bf7c4d8045eb0ede079 data/c/tags/item/slugs/rhenium.json
@@ -2780,6 +2784,7 @@ ee41d2f9c4295cdbd357af6647ca605fa83cec40 data/c/tags/item/storage_blocks/bronze.
 f5c0e15f51e6fc0658ba760deb01250ee8dd6506 data/c/tags/item/storage_blocks/cadmium.json
 1eefca65838930ab4ebb0932bf74de9776f26f68 data/c/tags/item/storage_blocks/calcite.json
 f2142b251301087f8fc46135439e630fadf43018 data/c/tags/item/storage_blocks/carbon_carbon.json
+8f511767f76d768d7796505e044cda708379df7f data/c/tags/item/storage_blocks/carbon_carbon_porous.json
 9f8b4374fc1a261a5e36dbfb4064228530b0d44e data/c/tags/item/storage_blocks/carbon_fibre.json
 cb964704d72d08068d5c67fa6b6731fde9f8d89a data/c/tags/item/storage_blocks/cast_iron.json
 c715cff39eea1ea11d0bdceb5aac6623ef0a294b data/c/tags/item/storage_blocks/ceramic_steel_armour.json

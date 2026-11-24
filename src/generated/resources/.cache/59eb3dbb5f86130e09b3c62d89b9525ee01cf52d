@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-23T09:45:12.221373351	Loot Tables
+// 1.21.1	2026-11-24T16:14:44.627757154	Loot Tables
 3ec2d8235a145e9ecd4bc49404e31bff70407cfb data/feedback/loot_table/blocks/alnico_block.json
 7ceaa2b8bfe1b647eb0a2c985f24c7b8138994b8 data/feedback/loot_table/blocks/alnico_pipe.json
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
@@ -53,6 +53,7 @@ d0970fb6467402af8238aa9886a59d75038b7fde data/feedback/loot_table/blocks/borax_d
 a15837966978c370e8c6525e0902dafe79d2fe0b data/feedback/loot_table/blocks/cadmium_block.json
 de481e15309f2c4dab0c54fc9b2ee48af7c89740 data/feedback/loot_table/blocks/cadmium_pipe.json
 1057a656b34ccdd3608d1f8cb11292578c6bf3b6 data/feedback/loot_table/blocks/carbon_carbon_block.json
+2bf9bef5fefddb48b1a9e84a386adfac8183b292 data/feedback/loot_table/blocks/carbon_carbon_porous_block.json
 f3ab3f361ef60e00e828d7a09f3c920efbcfdef5 data/feedback/loot_table/blocks/carbon_fibre_block.json
 0bbe1b179f8d130963c356e08f4799be015d4732 data/feedback/loot_table/blocks/cast_iron_block.json
 9551e6064f77262f1c8643d68d0ccdd5bfb7b0ba data/feedback/loot_table/blocks/cast_iron_pipe.json

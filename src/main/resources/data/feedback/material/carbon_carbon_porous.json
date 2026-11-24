@@ -1,0 +1,14 @@
+{
+  "parent": "carbon_carbon",
+  "color": "#3c3c46",
+  "hardness": 6,
+  "density": 1.2,
+  "mechanical": {
+    "toughness": 8,
+    "yield_strength": 8,
+    "abrasiveness": 0.18
+  },
+  "molten": {
+    "density": 1.1
+  }
+}

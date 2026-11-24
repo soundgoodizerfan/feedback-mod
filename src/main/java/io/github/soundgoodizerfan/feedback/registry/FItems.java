@@ -555,6 +555,10 @@ public class FItems {
     public static final DeferredItem<Item> CERMET_POWDER = ITEMS.registerSimpleItem("cermet_powder");
     public static final DeferredItem<Item> PTFE_POWDER = ITEMS.registerSimpleItem("ptfe_powder");
     public static final DeferredItem<Item> CERMET_GREEN_COMPACT = ITEMS.registerSimpleItem("cermet_green_compact");
+    /** Alumina powder die-pressed to a tile shape, before it is sintered. */
+    public static final DeferredItem<Item> ALUMINA_GREEN_COMPACT = ITEMS.registerSimpleItem("alumina_green_compact");
+    /** A sintered alumina tile: the hard ceramic face of ceramic-steel armour. */
+    public static final DeferredItem<Item> ALUMINA_TILE = ITEMS.registerSimpleItem("alumina_tile");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_POWDER = ITEMS.registerSimpleItem("tungsten_carbide_powder");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_GREEN_COMPACT = ITEMS.registerSimpleItem("tungsten_carbide_green_compact");
     /** What end stone leaves after its trapped hydrogen is driven off: a porous, very light insulating rock (the {@code porous_aggregate} material's raw form). */

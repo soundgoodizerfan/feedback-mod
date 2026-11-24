@@ -29,7 +29,8 @@
     "feedback:aluminium": 0.53
   },
   "forms": {
-    "raw": "feedback:alumina"
+    "raw": "feedback:alumina",
+    "green_compact": "feedback:alumina_green_compact"
   },
   "exclude": [
     "ingot",
