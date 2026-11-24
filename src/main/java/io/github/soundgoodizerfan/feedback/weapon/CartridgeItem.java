@@ -56,6 +56,12 @@ public class CartridgeItem extends Item {
             tooltip.add(Component.translatable("cartridge.feedback.charge", charge,
                     String.format("%.1f", load.get().peakPressure()), String.format("%.1f", rating.get().value()))
                     .withStyle(load.get().peakPressure() > rating.get().value() ? ChatFormatting.RED : ChatFormatting.GRAY));
+            // The load is named by how much of its case it asks: light, standard, heavy (+P), and over.
+            float share = load.get().peakPressure() / Math.max(0.001f, rating.get().value());
+            String band = share > 1f ? "over" : share >= GunTuning.LOAD_HEAVY_SHARE ? "heavy" : share >= GunTuning.LOAD_LIGHT_SHARE ? "standard" : "light";
+            tooltip.add(Component.translatable("cartridge.feedback.band." + band).withStyle(share > 1f ? ChatFormatting.RED : ChatFormatting.GRAY));
+            if (net.minecraft.client.gui.screens.Screen.hasShiftDown())
+                tooltip.add(Component.translatable("cartridge.feedback.band.tip", Math.round(GunTuning.LOAD_LIGHT_SHARE * 100), Math.round(GunTuning.LOAD_HEAVY_SHARE * 100)).withStyle(ChatFormatting.DARK_GRAY));
         }
         round.seed().ifPresent(sd -> tooltip.add(Component.translatable("cartridge.feedback.seed",
                 net.minecraft.core.registries.BuiltInRegistries.ITEM.get(sd).getDescription()).withStyle(ChatFormatting.GRAY)));

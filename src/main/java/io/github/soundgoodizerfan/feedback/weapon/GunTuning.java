@@ -235,6 +235,9 @@ public final class GunTuning {
     public static final float GUN_MIN_ENERGY_FRACTION = 0.03f;
 
 
+    /** A load is light under this share of its case's pressure rating and heavy (+P) at or over the second; the powder count in the press sets it. */
+    public static final float LOAD_LIGHT_SHARE = 0.5f, LOAD_HEAVY_SHARE = 0.85f;
+
     /** A bipod: ticks its legs take to come down and carry the gun, ticks to stow them, and the share of the view's turn left while they are out. */
     public static final int BIPOD_DEPLOY_TICKS = 20, BIPOD_FOLD_TICKS = 10;
     public static final float BIPOD_TURN_SHARE = 0.6f;
