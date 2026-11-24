@@ -12,7 +12,7 @@ Use the baton on a charged Leyden jar. The jar empties into the baton and the ba
 
 ## What a hit does
 
-The next melee hit spends everything. The target takes a [shock](Hazards.md) of the jar's band that scales with the Eu it held, is knocked back, and is staggered and slowed for longer the more Eu there was. A baton is empty after one hit: a capacitor empties, there is no second swing on the same charge.
+The next melee hit spends everything. The target takes a [shock](Hazards.md) of the jar's band that scales with the Eu it held, is knocked back, and is staggered and slowed for longer the more Eu there was. A creeper hit this way has its fuse put out at once and cannot light it again until the stagger ends. A baton is empty after one hit: a capacitor empties, there is no second swing on the same charge.
 
 How hard it hurts depends on what the victim is wearing and standing in, never on what it is, exactly as for the [Electrified Fence](Electrified_Fence.md): wet, metal armor and a metal floor make it worse; leather, wool and wood make it better; off the ground halves it.
 

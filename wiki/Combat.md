@@ -40,7 +40,7 @@ Press **G** to open a short window in which a blow aimed at you is turned aside.
 
 Heavy and long is a wide window and a long lockout: it sweeps across a lot of angle, and it is slow to bring back when it misses. Latency is covered by up to 2 extra ticks, never more, so ping can't buy a parry. The window only covers a **frontal cone**: 35° either side of your look for a pointlike weapon, up to 90° for a head-heavy one.
 
-**When it lands**, the blow is canceled before any trait or perk sees it, and the attacker is **staggered**: held back and slowed to 40% for a time set by the impact of their blow against *their own mass*: 16 ticks for every Work of impact per Mu of their mass, kept between 0.2 and 2 seconds. A blow with no figure of its own counts 10 Work per point of damage. A heavy mob stumbles less than a light one. A parried arrow or other projectile is turned back at 1.5× its speed.
+**When it lands**, the blow is canceled before any trait or perk sees it, and the attacker is **staggered**: held back and slowed to 40% for a time set by the impact of their blow against *their own mass*: 16 ticks for every Work of impact per Mu of their mass, kept between 0.2 and 2 seconds. A blow with no figure of its own counts 10 Work per point of damage. A heavy mob stumbles less than a light one. A staggered creeper has its fuse put out at once and cannot light another until the stagger ends. A parried arrow or other projectile is turned back at 1.5× its speed.
 
 **What it costs:** a clean parry takes **1 point** of wear on your weapon. If the blow was heavier than the weapon's joint is built for (60 Work per Mu of its own mass) it takes 4 more for every whole multiple it was over. A parry that misses leaves you in recovery, open. If you press at a bad moment (still recovering, or on the roll's cooldown) you get a small click and nothing happens.
 
@@ -74,6 +74,7 @@ Press **Left Alt** to roll in the direction you are moving (forward if you aren'
 
 - The whole 8-tick roll is **invulnerable**: it cancels every damage event, including fire and other ticking damage, though not the void or `/kill`.
 - It slides about **3 blocks** on flat ground.
+- For the roll and its recovery your body is low: the hitbox drops to crawl height (0.6 blocks) at the same width, and the camera drops with it. You roll under a one-block gap, and shots aimed at your head pass over. When the recovery ends you stand again if there is headroom, and stay low until there is.
 - Afterwards you're open for **12 ticks** of recovery, then there is a **30 tick cooldown** before you can roll, kick *or* parry again.
 
 A [sash](Combat_Gear.md#sash) lengthens the roll and shortens recovery. Dodging a real blow earns [Veil skill points](Skills.md#earning-points).
