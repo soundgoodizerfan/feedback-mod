@@ -55,6 +55,17 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// Thaumaturge's API classes, for compat/thaumaturge/api only. Thaumaturge is not published and its licence is all rights reserved, so the
+// classes are compiled locally from its source (scripts/build_thaumaturge_api.sh) into libs/thaumaturge-api.jar, which is never committed and
+// compileOnly keeps out of our jar: nothing of Thaumaturge ships with Feedback. Without the jar that one package is left out of the build and the
+// rest compiles as before (a pack without Thaumaturge never loads it either: Feedback reaches it by reflection).
+def thaumaturgeApi = file('libs/thaumaturge-api.jar')
+if (thaumaturgeApi.exists()) {
+    dependencies { compileOnly files(thaumaturgeApi) }
+} else {
+    sourceSets.main.java.exclude 'io/github/soundgoodizerfan/feedback/compat/thaumaturge/api/**'
+}
+
 // Mods we want present in the dev client but never in our jar and never in our
 // published dependencies. FML in a dev run does not scan the runtime classpath for
 // mods, so putting them on it does nothing -- they have to land in the run's mods

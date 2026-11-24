@@ -48,3 +48,6 @@ AGENTS.md
 # Pixel-art sources (not published)
 art/
 /scripts
+
+# Thaumaturge's API classes, built locally (scripts/build_thaumaturge_api.sh): all rights reserved, never committed
+libs/
