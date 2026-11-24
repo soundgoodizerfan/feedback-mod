@@ -66,6 +66,81 @@
     },
     "stock": {
       "kind": "point_magnetic"
+    },
+    "drive": {
+      "kind": "point_magnetic"
+    },
+    "bit": {
+      "kind": "point_magnetic"
+    },
+    "body": {
+      "kind": "worn_point_magnetic"
+    },
+    "coil_element": {
+      "kind": "worn_point_magnetic"
+    },
+    "lattice_frame": {
+      "kind": "point_magnetic"
+    },
+    "noisemaker": {
+      "kind": "point_magnetic"
+    },
+    "second_noisemaker": {
+      "kind": "point_magnetic"
+    },
+    "piston_rod": {
+      "kind": "point_magnetic"
+    },
+    "resonator_electrode": {
+      "kind": "worn_point_magnetic"
+    },
+    "face_piece": {
+      "kind": "worn_point_magnetic"
+    },
+    "robot_chassis": {
+      "kind": "point_magnetic"
+    },
+    "robot_radio": {
+      "kind": "worn_point_magnetic"
+    },
+    "bowl": {
+      "kind": "point_magnetic"
+    },
+    "module_optic": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_filter": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_thermal": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_actuator": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_thruster": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_coil": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_spring": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_tread": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_dispenser": {
+      "kind": "worn_point_magnetic"
+    },
+    "thermo_wire": {
+      "kind": "worn_point_magnetic"
+    },
+    "thermo_leg": {
+      "kind": "worn_point_magnetic"
+    },
+    "tray_deck": {
+      "kind": "point_magnetic"
     }
   },
   "mirror": {
@@ -130,6 +205,81 @@
       "kind": "worn_away_magnetic"
     },
     "stock": {
+      "kind": "away_magnetic"
+    },
+    "drive": {
+      "kind": "away_magnetic"
+    },
+    "bit": {
+      "kind": "away_magnetic"
+    },
+    "body": {
+      "kind": "worn_away_magnetic"
+    },
+    "coil_element": {
+      "kind": "worn_away_magnetic"
+    },
+    "lattice_frame": {
+      "kind": "away_magnetic"
+    },
+    "noisemaker": {
+      "kind": "away_magnetic"
+    },
+    "second_noisemaker": {
+      "kind": "away_magnetic"
+    },
+    "piston_rod": {
+      "kind": "away_magnetic"
+    },
+    "resonator_electrode": {
+      "kind": "worn_away_magnetic"
+    },
+    "face_piece": {
+      "kind": "worn_away_magnetic"
+    },
+    "robot_chassis": {
+      "kind": "away_magnetic"
+    },
+    "robot_radio": {
+      "kind": "worn_away_magnetic"
+    },
+    "bowl": {
+      "kind": "away_magnetic"
+    },
+    "module_optic": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_filter": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_thermal": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_actuator": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_thruster": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_coil": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_spring": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_tread": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_dispenser": {
+      "kind": "worn_away_magnetic"
+    },
+    "thermo_wire": {
+      "kind": "worn_away_magnetic"
+    },
+    "thermo_leg": {
+      "kind": "worn_away_magnetic"
+    },
+    "tray_deck": {
       "kind": "away_magnetic"
     }
   },

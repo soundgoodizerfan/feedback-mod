@@ -36,6 +36,30 @@
     },
     "bed_frame": {
       "kind": "bed_stick"
+    },
+    "wheel": {
+      "kind": "stick"
+    },
+    "bit": {
+      "kind": "stick"
+    },
+    "body": {
+      "kind": "worn_grip"
+    },
+    "noisemaker": {
+      "kind": "stick"
+    },
+    "second_noisemaker": {
+      "kind": "stick"
+    },
+    "roll": {
+      "kind": "stick"
+    },
+    "bowl": {
+      "kind": "stick"
+    },
+    "die": {
+      "kind": "stick"
     }
   },
   "mirror": {
@@ -71,6 +95,33 @@
     },
     "bed_frame": {
       "kind": "bed_slick"
+    },
+    "wheel": {
+      "kind": "slick"
+    },
+    "bit": {
+      "kind": "slick"
+    },
+    "centrifuge_rotor": {
+      "kind": "slick"
+    },
+    "body": {
+      "kind": "worn_slick"
+    },
+    "noisemaker": {
+      "kind": "slick"
+    },
+    "second_noisemaker": {
+      "kind": "slick"
+    },
+    "roll": {
+      "kind": "slick"
+    },
+    "bowl": {
+      "kind": "slick"
+    },
+    "die": {
+      "kind": "slick"
     }
   },
   "offering": "yield"

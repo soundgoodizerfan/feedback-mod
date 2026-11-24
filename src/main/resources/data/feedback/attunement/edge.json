@@ -39,6 +39,37 @@
     },
     "bed_frame": {
       "kind": "bed_keen"
+    },
+    "wheel": {
+      "kind": "extra_damage",
+      "flaw": 1
+    },
+    "bit": {
+      "kind": "extra_damage",
+      "flaw": 1
+    },
+    "jet_compressor": {
+      "kind": "extra_damage"
+    },
+    "noisemaker": {
+      "kind": "extra_damage",
+      "flaw": 1
+    },
+    "second_noisemaker": {
+      "kind": "extra_damage",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "extra_damage",
+      "flaw": 1
+    },
+    "bowl": {
+      "kind": "extra_damage",
+      "flaw": 1
+    },
+    "die": {
+      "kind": "extra_damage",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -121,6 +152,101 @@
     "wiring": {
       "kind": "deflect",
       "flaw": 1
+    },
+    "wheel": {
+      "kind": "pad",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "pad",
+      "flaw": 0
+    },
+    "body": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "coil_element": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "jet_compressor": {
+      "kind": "pad"
+    },
+    "noisemaker": {
+      "kind": "pad",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "pad",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "face_piece": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "robot_radio": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "pad",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "pad",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_filter": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_thermal": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_actuator": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_thruster": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_coil": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_spring": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_tread": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_dispenser": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "thermo_wire": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "thermo_leg": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "die": {
+      "kind": "pad",
+      "flaw": 0
     }
   },
   "starter": true,

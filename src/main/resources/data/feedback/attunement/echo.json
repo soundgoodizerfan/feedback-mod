@@ -57,6 +57,75 @@
     },
     "wiring": {
       "kind": "echo_wear"
+    },
+    "wheel": {
+      "kind": "echo_blow"
+    },
+    "bit": {
+      "kind": "echo_blow"
+    },
+    "body": {
+      "kind": "echo_wear"
+    },
+    "coil_element": {
+      "kind": "echo_wear"
+    },
+    "noisemaker": {
+      "kind": "echo_blow"
+    },
+    "second_noisemaker": {
+      "kind": "echo_blow"
+    },
+    "resonator_electrode": {
+      "kind": "echo_wear"
+    },
+    "face_piece": {
+      "kind": "echo_wear"
+    },
+    "robot_radio": {
+      "kind": "echo_wear"
+    },
+    "roll": {
+      "kind": "echo_blow"
+    },
+    "bowl": {
+      "kind": "echo_blow"
+    },
+    "module_optic": {
+      "kind": "echo_wear"
+    },
+    "module_filter": {
+      "kind": "echo_wear"
+    },
+    "module_thermal": {
+      "kind": "echo_wear"
+    },
+    "module_actuator": {
+      "kind": "echo_wear"
+    },
+    "module_thruster": {
+      "kind": "echo_wear"
+    },
+    "module_coil": {
+      "kind": "echo_wear"
+    },
+    "module_spring": {
+      "kind": "echo_wear"
+    },
+    "module_tread": {
+      "kind": "echo_wear"
+    },
+    "module_dispenser": {
+      "kind": "echo_wear"
+    },
+    "thermo_wire": {
+      "kind": "echo_wear"
+    },
+    "thermo_leg": {
+      "kind": "echo_wear"
+    },
+    "die": {
+      "kind": "echo_blow"
     }
   },
   "mirror": {
@@ -113,6 +182,75 @@
     },
     "mattress": {
       "kind": "bed_lag"
+    },
+    "wheel": {
+      "kind": "lag_blow"
+    },
+    "bit": {
+      "kind": "lag_blow"
+    },
+    "body": {
+      "kind": "lag_hit"
+    },
+    "coil_element": {
+      "kind": "lag_hit"
+    },
+    "noisemaker": {
+      "kind": "lag_blow"
+    },
+    "second_noisemaker": {
+      "kind": "lag_blow"
+    },
+    "resonator_electrode": {
+      "kind": "lag_hit"
+    },
+    "face_piece": {
+      "kind": "lag_hit"
+    },
+    "robot_radio": {
+      "kind": "lag_hit"
+    },
+    "roll": {
+      "kind": "lag_blow"
+    },
+    "bowl": {
+      "kind": "lag_blow"
+    },
+    "module_optic": {
+      "kind": "lag_hit"
+    },
+    "module_filter": {
+      "kind": "lag_hit"
+    },
+    "module_thermal": {
+      "kind": "lag_hit"
+    },
+    "module_actuator": {
+      "kind": "lag_hit"
+    },
+    "module_thruster": {
+      "kind": "lag_hit"
+    },
+    "module_coil": {
+      "kind": "lag_hit"
+    },
+    "module_spring": {
+      "kind": "lag_hit"
+    },
+    "module_tread": {
+      "kind": "lag_hit"
+    },
+    "module_dispenser": {
+      "kind": "lag_hit"
+    },
+    "thermo_wire": {
+      "kind": "lag_hit"
+    },
+    "thermo_leg": {
+      "kind": "lag_hit"
+    },
+    "die": {
+      "kind": "lag_blow"
     }
   },
   "offering": "toughness"

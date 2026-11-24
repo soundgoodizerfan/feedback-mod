@@ -60,6 +60,75 @@
     },
     "wiring": {
       "kind": "worn_reserve"
+    },
+    "wheel": {
+      "kind": "feed"
+    },
+    "bit": {
+      "kind": "feed"
+    },
+    "body": {
+      "kind": "worn_reserve"
+    },
+    "coil_element": {
+      "kind": "worn_reserve"
+    },
+    "noisemaker": {
+      "kind": "feed"
+    },
+    "second_noisemaker": {
+      "kind": "feed"
+    },
+    "resonator_electrode": {
+      "kind": "worn_reserve"
+    },
+    "face_piece": {
+      "kind": "worn_reserve"
+    },
+    "robot_radio": {
+      "kind": "worn_reserve"
+    },
+    "roll": {
+      "kind": "feed"
+    },
+    "bowl": {
+      "kind": "feed"
+    },
+    "module_optic": {
+      "kind": "worn_reserve"
+    },
+    "module_filter": {
+      "kind": "worn_reserve"
+    },
+    "module_thermal": {
+      "kind": "worn_reserve"
+    },
+    "module_actuator": {
+      "kind": "worn_reserve"
+    },
+    "module_thruster": {
+      "kind": "worn_reserve"
+    },
+    "module_coil": {
+      "kind": "worn_reserve"
+    },
+    "module_spring": {
+      "kind": "worn_reserve"
+    },
+    "module_tread": {
+      "kind": "worn_reserve"
+    },
+    "module_dispenser": {
+      "kind": "worn_reserve"
+    },
+    "thermo_wire": {
+      "kind": "worn_reserve"
+    },
+    "thermo_leg": {
+      "kind": "worn_reserve"
+    },
+    "die": {
+      "kind": "feed"
     }
   },
   "mirror": {
@@ -119,6 +188,75 @@
     },
     "wiring": {
       "kind": "worn_famine"
+    },
+    "wheel": {
+      "kind": "drain"
+    },
+    "bit": {
+      "kind": "drain"
+    },
+    "body": {
+      "kind": "worn_famine"
+    },
+    "coil_element": {
+      "kind": "worn_famine"
+    },
+    "noisemaker": {
+      "kind": "drain"
+    },
+    "second_noisemaker": {
+      "kind": "drain"
+    },
+    "resonator_electrode": {
+      "kind": "worn_famine"
+    },
+    "face_piece": {
+      "kind": "worn_famine"
+    },
+    "robot_radio": {
+      "kind": "worn_famine"
+    },
+    "roll": {
+      "kind": "drain"
+    },
+    "bowl": {
+      "kind": "drain"
+    },
+    "module_optic": {
+      "kind": "worn_famine"
+    },
+    "module_filter": {
+      "kind": "worn_famine"
+    },
+    "module_thermal": {
+      "kind": "worn_famine"
+    },
+    "module_actuator": {
+      "kind": "worn_famine"
+    },
+    "module_thruster": {
+      "kind": "worn_famine"
+    },
+    "module_coil": {
+      "kind": "worn_famine"
+    },
+    "module_spring": {
+      "kind": "worn_famine"
+    },
+    "module_tread": {
+      "kind": "worn_famine"
+    },
+    "module_dispenser": {
+      "kind": "worn_famine"
+    },
+    "thermo_wire": {
+      "kind": "worn_famine"
+    },
+    "thermo_leg": {
+      "kind": "worn_famine"
+    },
+    "die": {
+      "kind": "drain"
     }
   },
   "offering": "specific_heat"

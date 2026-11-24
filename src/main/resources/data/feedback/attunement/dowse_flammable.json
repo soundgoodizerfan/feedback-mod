@@ -66,6 +66,81 @@
     },
     "stock": {
       "kind": "point_flammable"
+    },
+    "drive": {
+      "kind": "point_flammable"
+    },
+    "bit": {
+      "kind": "point_flammable"
+    },
+    "body": {
+      "kind": "worn_point_flammable"
+    },
+    "coil_element": {
+      "kind": "worn_point_flammable"
+    },
+    "lattice_frame": {
+      "kind": "point_flammable"
+    },
+    "noisemaker": {
+      "kind": "point_flammable"
+    },
+    "second_noisemaker": {
+      "kind": "point_flammable"
+    },
+    "piston_rod": {
+      "kind": "point_flammable"
+    },
+    "resonator_electrode": {
+      "kind": "worn_point_flammable"
+    },
+    "face_piece": {
+      "kind": "worn_point_flammable"
+    },
+    "robot_chassis": {
+      "kind": "point_flammable"
+    },
+    "robot_radio": {
+      "kind": "worn_point_flammable"
+    },
+    "bowl": {
+      "kind": "point_flammable"
+    },
+    "module_optic": {
+      "kind": "worn_point_flammable"
+    },
+    "module_filter": {
+      "kind": "worn_point_flammable"
+    },
+    "module_thermal": {
+      "kind": "worn_point_flammable"
+    },
+    "module_actuator": {
+      "kind": "worn_point_flammable"
+    },
+    "module_thruster": {
+      "kind": "worn_point_flammable"
+    },
+    "module_coil": {
+      "kind": "worn_point_flammable"
+    },
+    "module_spring": {
+      "kind": "worn_point_flammable"
+    },
+    "module_tread": {
+      "kind": "worn_point_flammable"
+    },
+    "module_dispenser": {
+      "kind": "worn_point_flammable"
+    },
+    "thermo_wire": {
+      "kind": "worn_point_flammable"
+    },
+    "thermo_leg": {
+      "kind": "worn_point_flammable"
+    },
+    "tray_deck": {
+      "kind": "point_flammable"
     }
   },
   "mirror": {
@@ -130,6 +205,81 @@
       "kind": "worn_away_flammable"
     },
     "stock": {
+      "kind": "away_flammable"
+    },
+    "drive": {
+      "kind": "away_flammable"
+    },
+    "bit": {
+      "kind": "away_flammable"
+    },
+    "body": {
+      "kind": "worn_away_flammable"
+    },
+    "coil_element": {
+      "kind": "worn_away_flammable"
+    },
+    "lattice_frame": {
+      "kind": "away_flammable"
+    },
+    "noisemaker": {
+      "kind": "away_flammable"
+    },
+    "second_noisemaker": {
+      "kind": "away_flammable"
+    },
+    "piston_rod": {
+      "kind": "away_flammable"
+    },
+    "resonator_electrode": {
+      "kind": "worn_away_flammable"
+    },
+    "face_piece": {
+      "kind": "worn_away_flammable"
+    },
+    "robot_chassis": {
+      "kind": "away_flammable"
+    },
+    "robot_radio": {
+      "kind": "worn_away_flammable"
+    },
+    "bowl": {
+      "kind": "away_flammable"
+    },
+    "module_optic": {
+      "kind": "worn_away_flammable"
+    },
+    "module_filter": {
+      "kind": "worn_away_flammable"
+    },
+    "module_thermal": {
+      "kind": "worn_away_flammable"
+    },
+    "module_actuator": {
+      "kind": "worn_away_flammable"
+    },
+    "module_thruster": {
+      "kind": "worn_away_flammable"
+    },
+    "module_coil": {
+      "kind": "worn_away_flammable"
+    },
+    "module_spring": {
+      "kind": "worn_away_flammable"
+    },
+    "module_tread": {
+      "kind": "worn_away_flammable"
+    },
+    "module_dispenser": {
+      "kind": "worn_away_flammable"
+    },
+    "thermo_wire": {
+      "kind": "worn_away_flammable"
+    },
+    "thermo_leg": {
+      "kind": "worn_away_flammable"
+    },
+    "tray_deck": {
       "kind": "away_flammable"
     }
   },

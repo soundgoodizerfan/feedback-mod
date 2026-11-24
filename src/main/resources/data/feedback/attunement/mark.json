@@ -46,6 +46,40 @@
     },
     "container": {
       "kind": "meal_mark"
+    },
+    "wheel": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "centrifuge_rotor": {
+      "kind": "mark"
+    },
+    "noisemaker": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "robot_sensor": {
+      "kind": "mark"
+    },
+    "roll": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "die": {
+      "kind": "mark",
+      "flaw": 0
     }
   },
   "mirror": {
@@ -97,6 +131,70 @@
       "flaw": 2
     },
     "wiring": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "body": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "coil_element": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "resonator_electrode": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "face_piece": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "robot_radio": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_optic": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_filter": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_thermal": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_actuator": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_thruster": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_coil": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_spring": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_tread": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_dispenser": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "thermo_wire": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "thermo_leg": {
       "kind": "taunt",
       "flaw": 2
     }

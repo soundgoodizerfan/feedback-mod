@@ -75,6 +75,102 @@
     },
     "barrel": {
       "kind": "glow"
+    },
+    "wheel": {
+      "kind": "glow"
+    },
+    "burner_nozzle": {
+      "kind": "glow"
+    },
+    "nozzle": {
+      "kind": "glow"
+    },
+    "pilot": {
+      "kind": "glow"
+    },
+    "bit": {
+      "kind": "glow"
+    },
+    "body": {
+      "kind": "worn_glow"
+    },
+    "coil_element": {
+      "kind": "worn_glow"
+    },
+    "jet_nozzle": {
+      "kind": "glow"
+    },
+    "noisemaker": {
+      "kind": "glow"
+    },
+    "second_noisemaker": {
+      "kind": "glow"
+    },
+    "resonator_crystal": {
+      "kind": "glow"
+    },
+    "resonator_electrode": {
+      "kind": "worn_glow"
+    },
+    "face_piece": {
+      "kind": "worn_glow"
+    },
+    "robot_head": {
+      "kind": "glow"
+    },
+    "robot_sensor": {
+      "kind": "glow"
+    },
+    "robot_radio": {
+      "kind": "worn_glow"
+    },
+    "roll": {
+      "kind": "glow"
+    },
+    "bowl": {
+      "kind": "glow"
+    },
+    "module_optic": {
+      "kind": "worn_glow"
+    },
+    "module_filter": {
+      "kind": "worn_glow"
+    },
+    "module_thermal": {
+      "kind": "worn_glow"
+    },
+    "module_actuator": {
+      "kind": "worn_glow"
+    },
+    "module_thruster": {
+      "kind": "worn_glow"
+    },
+    "module_coil": {
+      "kind": "worn_glow"
+    },
+    "module_spring": {
+      "kind": "worn_glow"
+    },
+    "module_tread": {
+      "kind": "worn_glow"
+    },
+    "module_dispenser": {
+      "kind": "worn_glow"
+    },
+    "thermo_wire": {
+      "kind": "worn_glow"
+    },
+    "thermo_leg": {
+      "kind": "worn_glow"
+    },
+    "tube_cathode": {
+      "kind": "glow"
+    },
+    "tube_grid": {
+      "kind": "glow"
+    },
+    "die": {
+      "kind": "glow"
     }
   },
   "mirror": {
@@ -149,6 +245,102 @@
     },
     "mattress": {
       "kind": "bed_dim"
+    },
+    "wheel": {
+      "kind": "dim"
+    },
+    "burner_nozzle": {
+      "kind": "dim"
+    },
+    "nozzle": {
+      "kind": "dim"
+    },
+    "pilot": {
+      "kind": "dim"
+    },
+    "bit": {
+      "kind": "dim"
+    },
+    "body": {
+      "kind": "worn_dim"
+    },
+    "coil_element": {
+      "kind": "worn_dim"
+    },
+    "jet_nozzle": {
+      "kind": "dim"
+    },
+    "noisemaker": {
+      "kind": "dim"
+    },
+    "second_noisemaker": {
+      "kind": "dim"
+    },
+    "resonator_crystal": {
+      "kind": "dim"
+    },
+    "resonator_electrode": {
+      "kind": "worn_dim"
+    },
+    "face_piece": {
+      "kind": "worn_dim"
+    },
+    "robot_head": {
+      "kind": "dim"
+    },
+    "robot_sensor": {
+      "kind": "dim"
+    },
+    "robot_radio": {
+      "kind": "worn_dim"
+    },
+    "roll": {
+      "kind": "dim"
+    },
+    "bowl": {
+      "kind": "dim"
+    },
+    "module_optic": {
+      "kind": "worn_dim"
+    },
+    "module_filter": {
+      "kind": "worn_dim"
+    },
+    "module_thermal": {
+      "kind": "worn_dim"
+    },
+    "module_actuator": {
+      "kind": "worn_dim"
+    },
+    "module_thruster": {
+      "kind": "worn_dim"
+    },
+    "module_coil": {
+      "kind": "worn_dim"
+    },
+    "module_spring": {
+      "kind": "worn_dim"
+    },
+    "module_tread": {
+      "kind": "worn_dim"
+    },
+    "module_dispenser": {
+      "kind": "worn_dim"
+    },
+    "thermo_wire": {
+      "kind": "worn_dim"
+    },
+    "thermo_leg": {
+      "kind": "worn_dim"
+    },
+    "tube_cathode": {
+      "kind": "dim"
+    },
+    "tube_grid": {
+      "kind": "dim"
+    },
+    "die": {
+      "kind": "dim"
     }
   },
   "offering": "melting_point"

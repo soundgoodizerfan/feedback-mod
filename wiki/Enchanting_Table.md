@@ -111,6 +111,27 @@ Each effect does something different on a different **role** (the part's place i
 
 Some effects need the material to be right: **Heat** on a handle is only as hot as the material burns, **Lode** and the magnetic **Dowse** die when the part is heated past its Curie point, and **Impulse** on a crossbow's stock recoils the shooter. **Impulse** on a gun's grip locks it in the hand against hard recoil and throws the shooter back instead (see [Guns](Guns.md#handling)); every shot also throws the shooter away from where it is aimed, up and down as well as sideways, whether or not it hits, so firing straight down launches you up.
 
+## Parts that take effects like another part
+
+Every shaped part of every modular tool, weapon, machine, instrument and suit takes each effect the way its nearest relative among the parts above does. Fuses, primers, spark plugs, respirator filters and raw stock parts are consumables or plain stock and take none.
+
+- **Tip-like:** bits (drill bit, hand drill, lathe bit, prospector pick, pry bar, screwdriver), a note block's noisemakers and a spoon's bowl.
+- **Head-like:** abrasive wheels, rolls and wire dies.
+- **Plate-like:** a glove's body. Its metacarpal acts like reinforcing bands.
+- **Shell-like:** a crucible shell (like a vessel shell), a caster tank (like a tank shell), a respirator face piece (like a shell) and a piston cylinder (like a cylinder).
+- **Crankshaft-like:** a piston rod and a caster drive.
+- **Winding-like:** a heating coil element, a linear motor winding, thermocouple wire, a thermoelectric leg, a resonator electrode and a robot radio.
+- **Casing-like:** the suit module roles (like the module casing), a jet nozzle, a robot head and a burner nozzle.
+- **Frame-like:** a robot chassis, a lattice frame and a tray deck.
+- **Housing-like:** a robot loader, a note body, and a vacuum tube plate.
+- **Gearbox-case-like:** a robot drive.
+- **Sight-like:** a robot sensor.
+- **Core-like:** a lattice body.
+- **Optics:** telescope lenses act like a beam lens and its body tube like a tube.
+- **Compressor-rotor-like:** a jet compressor. A centrifuge rotor acts like a flywheel disc.
+- **Lamp-filament-like:** a vacuum tube cathode and grid, a resonator crystal and a caster pilot. The tube envelope acts like jar glass.
+- **Muzzle-brake-like:** a caster nozzle. A caster valve acts like a lock.
+
 ## On a machine
 
 A machine's parts are attuned at the table like a tool's, and a built machine's tooltip lists them. Each part has a place in the machine: a **working face** (what does the work: a head, rotor, impeller, winding), a **housing** (shells, cases, linings) or a **mount** (frames, bearings, shafts). The table lists an effect on a part only where the machine does something with it.

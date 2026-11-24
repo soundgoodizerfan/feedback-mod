@@ -57,6 +57,63 @@
     },
     "bayonet": {
       "kind": "pulse"
+    },
+    "wheel": {
+      "kind": "pulse"
+    },
+    "body": {
+      "kind": "arc"
+    },
+    "coil_element": {
+      "kind": "arc"
+    },
+    "resonator_electrode": {
+      "kind": "arc"
+    },
+    "face_piece": {
+      "kind": "arc"
+    },
+    "robot_radio": {
+      "kind": "arc"
+    },
+    "roll": {
+      "kind": "pulse"
+    },
+    "module_optic": {
+      "kind": "arc"
+    },
+    "module_filter": {
+      "kind": "arc"
+    },
+    "module_thermal": {
+      "kind": "arc"
+    },
+    "module_actuator": {
+      "kind": "arc"
+    },
+    "module_thruster": {
+      "kind": "arc"
+    },
+    "module_coil": {
+      "kind": "arc"
+    },
+    "module_spring": {
+      "kind": "arc"
+    },
+    "module_tread": {
+      "kind": "arc"
+    },
+    "module_dispenser": {
+      "kind": "arc"
+    },
+    "thermo_wire": {
+      "kind": "arc"
+    },
+    "thermo_leg": {
+      "kind": "arc"
+    },
+    "die": {
+      "kind": "pulse"
     }
   },
   "mirror": {
@@ -113,6 +170,63 @@
     },
     "container": {
       "kind": "meal_sense"
+    },
+    "wheel": {
+      "kind": "sense"
+    },
+    "body": {
+      "kind": "soak"
+    },
+    "coil_element": {
+      "kind": "soak"
+    },
+    "resonator_electrode": {
+      "kind": "soak"
+    },
+    "face_piece": {
+      "kind": "soak"
+    },
+    "robot_radio": {
+      "kind": "soak"
+    },
+    "roll": {
+      "kind": "sense"
+    },
+    "module_optic": {
+      "kind": "soak"
+    },
+    "module_filter": {
+      "kind": "soak"
+    },
+    "module_thermal": {
+      "kind": "soak"
+    },
+    "module_actuator": {
+      "kind": "soak"
+    },
+    "module_thruster": {
+      "kind": "soak"
+    },
+    "module_coil": {
+      "kind": "soak"
+    },
+    "module_spring": {
+      "kind": "soak"
+    },
+    "module_tread": {
+      "kind": "soak"
+    },
+    "module_dispenser": {
+      "kind": "soak"
+    },
+    "thermo_wire": {
+      "kind": "soak"
+    },
+    "thermo_leg": {
+      "kind": "soak"
+    },
+    "die": {
+      "kind": "sense"
     }
   },
   "offering": "hardness"

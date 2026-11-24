@@ -48,6 +48,51 @@
     },
     "module_plating": {
       "kind": "worn_grow"
+    },
+    "wheel": {
+      "kind": "grow",
+      "flaw": 1
+    },
+    "body": {
+      "kind": "worn_grow"
+    },
+    "face_piece": {
+      "kind": "worn_grow"
+    },
+    "roll": {
+      "kind": "grow",
+      "flaw": 1
+    },
+    "module_optic": {
+      "kind": "worn_grow"
+    },
+    "module_filter": {
+      "kind": "worn_grow"
+    },
+    "module_thermal": {
+      "kind": "worn_grow"
+    },
+    "module_actuator": {
+      "kind": "worn_grow"
+    },
+    "module_thruster": {
+      "kind": "worn_grow"
+    },
+    "module_coil": {
+      "kind": "worn_grow"
+    },
+    "module_spring": {
+      "kind": "worn_grow"
+    },
+    "module_tread": {
+      "kind": "worn_grow"
+    },
+    "module_dispenser": {
+      "kind": "worn_grow"
+    },
+    "die": {
+      "kind": "grow",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -95,6 +140,51 @@
     },
     "module_plating": {
       "kind": "worn_reap"
+    },
+    "wheel": {
+      "kind": "reap",
+      "flaw": 1
+    },
+    "body": {
+      "kind": "worn_reap"
+    },
+    "face_piece": {
+      "kind": "worn_reap"
+    },
+    "roll": {
+      "kind": "reap",
+      "flaw": 1
+    },
+    "module_optic": {
+      "kind": "worn_reap"
+    },
+    "module_filter": {
+      "kind": "worn_reap"
+    },
+    "module_thermal": {
+      "kind": "worn_reap"
+    },
+    "module_actuator": {
+      "kind": "worn_reap"
+    },
+    "module_thruster": {
+      "kind": "worn_reap"
+    },
+    "module_coil": {
+      "kind": "worn_reap"
+    },
+    "module_spring": {
+      "kind": "worn_reap"
+    },
+    "module_tread": {
+      "kind": "worn_reap"
+    },
+    "module_dispenser": {
+      "kind": "worn_reap"
+    },
+    "die": {
+      "kind": "reap",
+      "flaw": 1
     }
   },
   "offering": "specific_heat"

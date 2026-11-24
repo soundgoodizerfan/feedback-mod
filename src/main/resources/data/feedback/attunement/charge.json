@@ -97,6 +97,94 @@
     },
     "mattress": {
       "kind": "bed_charge"
+    },
+    "wheel": {
+      "kind": "build",
+      "flaw": 1
+    },
+    "burner_nozzle": {
+      "kind": "blast_arc"
+    },
+    "body": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "coil_element": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "jet_nozzle": {
+      "kind": "blast_arc"
+    },
+    "resonator_electrode": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "face_piece": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "robot_head": {
+      "kind": "blast_arc"
+    },
+    "robot_radio": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "build",
+      "flaw": 1
+    },
+    "module_optic": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_filter": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_thermal": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_actuator": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_thruster": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_coil": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_spring": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_tread": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_dispenser": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "thermo_wire": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "thermo_leg": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "tube_envelope": {
+      "kind": "capacitor"
+    },
+    "die": {
+      "kind": "build",
+      "flaw": 1
     }
   },
   "mirror": {

@@ -92,6 +92,107 @@
     },
     "container": {
       "kind": "meal_shove"
+    },
+    "wheel": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "burner_nozzle": {
+      "kind": "blast_shove"
+    },
+    "bit": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "body": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "coil_element": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "jet_nozzle": {
+      "kind": "blast_shove"
+    },
+    "noisemaker": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "face_piece": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "robot_head": {
+      "kind": "blast_shove"
+    },
+    "robot_radio": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "shove",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_filter": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_thermal": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_actuator": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_thruster": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_coil": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_spring": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_tread": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_dispenser": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "thermo_wire": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "thermo_leg": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "die": {
+      "kind": "shove",
+      "flaw": 0
     }
   },
   "mirror": {
@@ -187,6 +288,116 @@
     },
     "container": {
       "kind": "meal_pull"
+    },
+    "wheel": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "burner_nozzle": {
+      "kind": "blast_pull"
+    },
+    "tank": {
+      "kind": "damp"
+    },
+    "crucible_shell": {
+      "kind": "damp"
+    },
+    "bit": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "body": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "metacarpal": {
+      "kind": "damp"
+    },
+    "coil_element": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "jet_nozzle": {
+      "kind": "blast_pull"
+    },
+    "noisemaker": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "face_piece": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "robot_head": {
+      "kind": "blast_pull"
+    },
+    "robot_radio": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "roll": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "pull",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_filter": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_thermal": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_actuator": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_thruster": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_coil": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_spring": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_tread": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_dispenser": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "thermo_wire": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "thermo_leg": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "die": {
+      "kind": "pull",
+      "flaw": 0
     }
   },
   "books": [

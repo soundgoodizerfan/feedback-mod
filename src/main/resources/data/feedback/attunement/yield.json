@@ -75,6 +75,98 @@
     "wiring": {
       "kind": "scavenge",
       "flaw": 0
+    },
+    "wheel": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "body": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "coil_element": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "noisemaker": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "face_piece": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "robot_radio": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "roll": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "fortune",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_filter": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_thermal": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_actuator": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_thruster": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_coil": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_spring": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_tread": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_dispenser": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "thermo_wire": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "thermo_leg": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "die": {
+      "kind": "fortune",
+      "flaw": 0
     }
   },
   "mirror": {
@@ -94,6 +186,34 @@
     },
     "container": {
       "kind": "meal_intact"
+    },
+    "wheel": {
+      "kind": "intact",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "intact",
+      "flaw": 0
+    },
+    "noisemaker": {
+      "kind": "intact",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "intact",
+      "flaw": 0
+    },
+    "roll": {
+      "kind": "intact",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "intact",
+      "flaw": 0
+    },
+    "die": {
+      "kind": "intact",
+      "flaw": 0
     }
   },
   "starter": true,

@@ -84,6 +84,78 @@
     },
     "wiring": {
       "kind": "reserve"
+    },
+    "burner_nozzle": {
+      "kind": "reserve"
+    },
+    "tank": {
+      "kind": "reserve"
+    },
+    "crucible_shell": {
+      "kind": "reserve"
+    },
+    "body": {
+      "kind": "reserve"
+    },
+    "coil_element": {
+      "kind": "reserve"
+    },
+    "jet_nozzle": {
+      "kind": "reserve"
+    },
+    "note_body": {
+      "kind": "reserve"
+    },
+    "resonator_electrode": {
+      "kind": "reserve"
+    },
+    "face_piece": {
+      "kind": "reserve"
+    },
+    "robot_head": {
+      "kind": "reserve"
+    },
+    "robot_loader": {
+      "kind": "reserve"
+    },
+    "robot_radio": {
+      "kind": "reserve"
+    },
+    "module_optic": {
+      "kind": "reserve"
+    },
+    "module_filter": {
+      "kind": "reserve"
+    },
+    "module_thermal": {
+      "kind": "reserve"
+    },
+    "module_actuator": {
+      "kind": "reserve"
+    },
+    "module_thruster": {
+      "kind": "reserve"
+    },
+    "module_coil": {
+      "kind": "reserve"
+    },
+    "module_spring": {
+      "kind": "reserve"
+    },
+    "module_tread": {
+      "kind": "reserve"
+    },
+    "module_dispenser": {
+      "kind": "reserve"
+    },
+    "thermo_wire": {
+      "kind": "reserve"
+    },
+    "thermo_leg": {
+      "kind": "reserve"
+    },
+    "tube_plate": {
+      "kind": "reserve"
     }
   },
   "books": [

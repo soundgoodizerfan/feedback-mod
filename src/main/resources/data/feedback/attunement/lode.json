@@ -60,6 +60,75 @@
     },
     "wiring": {
       "kind": "worn_draw"
+    },
+    "wheel": {
+      "kind": "draw"
+    },
+    "bit": {
+      "kind": "draw"
+    },
+    "body": {
+      "kind": "worn_draw"
+    },
+    "coil_element": {
+      "kind": "worn_draw"
+    },
+    "noisemaker": {
+      "kind": "draw"
+    },
+    "second_noisemaker": {
+      "kind": "draw"
+    },
+    "resonator_electrode": {
+      "kind": "worn_draw"
+    },
+    "face_piece": {
+      "kind": "worn_draw"
+    },
+    "robot_radio": {
+      "kind": "worn_draw"
+    },
+    "roll": {
+      "kind": "draw"
+    },
+    "bowl": {
+      "kind": "draw"
+    },
+    "module_optic": {
+      "kind": "worn_draw"
+    },
+    "module_filter": {
+      "kind": "worn_draw"
+    },
+    "module_thermal": {
+      "kind": "worn_draw"
+    },
+    "module_actuator": {
+      "kind": "worn_draw"
+    },
+    "module_thruster": {
+      "kind": "worn_draw"
+    },
+    "module_coil": {
+      "kind": "worn_draw"
+    },
+    "module_spring": {
+      "kind": "worn_draw"
+    },
+    "module_tread": {
+      "kind": "worn_draw"
+    },
+    "module_dispenser": {
+      "kind": "worn_draw"
+    },
+    "thermo_wire": {
+      "kind": "worn_draw"
+    },
+    "thermo_leg": {
+      "kind": "worn_draw"
+    },
+    "die": {
+      "kind": "draw"
     }
   },
   "mirror": {
@@ -119,6 +188,75 @@
     },
     "wiring": {
       "kind": "worn_fling"
+    },
+    "wheel": {
+      "kind": "fling"
+    },
+    "bit": {
+      "kind": "fling"
+    },
+    "body": {
+      "kind": "worn_fling"
+    },
+    "coil_element": {
+      "kind": "worn_fling"
+    },
+    "noisemaker": {
+      "kind": "fling"
+    },
+    "second_noisemaker": {
+      "kind": "fling"
+    },
+    "resonator_electrode": {
+      "kind": "worn_fling"
+    },
+    "face_piece": {
+      "kind": "worn_fling"
+    },
+    "robot_radio": {
+      "kind": "worn_fling"
+    },
+    "roll": {
+      "kind": "fling"
+    },
+    "bowl": {
+      "kind": "fling"
+    },
+    "module_optic": {
+      "kind": "worn_fling"
+    },
+    "module_filter": {
+      "kind": "worn_fling"
+    },
+    "module_thermal": {
+      "kind": "worn_fling"
+    },
+    "module_actuator": {
+      "kind": "worn_fling"
+    },
+    "module_thruster": {
+      "kind": "worn_fling"
+    },
+    "module_coil": {
+      "kind": "worn_fling"
+    },
+    "module_spring": {
+      "kind": "worn_fling"
+    },
+    "module_tread": {
+      "kind": "worn_fling"
+    },
+    "module_dispenser": {
+      "kind": "worn_fling"
+    },
+    "thermo_wire": {
+      "kind": "worn_fling"
+    },
+    "thermo_leg": {
+      "kind": "worn_fling"
+    },
+    "die": {
+      "kind": "fling"
     }
   },
   "books": [

@@ -79,6 +79,101 @@
     },
     "mattress": {
       "kind": "bed_pack"
+    },
+    "wheel": {
+      "kind": "pack",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "pack",
+      "flaw": 0
+    },
+    "body": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "coil_element": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "noisemaker": {
+      "kind": "pack",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "pack",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "face_piece": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "robot_sensor": {
+      "kind": "pack"
+    },
+    "robot_radio": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "roll": {
+      "kind": "pack",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "pack",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_filter": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_thermal": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_actuator": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_thruster": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_coil": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_spring": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_tread": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_dispenser": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "thermo_wire": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "thermo_leg": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "die": {
+      "kind": "pack",
+      "flaw": 0
     }
   },
   "mirror": {
@@ -157,6 +252,101 @@
     },
     "mattress": {
       "kind": "bed_lone"
+    },
+    "wheel": {
+      "kind": "lone",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "lone",
+      "flaw": 0
+    },
+    "body": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "coil_element": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "noisemaker": {
+      "kind": "lone",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "lone",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "face_piece": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "robot_sensor": {
+      "kind": "lone"
+    },
+    "robot_radio": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "roll": {
+      "kind": "lone",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "lone",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_filter": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_thermal": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_actuator": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_thruster": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_coil": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_spring": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_tread": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_dispenser": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "thermo_wire": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "thermo_leg": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "die": {
+      "kind": "lone",
+      "flaw": 0
     }
   },
   "offering": "toughness"

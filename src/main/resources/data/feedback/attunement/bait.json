@@ -78,6 +78,78 @@
     },
     "wiring": {
       "kind": "worn_lure"
+    },
+    "burner_nozzle": {
+      "kind": "lure"
+    },
+    "drive": {
+      "kind": "lure"
+    },
+    "body": {
+      "kind": "worn_lure"
+    },
+    "coil_element": {
+      "kind": "worn_lure"
+    },
+    "jet_nozzle": {
+      "kind": "lure"
+    },
+    "lattice_frame": {
+      "kind": "lure"
+    },
+    "piston_rod": {
+      "kind": "lure"
+    },
+    "resonator_electrode": {
+      "kind": "worn_lure"
+    },
+    "face_piece": {
+      "kind": "worn_lure"
+    },
+    "robot_chassis": {
+      "kind": "lure"
+    },
+    "robot_head": {
+      "kind": "lure"
+    },
+    "robot_radio": {
+      "kind": "worn_lure"
+    },
+    "module_optic": {
+      "kind": "worn_lure"
+    },
+    "module_filter": {
+      "kind": "worn_lure"
+    },
+    "module_thermal": {
+      "kind": "worn_lure"
+    },
+    "module_actuator": {
+      "kind": "worn_lure"
+    },
+    "module_thruster": {
+      "kind": "worn_lure"
+    },
+    "module_coil": {
+      "kind": "worn_lure"
+    },
+    "module_spring": {
+      "kind": "worn_lure"
+    },
+    "module_tread": {
+      "kind": "worn_lure"
+    },
+    "module_dispenser": {
+      "kind": "worn_lure"
+    },
+    "thermo_wire": {
+      "kind": "worn_lure"
+    },
+    "thermo_leg": {
+      "kind": "worn_lure"
+    },
+    "tray_deck": {
+      "kind": "lure"
     }
   },
   "mirror": {
@@ -155,6 +227,78 @@
     },
     "wiring": {
       "kind": "worn_scare"
+    },
+    "burner_nozzle": {
+      "kind": "scare"
+    },
+    "drive": {
+      "kind": "scare"
+    },
+    "body": {
+      "kind": "worn_scare"
+    },
+    "coil_element": {
+      "kind": "worn_scare"
+    },
+    "jet_nozzle": {
+      "kind": "scare"
+    },
+    "lattice_frame": {
+      "kind": "scare"
+    },
+    "piston_rod": {
+      "kind": "scare"
+    },
+    "resonator_electrode": {
+      "kind": "worn_scare"
+    },
+    "face_piece": {
+      "kind": "worn_scare"
+    },
+    "robot_chassis": {
+      "kind": "scare"
+    },
+    "robot_head": {
+      "kind": "scare"
+    },
+    "robot_radio": {
+      "kind": "worn_scare"
+    },
+    "module_optic": {
+      "kind": "worn_scare"
+    },
+    "module_filter": {
+      "kind": "worn_scare"
+    },
+    "module_thermal": {
+      "kind": "worn_scare"
+    },
+    "module_actuator": {
+      "kind": "worn_scare"
+    },
+    "module_thruster": {
+      "kind": "worn_scare"
+    },
+    "module_coil": {
+      "kind": "worn_scare"
+    },
+    "module_spring": {
+      "kind": "worn_scare"
+    },
+    "module_tread": {
+      "kind": "worn_scare"
+    },
+    "module_dispenser": {
+      "kind": "worn_scare"
+    },
+    "thermo_wire": {
+      "kind": "worn_scare"
+    },
+    "thermo_leg": {
+      "kind": "worn_scare"
+    },
+    "tray_deck": {
+      "kind": "scare"
     }
   },
   "books": [

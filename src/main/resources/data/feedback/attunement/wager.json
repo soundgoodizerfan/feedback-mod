@@ -54,6 +54,75 @@
     },
     "wiring": {
       "kind": "gamble_ward"
+    },
+    "wheel": {
+      "kind": "gamble"
+    },
+    "bit": {
+      "kind": "gamble"
+    },
+    "body": {
+      "kind": "gamble_ward"
+    },
+    "coil_element": {
+      "kind": "gamble_ward"
+    },
+    "noisemaker": {
+      "kind": "gamble"
+    },
+    "second_noisemaker": {
+      "kind": "gamble"
+    },
+    "resonator_electrode": {
+      "kind": "gamble_ward"
+    },
+    "face_piece": {
+      "kind": "gamble_ward"
+    },
+    "robot_radio": {
+      "kind": "gamble_ward"
+    },
+    "roll": {
+      "kind": "gamble"
+    },
+    "bowl": {
+      "kind": "gamble"
+    },
+    "module_optic": {
+      "kind": "gamble_ward"
+    },
+    "module_filter": {
+      "kind": "gamble_ward"
+    },
+    "module_thermal": {
+      "kind": "gamble_ward"
+    },
+    "module_actuator": {
+      "kind": "gamble_ward"
+    },
+    "module_thruster": {
+      "kind": "gamble_ward"
+    },
+    "module_coil": {
+      "kind": "gamble_ward"
+    },
+    "module_spring": {
+      "kind": "gamble_ward"
+    },
+    "module_tread": {
+      "kind": "gamble_ward"
+    },
+    "module_dispenser": {
+      "kind": "gamble_ward"
+    },
+    "thermo_wire": {
+      "kind": "gamble_ward"
+    },
+    "thermo_leg": {
+      "kind": "gamble_ward"
+    },
+    "die": {
+      "kind": "gamble"
     }
   },
   "mirror": {},

@@ -26,6 +26,21 @@
     },
     "container": {
       "kind": "cure"
+    },
+    "wheel": {
+      "kind": "channel",
+      "flaw": 1
+    },
+    "motor_winding": {
+      "kind": "channel"
+    },
+    "roll": {
+      "kind": "channel",
+      "flaw": 1
+    },
+    "die": {
+      "kind": "channel",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -92,6 +107,82 @@
     "wiring": {
       "kind": "shed",
       "flaw": -1
+    },
+    "body": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "coil_element": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "note_body": {
+      "kind": "shed"
+    },
+    "resonator_electrode": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "face_piece": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "robot_drive": {
+      "kind": "shed"
+    },
+    "robot_loader": {
+      "kind": "shed"
+    },
+    "robot_radio": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_optic": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_filter": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_thermal": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_actuator": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_thruster": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_coil": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_spring": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_tread": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_dispenser": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "thermo_wire": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "thermo_leg": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "tube_plate": {
+      "kind": "shed"
     }
   },
   "books": [

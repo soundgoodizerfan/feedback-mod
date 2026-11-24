@@ -54,6 +54,24 @@
     },
     "container": {
       "kind": "meal_hold"
+    },
+    "burner_nozzle": {
+      "kind": "blast_hold"
+    },
+    "jet_nozzle": {
+      "kind": "blast_hold"
+    },
+    "lattice_frame": {
+      "kind": "clamp"
+    },
+    "robot_chassis": {
+      "kind": "clamp"
+    },
+    "robot_head": {
+      "kind": "blast_hold"
+    },
+    "tray_deck": {
+      "kind": "clamp"
     }
   },
   "mirror": {
@@ -105,6 +123,15 @@
     },
     "container": {
       "kind": "meal_slip"
+    },
+    "lattice_frame": {
+      "kind": "slip"
+    },
+    "robot_chassis": {
+      "kind": "slip"
+    },
+    "tray_deck": {
+      "kind": "slip"
     }
   },
   "starter": true,

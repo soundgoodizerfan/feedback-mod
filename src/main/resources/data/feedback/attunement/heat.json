@@ -85,6 +85,93 @@
     },
     "wiring": {
       "kind": "ignite_attacker"
+    },
+    "wheel": {
+      "kind": "ignite_target"
+    },
+    "burner_nozzle": {
+      "kind": "burn_wielder"
+    },
+    "bit": {
+      "kind": "ignite_target"
+    },
+    "body": {
+      "kind": "ignite_attacker"
+    },
+    "coil_element": {
+      "kind": "ignite_attacker"
+    },
+    "motor_winding": {
+      "kind": "ignite_target"
+    },
+    "jet_compressor": {
+      "kind": "ignite_target"
+    },
+    "jet_nozzle": {
+      "kind": "burn_wielder"
+    },
+    "lattice_body": {
+      "kind": "ignite_target"
+    },
+    "noisemaker": {
+      "kind": "ignite_target"
+    },
+    "second_noisemaker": {
+      "kind": "ignite_target"
+    },
+    "resonator_electrode": {
+      "kind": "ignite_attacker"
+    },
+    "face_piece": {
+      "kind": "ignite_attacker"
+    },
+    "robot_head": {
+      "kind": "burn_wielder"
+    },
+    "robot_radio": {
+      "kind": "ignite_attacker"
+    },
+    "roll": {
+      "kind": "ignite_target"
+    },
+    "bowl": {
+      "kind": "ignite_target"
+    },
+    "module_optic": {
+      "kind": "ignite_attacker"
+    },
+    "module_filter": {
+      "kind": "ignite_attacker"
+    },
+    "module_thermal": {
+      "kind": "ignite_attacker"
+    },
+    "module_actuator": {
+      "kind": "ignite_attacker"
+    },
+    "module_thruster": {
+      "kind": "ignite_attacker"
+    },
+    "module_coil": {
+      "kind": "ignite_attacker"
+    },
+    "module_spring": {
+      "kind": "ignite_attacker"
+    },
+    "module_tread": {
+      "kind": "ignite_attacker"
+    },
+    "module_dispenser": {
+      "kind": "ignite_attacker"
+    },
+    "thermo_wire": {
+      "kind": "ignite_attacker"
+    },
+    "thermo_leg": {
+      "kind": "ignite_attacker"
+    },
+    "die": {
+      "kind": "ignite_target"
     }
   },
   "mirror": {
@@ -156,6 +243,60 @@
     },
     "wiring": {
       "kind": "insulate"
+    },
+    "wheel": {
+      "kind": "freeze"
+    },
+    "bit": {
+      "kind": "freeze"
+    },
+    "coil_element": {
+      "kind": "insulate"
+    },
+    "motor_winding": {
+      "kind": "freeze"
+    },
+    "jet_compressor": {
+      "kind": "freeze"
+    },
+    "lattice_body": {
+      "kind": "freeze"
+    },
+    "note_body": {
+      "kind": "insulate"
+    },
+    "noisemaker": {
+      "kind": "freeze"
+    },
+    "second_noisemaker": {
+      "kind": "freeze"
+    },
+    "resonator_electrode": {
+      "kind": "insulate"
+    },
+    "robot_loader": {
+      "kind": "insulate"
+    },
+    "robot_radio": {
+      "kind": "insulate"
+    },
+    "roll": {
+      "kind": "freeze"
+    },
+    "bowl": {
+      "kind": "freeze"
+    },
+    "thermo_wire": {
+      "kind": "insulate"
+    },
+    "thermo_leg": {
+      "kind": "insulate"
+    },
+    "tube_plate": {
+      "kind": "insulate"
+    },
+    "die": {
+      "kind": "freeze"
     }
   },
   "books": [

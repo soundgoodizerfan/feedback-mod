@@ -46,6 +46,40 @@
     },
     "container": {
       "kind": "meal_swift"
+    },
+    "wheel": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "bit": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "centrifuge_rotor": {
+      "kind": "momentum"
+    },
+    "body": {
+      "kind": "worn_sprint"
+    },
+    "noisemaker": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "second_noisemaker": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "bowl": {
+      "kind": "momentum",
+      "flaw": 1
+    },
+    "die": {
+      "kind": "momentum",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -112,6 +146,85 @@
     },
     "wiring": {
       "kind": "worn_stance"
+    },
+    "wheel": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "centrifuge_rotor": {
+      "kind": "brace"
+    },
+    "body": {
+      "kind": "worn_stance"
+    },
+    "coil_element": {
+      "kind": "worn_stance"
+    },
+    "noisemaker": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "worn_stance"
+    },
+    "face_piece": {
+      "kind": "worn_stance"
+    },
+    "robot_radio": {
+      "kind": "worn_stance"
+    },
+    "roll": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "brace",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "worn_stance"
+    },
+    "module_filter": {
+      "kind": "worn_stance"
+    },
+    "module_thermal": {
+      "kind": "worn_stance"
+    },
+    "module_actuator": {
+      "kind": "worn_stance"
+    },
+    "module_thruster": {
+      "kind": "worn_stance"
+    },
+    "module_coil": {
+      "kind": "worn_stance"
+    },
+    "module_spring": {
+      "kind": "worn_stance"
+    },
+    "module_tread": {
+      "kind": "worn_stance"
+    },
+    "module_dispenser": {
+      "kind": "worn_stance"
+    },
+    "thermo_wire": {
+      "kind": "worn_stance"
+    },
+    "thermo_leg": {
+      "kind": "worn_stance"
+    },
+    "die": {
+      "kind": "brace",
+      "flaw": 0
     }
   },
   "books": [

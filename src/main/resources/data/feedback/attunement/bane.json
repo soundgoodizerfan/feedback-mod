@@ -90,6 +90,101 @@
     "wiring": {
       "kind": "bane_ward",
       "flaw": 0
+    },
+    "wheel": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "centrifuge_rotor": {
+      "kind": "bane"
+    },
+    "body": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "coil_element": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "noisemaker": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "face_piece": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "robot_radio": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "roll": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "bane",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_filter": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_thermal": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_actuator": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_thruster": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_coil": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_spring": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_tread": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_dispenser": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "thermo_wire": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "thermo_leg": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "die": {
+      "kind": "bane",
+      "flaw": 0
     }
   },
   "mirror": {
@@ -178,6 +273,101 @@
     },
     "wiring": {
       "kind": "kin_hide",
+      "flaw": 0
+    },
+    "wheel": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "bit": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "centrifuge_rotor": {
+      "kind": "kin_calm"
+    },
+    "body": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "coil_element": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "noisemaker": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "second_noisemaker": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "resonator_electrode": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "face_piece": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "robot_radio": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "roll": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "bowl": {
+      "kind": "kin_calm",
+      "flaw": 0
+    },
+    "module_optic": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_filter": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_thermal": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_actuator": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_thruster": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_coil": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_spring": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_tread": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_dispenser": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "thermo_wire": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "thermo_leg": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "die": {
+      "kind": "kin_calm",
       "flaw": 0
     }
   },

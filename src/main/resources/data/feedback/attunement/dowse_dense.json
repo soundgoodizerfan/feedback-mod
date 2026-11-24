@@ -66,6 +66,81 @@
     },
     "stock": {
       "kind": "point_dense"
+    },
+    "drive": {
+      "kind": "point_dense"
+    },
+    "bit": {
+      "kind": "point_dense"
+    },
+    "body": {
+      "kind": "worn_point_dense"
+    },
+    "coil_element": {
+      "kind": "worn_point_dense"
+    },
+    "lattice_frame": {
+      "kind": "point_dense"
+    },
+    "noisemaker": {
+      "kind": "point_dense"
+    },
+    "second_noisemaker": {
+      "kind": "point_dense"
+    },
+    "piston_rod": {
+      "kind": "point_dense"
+    },
+    "resonator_electrode": {
+      "kind": "worn_point_dense"
+    },
+    "face_piece": {
+      "kind": "worn_point_dense"
+    },
+    "robot_chassis": {
+      "kind": "point_dense"
+    },
+    "robot_radio": {
+      "kind": "worn_point_dense"
+    },
+    "bowl": {
+      "kind": "point_dense"
+    },
+    "module_optic": {
+      "kind": "worn_point_dense"
+    },
+    "module_filter": {
+      "kind": "worn_point_dense"
+    },
+    "module_thermal": {
+      "kind": "worn_point_dense"
+    },
+    "module_actuator": {
+      "kind": "worn_point_dense"
+    },
+    "module_thruster": {
+      "kind": "worn_point_dense"
+    },
+    "module_coil": {
+      "kind": "worn_point_dense"
+    },
+    "module_spring": {
+      "kind": "worn_point_dense"
+    },
+    "module_tread": {
+      "kind": "worn_point_dense"
+    },
+    "module_dispenser": {
+      "kind": "worn_point_dense"
+    },
+    "thermo_wire": {
+      "kind": "worn_point_dense"
+    },
+    "thermo_leg": {
+      "kind": "worn_point_dense"
+    },
+    "tray_deck": {
+      "kind": "point_dense"
     }
   },
   "mirror": {
@@ -130,6 +205,81 @@
       "kind": "worn_away_dense"
     },
     "stock": {
+      "kind": "away_dense"
+    },
+    "drive": {
+      "kind": "away_dense"
+    },
+    "bit": {
+      "kind": "away_dense"
+    },
+    "body": {
+      "kind": "worn_away_dense"
+    },
+    "coil_element": {
+      "kind": "worn_away_dense"
+    },
+    "lattice_frame": {
+      "kind": "away_dense"
+    },
+    "noisemaker": {
+      "kind": "away_dense"
+    },
+    "second_noisemaker": {
+      "kind": "away_dense"
+    },
+    "piston_rod": {
+      "kind": "away_dense"
+    },
+    "resonator_electrode": {
+      "kind": "worn_away_dense"
+    },
+    "face_piece": {
+      "kind": "worn_away_dense"
+    },
+    "robot_chassis": {
+      "kind": "away_dense"
+    },
+    "robot_radio": {
+      "kind": "worn_away_dense"
+    },
+    "bowl": {
+      "kind": "away_dense"
+    },
+    "module_optic": {
+      "kind": "worn_away_dense"
+    },
+    "module_filter": {
+      "kind": "worn_away_dense"
+    },
+    "module_thermal": {
+      "kind": "worn_away_dense"
+    },
+    "module_actuator": {
+      "kind": "worn_away_dense"
+    },
+    "module_thruster": {
+      "kind": "worn_away_dense"
+    },
+    "module_coil": {
+      "kind": "worn_away_dense"
+    },
+    "module_spring": {
+      "kind": "worn_away_dense"
+    },
+    "module_tread": {
+      "kind": "worn_away_dense"
+    },
+    "module_dispenser": {
+      "kind": "worn_away_dense"
+    },
+    "thermo_wire": {
+      "kind": "worn_away_dense"
+    },
+    "thermo_leg": {
+      "kind": "worn_away_dense"
+    },
+    "tray_deck": {
       "kind": "away_dense"
     }
   },

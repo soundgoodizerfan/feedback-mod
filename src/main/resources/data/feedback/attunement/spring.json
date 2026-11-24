@@ -79,6 +79,82 @@
     "wiring": {
       "kind": "coil",
       "flaw": 1
+    },
+    "body": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "coil_element": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "note_body": {
+      "kind": "coil"
+    },
+    "resonator_electrode": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "face_piece": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "robot_drive": {
+      "kind": "coil"
+    },
+    "robot_loader": {
+      "kind": "coil"
+    },
+    "robot_radio": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_optic": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_filter": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_thermal": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_actuator": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_thruster": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_coil": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_spring": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_tread": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_dispenser": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "thermo_wire": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "thermo_leg": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "tube_plate": {
+      "kind": "coil"
     }
   },
   "mirror": {

@@ -103,6 +103,100 @@
     "bayonet": {
       "kind": "grudge",
       "flaw": 1
+    },
+    "wheel": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "tank": {
+      "kind": "grudge"
+    },
+    "crucible_shell": {
+      "kind": "grudge"
+    },
+    "body": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "coil_element": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "note_body": {
+      "kind": "grudge"
+    },
+    "resonator_electrode": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "face_piece": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "robot_drive": {
+      "kind": "grudge"
+    },
+    "robot_loader": {
+      "kind": "grudge"
+    },
+    "robot_radio": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_optic": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_filter": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_thermal": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_actuator": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_thruster": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_coil": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_spring": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_tread": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_dispenser": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "thermo_wire": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "thermo_leg": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "tube_plate": {
+      "kind": "grudge"
+    },
+    "die": {
+      "kind": "grudge",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -188,6 +282,81 @@
       "kind": "calm"
     },
     "bayonet": {
+      "kind": "calm"
+    },
+    "wheel": {
+      "kind": "calm"
+    },
+    "tank": {
+      "kind": "calm"
+    },
+    "crucible_shell": {
+      "kind": "calm"
+    },
+    "body": {
+      "kind": "calm"
+    },
+    "coil_element": {
+      "kind": "calm"
+    },
+    "note_body": {
+      "kind": "calm"
+    },
+    "resonator_electrode": {
+      "kind": "calm"
+    },
+    "face_piece": {
+      "kind": "calm"
+    },
+    "robot_drive": {
+      "kind": "calm"
+    },
+    "robot_loader": {
+      "kind": "calm"
+    },
+    "robot_radio": {
+      "kind": "calm"
+    },
+    "roll": {
+      "kind": "calm"
+    },
+    "module_optic": {
+      "kind": "calm"
+    },
+    "module_filter": {
+      "kind": "calm"
+    },
+    "module_thermal": {
+      "kind": "calm"
+    },
+    "module_actuator": {
+      "kind": "calm"
+    },
+    "module_thruster": {
+      "kind": "calm"
+    },
+    "module_coil": {
+      "kind": "calm"
+    },
+    "module_spring": {
+      "kind": "calm"
+    },
+    "module_tread": {
+      "kind": "calm"
+    },
+    "module_dispenser": {
+      "kind": "calm"
+    },
+    "thermo_wire": {
+      "kind": "calm"
+    },
+    "thermo_leg": {
+      "kind": "calm"
+    },
+    "tube_plate": {
+      "kind": "calm"
+    },
+    "die": {
       "kind": "calm"
     }
   },

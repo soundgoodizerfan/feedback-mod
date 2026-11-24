@@ -72,6 +72,84 @@
     },
     "wiring": {
       "kind": "worn_ring"
+    },
+    "wheel": {
+      "kind": "ring"
+    },
+    "nozzle": {
+      "kind": "ring"
+    },
+    "bit": {
+      "kind": "ring"
+    },
+    "centrifuge_rotor": {
+      "kind": "ring"
+    },
+    "body": {
+      "kind": "worn_ring"
+    },
+    "coil_element": {
+      "kind": "worn_ring"
+    },
+    "jet_compressor": {
+      "kind": "ring"
+    },
+    "noisemaker": {
+      "kind": "ring"
+    },
+    "second_noisemaker": {
+      "kind": "ring"
+    },
+    "resonator_electrode": {
+      "kind": "worn_ring"
+    },
+    "face_piece": {
+      "kind": "worn_ring"
+    },
+    "robot_radio": {
+      "kind": "worn_ring"
+    },
+    "roll": {
+      "kind": "ring"
+    },
+    "bowl": {
+      "kind": "ring"
+    },
+    "module_optic": {
+      "kind": "worn_ring"
+    },
+    "module_filter": {
+      "kind": "worn_ring"
+    },
+    "module_thermal": {
+      "kind": "worn_ring"
+    },
+    "module_actuator": {
+      "kind": "worn_ring"
+    },
+    "module_thruster": {
+      "kind": "worn_ring"
+    },
+    "module_coil": {
+      "kind": "worn_ring"
+    },
+    "module_spring": {
+      "kind": "worn_ring"
+    },
+    "module_tread": {
+      "kind": "worn_ring"
+    },
+    "module_dispenser": {
+      "kind": "worn_ring"
+    },
+    "thermo_wire": {
+      "kind": "worn_ring"
+    },
+    "thermo_leg": {
+      "kind": "worn_ring"
+    },
+    "die": {
+      "kind": "ring"
     }
   },
   "mirror": {
@@ -140,6 +218,84 @@
     },
     "wiring": {
       "kind": "worn_hush"
+    },
+    "wheel": {
+      "kind": "hush"
+    },
+    "nozzle": {
+      "kind": "hush"
+    },
+    "bit": {
+      "kind": "hush"
+    },
+    "centrifuge_rotor": {
+      "kind": "hush"
+    },
+    "body": {
+      "kind": "worn_hush"
+    },
+    "coil_element": {
+      "kind": "worn_hush"
+    },
+    "jet_compressor": {
+      "kind": "hush"
+    },
+    "noisemaker": {
+      "kind": "hush"
+    },
+    "second_noisemaker": {
+      "kind": "hush"
+    },
+    "resonator_electrode": {
+      "kind": "worn_hush"
+    },
+    "face_piece": {
+      "kind": "worn_hush"
+    },
+    "robot_radio": {
+      "kind": "worn_hush"
+    },
+    "roll": {
+      "kind": "hush"
+    },
+    "bowl": {
+      "kind": "hush"
+    },
+    "module_optic": {
+      "kind": "worn_hush"
+    },
+    "module_filter": {
+      "kind": "worn_hush"
+    },
+    "module_thermal": {
+      "kind": "worn_hush"
+    },
+    "module_actuator": {
+      "kind": "worn_hush"
+    },
+    "module_thruster": {
+      "kind": "worn_hush"
+    },
+    "module_coil": {
+      "kind": "worn_hush"
+    },
+    "module_spring": {
+      "kind": "worn_hush"
+    },
+    "module_tread": {
+      "kind": "worn_hush"
+    },
+    "module_dispenser": {
+      "kind": "worn_hush"
+    },
+    "thermo_wire": {
+      "kind": "worn_hush"
+    },
+    "thermo_leg": {
+      "kind": "worn_hush"
+    },
+    "die": {
+      "kind": "hush"
     }
   },
   "offering": "toughness"

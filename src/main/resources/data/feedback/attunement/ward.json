@@ -331,6 +331,167 @@
     },
     "heat_sink": {
       "kind": "soak"
+    },
+    "wheel": {
+      "kind": "soak"
+    },
+    "tank": {
+      "kind": "soak"
+    },
+    "nozzle": {
+      "kind": "soak"
+    },
+    "valve": {
+      "kind": "soak"
+    },
+    "drive": {
+      "kind": "soak"
+    },
+    "pilot": {
+      "kind": "soak"
+    },
+    "crucible_shell": {
+      "kind": "soak"
+    },
+    "bit": {
+      "kind": "soak"
+    },
+    "centrifuge_rotor": {
+      "kind": "soak"
+    },
+    "body": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "metacarpal": {
+      "kind": "soak"
+    },
+    "coil_element": {
+      "kind": "soak"
+    },
+    "motor_winding": {
+      "kind": "soak"
+    },
+    "jet_compressor": {
+      "kind": "soak"
+    },
+    "lattice_body": {
+      "kind": "soak"
+    },
+    "lattice_frame": {
+      "kind": "soak"
+    },
+    "note_body": {
+      "kind": "soak"
+    },
+    "noisemaker": {
+      "kind": "soak"
+    },
+    "second_noisemaker": {
+      "kind": "soak"
+    },
+    "piston_cylinder": {
+      "kind": "soak"
+    },
+    "piston_rod": {
+      "kind": "soak"
+    },
+    "resonator_crystal": {
+      "kind": "soak"
+    },
+    "resonator_electrode": {
+      "kind": "soak"
+    },
+    "face_piece": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "robot_chassis": {
+      "kind": "soak"
+    },
+    "robot_drive": {
+      "kind": "soak"
+    },
+    "robot_sensor": {
+      "kind": "soak"
+    },
+    "robot_loader": {
+      "kind": "soak"
+    },
+    "robot_radio": {
+      "kind": "soak"
+    },
+    "roll": {
+      "kind": "soak"
+    },
+    "bowl": {
+      "kind": "soak"
+    },
+    "module_optic": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_filter": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_thermal": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_actuator": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_thruster": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_coil": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_spring": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_tread": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_dispenser": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "objective_lens": {
+      "kind": "soak"
+    },
+    "eyepiece_lens": {
+      "kind": "soak"
+    },
+    "body_tube": {
+      "kind": "soak"
+    },
+    "thermo_wire": {
+      "kind": "soak"
+    },
+    "thermo_leg": {
+      "kind": "soak"
+    },
+    "tray_deck": {
+      "kind": "soak"
+    },
+    "tube_cathode": {
+      "kind": "soak"
+    },
+    "tube_grid": {
+      "kind": "soak"
+    },
+    "tube_plate": {
+      "kind": "soak"
+    },
+    "die": {
+      "kind": "soak"
     }
   },
   "starter": true,

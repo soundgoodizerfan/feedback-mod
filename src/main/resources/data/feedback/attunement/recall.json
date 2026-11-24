@@ -66,6 +66,98 @@
     },
     "bed_frame": {
       "kind": "bed_recall"
+    },
+    "wheel": {
+      "kind": "recall",
+      "flaw": 1
+    },
+    "bit": {
+      "kind": "recall",
+      "flaw": 1
+    },
+    "body": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "coil_element": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "noisemaker": {
+      "kind": "recall",
+      "flaw": 1
+    },
+    "second_noisemaker": {
+      "kind": "recall",
+      "flaw": 1
+    },
+    "resonator_electrode": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "face_piece": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "robot_radio": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "recall",
+      "flaw": 1
+    },
+    "bowl": {
+      "kind": "recall",
+      "flaw": 1
+    },
+    "module_optic": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_filter": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_thermal": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_actuator": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_thruster": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_coil": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_spring": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_tread": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_dispenser": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "thermo_wire": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "thermo_leg": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "die": {
+      "kind": "recall",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -83,6 +175,34 @@
     },
     "bed_frame": {
       "kind": "bed_anchor"
+    },
+    "wheel": {
+      "kind": "anchor",
+      "flaw": 1
+    },
+    "bit": {
+      "kind": "anchor",
+      "flaw": 1
+    },
+    "noisemaker": {
+      "kind": "anchor",
+      "flaw": 1
+    },
+    "second_noisemaker": {
+      "kind": "anchor",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "anchor",
+      "flaw": 1
+    },
+    "bowl": {
+      "kind": "anchor",
+      "flaw": 1
+    },
+    "die": {
+      "kind": "anchor",
+      "flaw": 1
     }
   },
   "books": [

@@ -40,6 +40,61 @@
     },
     "module_casing": {
       "kind": "douse"
+    },
+    "wheel": {
+      "kind": "douse"
+    },
+    "burner_nozzle": {
+      "kind": "douse"
+    },
+    "body": {
+      "kind": "walker",
+      "flaw": 1
+    },
+    "jet_compressor": {
+      "kind": "douse"
+    },
+    "jet_nozzle": {
+      "kind": "douse"
+    },
+    "face_piece": {
+      "kind": "douse"
+    },
+    "robot_head": {
+      "kind": "douse"
+    },
+    "roll": {
+      "kind": "douse"
+    },
+    "module_optic": {
+      "kind": "douse"
+    },
+    "module_filter": {
+      "kind": "douse"
+    },
+    "module_thermal": {
+      "kind": "douse"
+    },
+    "module_actuator": {
+      "kind": "douse"
+    },
+    "module_thruster": {
+      "kind": "douse"
+    },
+    "module_coil": {
+      "kind": "douse"
+    },
+    "module_spring": {
+      "kind": "douse"
+    },
+    "module_tread": {
+      "kind": "douse"
+    },
+    "module_dispenser": {
+      "kind": "douse"
+    },
+    "die": {
+      "kind": "douse"
     }
   },
   "mirror": {
@@ -100,6 +155,93 @@
     },
     "module_plating": {
       "kind": "seal",
+      "flaw": 1
+    },
+    "wheel": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "burner_nozzle": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "bit": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "body": {
+      "kind": "stride",
+      "flaw": 1
+    },
+    "jet_nozzle": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "noisemaker": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "second_noisemaker": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "face_piece": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "robot_head": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "roll": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "bowl": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "module_optic": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_filter": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_thermal": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_actuator": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_thruster": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_coil": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_spring": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_tread": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_dispenser": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "tube_envelope": {
+      "kind": "seal"
+    },
+    "die": {
+      "kind": "affinity",
       "flaw": 1
     }
   },

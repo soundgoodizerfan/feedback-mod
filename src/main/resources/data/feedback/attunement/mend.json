@@ -327,6 +327,156 @@
     },
     "heat_sink": {
       "kind": "mend"
+    },
+    "wheel": {
+      "kind": "mend"
+    },
+    "tank": {
+      "kind": "mend"
+    },
+    "nozzle": {
+      "kind": "mend"
+    },
+    "valve": {
+      "kind": "mend"
+    },
+    "drive": {
+      "kind": "mend"
+    },
+    "pilot": {
+      "kind": "mend"
+    },
+    "crucible_shell": {
+      "kind": "mend"
+    },
+    "bit": {
+      "kind": "mend"
+    },
+    "centrifuge_rotor": {
+      "kind": "mend"
+    },
+    "body": {
+      "kind": "mend"
+    },
+    "metacarpal": {
+      "kind": "mend"
+    },
+    "coil_element": {
+      "kind": "mend"
+    },
+    "motor_winding": {
+      "kind": "mend"
+    },
+    "jet_compressor": {
+      "kind": "mend"
+    },
+    "lattice_body": {
+      "kind": "mend"
+    },
+    "lattice_frame": {
+      "kind": "mend"
+    },
+    "note_body": {
+      "kind": "mend"
+    },
+    "noisemaker": {
+      "kind": "mend"
+    },
+    "second_noisemaker": {
+      "kind": "mend"
+    },
+    "piston_cylinder": {
+      "kind": "mend"
+    },
+    "piston_rod": {
+      "kind": "mend"
+    },
+    "resonator_crystal": {
+      "kind": "mend"
+    },
+    "resonator_electrode": {
+      "kind": "mend"
+    },
+    "face_piece": {
+      "kind": "mend"
+    },
+    "robot_chassis": {
+      "kind": "mend"
+    },
+    "robot_drive": {
+      "kind": "mend"
+    },
+    "robot_sensor": {
+      "kind": "mend"
+    },
+    "robot_loader": {
+      "kind": "mend"
+    },
+    "robot_radio": {
+      "kind": "mend"
+    },
+    "roll": {
+      "kind": "mend"
+    },
+    "bowl": {
+      "kind": "mend"
+    },
+    "module_optic": {
+      "kind": "mend"
+    },
+    "module_filter": {
+      "kind": "mend"
+    },
+    "module_thermal": {
+      "kind": "mend"
+    },
+    "module_actuator": {
+      "kind": "mend"
+    },
+    "module_thruster": {
+      "kind": "mend"
+    },
+    "module_coil": {
+      "kind": "mend"
+    },
+    "module_spring": {
+      "kind": "mend"
+    },
+    "module_tread": {
+      "kind": "mend"
+    },
+    "module_dispenser": {
+      "kind": "mend"
+    },
+    "objective_lens": {
+      "kind": "mend"
+    },
+    "eyepiece_lens": {
+      "kind": "mend"
+    },
+    "body_tube": {
+      "kind": "mend"
+    },
+    "thermo_wire": {
+      "kind": "mend"
+    },
+    "thermo_leg": {
+      "kind": "mend"
+    },
+    "tray_deck": {
+      "kind": "mend"
+    },
+    "tube_cathode": {
+      "kind": "mend"
+    },
+    "tube_grid": {
+      "kind": "mend"
+    },
+    "tube_plate": {
+      "kind": "mend"
+    },
+    "die": {
+      "kind": "mend"
     }
   },
   "mirror": {
@@ -556,6 +706,105 @@
       "kind": "tithe"
     },
     "heat_sink": {
+      "kind": "tithe"
+    },
+    "wheel": {
+      "kind": "tithe"
+    },
+    "tank": {
+      "kind": "tithe"
+    },
+    "nozzle": {
+      "kind": "tithe"
+    },
+    "valve": {
+      "kind": "tithe"
+    },
+    "crucible_shell": {
+      "kind": "tithe"
+    },
+    "bit": {
+      "kind": "tithe"
+    },
+    "body": {
+      "kind": "tithe"
+    },
+    "metacarpal": {
+      "kind": "tithe"
+    },
+    "coil_element": {
+      "kind": "tithe"
+    },
+    "noisemaker": {
+      "kind": "tithe"
+    },
+    "second_noisemaker": {
+      "kind": "tithe"
+    },
+    "piston_cylinder": {
+      "kind": "tithe"
+    },
+    "resonator_electrode": {
+      "kind": "tithe"
+    },
+    "face_piece": {
+      "kind": "tithe"
+    },
+    "robot_sensor": {
+      "kind": "tithe"
+    },
+    "robot_radio": {
+      "kind": "tithe"
+    },
+    "roll": {
+      "kind": "tithe"
+    },
+    "bowl": {
+      "kind": "tithe"
+    },
+    "module_optic": {
+      "kind": "tithe"
+    },
+    "module_filter": {
+      "kind": "tithe"
+    },
+    "module_thermal": {
+      "kind": "tithe"
+    },
+    "module_actuator": {
+      "kind": "tithe"
+    },
+    "module_thruster": {
+      "kind": "tithe"
+    },
+    "module_coil": {
+      "kind": "tithe"
+    },
+    "module_spring": {
+      "kind": "tithe"
+    },
+    "module_tread": {
+      "kind": "tithe"
+    },
+    "module_dispenser": {
+      "kind": "tithe"
+    },
+    "objective_lens": {
+      "kind": "tithe"
+    },
+    "eyepiece_lens": {
+      "kind": "tithe"
+    },
+    "body_tube": {
+      "kind": "tithe"
+    },
+    "thermo_wire": {
+      "kind": "tithe"
+    },
+    "thermo_leg": {
+      "kind": "tithe"
+    },
+    "die": {
       "kind": "tithe"
     }
   },
