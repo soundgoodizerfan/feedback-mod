@@ -112,7 +112,7 @@ public final class DataLinkManager {
         }
         boolean linked = a.linkTo(node);
         if (linked) {
-            DataWires.record(level, a.getNodeRef(), node.getNodeRef(), paid.grade());
+            DataWires.record(level, a.getNodeRef(), node.getNodeRef(), paid.grade(), paid.critical());
             colour(a, node, colorIn(player, hand));
         }
         player.displayClientMessage(Component.translatable(linked

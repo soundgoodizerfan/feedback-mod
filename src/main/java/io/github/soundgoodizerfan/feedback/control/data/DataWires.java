@@ -79,7 +79,10 @@ public final class DataWires {
     }
 
     /** Result of paying for a link: the grade used, or why not. */
-    public record Paid(Grade grade, boolean enough, boolean inRange, int pieces) {
+    public record Paid(Grade grade, boolean enough, boolean inRange, int pieces, int critical) {
+        public Paid(Grade grade, boolean enough, boolean inRange, int pieces) {
+            this(grade, enough, inRange, pieces, ControlTuning.WIRE_CRITICAL_LINKS);
+        }
     }
 
     /**
@@ -101,8 +104,9 @@ public final class DataWires {
                 continue;
             anyInRange = true;
             if (count(player, grade) >= pieces) {
+                int critical = criticalOf(player, grade);
                 take(player, grade, pieces);
-                return new Paid(grade, true, true, pieces);
+                return new Paid(grade, true, true, pieces, critical);
             }
         }
         return new Paid(null, false, anyInRange, pieces);
@@ -114,6 +118,25 @@ public final class DataWires {
             if (stack.is(tag(grade)))
                 n += stack.getCount();
         return n;
+    }
+
+    /**
+     * Links per end a wire of this grade carries before its line quenches: from the material of the first wire held, its ampacity (the critical
+     * current of the alloy) times {@link ControlTuning#WIRE_LINKS_PER_AMPACITY}, scaled by the volume of its form against a plain wire's (a thicker wire
+     * carries more). A wire that states no ampacity carries the default.
+     */
+    private static int criticalOf(Player player, Grade grade) {
+        for (ItemStack stack : player.getInventory().items)
+            if (stack.is(tag(grade))) {
+                var found = io.github.soundgoodizerfan.feedback.process.Material.find(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), stack.getItem());
+                if (found.isPresent() && found.get().material().ampacity().orElse(0f) > 0f) {
+                    float thick = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(found.get().form())
+                            / (float) Math.max(1, io.github.soundgoodizerfan.feedback.registry.FormItems.volume("wire"));
+                    return Math.max(1, Math.round(found.get().material().ampacity().orElse(0f) * ControlTuning.WIRE_LINKS_PER_AMPACITY * thick));
+                }
+                break;
+            }
+        return ControlTuning.WIRE_CRITICAL_LINKS;
     }
 
     private static void take(Player player, Grade grade, int pieces) {
@@ -137,8 +160,13 @@ public final class DataWires {
 
     /** Remembers the grade of the wire that now joins {@code a} and {@code b}. */
     public static void record(Level level, DataNodeRef a, DataNodeRef b, Grade grade) {
+        record(level, a, b, grade, ControlTuning.WIRE_CRITICAL_LINKS);
+    }
+
+    /** As above with the links per end the wire carries ({@link #criticalOf}). */
+    public static void record(Level level, DataNodeRef a, DataNodeRef b, Grade grade, int critical) {
         if (level.getServer() != null)
-            Book.get(level.getServer()).put(key(level, a, b), new Wire(grade, 0f));
+            Book.get(level.getServer()).put(key(level, a, b), new Wire(grade, 0f, critical));
     }
 
     /**
@@ -269,8 +297,9 @@ public final class DataWires {
         }
         DataNode far = DataNode.resolveOrNull(level, other);
         // An end quenches its line when it is carrying all it can: more than the critical count, and at its own cap (a Controller takes more).
-        boolean overloaded = node.getNodeLinks().size() > Math.max(ControlTuning.WIRE_CRITICAL_LINKS, node.getMaxNodeLinks() - 1)
-                || far != null && far.getNodeLinks().size() > Math.max(ControlTuning.WIRE_CRITICAL_LINKS, far.getMaxNodeLinks() - 1);
+        int critical = Book.get(level.getServer()).get(k).critical();
+        boolean overloaded = node.getNodeLinks().size() > Math.max(critical, node.getMaxNodeLinks() - 1)
+                || far != null && far.getNodeLinks().size() > Math.max(critical, far.getMaxNodeLinks() - 1);
         if (overloaded) {
             QUENCHED_UNTIL.put(k, now + ControlTuning.WIRE_QUENCH_TICKS);
             return true;
@@ -376,7 +405,7 @@ public final class DataWires {
     /** Remembers the fibre that now joins {@code a} and {@code b}: its total loss in dB. */
     public static void recordFibre(Level level, DataNodeRef a, DataNodeRef b, float lossDb) {
         if (level.getServer() != null)
-            Book.get(level.getServer()).put(key(level, a, b), new Wire(Grade.FIBRE, lossDb));
+            Book.get(level.getServer()).put(key(level, a, b), new Wire(Grade.FIBRE, lossDb, ControlTuning.WIRE_CRITICAL_LINKS));
     }
 
     /** The loss in dB of the fibre between two nodes, or empty when the link is not a fibre. */
@@ -388,12 +417,12 @@ public final class DataWires {
     }
 
     /** What a wire is: its grade, and for a fibre its total loss in dB. */
-    record Wire(Grade grade, float lossDb) {
+    record Wire(Grade grade, float lossDb, int critical) {
     }
 
     /** The recorded wire between two nodes as it was made (a fibre keeps its loss), for carrying a link to a new position. */
     static Wire wireOf(Level level, DataNodeRef a, DataNodeRef b) {
-        return level.getServer() == null ? new Wire(Grade.POOR, 0f) : Book.get(level.getServer()).get(key(level, a, b));
+        return level.getServer() == null ? new Wire(Grade.POOR, 0f, ControlTuning.WIRE_CRITICAL_LINKS) : Book.get(level.getServer()).get(key(level, a, b));
     }
 
     static void recordWire(Level level, DataNodeRef a, DataNodeRef b, Wire wire) {
@@ -415,7 +444,7 @@ public final class DataWires {
         }
 
         Wire get(String key) {
-            return wires.getOrDefault(key, new Wire(Grade.POOR, 0f));
+            return wires.getOrDefault(key, new Wire(Grade.POOR, 0f, ControlTuning.WIRE_CRITICAL_LINKS));
         }
 
         @Override
@@ -425,6 +454,7 @@ public final class DataWires {
                 CompoundTag one = new CompoundTag();
                 one.putString("Grade", w.grade().name());
                 one.putFloat("Loss", w.lossDb());
+                one.putInt("Critical", w.critical());
                 all.put(k, one);
             });
             tag.put("Wires2", all);
@@ -437,9 +467,9 @@ public final class DataWires {
             for (String k : all.getAllKeys()) {
                 CompoundTag one = all.getCompound(k);
                 try {
-                    book.wires.put(k, new Wire(Grade.valueOf(one.getString("Grade")), one.getFloat("Loss")));
+                    book.wires.put(k, new Wire(Grade.valueOf(one.getString("Grade")), one.getFloat("Loss"), one.contains("Critical") ? one.getInt("Critical") : ControlTuning.WIRE_CRITICAL_LINKS));
                 } catch (IllegalArgumentException ignored) {
-                    book.wires.put(k, new Wire(Grade.POOR, 0f));
+                    book.wires.put(k, new Wire(Grade.POOR, 0f, ControlTuning.WIRE_CRITICAL_LINKS));
                 }
             }
             return book;

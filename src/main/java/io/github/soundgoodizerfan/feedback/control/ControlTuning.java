@@ -166,6 +166,8 @@ public final class ControlTuning {
     public static final int CARD_FRAME_REACH = 48;
 
     /** Invented. Data wire (control/data/DataWires): the blocks a link may span on poor (copper) and good (redstone-chromium) wire, the links an end may carry before good wire quenches, and the ticks a quenched line stays dark. */
+    /** Links per end a wire carries per unit of its material's ampacity (the redstone filament's 1.74 gives about 3, the superconductor's 6.25 about 11). */
+    public static final float WIRE_LINKS_PER_AMPACITY = 1.75f;
     public static final int WIRE_RANGE_POOR = 8, WIRE_RANGE_GOOD = 32, WIRE_CRITICAL_LINKS = 3, WIRE_QUENCH_TICKS = 200;
     /** Placeholder. Loss in dB a fibre link may carry before its reading starts to degrade, with a perfect crystal at both ends. */
     public static final float FIBRE_LOSS_BUDGET_DB = 20f;
