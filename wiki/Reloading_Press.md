@@ -54,6 +54,8 @@ One case, one projectile and one payload are used per round. The charge slots ar
 
 The sheet along the bottom names the bullet's shape, with its drag, pierce and hurt multipliers. With a case and charge in, it also shows the pressure the charge will make **against what that case can hold**, e.g. *"Charge 4: 3.0 Pu against case 3.8 Pu"*. It turns **red** if the charge is more than the case can take.
 
+The cartridge's tooltip names the same load as light, standard, heavy (+P) or over the case's rating ([Ammunition](Ammunition.md)).
+
 That line is about the **case**. Whether your **gun** can take it is a separate question: compare it with the *Chamber* line on the gun's tooltip.
 
 ## Messages

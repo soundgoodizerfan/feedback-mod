@@ -35,6 +35,10 @@ The hammer does nothing without a **[Hammer](Hammer.md)** seated as its head. Th
 
 While the linkage turns, a copper head clamp on a bronze guide rod lifts and drops the seated head onto the cobblestone anvil in time with the crank. A short throw drops it less far than a long one, and it stops when the linkage stops. With no head seated nothing moves. Each blow puts work into the piece. When the piece has taken enough, it becomes the next thing (ingot → plate), and **the hammer keeps right on hitting that**. Take it off at the right time. See [Metalworking](Metalworking.md).
 
+## Forging at a bench
+
+A driven Mechanical Hammer with a head seated, standing against a part bench ([Anvil](Anvil.md)), plays a forged shape's pattern itself. Pick the shape in the fan as usual; no hand hammer is needed in the bench's hammer slot. The hammer lands every note of the pattern, with the one force its throw and gearing give it, and holds the part until the last note has landed (a harder metal plays slower, so it takes longer). The part then goes to the player who started it, with the usual result line, or drops above the hammer if they have left. The hammer takes no second job while it works. A blow it cannot land wears the head, not your hand hammer.
+
 ## Crushing ore
 
 Put raw ore or a lump on the anvil and the hammer breaks it into **Crushed** ore. See [Ore Processing](Ore_Processing.md#crushing-and-grinding).
