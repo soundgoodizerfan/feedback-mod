@@ -18,7 +18,7 @@
     "service_temperature": 836
   },
   "mechanical": {
-    "toughness": 5,
+    "toughness": 45,
     "friction": 0.4,
     "abrasiveness": 0.557,
     "yield_strength": 25

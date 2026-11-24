@@ -276,7 +276,15 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                                 : lm.separation().reflectivity().orElse(ModularTuning.EGUN_COHERENCE_DEFAULT_LINING), 0f, 1f);
                     } else if (v.equals("malefic_lens"))
                         malefic = true;
-                    else
+                    else if (v.equals("laser_rod")) {
+                        // A rod of a material that lases (ruby: chromium in corundum) turns the pulse into a narrower beam: the clearer
+                        // the stuff and the longer the rod, the tighter the cone. Glass or a gem that does not lase is only a lens.
+                        Material lm = ModularBake.slotMaterial(role, p, "lens", materials);
+                        if (lm != null && lm.phosphor())
+                            spreadMult *= 1f - ModularTuning.EGUN_LASER_MAX_SPREAD_CUT
+                                    * (1f - Mth.clamp(lm.separation().reflectivity().orElse(ModularTuning.LENS_DEFAULT_LOSS), 0f, 1f))
+                                    * Mth.clamp(role.axis(p, "rod_length") / ModularTuning.EGUN_LASER_ROD_REF_MM, 0f, 1f);
+                    } else
                         beams = Mth.clamp(Math.round(role.axis(p, "beams")), 3, 7);
                 }
                 case "zoom_charge" -> {

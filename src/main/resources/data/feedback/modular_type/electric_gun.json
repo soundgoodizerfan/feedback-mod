@@ -746,6 +746,13 @@
             "params": {
               "malefic": 1
             }
+          },
+          {
+            "name": "laser_rod",
+            "cells": 3,
+            "params": {
+              "laser": 1
+            }
           }
         ],
         "base": "beam_splitter",
@@ -777,6 +784,15 @@
           "default": 3,
           "step": 1,
           "when": "splitter",
+          "at_least": 1
+        },
+        "rod_length": {
+          "min": 20,
+          "max": 120,
+          "unit": "mm",
+          "default": 60,
+          "step": 10,
+          "when": "laser",
           "at_least": 1
         }
       },

@@ -284,6 +284,8 @@ public final class ModularTuning {
     public static final int EGUN_COHERENCE_BOUNCES = 4, EGUN_COHERENCE_HOLD_BOUNCES = 2;
     /** Eu in one reference cell: a stock battery block's (BatteryBlockEntity), for the shots-per-battery figure. */
     public static final float EGUN_REF_CELL_EU = 48000f * io.github.soundgoodizerfan.feedback.core.FTuning.BATTERY_INGOTS_PER_CELL;
+    /** A laser rod: the most it cuts the beam's spread (a clear rod at the reference length) and the rod length that reaches it, mm. */
+    public static final float EGUN_LASER_MAX_SPREAD_CUT = 0.7f, EGUN_LASER_ROD_REF_MM = 100f;
     public static final float EGUN_COHERENCE_FLOOR = 0.08f, EGUN_COHERENCE_BLAST = 1.2f, EGUN_COHERENCE_DEFAULT_LINING = 0.5f;
     /** Mixed blocks: the reflectivity of dark stone, dirt, wood, wool, ice, tinted glass and anything else. */
     public static final float BLOCK_REFLECT_STONE = 0.12f, BLOCK_REFLECT_DIRT = 0.03f, BLOCK_REFLECT_WOOD = 0.08f, BLOCK_REFLECT_WOOL = 0.02f,
