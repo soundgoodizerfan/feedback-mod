@@ -44,6 +44,12 @@ public final class FCombat {
             () -> AttachmentType.builder(() -> 0f).serialize(com.mojang.serialization.Codec.FLOAT)
                     .sync((holder, to) -> holder == to, net.minecraft.network.codec.ByteBufCodecs.FLOAT).build());
 
+    /** The planets this person has resolved through a telescope ({@code SkyBodies} ids): persisted, kept on death, synced to the owner for the sky notebook's tooltip. */
+    public static final Supplier<AttachmentType<java.util.List<String>>> SIGHTED = ATTACHMENTS.register("sighted_planets",
+            () -> AttachmentType.<java.util.List<String>>builder(() -> java.util.List.of())
+                    .serialize(com.mojang.serialization.Codec.STRING.listOf()).copyOnDeath()
+                    .sync((holder, to) -> holder == to, net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8.apply(net.minecraft.network.codec.ByteBufCodecs.list())).build());
+
     private FCombat() {
     }
 

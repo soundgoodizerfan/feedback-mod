@@ -261,7 +261,7 @@ public class FCreativeTabs {
 
     /** Process intermediates and wastes, in the order the work goes: powders, compacts, blanks, then slags. */
     private static final List<DeferredItem<?>> INTERMEDIATES = of(FItems.BURNT_IRON, FItems.SUPERCONDUCTOR_BLEND,
-            FItems.CALCINED_BLEND, FItems.SHEATHED_BILLET, FItems.CERMET_POWDER, FItems.CERMET_GREEN_COMPACT, FItems.ALUMINA_GREEN_COMPACT, FItems.ALUMINA_TILE,
+            FItems.CALCINED_BLEND, FItems.SHEATHED_BILLET, FItems.CERMET_POWDER, FItems.CERMET_GREEN_COMPACT, FItems.SKY_NOTEBOOK, FItems.ALUMINA_GREEN_COMPACT, FItems.ALUMINA_TILE,
             FItems.TUNGSTEN_CARBIDE_POWDER, FItems.TUNGSTEN_CARBIDE_GREEN_COMPACT, FItems.RARE_EARTH_MAGNET_POWDER,
             FItems.RARE_EARTH_MAGNET_GREEN_COMPACT, FItems.RARE_EARTH_MAGNET_BLANK, FItems.OSMIUM_SPONGE,
             FItems.OSMIUM_POWDER, FItems.OSMIUM_GREEN_COMPACT, FItems.IRIDIUM_RESIDUE, FItems.IRIDIUM_SPONGE,

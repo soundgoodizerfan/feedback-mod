@@ -555,6 +555,8 @@ public class FItems {
     public static final DeferredItem<Item> CERMET_POWDER = ITEMS.registerSimpleItem("cermet_powder");
     public static final DeferredItem<Item> PTFE_POWDER = ITEMS.registerSimpleItem("ptfe_powder");
     public static final DeferredItem<Item> CERMET_GREEN_COMPACT = ITEMS.registerSimpleItem("cermet_green_compact");
+    /** The notebook a first planet sighting hands over; its tooltip lists the planets its owner has resolved and what was seen of each. */
+    public static final DeferredItem<Item> SKY_NOTEBOOK = ITEMS.registerSimpleItem("sky_notebook", new Item.Properties().stacksTo(1));
     /** Alumina powder die-pressed to a tile shape, before it is sintered. */
     public static final DeferredItem<Item> ALUMINA_GREEN_COMPACT = ITEMS.registerSimpleItem("alumina_green_compact");
     /** A sintered alumina tile: the hard ceramic face of ceramic-steel armour. */

@@ -71,16 +71,35 @@ public final class Sighting {
         return null;
     }
 
-    /** Server: the client says it sighted {@code id}; check it and give the study once. */
+    /**
+     * Server: the client says it sighted {@code id}; check it. The first sighting of anything gives the study (the advancement, Aerospace
+     * Treatise IV and a sky notebook); every planet not yet resolved is written into the person's notes (what the notebook lists).
+     */
     public static void claim(ServerPlayer player, String id) {
         SkyBodies.Body body = SkyBodies.byId(id);
         if (body == null || resolved(player, SkyBodies.SERVER_SLACK, 1f) != body)
             return;
         AdvancementHolder holder = player.server.getAdvancements().get(io.github.soundgoodizerfan.feedback.Feedback.id(EVENT));
-        if (holder == null || player.getAdvancements().getOrStartProgress(holder).isDone())
+        if (holder == null)
             return;
-        player.getInventory().placeItemBackInInventory(Treatises.of(School.AEROSPACE, 4));
+        java.util.List<String> seen = player.getData(io.github.soundgoodizerfan.feedback.registry.FCombat.SIGHTED);
+        boolean fresh = !seen.contains(id);
+        boolean first = !player.getAdvancements().getOrStartProgress(holder).isDone();
+        if (!fresh && !first)
+            return;
+        if (fresh) {
+            java.util.List<String> next = new java.util.ArrayList<>(seen);
+            next.add(id);
+            player.setData(io.github.soundgoodizerfan.feedback.registry.FCombat.SIGHTED, java.util.List.copyOf(next));
+        }
         player.level().playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1f);
-        Awards.give(player, EVENT);
+        if (first) {
+            player.getInventory().placeItemBackInInventory(Treatises.of(School.AEROSPACE, 4));
+            player.getInventory().placeItemBackInInventory(new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.SKY_NOTEBOOK.get()));
+            Awards.give(player, EVENT);
+        } else {
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.sighting.noted",
+                    net.minecraft.network.chat.Component.translatable("planet.feedback." + id)), true);
+        }
     }
 }

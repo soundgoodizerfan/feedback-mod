@@ -40,7 +40,19 @@ Look through the telescope on a clear night (no rain or thunder) with open sky o
 | Crystal world | 12x |
 | Frozen moon | 16x |
 
-Your first resolved sighting plays a chime, earns the **A Light That Wanders** advancement ([Ages](Ages.md)) and gives you a finished Aerospace Treatise IV: The Wandering Lights ([Treatise](Treatise.md)).
+Your first resolved sighting plays a chime, earns the **A Light That Wanders** advancement ([Ages](Ages.md)) and gives you a finished Aerospace Treatise IV: The Wandering Lights ([Treatise](Treatise.md)) and a Sky Notebook.
+
+### Sky Notebook
+
+Each planet you resolve for the first time is written into your notes with a chime and the action-bar line "Noted in your sky notebook: <planet>". The notes belong to you and survive death. The notebook's tooltip lists each resolved planet in gold, with a gray line giving its color, its air and one fact about it:
+
+| Planet | Tooltip |
+| --- | --- |
+| Acid cloud world | yellow-green disc in thick cloud; dense acid air where hulls corrode, wings bite and thrusters struggle |
+| Frozen moon | small pale blue disc; seas of liquid gas, cryogenic coolant |
+| Crystal world | violet disc with glints; geodes holding stored experience |
+
+A planet you have not seen shows a dark gray line, "An empty line, waiting for a planet."
 
 Because the tube length is its own axis, match it to the lenses: for a 300 mm objective and a 30 mm eyepiece, a 330 mm tube.
 
