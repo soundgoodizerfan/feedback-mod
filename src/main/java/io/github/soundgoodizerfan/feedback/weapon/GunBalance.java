@@ -85,7 +85,7 @@ public final class GunBalance {
 
     /** How nose-heavy the gun is: 0 when the back weighs at least the front, 1 when the front weighs twice the back, and on. */
     public static float nose(GunSpec spec) {
-        Optional<float[]> m = masses(spec, MaterialTable.get().materials());
+        Optional<float[]> m = masses(spec, io.github.soundgoodizerfan.feedback.process.ClientMaterials.known());
         if (m.isEmpty())
             return 0f;
         float front = m.get()[0], back = Math.max(0.01f, m.get()[1]);

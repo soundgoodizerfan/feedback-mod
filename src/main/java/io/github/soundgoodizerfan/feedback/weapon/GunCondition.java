@@ -70,11 +70,11 @@ public final class GunCondition {
         io.github.soundgoodizerfan.feedback.process.Material boreMetal = null;
         var spec = GunSpec.of(gun);
         if (spec.isPresent()) {
-            var rm = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(spec.get().parts().receiver());
+            var rm = io.github.soundgoodizerfan.feedback.process.ClientMaterials.known().get(spec.get().parts().receiver());
             float service = rm == null ? Float.MAX_VALUE : rm.thermal().serviceTemperature().map(v -> v.value()).orElse(Float.MAX_VALUE);
             soft = Math.max(0f, t - service) * GunTuning.GUN_RECEIVER_SOFT_WEAR_PER_TU;
             // The fittings are worked too: a brake's ports are cut by the gas, a vent's seat by what it lets out.
-            var mats = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+            var mats = io.github.soundgoodizerfan.feedback.process.ClientMaterials.known();
             var barrel = mats.get(spec.get().material());
             boreMetal = barrel;
             float barrelYield = barrel == null ? 1f : barrel.mechanical().yieldStrength().map(y -> y.value()).orElse(1f);

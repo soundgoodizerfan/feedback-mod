@@ -29,6 +29,14 @@ public final class ClientMaterials {
         return materials;
     }
 
+    /**
+     * The table this JVM knows, for code that runs on both sides without a level (a gun's figures, a tooltip): the synced copy
+     * when there is one, else the server's own. A remote client has only the copy; a dedicated server only the table.
+     */
+    public static Map<ResourceLocation, Material> known() {
+        return materials.isEmpty() ? MaterialTable.get().materials() : materials;
+    }
+
     /** Called whenever the table is replaced. One listener is enough; only JEI wants this. */
     public static void onChanged(Runnable onChanged) {
         listener = onChanged;

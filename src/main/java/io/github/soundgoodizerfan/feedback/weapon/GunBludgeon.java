@@ -100,7 +100,7 @@ public final class GunBludgeon {
     private static float bayonetDamage(ItemStack gun, GunFigures f) {
         var design = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(gun);
         var part = design == null ? null : design.part("a");
-        var mat = part == null ? null : io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(part.material());
+        var mat = part == null ? null : io.github.soundgoodizerfan.feedback.process.ClientMaterials.known().get(part.material());
         float hard = mat == null ? 1f : mat.hardness().value();
         // Edge on the bayonet: a keener point cuts deeper, a padded one (the mirror) does less.
         float keen = 1f + GunFuTuning.BAYONET_EDGE_PER_LEVEL * (io.github.soundgoodizerfan.feedback.modular.attunement.TideKinds.level(gun, "bayonet_edge")

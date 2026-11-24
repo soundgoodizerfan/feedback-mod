@@ -11,6 +11,7 @@ import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import net.minecraft.resources.ResourceLocation;
@@ -184,20 +185,27 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
 
     private static final Map<ModularDesign, Optional<GunSpec>> CACHE = new HashMap<>();
     private static int cachedFor = -1;
+    private static Map<ResourceLocation, Material> cachedMaterials = Map.of();
 
-    /** The gun on {@code stack}, read off its design on whichever side this is; empty for anything else. */
+    /**
+     * The gun on {@code stack}, read off its design on whichever side this is; empty for anything else. A remote client has
+     * no material table of its own, only the copy the server synced ({@link ClientMaterials}); the server's table is used
+     * where there is no such copy, as {@link ModularTypes#known()} does for the types.
+     */
     public static Optional<GunSpec> of(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
         if (design == null)
             return Optional.empty();
+        Map<ResourceLocation, Material> materials = ClientMaterials.known();
         int generation = MaterialTable.generation() * 31 + ModularTypes.generation();
         synchronized (CACHE) {
-            if (cachedFor != generation || CACHE.size() > 64) {
+            if (cachedFor != generation || cachedMaterials != materials || CACHE.size() > 64) {
                 CACHE.clear();
                 FittingHeat.clearCache();
                 cachedFor = generation;
+                cachedMaterials = materials;
             }
-            return CACHE.computeIfAbsent(design, d -> of(d, ModularTypes.known(d.type()), MaterialTable.get().materials()));
+            return CACHE.computeIfAbsent(design, d -> of(d, ModularTypes.known(d.type()), materials));
         }
     }
 

@@ -39,7 +39,7 @@ public final class FittingHeat {
         if (spec.isEmpty() || spec.get().fittings().isEmpty())
             return f;
         float tu = GunCondition.temperature(gun, shooter.level()).value();
-        for (FittingPhysics fp : CACHE.computeIfAbsent(spec.get(), g -> List.copyOf(g.fitted(MaterialTable.get().materials()).values()))) {
+        for (FittingPhysics fp : CACHE.computeIfAbsent(spec.get(), g -> List.copyOf(g.fitted(io.github.soundgoodizerfan.feedback.process.ClientMaterials.known()).values()))) {
             float gone = 1f - fp.soundness(tu);
             if (gone <= 0f)
                 continue;
@@ -58,7 +58,7 @@ public final class FittingHeat {
         ModularDesign design = ModularStacks.design(gun);
         if (spec.isEmpty() || design == null || spec.get().fittings().isEmpty())
             return List.of();
-        Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
+        Map<ResourceLocation, Material> materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.known();
         float tu = GunCondition.temperature(gun, level).value();
         List<GunOption> lost = new ArrayList<>();
         for (var e : spec.get().fitted(materials).entrySet())

@@ -62,7 +62,7 @@ public final class Blast {
         var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known(design.type());
         if (type == null)
             return java.util.Optional.empty();
-        return read(design, type, io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
+        return read(design, type, io.github.soundgoodizerfan.feedback.process.ClientMaterials.known());
     }
 
     /**
