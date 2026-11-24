@@ -235,6 +235,10 @@ public final class GunTuning {
     public static final float GUN_MIN_ENERGY_FRACTION = 0.03f;
 
 
+    /** A bipod: ticks its legs take to come down and carry the gun, ticks to stow them, and the share of the view's turn left while they are out. */
+    public static final int BIPOD_DEPLOY_TICKS = 20, BIPOD_FOLD_TICKS = 10;
+    public static final float BIPOD_TURN_SHARE = 0.6f;
+
     // --- Handling: aiming, stance, fire modes, recoil climb (spec 7). Placeholders. -------------
 
     /** Spread multiplier when aimed down the sights, and the kick that is left of it. */

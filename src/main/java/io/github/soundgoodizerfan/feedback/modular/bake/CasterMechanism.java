@@ -106,14 +106,19 @@ public final class CasterMechanism implements GunMechanism {
     @Override
     public java.util.List<io.github.soundgoodizerfan.feedback.weapon.GunSwitch> switches(ItemStack gun) {
         CasterSpec spec = ModularCaster.spec(gun).orElse(null);
-        return spec != null && spec.piloted() ? java.util.List.of(new io.github.soundgoodizerfan.feedback.weapon.GunSwitch("pilot", ModularCaster.pilotOn(gun)))
-                : java.util.List.of();
+        java.util.List<io.github.soundgoodizerfan.feedback.weapon.GunSwitch> out = new java.util.ArrayList<>();
+        if (spec != null && spec.piloted())
+            out.add(io.github.soundgoodizerfan.feedback.weapon.GunSwitch.twoState("pilot", "out", "lit", ModularCaster.pilotOn(gun)));
+        out.addAll(GunMechanism.super.switches(gun));
+        return out;
     }
 
     @Override
-    public void setSwitch(ItemStack gun, String id, boolean on) {
+    public void setSwitch(ItemStack gun, String id, int state, long now) {
         if ("pilot".equals(id))
-            ModularCaster.setPilot(gun, on);
+            ModularCaster.setPilot(gun, state == 1);
+        else
+            GunMechanism.super.setSwitch(gun, id, state, now);
     }
 
     @Override

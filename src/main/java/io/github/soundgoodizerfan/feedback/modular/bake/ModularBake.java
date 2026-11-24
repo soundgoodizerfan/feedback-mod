@@ -1031,6 +1031,9 @@ public final class ModularBake {
                     var brace = hand.braced();
                     f.put(Fig.BRACE_KICK, brace.kick());
                     f.put(Fig.BRACE_SPREAD, brace.spread());
+                    var folded = hand.bracedFolded();
+                    f.put(Fig.FOLDED_BRACE_KICK, folded.kick());
+                    f.put(Fig.FOLDED_BRACE_SPREAD, folded.spread());
                 }
                 // The shared gun figures at an ordinary pulse: what the gun pipeline reads (cycle, kick, sound, the HUD).
                 f.putAll(egun.figures(egun.pulseWork() * egun.seatMult(), total, egun.cycleTicks(false), 0f, 1f).figs());
@@ -1437,6 +1440,9 @@ public final class ModularBake {
             var brace = gun.get().hand().braced();
             f.put(Fig.BRACE_KICK, brace.kick());
             f.put(Fig.BRACE_SPREAD, brace.spread());
+            var folded = gun.get().hand().bracedFolded();
+            f.put(Fig.FOLDED_BRACE_KICK, folded.kick());
+            f.put(Fig.FOLDED_BRACE_SPREAD, folded.spread());
         }
         f.put(Fig.ENCHANTABILITY, (float) enchantability(by.get(type.primary())));
         return Optional.of(ModularFigures.of(f, step));

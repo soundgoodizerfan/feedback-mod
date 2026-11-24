@@ -17,7 +17,7 @@ public class GunReticle implements ModularTrait {
     @Override
     public GunFigures gunAimed(Player shooter, ItemStack gun, GunFigures f, Params p) {
         var m = GunFitting.of(gun, "lit_reticle");
-        if (m == null || shooter.level().getMaxLocalRawBrightness(shooter.blockPosition()) > p.get("dark_at", 7f))
+        if (m == null || !io.github.soundgoodizerfan.feedback.weapon.GunSwitches.reticleOpen(gun) || shooter.level().getMaxLocalRawBrightness(shooter.blockPosition()) > p.get("dark_at", 7f))
             return f;
         return f.withSpread(1f - p.get("spread_cut", 0.2f) * m.luminance().orElse(0) / 15f);
     }

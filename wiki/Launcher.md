@@ -26,7 +26,7 @@ The seat comes in four variants. All of them act through the reload key, which a
 
 ## Using it
 
-**Left click** fires. The spring seat fires one shot a cocking; the other seats can also fire automatically, and **V** cycles the fire mode. A [magazine](Magazine.md) of the gun's bore in your pack is loaded by the reload key when the chamber is empty, and the gun then feeds from it. The tooltip shows the rounds loaded and the seat's state: cocked, pressure, boiler water or cell charge.
+**Left click** fires. The spring seat fires one shot a cocking; the other seats can also fire automatically, and the **Gun option** key (**V**) cycles the fire mode (see [Options](Guns.md#options)). A [magazine](Magazine.md) of the gun's bore in your pack is loaded by the reload key when the chamber is empty, and the gun then feeds from it. The tooltip shows the rounds loaded and the seat's state: cocked, pressure, boiler water or cell charge.
 
 A launcher takes shells and rockets of its bore (within 1 mm) and refuses powder rounds. The shell flies like an arrow, nearly silent, and cannot be picked up. A denser shell hits harder. The seat's work is shared with the piston, so a lighter piston wastes less.
 
@@ -48,7 +48,7 @@ A shell with no fuse bursts on its first hit.
 
 ## Fuse control
 
-A finished, live [circuit](Basic_Electronic_Circuit.md) clipped onto the launcher is its **fuse control**. Without one the round keeps the fuse it was pressed with. With one, **sneak and press the fire-mode key** (**V**) to step what fuses the round, shown on the HUD as *Fuse*:
+A finished, live [circuit](Basic_Electronic_Circuit.md) clipped onto the launcher is its **fuse control**. Without one the round keeps the fuse it was pressed with. With one, **sneak and tap the Gun option key** (**V**) to step what fuses the round, shown on the HUD as *Fuse*:
 
 - **round**: the round's own fuse.
 - **proximity**: the round bursts when a body or block comes near its path. The sensing radius widens with the circuit's gain and wavers with its noise.

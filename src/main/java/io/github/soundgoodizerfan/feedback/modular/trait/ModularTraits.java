@@ -340,8 +340,11 @@ public final class ModularTraits {
         var figs = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.figures(gun);
         if (figs == null)
             return f;
-        float kick = figs.get(io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.BRACE_KICK),
-                spread = figs.get(io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.BRACE_SPREAD);
+        // A bipod only braces with its legs fully down; folded (or still coming down) the stock alone does.
+        boolean legsDown = !GunFitting.has(gun, "bipod")
+                || io.github.soundgoodizerfan.feedback.weapon.GunSwitches.legs(gun, shooter.level().getGameTime()).carrying();
+        float kick = figs.get(legsDown ? io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.BRACE_KICK : io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.FOLDED_BRACE_KICK),
+                spread = figs.get(legsDown ? io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.BRACE_SPREAD : io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.FOLDED_BRACE_SPREAD);
         return kick <= 0f || spread <= 0f ? f : f.withKick(kick).withSpread(spread);
     }
 

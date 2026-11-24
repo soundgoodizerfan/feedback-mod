@@ -11,9 +11,20 @@ import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nullable;
 
 /** The material of a fitting on a built gun, found by the form it was made as: fittings whose effect is the stuff itself read it here. */
-final class GunFitting {
+public final class GunFitting {
 
     private GunFitting() {
+    }
+
+    /** Whether the gun carries a part made as {@code form}. */
+    public static boolean has(ItemStack gun, String form) {
+        var design = ModularStacks.design(gun);
+        if (design == null)
+            return false;
+        for (var p : design.parts())
+            if (p.kind().equals(form))
+                return true;
+        return false;
     }
 
     @Nullable

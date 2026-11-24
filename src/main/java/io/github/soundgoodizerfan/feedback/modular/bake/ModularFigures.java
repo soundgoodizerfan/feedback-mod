@@ -114,6 +114,9 @@ public record ModularFigures(List<Float> values, int step) {
         /** Kick and spread left, as a share, when the shooter is braced (crouched and still) on a stock or a bipod: 1 is no cut. */
         BRACE_KICK,
         BRACE_SPREAD,
+        /** The same cut with a bipod folded: the stock alone. */
+        FOLDED_BRACE_KICK,
+        FOLDED_BRACE_SPREAD,
         // --- a charge's (family CHARGE) ---
         /** Explosion power: the blend's burned potential and the casing's confinement. */
         BLAST,

@@ -8,7 +8,6 @@ import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.net.GunFirePayload;
-import io.github.soundgoodizerfan.feedback.net.GunModePayload;
 import io.github.soundgoodizerfan.feedback.net.GunReloadPayload;
 import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.net.GunSwingPayload;
@@ -85,9 +84,15 @@ public final class GunClient {
 
     /** Swap magazines. Registered by {@code FClientSetup}. */
     public static final KeyMapping RELOAD = new KeyMapping("key.feedback.reload", InputConstants.KEY_R, "key.categories.feedback");
-    /** The one key every weapon's own switch hangs on ({@code GunMechanism#options}); unbound until the player picks a key. */
-    public static final KeyMapping OPTION = new KeyMapping("key.feedback.gun_option", InputConstants.UNKNOWN.getValue(), "key.categories.feedback");
-    public static final KeyMapping FIRE_MODE = new KeyMapping("key.feedback.fire_mode", InputConstants.KEY_V, "key.categories.feedback");
+    /**
+     * The one key every weapon's switches hang on ({@code GunMechanism#switches}: the fire selector, a bipod, a lit reticle, a pilot flame).
+     * A tap steps the first switch; held, a weapon with two or more switches opens {@link GunOptionWheel}.
+     */
+    public static final KeyMapping OPTION = new KeyMapping("key.feedback.gun_option", InputConstants.KEY_V, "key.categories.feedback");
+    /** How long the option key is held before the wheel opens, ms, and the press it is timed from (0 when none is pending). */
+    private static final long WHEEL_HOLD_MS = 220;
+    private static long optionPressMs;
+    private static boolean optionPressOff;
     public static final KeyMapping UNLOAD = new KeyMapping("key.feedback.unload", InputConstants.KEY_U, "key.categories.feedback");
 
     /** Wall-clock ms each hand's bludgeon may swing again. */
@@ -202,10 +207,16 @@ public final class GunClient {
     @SubscribeEvent
     public static void onTurn(net.neoforged.neoforge.client.event.CalculatePlayerTurnEvent event) {
         var mc = Minecraft.getInstance();
-        if (aim <= 0 || mc.player == null || !(mc.player.getMainHandItem().getItem() instanceof GunItem gun))
+        if (mc.player == null || !(mc.player.getMainHandItem().getItem() instanceof GunItem gun))
             return;
         var held = mc.player.getMainHandItem();
-        if (gun.mechanism().built(held))
+        if (!gun.mechanism().built(held))
+            return;
+        // A bipod's legs out (coming down, down, or being stowed) hold the muzzle: the view turns at a share of its speed.
+        if (io.github.soundgoodizerfan.feedback.modular.trait.GunFitting.has(held, "bipod")
+                && !io.github.soundgoodizerfan.feedback.weapon.GunSwitches.legs(held, mc.level.getGameTime()).handy())
+            event.setMouseSensitivity(event.getMouseSensitivity() * io.github.soundgoodizerfan.feedback.weapon.GunTuning.BIPOD_TURN_SHARE);
+        if (aim > 0)
             event.setMouseSensitivity(event.getMouseSensitivity() * Mth.lerp(aim, 1f, gun.mechanism().sightZoom(held)));
     }
 
@@ -336,19 +347,34 @@ public final class GunClient {
         reloadWasDown = reloadDown;
         // Mode and unload go to the main gun; the off-hand one when that is the only gun, or Shift is held.
         boolean keyOff = offGunHeld && (!canAct || player.isShiftKeyDown());
-        while (FIRE_MODE.consumeClick()) {
-            if (canAct || (offGunHeld && ready)) {
-                PacketDistributor.sendToServer(new GunModePayload(keyOff));
-                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_MODE_CLICK.get(),
-                        SoundSource.PLAYERS, 0.6f, 1f, false);
-                MAIN.burstLeft = 0;
-                OFF.burstLeft = 0;
-            }
-        }
+        // The option key: a tap steps the first switch; held past WHEEL_HOLD_MS on a weapon with two or more, the wheel opens.
         while (OPTION.consumeClick()) {
             var target = keyOff ? offItem : held;
-            if ((canAct || (offGunHeld && ready)) && target.getItem() instanceof GunItem g && !g.mechanism().switches(target).isEmpty())
-                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.GunOptionPayload(keyOff, 0));
+            if (!(canAct || (offGunHeld && ready)) || !(target.getItem() instanceof GunItem g))
+                continue;
+            int count = g.mechanism().switches(target).size();
+            // A launcher with a fuse control and no switch still answers a sneaking tap: the server cycles its fuse mode.
+            if (count == 0) {
+                if (player.isShiftKeyDown() && io.github.soundgoodizerfan.feedback.weapon.SmartFuse.fitted(target, mc.level))
+                    optionStep(mc, player, keyOff);
+            } else if (count == 1)
+                optionStep(mc, player, keyOff);
+            else if (count > 1) {
+                optionPressMs = now;
+                optionPressOff = keyOff;
+            }
+        }
+        if (optionPressMs != 0) {
+            var target = optionPressOff ? offItem : held;
+            if (!(target.getItem() instanceof GunItem g)) {
+                optionPressMs = 0;
+            } else if (!OPTION.isDown()) {
+                optionPressMs = 0;
+                optionStep(mc, player, optionPressOff);
+            } else if (now - optionPressMs >= WHEEL_HOLD_MS) {
+                optionPressMs = 0;
+                mc.setScreen(new GunOptionWheel(optionPressOff, g.mechanism().switches(target)));
+            }
         }
         while (UNLOAD.consumeClick()) {
             if (canAct || (offGunHeld && ready))
@@ -363,6 +389,15 @@ public final class GunClient {
         pull(mc, player, held, figures, MAIN, canAct, canAct && (holdOnR ? RELOAD.isDown() : mc.options.keyAttack.isDown()), fanning, false, now);
         pull(mc, player, offItem, offFigures, OFF, offCanAct, offCanAct && mc.options.keyUse.isDown(), offFanning, true, now);
         applyKicks(player, now);
+    }
+
+    /** A tap of the option key: step the first switch of the gun in the chosen hand, with the selector's click. */
+    private static void optionStep(Minecraft mc, LocalPlayer player, boolean off) {
+        PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.GunOptionPayload(off, 0, -1));
+        mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_MODE_CLICK.get(),
+                SoundSource.PLAYERS, 0.6f, 1f, false);
+        MAIN.burstLeft = 0;
+        OFF.burstLeft = 0;
     }
 
     /**

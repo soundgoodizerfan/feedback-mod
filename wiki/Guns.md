@@ -35,7 +35,7 @@ A **stock** is its own part, on any frame, and changes what a gun is like to hol
 
 A **foregrip** is a hold for the off hand under the forend of a long gun or machine gun, shaped from a turned grip in any metal, wood or polymer. It works standing or crouched and stacks with a stock. It holds by its material's friction and a stiff frame, and its cut is built into the gun's kick and spread; its shape sets the leverage: a **vertical** post (one cell), an **angled** one (two cells), a **folding** one (two cells) or a **hand stop** (one cell). A handgun frame takes none.
 
-A **bipod** holds the gun by how stiff its legs are, and braces like a stock: crouched and still, its cut shows in **Braced kick** and **Braced spread**. A **counterweight** cancels kick by its share of the gun's mass and slows the cycle; when the bore is worn, a brittle metal slaps worse. A **belt feed** reloads slower on a rougher feed way. A flexing trigger group or receiver widens the spread, where a stiff metal keeps it tight. A heavier slide or bolt slows the cycle and a lighter one quickens it; the friction of the feed way slows or frees the cycle.
+A **bipod** holds the gun by how stiff its legs are, and braces like a stock once it is deployed (see [Options](#options)): crouched and still, its cut shows in **Braced kick** and **Braced spread**. A **counterweight** cancels kick by its share of the gun's mass and slows the cycle; when the bore is worn, a brittle metal slaps worse. A **belt feed** reloads slower on a rougher feed way. A flexing trigger group or receiver widens the spread, where a stiff metal keeps it tight. A heavier slide or bolt slows the cycle and a lighter one quickens it; the friction of the feed way slows or frees the cycle.
 
 What the gun is called (rifle or shotgun, pistol or revolver) follows from the other parts, see [Names](#names).
 
@@ -87,7 +87,8 @@ The **name** on the tooltip, and beside the type name in the Blueprint Table, is
 | Attack (left mouse) | Fire |
 | Use (right mouse), held | Aim down the sights; the view keeps its walking bob and the sights move with it |
 | **R**, held | Reload |
-| **V** | Switch fire mode (only the modes the action has) |
+| **V** (Gun option), tap | Step the gun's first switch (see [Options](#options)) |
+| **V**, held | Open the option wheel (a gun with two or more switches) |
 | **U** | Unload: takes the magazine and the chambered round out |
 
 
@@ -100,6 +101,16 @@ All of these keys can be rebound under the *Feedback* category in Controls.
 - A gun with a **tube** loads one loose round every **0.45 s** while R is down, and keeps whatever is in when you let go. A **cylinder** is loaded a round at a time, each counting the moment your free hand seats it (0.45 s a round), and keeps whatever is in when you let go. A revolver cannot be fired while its loading stroke runs, however many rounds are already in; letting go of R ends the stroke at once. A break action's **barrels** are loaded in one stroke: every missing round goes in when the whole motion has finished (**0.5 s** a round), and nothing goes in if you let go early.
 
 Firing or putting the gun away stops a reload.
+
+## Options
+
+A gun carries up to three **switches**, in this order: the **fire selector** (semi, burst or full auto, only the modes the action allows), the **bipod** (folded or deployed) and the **lit reticle** (shutter shut or open). Only the switches the gun has count. The **Gun option** key (V by default) works them: a tap steps the first switch to its next state, and the action bar names the new state.
+
+Hold the key about 0.2 seconds on a gun with two or more switches and a **wheel** opens, one slice per state of each switch. Point at a slice and release to set it. Release over the middle to cancel.
+
+- **Bipod.** Folded, the bipod gives no brace and the gun stays handy; a stock still braces. Deployed, the legs take about a second to come down and half that to stow. The bipod braces only when fully down, with you crouched and still, and turning is slowed to 60% of normal while the legs are out. A gun starts with its bipod folded.
+- **Lit reticle.** With the shutter shut the reticle cuts no spread. A gun starts with the shutter open.
+- A [fluid caster](Fluid_Caster.md#pilot) with a pilot flame has the pilot as its first switch.
 
 ## The HUD
 
@@ -230,7 +241,7 @@ A gun cools down wherever it is: in your hand, in your hotbar, in a chest. A [Ba
 
 ## Wear
 
-The bore wears a little with every shot, faster when the barrel is hot and slower the harder the barrel's metal is. The tooltip shows it as **Bore wear**. A worn gun hits less hard and spreads wider, down to a floor: at its worst it delivers **30% less** energy, but it never stops working from wear alone. Fittings wear the gun too: a muzzle brake's ports are cut by the gas, and a relief vent's seat wears each time it opens, more in a soft metal. A **box feed** or **belt feed** can **jam** by chance (*"The feed jams."*): tough feed lips jam less, and a harder-kicking gun jams more. An [Arc Welder](Arc_Welder.md) repairs a worn gun, at the cost of a lower best condition each time.
+The bore wears a little with every shot, faster when the barrel is hot and slower the harder the barrel's metal is. The tooltip shows it as **Bore wear**. A worn gun hits less hard and spreads wider, down to a floor: at its worst it delivers **30% less** energy, but it never stops working from wear alone. Fittings wear the gun too: a muzzle brake's ports are cut by the gas, and a relief vent's seat wears each time it opens, more in a soft metal. A **box feed** or **belt feed** can **jam** by chance (*"The feed jams."*): tough feed lips jam less, and a harder-kicking gun jams more. An [Arc Welder](Arc_Welder.md) repairs a worn gun, at the cost of a lower best condition each time. At the [Engineering Table](Engineering_Table.md#repair-tab), **Repair** with a hammer and stock of the barrel's own material takes bore wear off, by the stock's cells over the barrel's cells. Overpressure damage is not mended by stock; a new barrel (**Swap part**) answers it. To change a fitting, **Take apart** the gun there (the fitting comes back whole) and fit the new one.
 
 ## Overpressure
 

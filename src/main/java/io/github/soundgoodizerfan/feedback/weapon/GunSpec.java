@@ -119,6 +119,13 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     public record Hand(float stockLength, Material core, Material pad, Material bipod, float leverage, Material foregrip) {
         static final Hand NONE = new Hand(1f, null, null, null, 1f, null);
 
+        /** Kick and spread multipliers braced and still with a bipod folded: the stock alone; 1 and 1 without one. */
+        public HandlingPhysics.Brace bracedFolded() {
+            if (core == null)
+                return new HandlingPhysics.Brace(1f, 1f);
+            return HandlingPhysics.stock(stockLength, core, pad);
+        }
+
         /** Kick and spread multipliers braced and still: the stock and the bipod together; 1 and 1 with neither. */
         public HandlingPhysics.Brace braced() {
             float kick = 1f, spread = 1f;

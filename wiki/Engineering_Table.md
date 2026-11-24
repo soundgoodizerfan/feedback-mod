@@ -87,7 +87,7 @@ Put a finished item in the **Item** slot and up to sixteen extras in the **Attac
 
 Put a modular item in the **Item** slot and stock in the **Part stock** slots. A hammer in the tool row loses a point for each:
 
-- **Repair** mends the wearing part with stock of its own material, as many pieces as it takes.
+- **Repair** mends the wearing part with stock of its own material, as many pieces as it takes. On a gun, stock of the barrel's own material takes bore wear off by the stock's cells over the barrel's cells; overpressure damage is not mended by stock, a new barrel (**Swap part**) answers it.
 - **Swap part** replaces a part with stock of a different material or shape. The old part comes back to you, the wearing part short by its wear. The replacement wearing part is fresh.
 - **Take apart** returns every part. A worn wearing part comes back short by its wear (the Salvage skill lessens it, see [Skills](Skills.md)); a held item comes back whole.
 - **Take apart** on a machine built with a circuit (the [Auto Engineer](Auto_Engineer.md), [Power Cutter](Power_Cutter.md), [Electric Controller](Electric_Controller.md), [Computer](Electric_Controller.md#computer), [Converter](Converter.md), [Ripeness Probe and Fill Gauge](Sensors.md#crafting)) returns its circuit and consumes the machine; it needs the hammer like the other acts.

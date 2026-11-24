@@ -85,6 +85,20 @@ public final class ModularRework {
         ItemStack out = tool.copy();
         out.setCount(1);
         Part wearing = design.part(type.wearRole());
+        // A gun mends its bore: stock of the barrel's own material takes wear off by its cells over the barrel's cells. Overpressure
+        // damage ({@code GUN_DAMAGE}) is not wear and stock does not mend it; a new barrel (a swap) is what answers it.
+        if (mode.mend && type.family() == ModularType.Family.GUN && wearing != null && wearing.material().equals(what.id())
+                && type.roles().get(type.wearRole()).acceptsStock(what)) {
+            float wear = io.github.soundgoodizerfan.feedback.weapon.GunCondition.wear(tool);
+            if (wear <= 0f)
+                return Optional.empty();
+            float cells = 0;
+            for (ItemStack o : stock)
+                cells += o.getCount() * (float) io.github.soundgoodizerfan.feedback.registry.FormItems.volume(what.form()) / ModularTuning.CELL_MB;
+            out.set(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_WEAR.get(), Math.max(0f, wear - cells / Math.max(1, wearing.count())));
+            ModularStacks.refresh(out);
+            return Optional.of(out);
+        }
         // A hafted tool mends face by face: stock of a face's own material puts that face's life back.
         if (mode.mend && type.family() == ModularType.Family.HAFTED) {
             Optional<ItemStack> mended = ModularFaces.mend(tool, stock, what, type);

@@ -23,7 +23,7 @@ The seat's tier is **Light**, **Standard** or **Heavy**. Each step up raises the
 
 ### Seats
 
-The seat's shape is how the gun fires and cools. The **V** key cycles the fire mode among the modes the seat allows.
+The seat's shape is how the gun fires and cools. The **Gun option** key (V) cycles the fire mode among the modes the seat allows; see [Options](Guns.md#options).
 
 | Seat | How it fires | Modes |
 | --- | --- | --- |

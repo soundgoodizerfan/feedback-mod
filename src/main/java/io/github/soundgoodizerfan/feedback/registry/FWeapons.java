@@ -76,6 +76,20 @@ public class FWeapons {
                     .networkSynchronized(FireMode.STREAM_CODEC)
                     .build());
 
+    /** A bipod's last order: game time plus one when told to deploy, minus that when told to fold; absent is folded since forever. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> BIPOD_AT =
+            COMPONENTS.register("bipod_at", () -> DataComponentType.<Long>builder()
+                    .persistent(com.mojang.serialization.Codec.LONG)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_LONG)
+                    .build());
+
+    /** A lit reticle's shutter: present and true when it is shut. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> RETICLE_SHUT =
+            COMPONENTS.register("reticle_shut", () -> DataComponentType.<Boolean>builder()
+                    .persistent(com.mojang.serialization.Codec.BOOL)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL)
+                    .build());
+
     /** A fuse-control launcher's selected fuse mode ({@code SmartFuse.Mode} ordinal). Absent reads the round's own fuse. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FUSE_MODE =
             COMPONENTS.register("fuse_mode", () -> DataComponentType.<Integer>builder()

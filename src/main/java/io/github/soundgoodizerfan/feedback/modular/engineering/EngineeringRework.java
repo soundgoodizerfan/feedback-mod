@@ -141,7 +141,7 @@ public final class EngineeringRework {
             }
             best = r;
             used = n;
-            if (mode != ModularRework.Mode.MEND || r.get().getDamageValue() == 0)
+            if (mode != ModularRework.Mode.MEND || r.get().getDamageValue() == 0 && io.github.soundgoodizerfan.feedback.weapon.GunCondition.wear(r.get()) <= 0f)
                 break;
         }
         if (best.isEmpty())

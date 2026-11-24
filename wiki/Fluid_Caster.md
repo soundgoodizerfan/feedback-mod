@@ -125,7 +125,7 @@ Nothing places a fluid block in the world.
 
 ### Pilot
 
-Press the **Gun option** key (unbound until you set it) with a piloted caster in hand to turn the pilot flame off or on; the action bar reads *Pilot flame: lit* or *Pilot flame: out*. With the pilot out there is no flame at the nozzle and no trickle drawn from the tank.
+Tap the **Gun option** key (**V** by default) with a piloted caster in hand to turn the pilot flame off or on; the action bar reads *Pilot flame: lit* or *Pilot flame: out*. With the pilot out there is no flame at the nozzle and no trickle drawn from the tank.
 
 The pilot is lit only while the valve is open, the tank's fluid burns or is an oxidiser, and the muzzle is not under water; closing the valve puts it out. While lit it shows as a small flame at the nozzle and draws a trickle from the tank, more through a wider orifice. It counts as an open flame in the stream's path, so a burning stream, a body set alight, fires and a vapor cloud going off all follow as above.
 
