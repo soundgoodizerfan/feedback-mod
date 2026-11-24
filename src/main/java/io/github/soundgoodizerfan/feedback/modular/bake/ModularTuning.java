@@ -1316,6 +1316,8 @@ public final class ModularTuning {
     /** Placeholder. A telescope: the most it magnifies, how hard a tube's mismatch (a share of the focal lengths' sum) blurs, how hard a lens's weakness (aperture over focal length over its refractive index less one) does, and the most blur it can reach. */
     public static final float TELESCOPE_BASE_DURABILITY = 200f;
     public static final float TELESCOPE_MAX_MAGNIFICATION = 20f, TELESCOPE_MISMATCH_BLUR = 2f, TELESCOPE_APERTURE_BLUR = 0.6f, TELESCOPE_BLUR_MAX = 1f;
+    /** How much a tube's thermal expansion, over the difference from the Overworld's ambient, is magnified into blur (real expansion alone is a haze of a few thousandths). */
+    public static final float TELESCOPE_EXPANSION_GAIN = 400f;
 
     /** Placeholder. A respirator's filter bed (cm) at which its floor is halfway down: depth over depth plus this. */
     public static final float RESPIRATOR_BED_HALF_CM = 4f;

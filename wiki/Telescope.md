@@ -20,19 +20,19 @@ The lenses must be of a material that bends light: glass, quartz, amber or a gem
 
 ## Using it
 
-Hold right click to look through it. The view narrows by the **magnification** inside a round scope mask, and a pale haze over the view shows the **blur**. Release to lower it. Looking does not wear it. The tooltip shows magnification, blur and mass.
+Hold right click to look through it. The view narrows by the **magnification** inside a round scope mask, and a pale haze over the view shows the **blur**. Release to lower it. Looking does not wear it. The tooltip shows magnification, mass and the blur as built, for a tube at the Overworld's ambient temperature; the haze in the view also counts how far the tube's temperature is from that, so a steel tube is a little soft in a cold winter and much softer in the Nether or the Gap.
 
 ## How it works
 
 - **Magnification** is the objective's focal length divided by the eyepiece's, up to 20x. A long objective with a short eyepiece magnifies most.
-- **Blur** has two causes. A tube whose length is not the sum of the two focal lengths puts the lenses out of focus; the further off, the more haze. A wide objective of glass that bends light weakly blurs too: the weakness is the lens width over its focal length, over the refractive index less one. A longer focal length, a narrower lens or a material with a higher index lowers it.
-- The tube's metal sets the mass.
+- **Blur** has three causes. A tube whose length is not the sum of the two focal lengths puts the lenses out of focus; the further off, the more haze. A wide objective of glass that bends light weakly blurs too: the weakness is the lens width over its focal length, over the refractive index less one. A longer focal length, a narrower lens or a material with a higher index lowers it. The third is heat: focus is set at the Overworld's ambient temperature, and a tube warmer or colder is the wrong length for its lenses. The blur added grows with the tube material's **thermal expansion** ([Materials](Materials.md#heat-and-other-figures)) and with how far the tube's temperature is from the Overworld's. The tube takes the telescope's own heat, or the ambient temperature of the dimension: the Nether is 40 Tu and the Gap 0 Tu. A steel tube turns soft in the Nether and the Gap, an aluminum tube much worse, an invar tube hardly at all.
+- The tube's metal sets the mass. The tooltip lists its **Tube expansion** with the other figures.
 
 ## Sighting a planet
 
 Three faint, unnamed points in the Overworld night sky ride the turning of the stars but drift among them from day to day: an acid cloud world, a frozen moon and a crystal world. They return every 23, 11 and 37 days, so each is up on some nights and not on others. To the eye they stay points.
 
-Look through the telescope on a clear night (no rain or thunder) with open sky overhead, and keep the planet in the middle third of the view. A telescope strong and sharp enough resolves it as a lit disc; a poorer one shows only a haze, and nothing locks. The blur must stay under 0.3, and the magnification must reach:
+Look through the telescope on a clear night (no rain or thunder) with open sky overhead, and keep the planet in the middle third of the view. A telescope strong and sharp enough resolves it as a lit disc; a poorer one shows only a haze, and nothing locks. The blur, heat included, must stay under 0.3, and the magnification must reach:
 
 | Planet | Magnification |
 | --- | --- |

@@ -78,7 +78,7 @@ public final class TelescopeView {
         g.fill(x, 0, x + size, y, 0xFF000000);
         g.fill(x, y + size, x + size, h, 0xFF000000);
         ModularFigures f = ModularStacks.figures(stack);
-        float blur = f == null ? 0f : f.get(Fig.TELESCOPE_BLUR);
+        float blur = f == null ? 0f : io.github.soundgoodizerfan.feedback.modular.item.TelescopeFocus.blur(stack, mc.level);
         int alpha = Math.round(255f * HAZE_AT_FULL_BLUR * Math.max(0f, Math.min(1f, blur)));
         if (alpha > 0)
             g.fill(x, y, x + size, y + size, alpha << 24 | 0xE6E6E6);

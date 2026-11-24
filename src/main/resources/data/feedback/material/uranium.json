@@ -7,6 +7,7 @@
     "luminous"
   ],
   "thermal": {
+    "expansion": 1.39e-5,
     "melting_point": 1132,
     "boiling_point": 4131,
     "cooling_rate": 2.38,

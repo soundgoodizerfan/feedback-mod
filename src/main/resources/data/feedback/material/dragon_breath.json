@@ -15,6 +15,7 @@
     "paper_case"
   ],
   "thermal": {
+    "expansion": 3e-5,
     "melting_point": -100,
     "boiling_point": 100,
     "specific_heat": 1.5,

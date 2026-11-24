@@ -6,6 +6,7 @@
   "min_temperature": 900,
   "max_temperature": 1500,
   "thermal": {
+    "expansion": 1.18e-5,
     "melting_point": 1500,
     "boiling_point": 2860,
     "cooling_rate": 2.09,

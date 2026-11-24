@@ -8,6 +8,7 @@
   "hardness": 2.5,
   "density": 2.1,
   "thermal": {
+    "expansion": 4e-5,
     "melting_point": 334,
     "cooling_rate": 1.78,
     "conductivity": 0.000125,

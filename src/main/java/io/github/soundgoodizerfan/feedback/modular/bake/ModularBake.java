@@ -1217,6 +1217,8 @@ public final class ModularBake {
                 f.put(Fig.MASS, total);
                 f.put(Fig.DURABILITY, ModularTuning.TELESCOPE_BASE_DURABILITY);
                 Part objective = design.part(ModularTelescope.OBJECTIVE), eyepiece = design.part(ModularTelescope.EYEPIECE), tube = design.part(ModularTelescope.TUBE);
+                if (tube != null)
+                    f.put(Fig.TUBE_EXPANSION, by.get(ModularTelescope.TUBE).thermal().expansion().orElse(0f));
                 if (objective != null && eyepiece != null) {
                     // A refracting telescope: magnification is the objective's focal length over the eyepiece's, and the tube wants to be
                     // the two focal lengths long (the image is only sharp when the lenses sit where they focus).

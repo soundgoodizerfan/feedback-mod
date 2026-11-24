@@ -10,6 +10,7 @@
   "max_temperature": 1400,
   "density": 7.04,
   "thermal": {
+    "expansion": 1.2e-5,
     "melting_point": 1520,
     "boiling_point": 2862,
     "cooling_rate": 1.62,

@@ -21,6 +21,7 @@
     "featherlight": 1
   },
   "thermal": {
+    "expansion": 1.2e-5,
     "melting_point": 1000,
     "specific_heat": 1.2,
     "latent_heat_fusion": 150,

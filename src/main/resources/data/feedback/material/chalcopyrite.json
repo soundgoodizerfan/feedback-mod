@@ -8,6 +8,7 @@
   "hardness": 20,
   "density": 4.2,
   "thermal": {
+    "expansion": 1.1e-5,
     "cooling_rate": 2.27,
     "conductivity": 0.002,
     "oxidation_temperature": 500,

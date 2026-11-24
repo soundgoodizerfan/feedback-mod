@@ -11,6 +11,7 @@
   "hardness": 147,
   "density": 2.76,
   "thermal": {
+    "expansion": 2.6e-6,
     "cooling_rate": 2.31,
     "conductivity": 0.00125,
     "melting_point": 1650,

@@ -2,6 +2,7 @@
   "parent": "steel",
   "hardness": 44,
   "thermal": {
+    "expansion": 1.2e-5,
     "conductivity": 0.0115,
     "service_temperature": 400,
     "melting_point": 1450

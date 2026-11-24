@@ -8,6 +8,7 @@
   "hardness": 34,
   "density": 4.43,
   "thermal": {
+    "expansion": 8.6e-6,
     "melting_point": 1650,
     "boiling_point": 3300,
     "cooling_rate": 2.27,

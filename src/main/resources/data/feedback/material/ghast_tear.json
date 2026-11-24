@@ -20,6 +20,7 @@
     "grip"
   ],
   "thermal": {
+    "expansion": 1e-5,
     "melting_point": 300,
     "boiling_point": 900,
     "specific_heat": 3,

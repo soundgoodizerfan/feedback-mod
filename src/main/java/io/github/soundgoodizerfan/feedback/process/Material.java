@@ -401,16 +401,19 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     /**
      * The thermal figures. {@code shockLimit}: the sudden jump in temperature, in Tu, a body of it takes without crazing (real critical
      * thermal-shock difference: soda-lime glass about 100, borosilicate about 170, silica glass about 1000). Absent is not rated.
+     * {@code expansion}: linear thermal expansion, the share of its length it gains per Tu (real: steel about 1.2e-5, aluminium 2.3e-5,
+     * invar 1.2e-6, silica glass 5.5e-7, aramid along its fibre -4e-6); every solid states it. A bare float, like {@code refractive_index}: it is a dimensionless
+     * ratio per Tu, read only by the bake, never added to or compared with a Tu.
      */
     public record Thermal(Optional<Tu> meltingPoint, Optional<Tu> boilingPoint, Optional<TuRate> coolingRate,
                           Optional<Conductance> conductivity, Optional<Tu> oxidationTemperature,
                           Optional<Tu> annealTemperature, Optional<Tu> serviceTemperature,
                           Optional<Tu> sublimationTemperature, Optional<SpecificHeat> specificHeat,
                           Optional<LatentHeat> latentHeatFusion, Optional<LatentHeat> latentHeatVaporisation,
-                          Optional<Tu> shockLimit) {
+                          Optional<Tu> shockLimit, Optional<Float> expansion) {
         static final Thermal NONE = new Thermal(Optional.empty(), Optional.empty(), Optional.empty(),
                 Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Thermal> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(Tu::new).optionalFieldOf("melting_point").forGetter(Thermal::meltingPoint),
@@ -424,7 +427,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Units.codec(SpecificHeat::new).optionalFieldOf("specific_heat").forGetter(Thermal::specificHeat),
                 Units.codec(LatentHeat::new).optionalFieldOf("latent_heat_fusion").forGetter(Thermal::latentHeatFusion),
                 Units.codec(LatentHeat::new).optionalFieldOf("latent_heat_vaporisation").forGetter(Thermal::latentHeatVaporisation),
-                Units.codec(Tu::new).optionalFieldOf("shock_limit").forGetter(Thermal::shockLimit)
+                Units.codec(Tu::new).optionalFieldOf("shock_limit").forGetter(Thermal::shockLimit),
+                Codec.floatRange(-1e-4f, 1e-3f).optionalFieldOf("expansion").forGetter(Thermal::expansion)
         ).apply(instance, Thermal::new));
     }
 

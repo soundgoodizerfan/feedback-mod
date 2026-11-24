@@ -160,6 +160,8 @@ public record ModularFigures(List<Float> values, int step) {
         MAGNIFICATION,
         /** 0 to 1: how much the image is softened. A tube whose length is not the sum of the two focal lengths, and a lens that bends light weakly for its aperture, both blur it. */
         TELESCOPE_BLUR,
+        /** The tube's linear thermal expansion (the share of its length gained per Tu): a warm or cold tube is the wrong length for its lenses and blurs. */
+        TUBE_EXPANSION,
         // --- a dish's profile as it is judged (DishProfile): live state, then composition. Baked to zero; read off the stack when a dish is judged or tasted. ---
         /** 0 to 1: how cooked through the dish is now. */
         DISH_COOK,

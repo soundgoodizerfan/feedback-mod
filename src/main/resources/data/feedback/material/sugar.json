@@ -18,6 +18,7 @@
     }
   },
   "thermal": {
+    "expansion": 2.5e-5,
     "melting_point": 186,
     "specific_heat": 1.2,
     "latent_heat_fusion": 130,

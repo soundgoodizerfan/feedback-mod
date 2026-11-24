@@ -22,6 +22,7 @@
     }
   },
   "thermal": {
+    "expansion": 1e-5,
     "melting_point": 250,
     "specific_heat": 1.6,
     "latent_heat_fusion": 100,

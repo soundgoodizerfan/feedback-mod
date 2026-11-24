@@ -95,6 +95,7 @@ public final class ModularCause {
                 case BREATH_FLOOR, FILTER_LIFE, BREATH_DRAG -> p.role().equals(ModularRespirator.FILTER);
                 case AIR_CAPACITY -> p.role().equals(ModularRespirator.CYLINDER);
                 case MAGNIFICATION, TELESCOPE_BLUR -> !p.role().equals(ModularTelescope.TUBE);
+                case TUBE_EXPANSION -> p.role().equals(ModularTelescope.TUBE);
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds
                 case HUNGER, SATURATION, PATHOGEN, TOXIN, CHARRED, FAT, FIBRE -> !p.role().equals(type.primary()) || p.kind().isEmpty();
                 case LITRES -> p.role().equals(type.primary());

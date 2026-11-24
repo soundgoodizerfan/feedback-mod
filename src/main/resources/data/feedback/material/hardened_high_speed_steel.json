@@ -3,6 +3,7 @@
   "parent": "high_speed_steel",
   "hardness": 75,
   "thermal": {
+    "expansion": 1.1e-5,
     "conductivity": 0.0052,
     "service_temperature": 600,
     "melting_point": 1430

@@ -7,6 +7,7 @@ import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularTelescope;
+import io.github.soundgoodizerfan.feedback.modular.item.TelescopeFocus;
 import io.github.soundgoodizerfan.feedback.modular.treatise.School;
 import io.github.soundgoodizerfan.feedback.modular.treatise.Treatises;
 
@@ -47,10 +48,10 @@ public final class Sighting {
                 && level.canSeeSky(player.blockPosition().above());
     }
 
-    /** Whether {@code scope} resolves {@code body}: enough magnification, blur under {@link SkyBodies#MAX_BLUR}. */
-    public static boolean sharp(ItemStack scope, SkyBodies.Body body) {
+    /** Whether {@code scope} resolves {@code body}: enough magnification, {@code blur} (from {@link TelescopeFocus#blur}) under {@link SkyBodies#MAX_BLUR}. */
+    public static boolean sharp(ItemStack scope, SkyBodies.Body body, float blur) {
         ModularFigures f = scope.isEmpty() ? null : ModularStacks.figures(scope);
-        return f != null && f.get(Fig.MAGNIFICATION) >= body.minMagnification() && f.get(Fig.TELESCOPE_BLUR) <= SkyBodies.MAX_BLUR;
+        return f != null && f.get(Fig.MAGNIFICATION) >= body.minMagnification() && blur <= SkyBodies.MAX_BLUR;
     }
 
     /** The body {@code player} resolves now, or null: {@code slack} widens the aim (1 on the client, {@link SkyBodies#SERVER_SLACK} on the server). */
@@ -60,10 +61,11 @@ public final class Sighting {
             return null;
         ModularFigures f = ModularStacks.figures(scope);
         float magnification = f == null ? 1f : f.get(Fig.MAGNIFICATION);
+        float blur = TelescopeFocus.blur(scope, player.level());
         Vec3 look = player.getViewVector(partial);
         for (SkyBodies.Body body : SkyBodies.ALL) {
             Vec3 at = SkyBodies.direction(player.level(), body, partial);
-            if (SkyBodies.up(at) && sharp(scope, body) && SkyBodies.offBy(look, at) <= SkyBodies.aim(magnification) * slack)
+            if (SkyBodies.up(at) && sharp(scope, body, blur) && SkyBodies.offBy(look, at) <= SkyBodies.aim(magnification) * slack)
                 return body;
         }
         return null;

@@ -5,6 +5,7 @@
   "hardness": 4.5,
   "density": 1.74,
   "thermal": {
+    "expansion": 2.48e-5,
     "melting_point": 650,
     "boiling_point": 1090,
     "cooling_rate": 2.99,
