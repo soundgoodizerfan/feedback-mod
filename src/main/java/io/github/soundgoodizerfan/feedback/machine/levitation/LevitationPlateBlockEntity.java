@@ -40,6 +40,7 @@ public class LevitationPlateBlockEntity extends BlockEntity implements BlockEnti
     @Nullable
     private ResourceLocation material;
     private float diamagnetism = -1f;
+    private double realMass = -1.0;
     private volatile float lift;
     private int sinceSpark;
 
@@ -62,6 +63,19 @@ public class LevitationPlateBlockEntity extends BlockEntity implements BlockEnti
         return diamagnetism;
     }
 
+    /**
+     * The plate's real mass in Sable units: {@link LevitationTuning#PLATE_SABLE_MASS} is a bismuth plate's, scaled by this material's density
+     * (a lead plate weighs more than a graphite one). Sable carries one fixed figure for the block; the difference is applied as weight.
+     */
+    public double realMass() {
+        if (realMass < 0.0) {
+            var m = material == null ? null : MaterialTable.get().materials().get(material);
+            realMass = m == null ? LevitationTuning.PLATE_SABLE_MASS
+                    : LevitationTuning.PLATE_SABLE_MASS * m.density().muPerMb() / LevitationTuning.PLATE_REFERENCE_DENSITY;
+        }
+        return realMass;
+    }
+
     /** 0 to 1: the lift it felt on its last step as a share of the most it can give (0 when nothing is below). */
     public float lift() {
         return lift;
@@ -69,30 +83,38 @@ public class LevitationPlateBlockEntity extends BlockEntity implements BlockEnti
 
     @Override
     public void sable$physicsTick(ServerSubLevel subLevel, RigidBodyHandle handle, double dt) {
+        if (!(level instanceof ServerLevel server))
+            return;
         float dia = diamagnetism();
-        if (dia <= 0f || !(level instanceof ServerLevel server))
-            return;
+        double gravity = io.github.soundgoodizerfan.feedback.vehicle.Gravity.of(server);
+        double mass0 = realMass();
+        // Sable weighs the block at one fixed figure; what this plate really weighs over or under it is applied as weight.
+        double extra = (mass0 - LevitationTuning.PLATE_SABLE_MASS) * gravity;
         Vec3 centre = subLevel.logicalPose().transformPosition(Vec3.atCenterOf(worldPosition));
-        float field = MagnetField.below(server, centre.x, centre.y, centre.z);
+        float field = dia <= 0f ? 0f : MagnetField.below(server, centre.x, centre.y, centre.z);
         lift = field * dia;
-        if (field <= 0f)
+        double push = 0.0;
+        if (field > 0f) {
+            double weight = mass0 * gravity;
+            // Lift falls by (LIFT_AT_TOUCH / (reach - touch)) of a weight per block, which is also the hover's spring constant.
+            double spring = weight * dia * LevitationTuning.LIFT_AT_TOUCH_WEIGHTS / (MagnetField.REACH - MagnetField.TOUCH);
+            double lifting = weight * LevitationTuning.LIFT_AT_TOUCH_WEIGHTS * dia * field;
+            at.set(centre.x, centre.y, centre.z);
+            double vy = BodyPush.pointVelocity(subLevel, at).y;
+            double mass = BodyPush.effectiveMass(subLevel, at, up);
+            double damp = 2.0 * LevitationTuning.HOVER_DAMPING_RATIO * Math.sqrt(spring * mass);
+            push = Math.max(0.0, lifting - damp * vy);
+        }
+        double net = push - extra;
+        if (net == 0.0)
             return;
-        double weight = LevitationTuning.PLATE_SABLE_MASS * io.github.soundgoodizerfan.feedback.vehicle.Gravity.of(server);
-        // Lift falls by (LIFT_AT_TOUCH / (reach - touch)) of a weight per block, which is also the hover's spring constant.
-        double spring = weight * dia * LevitationTuning.LIFT_AT_TOUCH_WEIGHTS / (MagnetField.REACH - MagnetField.TOUCH);
-        double lifting = weight * LevitationTuning.LIFT_AT_TOUCH_WEIGHTS * dia * field;
-        at.set(centre.x, centre.y, centre.z);
-        double vy = BodyPush.pointVelocity(subLevel, at).y;
-        double mass = BodyPush.effectiveMass(subLevel, at, up);
-        double damp = 2.0 * LevitationTuning.HOVER_DAMPING_RATIO * Math.sqrt(spring * mass);
-        double push = Math.max(0.0, lifting - damp * vy);
-        subLevel.logicalPose().transformNormalInverse(impulse.set(0, push * dt, 0), local);
+        subLevel.logicalPose().transformNormalInverse(impulse.set(0, net * dt, 0), local);
         force.applyImpulseAtPoint(subLevel.getMassTracker(), this.at.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
                 worldPosition.getZ() + 0.5), local);
         io.github.soundgoodizerfan.feedback.vehicle.ForceLedger.record(subLevel, io.github.soundgoodizerfan.feedback.vehicle.ForceLedger.Cause.LEVITATION,
                 this.at.x, this.at.y, this.at.z, local.x, local.y, local.z);
         handle.applyForcesAndReset(force);
-        if (++sinceSpark >= LevitationTuning.SPARK_INTERVAL_TICKS) {
+        if (field > 0f && ++sinceSpark >= LevitationTuning.SPARK_INTERVAL_TICKS) {
             sinceSpark = 0;
             // The physics step is not the server thread: the spark goes to it.
             server.getServer().execute(() -> server.sendParticles(ParticleTypes.ELECTRIC_SPARK, centre.x, centre.y - 0.3, centre.z, 1, 0.3, 0.05, 0.3, 0.02));
@@ -106,6 +128,7 @@ public class LevitationPlateBlockEntity extends BlockEntity implements BlockEnti
         if (made != null)
             material = made.material();
         diamagnetism = -1f;
+        realMass = -1.0;
     }
 
     @Override
@@ -127,5 +150,6 @@ public class LevitationPlateBlockEntity extends BlockEntity implements BlockEnti
         super.loadAdditional(tag, registries);
         material = tag.contains("Material") ? ResourceLocation.parse(tag.getString("Material")) : null;
         diamagnetism = -1f;
+        realMass = -1.0;
     }
 }
