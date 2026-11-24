@@ -76,7 +76,22 @@ final class NotesScreen extends Screen {
             results[i] = Component.translatable("gui.feedback.notes.result." + i);
         int seed = containerId * 31 + (parts.isEmpty() ? 7 : parts.get(0).getDescriptionId().hashCode());
         for (int i = 0; i < rounds; i++)
-            spans[i] = 44f + Math.floorMod(seed * (i + 3) * 2654435761L, 71L);
+            spans[i] = parts.isEmpty() ? 44f + Math.floorMod(seed * (i + 3) * 2654435761L, 71L) : spanOf(parts.get(i % parts.size()));
+    }
+
+    /**
+     * What the jaws have to find: the part's own size, drawn to the jaws' travel. Its largest as-built axis (mm; 300 fills the jaws) when it has
+     * any, else its cells of stock (6 fills them). The reading's error is the player's; the part is what it is.
+     */
+    private static float spanOf(ItemStack part) {
+        var made = part.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        if (made == null)
+            return 44f;
+        float biggest = 0f;
+        for (float v : made.measures().axes().values())
+            biggest = Math.max(biggest, v);
+        float share = biggest > 0f ? biggest / 300f : made.cells() / 6f;
+        return 44f + 71f * Math.max(0f, Math.min(1f, share));
     }
 
     @Override
