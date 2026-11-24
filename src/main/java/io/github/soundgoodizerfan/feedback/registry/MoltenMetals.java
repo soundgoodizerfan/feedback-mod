@@ -5,6 +5,7 @@ package io.github.soundgoodizerfan.feedback.registry;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 
@@ -40,6 +41,12 @@ public final class MoltenMetals {
             "antimony", "vanadium", "indium", "mercury", "galinstan", "constantan", "cupronickel", "alnico", "high_speed_steel", "titanium_6al_4v", "stellite", "pewter", "babbitt", "bell_metal", "shakudo", "aluminium_foam", "lumen_glass",
             "essentia", "thaumium_lean", "thaumium", "thaumium_rich", "ruby", "jade", "garnet", "tourmaline");
 
+    /**
+     * Materials that are liquid at room temperature: their fluid is a cool, dark, runny liquid held in vessels and buckets, not a glowing
+     * melt, and a loose solid piece of one (frozen in a Cryocooler basin) melts back where it lies ({@code FormItem}).
+     */
+    public static final Set<String> LIQUID_AT_AMBIENT = Set.of("mercury", "galinstan");
+
     private static final DeferredRegister<FluidType> TYPES =
             DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, Feedback.MOD_ID);
     private static final DeferredRegister<Fluid> FLUIDS =
@@ -50,12 +57,13 @@ public final class MoltenMetals {
     static {
         for (String id : IDS) {
             String name = "molten_" + id;
+            boolean cool = LIQUID_AT_AMBIENT.contains(id);
             DeferredHolder<FluidType, FluidType> type = TYPES.register(name, () -> new FluidType(FluidType.Properties.create()
                     .descriptionId("fluid.feedback." + name)
-                    .lightLevel(15)
-                    .density(7000)
-                    .viscosity(6000)
-                    .temperature(1300)
+                    .lightLevel(cool ? 0 : 15)
+                    .density(cool ? 13530 : 7000)
+                    .viscosity(cool ? 1550 : 6000)
+                    .temperature(cool ? 293 : 1300)
                     .canConvertToSource(false)
                     .canSwim(false)
                     .canDrown(false)

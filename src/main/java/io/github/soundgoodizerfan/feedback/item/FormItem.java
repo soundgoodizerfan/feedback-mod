@@ -2,7 +2,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FormItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +41,37 @@ public class FormItem extends Item {
 
     public String form() {
         return form;
+    }
+
+    /**
+     * A solid piece of a material that is liquid at the room it lies in (mercury, galinstan; frozen in a Cryocooler basin) melts back:
+     * once a second, on the ground, it spills as the fluid where it lay, a source block for a block's worth and else a flowing
+     * level for each eighth of a bucket, a mere nugget going into the floor. In a pack or a chest it stays as it is.
+     */
+    @Override
+    public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
+        Level level = entity.level();
+        if (level.isClientSide || entity.tickCount % 20 != 0 || !entity.onGround())
+            return false;
+        Material m = MaterialTable.get().materials().get(material);
+        if (m == null || m.thermal().meltingPoint().filter(mp -> mp.value() < AmbientTable.at(level).value()).isEmpty())
+            return false;
+        Fluid source = BuiltInRegistries.FLUID.get(ResourceLocation.fromNamespaceAndPath(material.getNamespace(), "molten_" + material.getPath()));
+        if (!(source instanceof FlowingFluid flowing) || source == net.minecraft.world.level.material.Fluids.EMPTY)
+            return false;
+        int mb = FormItems.volume(form) * stack.getCount();
+        BlockPos at = entity.blockPosition();
+        BlockState here = level.getBlockState(at);
+        if (here.isAir() || here.canBeReplaced(source)) {
+            if (mb >= 1000)
+                level.setBlockAndUpdate(at, flowing.getSource().defaultFluidState().createLegacyBlock());
+            else if (mb >= 63)
+                level.setBlockAndUpdate(at, flowing.getFlowing(Math.max(1, Math.min(7, Math.round(mb / 125f))), false).createLegacyBlock());
+        } else {
+            return false;
+        }
+        entity.discard();
+        return true;
     }
 
     @Override
