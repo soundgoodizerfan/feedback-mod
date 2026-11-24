@@ -28,6 +28,9 @@ import javax.annotation.Nullable;
  * called through their public API; nothing of theirs is copied.
  */
 public final class SpaceTravel {
+    /** The acid-cloud world: a dimension of its own, reached from the Gap along {@link AcidRoute}'s bearing. */
+    public static final ResourceKey<Level> ACID = ResourceKey.create(Registries.DIMENSION,
+            io.github.soundgoodizerfan.feedback.Feedback.id("acid_cloud"));
     public static final ResourceKey<Level> GAP = ResourceKey.create(Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID, "gap"));
     private static final double LOOK_REACH = 16;

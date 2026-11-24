@@ -1,0 +1,11 @@
+{
+  "type": "feedback:acid_cloud",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "minecraft:overworld",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "feedback:acid_flats"
+    }
+  }
+}

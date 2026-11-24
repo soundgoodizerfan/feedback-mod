@@ -54,8 +54,8 @@ public final class SpaceTrigger {
             ScaleAboard.sweep(level);
         if (level.getGameTime() % SpaceTuning.CHECK_INTERVAL != 0)
             return;
-        boolean end = level.dimension().equals(Level.END);
-        if (!gap && !end && !level.dimension().equals(Level.OVERWORLD))
+        boolean end = level.dimension().equals(Level.END), acid = level.dimension().equals(SpaceTravel.ACID);
+        if (!gap && !end && !acid && !level.dimension().equals(Level.OVERWORLD))
             return;
         SpaceTravel.noteStanding(level);
         var container = ServerSubLevelContainer.getContainer(level);
@@ -63,6 +63,7 @@ public final class SpaceTrigger {
             return;
         var movers = new ArrayList<ServerSubLevel>();
         var taken = new ArrayList<ServerSubLevel>(); // the Gap's bodies that reached the End
+        var takenAcid = new ArrayList<ServerSubLevel>(); // and those that reached the acid-cloud world
         var present = new java.util.HashSet<UUID>();
         var thin = new java.util.HashSet<UUID>();
         for (ServerSubLevel body : container.getAllSubLevels()) {
@@ -75,6 +76,8 @@ public final class SpaceTrigger {
                     movers.add(body);
                 else if (EndRoute.captured(body))
                     taken.add(body);
+                else if (AcidRoute.captured(body))
+                    takenAcid.add(body);
             } else if (AirDensityTable.at(level, y) <= 0f) {
                 thin.add(body.getUniqueId());
                 if (HELD.merge(body.getUniqueId(), SpaceTuning.CHECK_INTERVAL, Integer::sum) >= SpaceTuning.HOLD_TICKS)
@@ -90,10 +93,13 @@ public final class SpaceTrigger {
             HELD.remove(body.getUniqueId());
             if (body.isRemoved()) // a chain moves with its first body
                 continue;
-            int n = gap ? SpaceTravel.back(level, body) : end ? EndRoute.toGap(level, body) : SpaceTravel.send(level, body);
+            int n = gap ? SpaceTravel.back(level, body) : end ? EndRoute.toGap(level, body) : acid ? AcidRoute.toGap(level, body) : SpaceTravel.send(level, body);
             Feedback.LOGGER.info("Space crossing of body {} at y {}: {} body(ies) moved to {}", body.getUniqueId(),
                     Math.round(body.logicalPose().position().y()), n, gap ? "the Overworld" : "the Gap");
         }
+        for (ServerSubLevel body : takenAcid)
+            if (!body.isRemoved())
+                Feedback.LOGGER.info("Space crossing of body {} to the acid-cloud world: {} body(ies) moved", body.getUniqueId(), AcidRoute.toAcid(level, body));
         for (ServerSubLevel body : taken)
             if (!body.isRemoved())
                 Feedback.LOGGER.info("Space crossing of body {} to the End: {} body(ies) moved", body.getUniqueId(), EndRoute.toEnd(level, body));

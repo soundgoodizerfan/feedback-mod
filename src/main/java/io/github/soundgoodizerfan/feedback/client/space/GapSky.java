@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.space.AcidRoute;
 import io.github.soundgoodizerfan.feedback.space.EndRoute;
 import io.github.soundgoodizerfan.feedback.space.SpaceTuning;
 
@@ -52,7 +53,6 @@ final class GapSky {
     }
 
     private static final Planet[] PLANETS = {
-            new Planet(205f, 18f, 7f, sprite("acid_cloud")),
             new Planet(112f, 27f, 4f, sprite("frozen_moon")),
             new Planet(305f, 41f, 3f, sprite("crystal")),
     };
@@ -60,6 +60,9 @@ final class GapSky {
     /** The End's gas giant: a real place in the Gap ({@link EndRoute#planet}), so it is drawn where it is, and grows as the craft closes on it. */
     private static final ResourceLocation GAS_GIANT = sprite("gas_giant");
     private static final float GAS_GIANT_SIZE = 5.5f;
+    /** The acid-cloud world: a real place in the Gap too ({@link AcidRoute#planet}), drawn where it is and growing as a craft closes on it. */
+    private static final ResourceLocation ACID_CLOUD = sprite("acid_cloud");
+    private static final float ACID_SIZE = 7f;
     /** The most its apparent size grows to, so a craft inside the capture sphere sees it fill much of the sky, not all of it. */
     private static final float GROWTH_CAP = 10f;
     /** Half-width of a planet's cube against its nominal radius: the cube's corners then reach about the radius. */
@@ -100,6 +103,11 @@ final class GapSky {
         if (away > 1e-3)
             cube(view, GAS_GIANT, new Vector3f((float) (to.x / away), (float) (to.y / away), (float) (to.z / away)),
                     GAS_GIANT_SIZE * CUBE_SHARE * (float) Math.min(GROWTH_CAP, SpaceTuning.END_DISTANCE / away), true, time * SPIN);
+        Vector3d toAcid = AcidRoute.planet().sub(camera.x, camera.y, camera.z);
+        double acidAway = toAcid.length();
+        if (acidAway > 1e-3)
+            cube(view, ACID_CLOUD, new Vector3f((float) (toAcid.x / acidAway), (float) (toAcid.y / acidAway), (float) (toAcid.z / acidAway)),
+                    ACID_SIZE * CUBE_SHARE * (float) Math.min(GROWTH_CAP, SpaceTuning.ACID_DISTANCE / acidAway), false, time * SPIN * 1.4f);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         sprite(view, SUN_TEXTURE, SUN, SUN_SIZE);
 

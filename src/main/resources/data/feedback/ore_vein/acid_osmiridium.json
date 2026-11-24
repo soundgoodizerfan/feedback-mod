@@ -1,0 +1,19 @@
+{
+  "ore": "feedback:osmiridium_ore",
+  "deepslate_ore": "feedback:osmiridium_deepslate_ore",
+  "radius": 9,
+  "thickness": 4,
+  "density": 0.45,
+  "min_y": 20,
+  "max_y": 90,
+  "triangle": true,
+  "dimension_filter": [
+    "feedback:acid_cloud"
+  ],
+  "indicator": "feedback:osmiridium_loose_rock",
+  "indicator_depth": 12,
+  "material": "feedback:osmiridium",
+  "share": 0.6,
+  "province": "placer",
+  "biome_default": 1.0
+}
