@@ -124,7 +124,12 @@ public class ModularGlove extends ModularItem implements Insulator {
         ResourceLocation lining = material(stack, "L");
         if (lining == null || Grip.material(level, lining).filter(Grip::insulates).isEmpty())
             return alone;
-        return Math.max(alone, Grip.safeUpTo(level, lining, FTuning.GLOVE_EXPOSURE * ModularTuning.GLOVE_LINING_SHARE));
+        // The lining's own conductivity sets what reaches the hand through it: the reference lining leaves GLOVE_LINING_SHARE of the
+        // glove's exposure, a better insulator less, a poorer one more (a figure-less organic is taken as the reference).
+        float conductivity = Grip.material(level, lining).flatMap(m -> m.thermal().conductivity()).map(c -> c.workPerTickPerTu())
+                .orElse(ModularTuning.LINING_REF_CONDUCTIVITY);
+        float exposure = Math.min(1f, FTuning.GLOVE_EXPOSURE * ModularTuning.GLOVE_LINING_SHARE * conductivity / ModularTuning.LINING_REF_CONDUCTIVITY);
+        return Math.max(alone, Grip.safeUpTo(level, lining, exposure));
     }
 
     /**

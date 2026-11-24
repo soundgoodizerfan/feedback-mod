@@ -1272,6 +1272,8 @@ public final class ModularTuning {
 
     /** Invented. The share of a glove's exposure that is left when an insulating lining sits against the hand (a gauntlet's lining role). */
     public static final float GLOVE_LINING_SHARE = 0.5f;
+    /** Invented. The conductivity ({@code workPerTickPerTu}) of the lining that leaves exactly {@link #GLOVE_LINING_SHARE} of a glove's exposure: wool's. A lining conducting twice as much leaves twice the share. */
+    public static final float LINING_REF_CONDUCTIVITY = 1.25e-5f;
 
     /**
      * Invented. A shield as a thermal sink. A point of blocked damage

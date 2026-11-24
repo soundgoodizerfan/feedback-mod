@@ -33,7 +33,7 @@ Worn gear is drawn on the body (simple shapes tinted by the shell material): the
 
 ## Glove
 
-Made at the [Woodworking Table](Woodworking_Table.md) (the plain leather one also from four leather in the crafting grid): shape a body from leather or carpet stock. Worn in the hands slot, the body keeps warm work and weak shocks off the hand, as far as the material stands it. Add a fibrous lining (wool, say) and an insulating lining against the hand cuts the heat that reaches it: a lined glove is never worse than the same body unlined. The lining adds a little armor by its material. A **vambrace** (ingot, plate or leather, worn at the wrist) adds armor by its hardness and turns a light blow.
+Made at the [Woodworking Table](Woodworking_Table.md) (the plain leather one also from four leather in the crafting grid): shape a body from leather or carpet stock. Worn in the hands slot, the body keeps warm work and weak shocks off the hand, as far as the material stands it. Add an insulating lining (wool, say) against the hand and it cuts the heat that reaches it, by how poorly its material conducts heat: wool is the middle case, a better insulator than wool lets you hold a hotter piece, and a poorer one (leather, say) a less hot piece. A lined glove is never worse than the same body unlined. The lining adds a little armor by its material. A **vambrace** (ingot, plate or leather, worn at the wrist) adds armor by its hardness and turns a light blow.
 
 A **metacarpal plate** (shaped from ingot or plate stock, laid over the back of the hand) turns the glove into a fighting glove. By its hardness and density it:
 
