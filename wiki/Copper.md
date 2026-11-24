@@ -29,7 +29,7 @@ Copper is the reference conductor: every other metal's conductivity is read agai
 ## What it is used in
 
 - **Wire and cable.** [Copper Cable](Copper_Cable.md) carries 1, 4, 16 or 64 A by gauge, and every other metal's cable is read against it. Copper wire also goes into the [Arc Furnace](Arc_Furnace.md), the [Breaker](Breaker.md), the [Charger](Charger.md), [Induction](Induction.md) coils.
-- **Tubing and buckets.** Two Copper Plates stacked make two Copper Tubing, used by the [Condenser](Condenser.md), the [Fission Reactor](Fission_Reactor.md) and the improved [furnaces](Furnaces.md). Three Copper Plates in a V make a Copper Bucket, which scoops oil and carries melt ([Casting](Casting.md#casting-basin)).
+- **Tubing and buckets.** Two Copper Plates stacked make two Copper Tubing, used by the [Condenser](Condenser.md), the [Fission Reactor](Fission_Reactor.md) and the crude blast and improved [furnaces](Furnaces.md). Three Copper Plates in a V make a Copper Bucket, which scoops oil and carries melt ([Casting](Casting.md#casting-basin)).
 - **Electrodes.** Copper is the cathode of the [Galvanic Cell](Galvanic_Cell.md) and the noble metal of the [Electrolytic Cell](Electrolytic_Cell.md). As fuse wire it carries 16 A ([Fuse](Fuse.md)).
 - **Alloys.** [Bronze](Bronze.md) with tin, brass with zinc, and the other copper alloys on [Casting](Casting.md#alloys).
 - **Fasteners.** Quality 1 ([Fasteners](Fasteners.md)).

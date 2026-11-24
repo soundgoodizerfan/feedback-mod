@@ -8,6 +8,8 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 
 ## The metals
 
+Fifteen of these metals have their own page: see [Metals](Metals.md).
+
 | Metal | Hardness | Density | Yield strength | Melts at | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Lead | 0.5 | 11.34 | 0.5 | 327 Tu | Dense: the classic bullet metal. Useless for guns. |

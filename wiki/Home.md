@@ -42,6 +42,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 - [Metalworking](Metalworking.md): work, hardness, overrun and wear
 - [Materials](Materials.md): every metal, gem, mineral, polymer, composite, glass and solder, and the forms they take
+- [Metals](Metals.md): [Copper](Copper.md), [Tin](Tin.md), [Bronze](Bronze.md), [Lead](Lead.md), [Zinc](Zinc.md), [Gold](Gold.md), [Silver](Silver.md), [Iron](Iron.md), [Steel](Steel.md), [Stainless Steel](Stainless_Steel.md), [Nickel](Nickel.md), [Chromium](Chromium.md), [Aluminum](Aluminum.md), [Titanium](Titanium.md) and [Tungsten](Tungsten.md): how to get each, what it is good for and what it is used in
 - [Mod Compats](Mod_Compats.md): the mods Feedback requires or works with, and what each adds
 - [Units](Units.md): what Tu, Su, mB, Qu, Wu, Fu and the other figures measure
 - [Ore Deposits](Ore_Deposits.md): where ores and crystals grow
