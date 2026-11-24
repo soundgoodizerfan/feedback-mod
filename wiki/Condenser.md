@@ -12,7 +12,7 @@ T   T
 C T C
 ```
 
-C is a Copper Ingot and T is Copper Tubing (two [Copper Plates](Mechanical_Hammer.md) stacked make two Tubing).
+C is a [Copper Plate](Mechanical_Hammer.md) and T is Copper Tubing (two Copper Plates stacked make two Tubing).
 
 ## Using it
 

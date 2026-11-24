@@ -4,7 +4,7 @@ Carries [rotation](Rotation.md) in a straight line along its length. It's the mo
 
 ## Crafting
 
-Three Bronze Ingots in a vertical line make **four** shafts.
+Three ingots of any metal with a yield strength of **7.5 St** or more, such as bronze, iron or steel, in a vertical line make **four** shafts.
 
 ```
 C

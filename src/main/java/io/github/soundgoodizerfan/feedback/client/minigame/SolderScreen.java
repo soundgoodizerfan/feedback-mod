@@ -58,6 +58,10 @@ public class SolderScreen extends Screen {
     /** Crouched as the iron was lifted: opening a screen releases the key, so the stance is read here, as the server reads it. */
     private final boolean braced = Minecraft.getInstance().player != null && Minecraft.getInstance().player.isShiftKeyDown();
     private int mouseX, mouseY, pitch, x0, rowY, soundCooldown;
+    /** The keyboard's hand: arrows move the tip along the pads and off the row, space or enter lays it down and lifts it. Once a key has been used the mouse no longer moves the tip. */
+    private boolean kb;
+    private int kbPad;
+    private float kbOff;
     // Panel layout, computed once in init (panel-relative y unless named screen).
     private static final int PITCH_MAX = 36, HEADER = 22, SWATCH = 8, ROW_H = 12, PAD_BOTTOM = 10;
     private int px, py, pw, ph, boardY, boardH, hintY, padSize;
@@ -154,6 +158,10 @@ public class SolderScreen extends Screen {
 
     @Override
     public void tick() {
+        if (kb) {
+            mouseX = x0 + kbPad * pitch + pitch / 2;
+            mouseY = Math.round(rowY + kbOff * pitch);
+        }
         if (!down || sent || !opening.settled())
             return;
         int p = Mth.floor((double) (mouseX - x0) / pitch);
@@ -204,7 +212,48 @@ public class SolderScreen extends Screen {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
+        if (!opening.closing() && opening.settled() && !sent) {
+            switch (key) {
+                case org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT, org.lwjgl.glfw.GLFW.GLFW_KEY_A -> {
+                    useKeys();
+                    kbPad = Math.max(0, kbPad - 1);
+                    return true;
+                }
+                case org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT, org.lwjgl.glfw.GLFW.GLFW_KEY_D -> {
+                    useKeys();
+                    kbPad = Math.min(pads - 1, kbPad + 1);
+                    return true;
+                }
+                case org.lwjgl.glfw.GLFW.GLFW_KEY_UP, org.lwjgl.glfw.GLFW.GLFW_KEY_W -> {
+                    useKeys();
+                    kbOff = Math.max(-1.5f, kbOff - 0.25f);
+                    return true;
+                }
+                case org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN, org.lwjgl.glfw.GLFW.GLFW_KEY_S -> {
+                    useKeys();
+                    kbOff = Math.min(1.5f, kbOff + 0.25f);
+                    return true;
+                }
+                case org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE, org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER -> {
+                    useKeys();
+                    if (!down)
+                        down = true;
+                    else {
+                        down = false;
+                        if (dwell[pads - 1] > 0)
+                            send(false);
+                    }
+                    return true;
+                }
+                default -> {
+                }
+            }
+        }
         return opening.closing() || super.keyPressed(key, scan, modifiers);
+    }
+
+    private void useKeys() {
+        kb = true;
     }
 
     /** The panel only; the world stays as it is. */
@@ -257,8 +306,10 @@ public class SolderScreen extends Screen {
             super.onClose();
             return;
         }
-        mouseX = mx;
-        mouseY = my;
+        if (!kb) {
+            mouseX = mx;
+            mouseY = my;
+        }
         opening.render(g, width, height, px, py, pw, ph, 0f, () -> {
             SKIN.panel(g, px, py, pw, ph);
             g.drawString(font, title, px + MARGIN, py + 9, SKIN.ink(), false);

@@ -5989,7 +5989,7 @@
   "gui.feedback.prep_pour.hint_shake": "Hold and sweep side to side to shake. Done or Enter when dusted.",
   "gui.feedback.prep_pour.hint_place": "Left-click lays a slice on a ring, right-click lifts one. Done or Enter to finish.",
   "gui.feedback.prep_pour.hint": "Hold to pour, release at the marks.",
-  "gui.feedback.solder.hint": "Hold and drag along the pads.",
+  "gui.feedback.solder.hint": "Hold and drag along the pads, or use the arrow keys to move the tip and space to lay it down and lift it.",
   "gui.feedback.enchant.state.none": "No effects known.",
   "gui.feedback.enchant.state.put": "Seat a part.",
   "gui.feedback.enchant.state.attuned": "No more room.",
