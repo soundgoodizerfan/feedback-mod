@@ -8,7 +8,7 @@ Take one from a trial chamber, or make it.
 
 ## Making it
 
-1. **Find osmiridium.** The ore forms **placer veins** in river biomes (Y 36 to 64) and a **sulfide band** underground (Y -32 to 40). A loose rock marks the vein. It drops Raw Osmiridium.
+1. **Find osmiridium.** The ore forms **placer veins** in river biomes (Y 36 to 64) and a **sulfide band** underground (Y -32 to 40). The [acid-cloud world](The_Gap.md#the-acid-cloud-world-by-rocket) has a rich crust of it. A loose rock marks the vein. It drops Raw Osmiridium.
 2. **Leach it** in a [Reactor](Reactor.md#the-reactions) with sulfuric acid and oxygen. The product is **osmium tetroxide**, a toxic gas. Keep room in the output tank: gas with nowhere to go forms a [fume cloud](Hazards.md#fume-clouds).
 3. **Reduce it** with hydrogen in a Reactor. The product is an **Osmium Sponge**.
 4. **Mix** 7 sponge to 1 nickel in the [Mixer](Mixer.md#mixing-powders-for-pressing) for **Osmium Powder**.

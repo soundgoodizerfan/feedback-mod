@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-24T16:14:44.633708056	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-24T18:44:57.754106286	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
@@ -217,6 +217,7 @@ a8335e3034581b704c6bc6e3943cc538871951dc data/c/tags/item/calcines/red_mud.json
 6b2b94e969913ed4c93d69b2379f798510857e24 data/c/tags/item/calcines/ruby.json
 d4b495b7a8082d0c6f9609dfd936c6cc2cb326f9 data/c/tags/item/calcines/rusty_soil.json
 bed1792e1b5b99b0392a83fa1cc21db2692eb7ec data/c/tags/item/calcines/silicate_slag.json
+d83a54c1ac7693ab69cfa14a8598e57ad0c35cf4 data/c/tags/item/calcines/sperrylite.json
 21eb12d439d396e7c807af5df8207c35e78ce010 data/c/tags/item/calcines/sphalerite.json
 85a058c5a4364d1f2b896de0c79feed3c0a33441 data/c/tags/item/calcines/spodumene.json
 07f16d2ccaab9534c825aef8310b17379b301fd1 data/c/tags/item/calcines/stibnite.json
@@ -599,6 +600,7 @@ ef8b405610ff0c6f5ae14a244f9ffa94f60a9a0d data/c/tags/item/deepslate_ores/pyrolus
 e07078fe48a5544b13c1493d1ccb7690d56c2309 data/c/tags/item/deepslate_ores/redstone.json
 e6a49d68ae9b35459bb2650ea69ec7c50b6500fa data/c/tags/item/deepslate_ores/ruby.json
 bfacb970c5259c5c146f66a30d97d287299d4028 data/c/tags/item/deepslate_ores/saltpetre.json
+0c3e673c4918eaad1a0bd39a76c2c312567d9d8a data/c/tags/item/deepslate_ores/sperrylite.json
 af67304dcbbf31dd0729e81fa5443859af1f301a data/c/tags/item/deepslate_ores/sphalerite.json
 74f4d6585c8b10778e158694c7c3f409cf416557 data/c/tags/item/deepslate_ores/spodumene.json
 d3f3c872283eab157aefe8fd6f8b27b448567ae3 data/c/tags/item/deepslate_ores/stibnite.json
@@ -820,6 +822,7 @@ c3a1ffe1ac2610aa9904a10deee895d3d084be52 data/c/tags/item/dusts/silicon_crude.js
 0dc9c3e2a8d332a6e4b18c87632313a79c300a73 data/c/tags/item/dusts/solder_free.json
 a30a92f1ee4cb021183206c8808667571b35880a data/c/tags/item/dusts/solder_leaded.json
 5ec980b44c260aae4d914314bdf5e60bbd1bd981 data/c/tags/item/dusts/soul_sand.json
+2daa19665a4a39d5260c5971c8438c006aba3eae data/c/tags/item/dusts/sperrylite.json
 97c2bf2eb1054b2145e32c536619c0cde803bf54 data/c/tags/item/dusts/sphalerite.json
 2dd9986c892c965e06b2e76a29acfc532bf30396 data/c/tags/item/dusts/spinel.json
 2dd66d5ed7664b4a4baab62e5fdc0b7939dad279 data/c/tags/item/dusts/spodumene.json
@@ -1742,6 +1745,7 @@ a5f86255b4a4c69e8901db1968de825261670f05 data/c/tags/item/loose_rocks/osmiridium
 72e57498a2a4e245c2fb04939e91b0fde3dbfec3 data/c/tags/item/loose_rocks/redstone.json
 ac77558326b90247208f579e52299de644b5c095 data/c/tags/item/loose_rocks/ruby.json
 f1e459bbf05a931a68a2914870b2feafe0fdbe63 data/c/tags/item/loose_rocks/saltpetre.json
+10981e20fb3571902d1db5b3ce56a689f970b9c6 data/c/tags/item/loose_rocks/sperrylite.json
 27cae528c6dbd4790018580b4122529f118a2565 data/c/tags/item/loose_rocks/sphalerite.json
 830ee16c0b1a7495ed76f04e864e5f2a5c36965b data/c/tags/item/loose_rocks/spodumene.json
 a5e8ba7af46f7e0d4f5340daa0513bea476d46bf data/c/tags/item/loose_rocks/stibnite.json
@@ -1789,6 +1793,7 @@ e165fe92a0d6ed55859660731bb2710928bd1e2f data/c/tags/item/lumps/pyrolusite.json
 9b777484f482df44622a5989bc10e70c7b96cb04 data/c/tags/item/lumps/ruby.json
 f08fb603132e8965557f43c5aadb1ba93e1e08fc data/c/tags/item/lumps/rusty_soil.json
 9c7fc20d1cdc7ff524a56a11dc216f0257674072 data/c/tags/item/lumps/saltpetre.json
+e4e4374be7b5bb821f0345d71e38c5986b6d7e4e data/c/tags/item/lumps/sperrylite.json
 122d4a18188fbaa8513c837e2feb0ef1563c99d3 data/c/tags/item/lumps/sphalerite.json
 5e7698064cc88ae9c93cfc874d8cf3817676227a data/c/tags/item/lumps/spodumene.json
 102130f084ac7c376e5336c496a019623f680353 data/c/tags/item/lumps/stibnite.json
@@ -2004,6 +2009,7 @@ a0d593a86961ab4115652bfdb910e5c2c52c58f5 data/c/tags/item/ores/osmiridium.json
 428e31607b07d9d9fc0ae533d657f29e7e7810f0 data/c/tags/item/ores/redstone.json
 559a4ac13e8f6be8d0cb1c037b826b893ca2612d data/c/tags/item/ores/ruby.json
 39b8c2284db92358b8c01822f6f7fb680be01775 data/c/tags/item/ores/saltpetre.json
+c603121fbd5fcd6e27edae77463274f587b69490 data/c/tags/item/ores/sperrylite.json
 7620576eab1ef0430f4c347a6e6ed55d9314d9b5 data/c/tags/item/ores/sphalerite.json
 985e0170cabdd6f9031c86cd5824e8d6741cc6e6 data/c/tags/item/ores/spodumene.json
 1e7ac79db793c8f277b90c48a1a3dc8a864c0de7 data/c/tags/item/ores/stibnite.json

@@ -29,7 +29,7 @@ The share is the part of the ore that is that metal. Depths are y levels. A prov
 | Malachite | Copper (50%) | Overworld, y -16 to 112, cap of the chalcopyrite veins |
 | Molybdenite | Molybdenum (60%), Rhenium (2%) | Overworld, y -16 to 48, tin belt |
 | Monazite | Thorium (50%) | Overworld, y -48 to 16, pegmatite field; the Nether, y 10 to 117, hot Nether belt |
-| Osmiridium | Osmium (50%), Iridium (50%) | Overworld: y 36 to 64, river placers; y -32 to 40, mafic complex |
+| Osmiridium | Osmium (50%), Iridium (50%) | Overworld: y 36 to 64, river placers; y -32 to 40, mafic complex; the acid-cloud world, y 20 to 90 ([The Gap](The_Gap.md#the-acid-cloud-world-by-rocket)) |
 | Pentlandite | Nickel (60%) | Overworld, y -32 to 40, mafic complex; the Nether, y 10 to 117, hot Nether belt |
 | Pyrolusite | Manganese (63%) | Overworld, y 0 to 64 |
 | Sphalerite | Zinc (67%) | Overworld, y -32 to 48, sulfide belt |

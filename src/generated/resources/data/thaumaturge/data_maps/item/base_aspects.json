@@ -37544,6 +37544,94 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:sperrylite_calcine": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:sperrylite_deepslate_ore": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:sperrylite_dust": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:sperrylite_loose_rock": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:sperrylite_lump": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:sperrylite_ore": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:sphalerite_calcine": [
       {
         "amount": 6,

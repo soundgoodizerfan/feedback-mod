@@ -16,6 +16,14 @@ The End is a point in the Gap along a fixed bearing, the gas giant in the sky (s
 
 The End's air is very thin and holds no oxygen, and is gone above y 320. A [thruster](Thruster.md) that carries its own oxidizer works there; an air-breathing one does not. A [Vacuum Dryer](Potion_Salts.md#vacuum-dryer) set in the End draws its chamber down with no shaft turning. Leaving upward out of the End's air, as in the Overworld climb, returns the craft to the Gap just short of the End, shrunk again.
 
+## The acid-cloud world by rocket
+
+The acid-cloud world is a second point in the Gap along its own fixed bearing, the ochre planet in the sky, farther from the origin than the End. A craft that gets within its capture sphere while heading toward it arrives in the acid-cloud world at full size, high up, coming in fast and descending. A craft that misses coasts on. The planet grows in the sky as the craft closes on it.
+
+The world has a yellow-green sky and fog, acid-green water and rain, and no mobs. The air is thick: density 3.0 at the ground, thinning with height to zero near the top of the build height (y 316). It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 90 Tu. Terrain is shaped like the Overworld's. Flying up out of the thick air returns the craft to the Gap just short of the planet, shrunk again.
+
+Its crust is rich in osmiridium, from y 20 to 90 ([Ores](Ores.md)).
+
 ## Coming back
 
 A body moving fast through air heats on its leading face. Blocks on the windward side burn off a voxel at a time when the heat passes what their material can take: burnable ones oxidize and metals melt. A block counts by the material it is a form of, so an iron block holds until iron melts and a wool block burns away at wool's oxidation temperature. A block that is no material's form does not burn. Thick burnable layers last longer, and refractory plates hold. Blocks that are only touching are not broken. A hard landing hurts everyone aboard like a fall of the speed change.
@@ -40,7 +48,7 @@ Four planets hang at fixed bearings, so each one is a landmark to steer toward:
 - **Crystal world.** Violet and teal.
 - **The End's gas giant.** Banded, low on the horizon and small.
 
-The other three keep their size as you travel. The gas giant starts small and grows as you close on the End.
+The frozen moon and the crystal world keep their size as you travel. The gas giant starts small and grows as you close on the End, and the acid-cloud world grows as you close on it.
 
 ## Radiation
 

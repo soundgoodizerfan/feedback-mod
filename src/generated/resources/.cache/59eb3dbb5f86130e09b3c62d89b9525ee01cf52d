@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-24T16:14:44.627757154	Loot Tables
+// 1.21.1	2026-11-24T18:44:57.751162192	Loot Tables
 3ec2d8235a145e9ecd4bc49404e31bff70407cfb data/feedback/loot_table/blocks/alnico_block.json
 7ceaa2b8bfe1b647eb0a2c985f24c7b8138994b8 data/feedback/loot_table/blocks/alnico_pipe.json
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
@@ -240,6 +240,9 @@ cd11c332686fbdc4e70429c4d28212ea94cb59fa data/feedback/loot_table/blocks/solder_
 3b27ba4aa26e14eb9063729f2b5cb965bd5074cb data/feedback/loot_table/blocks/soul_resin_block.json
 c72d497428199e431b188ecbc2a18d4619170165 data/feedback/loot_table/blocks/soul_resin_pipe.json
 118cf820e19b92bc34e9c1be9e3a1f85e3c2d46f data/feedback/loot_table/blocks/spent_fuel_rod_pipe.json
+c1707a11eb5209432d8ae85099e47cd27fadee02 data/feedback/loot_table/blocks/sperrylite_deepslate_ore.json
+70fbd5c533c11d980c892b609b2a1566262dc0a8 data/feedback/loot_table/blocks/sperrylite_loose_rock.json
+7a29cf07bb29eeef41b56b037e1bcf8752033b89 data/feedback/loot_table/blocks/sperrylite_ore.json
 7ccf3c1c256a70d57f6765d892d3fba57f6a6a43 data/feedback/loot_table/blocks/sphalerite_deepslate_ore.json
 339da87652d8ae664804a6c3caf38e41bb23514f data/feedback/loot_table/blocks/sphalerite_loose_rock.json
 d251b5c362f56effcc422bd9cabdc0dd8462864d data/feedback/loot_table/blocks/sphalerite_ore.json

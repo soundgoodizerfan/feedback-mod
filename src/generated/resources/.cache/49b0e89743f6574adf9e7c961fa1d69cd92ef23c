@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-24T16:14:44.615196311	Item Models: feedback
+// 1.21.1	2026-11-24T18:44:57.735595266	Item Models: feedback
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/acacia_grip.json
 1cbe171cef7392663517643cbe471f06b808ce0b assets/feedback/models/item/acacia_shaving.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/alnico_birdshot.json
@@ -2065,6 +2065,9 @@ ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/spent_fuel_
 73b4f7f3cf725c01eb98bccf08e086450a2a19e4 assets/feedback/models/item/spent_fuel_rod_screw.json
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/spent_fuel_rod_swarf.json
 8c6561c2f1587b8b174519f5b02c4f34cba746aa assets/feedback/models/item/spent_fuel_rod_welding_rod.json
+33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/sperrylite_calcine.json
+94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/sperrylite_dust.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/sperrylite_lump.json
 33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/sphalerite_calcine.json
 510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/sphalerite_concentrate.json
 81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/sphalerite_crushed.json

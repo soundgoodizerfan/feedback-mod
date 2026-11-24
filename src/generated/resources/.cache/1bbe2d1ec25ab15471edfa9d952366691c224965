@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-24T16:14:44.625450406	Tags for minecraft:block mod id feedback
+// 1.21.1	2026-11-24T18:44:57.749327172	Tags for minecraft:block mod id feedback
 5299fba2cf8a4d2241cff1374fa635c78187d415 data/c/tags/block/cobbles/deepslate.json
 e46c61e630c70c05b43ebfc298ed188210359830 data/c/tags/block/cobbles/stone.json
 ff5f6a7fd186e4aca55ed7b60721a78c9241c219 data/c/tags/block/deepslate_ores/alumina.json
@@ -39,6 +39,7 @@ ef8b405610ff0c6f5ae14a244f9ffa94f60a9a0d data/c/tags/block/deepslate_ores/pyrolu
 e07078fe48a5544b13c1493d1ccb7690d56c2309 data/c/tags/block/deepslate_ores/redstone.json
 e6a49d68ae9b35459bb2650ea69ec7c50b6500fa data/c/tags/block/deepslate_ores/ruby.json
 bfacb970c5259c5c146f66a30d97d287299d4028 data/c/tags/block/deepslate_ores/saltpetre.json
+0c3e673c4918eaad1a0bd39a76c2c312567d9d8a data/c/tags/block/deepslate_ores/sperrylite.json
 af67304dcbbf31dd0729e81fa5443859af1f301a data/c/tags/block/deepslate_ores/sphalerite.json
 74f4d6585c8b10778e158694c7c3f409cf416557 data/c/tags/block/deepslate_ores/spodumene.json
 d3f3c872283eab157aefe8fd6f8b27b448567ae3 data/c/tags/block/deepslate_ores/stibnite.json
@@ -89,6 +90,7 @@ a5f86255b4a4c69e8901db1968de825261670f05 data/c/tags/block/loose_rocks/osmiridiu
 72e57498a2a4e245c2fb04939e91b0fde3dbfec3 data/c/tags/block/loose_rocks/redstone.json
 ac77558326b90247208f579e52299de644b5c095 data/c/tags/block/loose_rocks/ruby.json
 f1e459bbf05a931a68a2914870b2feafe0fdbe63 data/c/tags/block/loose_rocks/saltpetre.json
+10981e20fb3571902d1db5b3ce56a689f970b9c6 data/c/tags/block/loose_rocks/sperrylite.json
 27cae528c6dbd4790018580b4122529f118a2565 data/c/tags/block/loose_rocks/sphalerite.json
 830ee16c0b1a7495ed76f04e864e5f2a5c36965b data/c/tags/block/loose_rocks/spodumene.json
 a5e8ba7af46f7e0d4f5340daa0513bea476d46bf data/c/tags/block/loose_rocks/stibnite.json
@@ -99,7 +101,7 @@ c8ed267cfc71260d6173babd86625edabea42eee data/c/tags/block/loose_rocks/sulfur.js
 d181f4e2cccf9cef013cdb8aa9e684b6db05ebc1 data/c/tags/block/loose_rocks/vanadinite.json
 2a857f48a6e29385a571d1be31dffbd1b2b84381 data/c/tags/block/loose_rocks/wolframite.json
 32e28512c91d3d7ab91d7b6f219dbd5da63654ad data/c/tags/block/loose_rocks/zinc.json
-49b7f36873d413f494a599bba0988648b92fb9bb data/c/tags/block/ores.json
+325c59fe7788da8b77096a06fbc8a25f043f0424 data/c/tags/block/ores.json
 35b1bc8d435c581a85001ba42a2bd4d9d99daccc data/c/tags/block/ores/alumina.json
 eff38d86e41cb6a657da04d366a61091921cddd4 data/c/tags/block/ores/argentite.json
 853e8786b8c8563da9edc9aee62a91fb2ad75fa1 data/c/tags/block/ores/bauxite.json
@@ -140,6 +142,7 @@ a0d593a86961ab4115652bfdb910e5c2c52c58f5 data/c/tags/block/ores/osmiridium.json
 428e31607b07d9d9fc0ae533d657f29e7e7810f0 data/c/tags/block/ores/redstone.json
 559a4ac13e8f6be8d0cb1c037b826b893ca2612d data/c/tags/block/ores/ruby.json
 39b8c2284db92358b8c01822f6f7fb680be01775 data/c/tags/block/ores/saltpetre.json
+c603121fbd5fcd6e27edae77463274f587b69490 data/c/tags/block/ores/sperrylite.json
 7620576eab1ef0430f4c347a6e6ed55d9314d9b5 data/c/tags/block/ores/sphalerite.json
 985e0170cabdd6f9031c86cd5824e8d6741cc6e6 data/c/tags/block/ores/spodumene.json
 1e7ac79db793c8f277b90c48a1a3dc8a864c0de7 data/c/tags/block/ores/stibnite.json
@@ -402,8 +405,8 @@ bc25e94ac1db7f5244adecf6ac0ff2275cbcd915 data/c/tags/block/storage_blocks/wrough
 825395f91e779f7526e3a038855418db0580fd76 data/feedback/tags/block/mineable/wrench.json
 513d6f343f36bc01daa756011e4dbbe32d3ff6b6 data/minecraft/tags/block/mineable/axe.json
 a45842e11a0f307ad8ba6b6b9af3cf1f17e5e45b data/minecraft/tags/block/mineable/hoe.json
-6f25df111e93c039b199acc5046581eef7e5f61b data/minecraft/tags/block/mineable/pickaxe.json
+5bd42c2558a6cc9d209076fdd4dc86e3b3eb6463 data/minecraft/tags/block/mineable/pickaxe.json
 ae9427d3f6cf27d8eb095f5fa284df1b89372e2b data/minecraft/tags/block/needs_iron_tool.json
-887b57db5cf2256c7718051c18405984a7ae6f1b data/minecraft/tags/block/needs_stone_tool.json
+45aff7d7130af30d0f43c29f2828106202544d64 data/minecraft/tags/block/needs_stone_tool.json
 4717983d563c31c9acec00d82adf8151d05e61f5 data/thaumaturge/tags/block/portable_hole_blacklist.json
 4717983d563c31c9acec00d82adf8151d05e61f5 data/thaumaturge/tags/block/taint_conversion_immune.json

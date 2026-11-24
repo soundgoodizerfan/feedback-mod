@@ -122,7 +122,7 @@ Then use the bearing with an empty hand to assemble the sheet as the turning par
 
 ## Air drag
 
-Every moving body is slowed by the air, in proportion to its speed **squared** and the dimension's **air density**: twice as fast is four times the drag. A craft pushed by [Thrusters](Thruster.md) tops out where its push equals the drag, about 20 blocks a second for one standard thruster and higher with more. The Nether's air is a little thicker than the Overworld's and the **End's is very thin** and holds no oxygen for a thruster to burn. A body with a thruster is held to about 40 blocks a second so it cannot fly through walls.
+Every moving body is slowed by the air, in proportion to its speed **squared** and the dimension's **air density**: twice as fast is four times the drag. A craft pushed by [Thrusters](Thruster.md) tops out where its push equals the drag, about 20 blocks a second for one standard thruster and higher with more. The Nether's air is a little thicker than the Overworld's and the **End's is very thin** and holds no oxygen for a thruster to burn. The [acid-cloud world's](The_Gap.md#the-acid-cloud-world-by-rocket) is far thicker than the Overworld's and holds no oxygen either. A body with a thruster is held to about 40 blocks a second so it cannot fly through walls.
 
 ### Air density
 

@@ -1,0 +1,50 @@
+{
+  "color": "#c9c9bd",
+  "kind": "mineral",
+  "abundance": 4.0,
+  "exclude": [
+    "ingot",
+    "crushed",
+    "concentrate",
+    "tailings"
+  ],
+  "hardness": 70,
+  "density": 10.6,
+  "thermal": {
+    "expansion": 8e-06,
+    "cooling_rate": 2.09,
+    "conductivity": 0.0175,
+    "melting_point": 1500,
+    "boiling_point": 2500,
+    "specific_heat": 0.2,
+    "latent_heat_fusion": 60,
+    "latent_heat_vaporisation": 2000,
+    "oxidation_temperature": 1500,
+    "service_temperature": 1100
+  },
+  "mechanical": {
+    "toughness": 5,
+    "friction": 0.4,
+    "abrasiveness": 0.45,
+    "yield_strength": 20
+  },
+  "separation": {
+    "reflectivity": 0.7
+  },
+  "bears": {
+    "feedback:platinum": 1.0
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 2.5,
+  "molten": {
+    "viscosity": 100,
+    "density": 9.5,
+    "shear_thickening": 0
+  },
+  "enchantability": 4,
+  "electrical": {
+    "conductivity": 0.08,
+    "drop": 0.5
+  },
+  "ampacity": 0.3
+}
