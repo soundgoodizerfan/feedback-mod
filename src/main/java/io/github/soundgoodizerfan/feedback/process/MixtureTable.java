@@ -44,6 +44,18 @@ public class MixtureTable extends SimpleJsonResourceReloadListener {
         Feedback.LOGGER.info("Loaded {} mixture rows", entries.size());
     }
 
+    /** The materials some melt row names as a dispersed solid: stock of one stirred into a melt joins its ledger as a suspended solid. */
+    public java.util.Set<net.minecraft.resources.ResourceLocation> dispersed() {
+        java.util.Set<net.minecraft.resources.ResourceLocation> out = new java.util.HashSet<>();
+        for (Mixture row : entries)
+            if (row.hasFluidResult())
+                row.parts().forEach((id, range) -> {
+                    if (range.dispersed())
+                        out.add(id);
+                });
+        return out;
+    }
+
     public List<Mixture> entries() {
         return entries;
     }

@@ -39,6 +39,17 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public final class AlloyMix {
 
     private final Map<Fluid, Integer> content = new LinkedHashMap<>();
+    /** Solids suspended in the melt (a dispersed part of a {@link Mixture} row), by material, in mB: they never melt, never boil off, and leave with the melt. */
+    private final Map<ResourceLocation, Integer> solids = new LinkedHashMap<>();
+
+    public void addSolid(ResourceLocation material, int amount) {
+        if (amount > 0)
+            solids.merge(material, amount, Integer::sum);
+    }
+
+    public Map<ResourceLocation, Integer> solids() {
+        return solids;
+    }
 
     public void add(Fluid fluid, int amount) {
         if (fluid == Fluids.EMPTY || amount <= 0)
@@ -63,6 +74,15 @@ public final class AlloyMix {
         int total = 0;
         for (int value : content.values())
             total += value;
+        for (int value : solids.values())
+            total += value;
+        return total;
+    }
+
+    private int fluidAmount() {
+        int total = 0;
+        for (int value : content.values())
+            total += value;
         return total;
     }
 
@@ -82,7 +102,28 @@ public final class AlloyMix {
             return;
         if (removedAmount >= total) {
             content.clear();
+            solids.clear();
             return;
+        }
+        // The suspended solids leave in proportion with the melt that carries them.
+        if (!solids.isEmpty()) {
+            int fromSolids = Math.round(removedAmount * (total - fluidAmount()) / (float) total);
+            int left = total - fluidAmount() - fromSolids;
+            int before = total - fluidAmount();
+            if (before > 0)
+                solids.replaceAll((id, mb) -> Math.max(0, Math.round(mb * (left / (float) before))));
+            solids.values().removeIf(value -> value <= 0);
+            removedAmount -= fromSolids;
+            total = fluidAmount();
+            if (removedAmount <= 0 || total <= 0) {
+                if (total <= 0)
+                    content.clear();
+                return;
+            }
+            if (removedAmount >= total) {
+                content.clear();
+                return;
+            }
         }
         // Largest remainder: floor every share, then hand the leftover mB to the metals with the
         // biggest fractional parts. Rounding each share on its own creates or destroys metal and
@@ -119,7 +160,7 @@ public final class AlloyMix {
         int total = amount();
         if (total <= 0)
             return FluidStack.EMPTY;
-        if (content.size() == 1) {
+        if (content.size() == 1 && solids.isEmpty()) {
             Map.Entry<Fluid, Integer> only = content.entrySet().iterator().next();
             return new FluidStack(only.getKey(), only.getValue());
         }
@@ -131,6 +172,7 @@ public final class AlloyMix {
                 return FluidStack.EMPTY;
             byMaterial.merge(material.get(), e.getValue(), Integer::sum);
         }
+        solids.forEach((id, mb) -> byMaterial.merge(id, mb, Integer::sum));
         for (Mixture row : MixtureTable.get().entries())
             if (row.hasFluidResult() && row.matchesAmounts(byMaterial))
                 return new FluidStack(row.resultFluid().getFluid(), total);
@@ -146,10 +188,22 @@ public final class AlloyMix {
             list.add(entry);
         });
         tag.put("Alloy", list);
+        ListTag grit = new ListTag();
+        solids.forEach((id, mb) -> {
+            CompoundTag entry = new CompoundTag();
+            entry.putString("Material", id.toString());
+            entry.putInt("Amount", mb);
+            grit.add(entry);
+        });
+        tag.put("Solids", grit);
     }
 
     public void readNbt(CompoundTag tag) {
         content.clear();
+        solids.clear();
+        ListTag grit = tag.getList("Solids", Tag.TAG_COMPOUND);
+        for (int i = 0; i < grit.size(); i++)
+            addSolid(ResourceLocation.parse(grit.getCompound(i).getString("Material")), grit.getCompound(i).getInt("Amount"));
         if (!tag.contains("Alloy"))
             return;
         ListTag list = tag.getList("Alloy", Tag.TAG_COMPOUND);

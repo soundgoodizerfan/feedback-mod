@@ -6,7 +6,8 @@
     },
     "feedback:amethyst": {
       "min": 0.06,
-      "max": 0.1
+      "max": 0.1,
+      "dispersed": true
     }
   },
   "result_fluid": {

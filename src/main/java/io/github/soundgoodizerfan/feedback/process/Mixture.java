@@ -45,12 +45,14 @@ public record Mixture(Map<ResourceLocation, Range> parts, float stray, ItemStack
      * is adapted from TerraFirmaCraft's {@code AlloyRange}/{@code AlloyRecipe} (EUPL-1.2, cleared for
      * reading per {@code THIRD-PARTY-LICENSES.md}); the shape of the idea, not the code.
      */
-    public record Range(float min, float max) {
+    public record Range(float min, float max, boolean dispersed) {
         public static final Codec<Range> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.floatRange(0f, 1f).fieldOf("min").forGetter(Range::min),
-                Codec.floatRange(0f, 1f).fieldOf("max").forGetter(Range::max)
+                Codec.floatRange(0f, 1f).fieldOf("max").forGetter(Range::max),
+                Codec.BOOL.optionalFieldOf("dispersed", false).forGetter(Range::dispersed)
         ).apply(i, Range::new));
 
+        /** {@code dispersed}: the part is a solid that does not melt at the pour (grit, fibre) and rides suspended in the melt, counted by volume. */
         public boolean isIn(float fraction) {
             return fraction >= min - EPSILON && fraction <= max + EPSILON;
         }

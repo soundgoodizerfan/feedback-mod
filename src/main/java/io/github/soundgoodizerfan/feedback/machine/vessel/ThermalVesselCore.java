@@ -424,6 +424,21 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
             sync();
             return;
         }
+        // Grit stirred into a melt: stock of a material some melt row names as dispersed joins the ledger as a suspended solid, a piece at a time.
+        if (alloy.amount() > 0 && takesMelt()) {
+            var located = Material.find(MaterialTable.get().materials(), input.getItem());
+            if (located.isPresent() && io.github.soundgoodizerfan.feedback.process.MixtureTable.get().dispersed().contains(located.get().id())) {
+                int mb = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(located.get().form());
+                if (mb <= tank.getCapacity() - alloy.amount()) {
+                    alloy.addSolid(located.get().id(), mb);
+                    input.shrink(1);
+                    cleanEmpties(contents);
+                    refreshTank();
+                    sync();
+                    return;
+                }
+            }
+        }
         // A plain dip (wash dirt to clay, wet wheat to dough) works on a stack sitting in the vessel the same as one held to it; a coat or imbue needs a hand. It runs before the food ladder: a bath is a deliberate act, and a food in a bath that has a dip for it is dipped, not cooked.
         var dip = ThermalProcessTable.get().findDip(tank.getFluid(), input, new Tu(temperature));
         if (dip.isPresent() && dip.get().coat().isEmpty() && (!dip.get().hasFluidResult() || takesMelt())) {

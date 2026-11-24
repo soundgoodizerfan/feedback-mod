@@ -97,7 +97,7 @@ public class MixtureCategory implements IRecipeCategory<Mixture> {
         graphics.drawString(font, (recipe.hasFluidResult() ? recipe.resultFluid().getHoverName() : recipe.result().getHoverName()).getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         int y = 13;
         for (var part : recipe.parts().entrySet()) {
-            graphics.drawString(font, Math.round(part.getValue().min() * 100) + "-" + Math.round(part.getValue().max() * 100) + "%", 1, y, VALUE_COLOUR, false);
+            graphics.drawString(font, Math.round(part.getValue().min() * 100) + "-" + Math.round(part.getValue().max() * 100) + "%" + (part.getValue().dispersed() ? " " + Component.translatable("feedback.jei.mixture.dispersed").getString() : ""), 1, y, VALUE_COLOUR, false);
             var trait = Mixture.traitOf(part.getKey());
             Component name = trait != null ? Component.translatable("feedback.jei.mixture.trait." + trait.name().toLowerCase(Locale.ROOT))
                     : CartridgeItem.name(part.getKey());

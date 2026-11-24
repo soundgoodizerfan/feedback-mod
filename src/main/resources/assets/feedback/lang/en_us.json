@@ -2528,6 +2528,7 @@
   "feedback.jei.info.pyrite": "A rectifying crystal, poorer than galena. Seat it in a cat's whisker detector, or mount it on a trace board as a switching part.",
   "feedback.jei.dip": "Dipping",
   "feedback.jei.mixture": "Mixing",
+  "feedback.jei.mixture.dispersed": "(solid, stirred in)",
   "feedback.jei.mixture.stray": "Anything else: up to %s%%",
   "feedback.jei.mixture.pure": "Nothing else in it.",
   "feedback.jei.mixture.trait.woody": "Any wood",
