@@ -228,6 +228,9 @@ public final class FModular {
 
     public static final DeferredItem<Item> BALANCE_SCALE = ITEMS.registerItem("balance_scale",
             io.github.soundgoodizerfan.feedback.item.BalanceScaleItem::new, new Item.Properties().stacksTo(1));
+    /** Reads what a sample is made of, on tooltips, for whoever carries it. */
+    public static final DeferredItem<Item> SPECTROMETER = ITEMS.registerItem("spectrometer",
+            io.github.soundgoodizerfan.feedback.item.SpectrometerItem::new, new Item.Properties().stacksTo(1));
     /** Reads the draw and launch figures of a bow, a crossbow, a spring or a spring gun and stamps them on it. */
     public static final DeferredItem<Item> DRAW_GAUGE = ITEMS.registerItem("draw_gauge",
             io.github.soundgoodizerfan.feedback.item.DrawGaugeItem::new, new Item.Properties().stacksTo(1));

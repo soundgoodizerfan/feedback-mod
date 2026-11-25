@@ -118,7 +118,9 @@ public enum Quantity implements StringRepresentable {
     /** A force on a body, in Fu (kN): a flight sensor's Contraption Diagram resolves it. Appended, never inserted. */
     FORCE("force"),
     /** Where a body is east or south of the world's origin, in blocks, to a coarse step: a flight sensor reads it. Appended, never inserted. */
-    POSITION("position");
+    POSITION("position"),
+    /** What a sample is made of, as shares of its constituents in percent: read by the spectrometer. */
+    COMPOSITION("composition");
 
     private final String key;
 

@@ -547,6 +547,8 @@ public final class ModularTuning {
 
     /** A balance scale reads to this many Mu. */
     public static final float BALANCE_RESOLUTION = 0.1f;
+    /** The spectrometer tells a share of a sample's makeup to this many percent. */
+    public static final float SPECTROMETER_RESOLUTION_PERCENT = 5f;
     /** The hardness of each file in a set: a file bites anything softer than itself. */
     public static final float[] SCRATCH_FILES = {0.5f, 1f, 2f, 5f, 10f, 20f, 40f, 80f};
 
