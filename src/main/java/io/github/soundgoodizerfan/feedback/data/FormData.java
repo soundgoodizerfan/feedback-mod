@@ -100,8 +100,36 @@ public final class FormData {
     }
 
     public static LootTableProvider loot(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
+        // The loot provider has no way to attach conditions, so a block of a conditional material gets its material's on the way to disk.
         return new LootTableProvider(output, Set.of(), List.of(
-                new LootTableProvider.SubProviderEntry(Loot::new, LootContextParamSets.BLOCK)), lookup);
+                new LootTableProvider.SubProviderEntry(Loot::new, LootContextParamSets.BLOCK)), lookup) {
+            @Override
+            public CompletableFuture<?> run(net.minecraft.data.CachedOutput real) {
+                return super.run((path, data, hash) -> {
+                    String name = path.getFileName().toString();
+                    var conditions = name.endsWith(".json") && path.getParent() != null && path.getParent().getFileName().toString().equals("blocks")
+                            ? FormItems.conditionsOf(name.substring(0, name.length() - ".json".length())) : null;
+                    if (conditions == null) {
+                        real.writeIfNeeded(path, data, hash);
+                        return;
+                    }
+                    var table = com.google.gson.JsonParser.parseString(new String(data, java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+                    var stamped = new com.google.gson.JsonObject();
+                    stamped.add(io.github.soundgoodizerfan.feedback.core.LoadConditions.KEY, conditions);
+                    table.entrySet().forEach(e -> stamped.add(e.getKey(), e.getValue()));
+                    byte[] bytes = new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(stamped).getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                    real.writeIfNeeded(path, bytes, com.google.common.hash.Hashing.sha1().hashBytes(bytes));
+                });
+            }
+        };
+    }
+
+    /** A material file's {@code neoforge:conditions} as conditions to stamp on generated data. */
+    static net.neoforged.neoforge.common.conditions.ICondition[] conditions(com.google.gson.JsonArray array) {
+        var list = new java.util.ArrayList<net.neoforged.neoforge.common.conditions.ICondition>();
+        array.forEach(c -> list.add(net.neoforged.neoforge.common.conditions.ICondition.CODEC
+                .parse(com.mojang.serialization.JsonOps.INSTANCE, c).getOrThrow()));
+        return list.toArray(net.neoforged.neoforge.common.conditions.ICondition[]::new);
     }
 
     private static class Loot extends BlockLootSubProvider {
@@ -180,6 +208,16 @@ public final class FormData {
         };
     }
 
+    /** An entry of a tag: a block or item of a conditional material is optional, so the tag still loads when its mod is absent and the thing is not registered. */
+    static <T> void put(net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender<T> tag,
+                                net.minecraft.core.Registry<T> registry, T entry) {
+        ResourceLocation id = registry.getKey(entry);
+        if (Feedback.MOD_ID.equals(id.getNamespace()) && FormItems.conditionsOf(id.getPath()) != null)
+            tag.addOptional(id);
+        else
+            tag.add(entry);
+    }
+
     private static ResourceLocation formTag(Material.Located located) {
         return ResourceLocation.fromNamespaceAndPath("c", tagFolder(located.form()) + "/" + located.id().getPath());
     }
@@ -193,9 +231,9 @@ public final class FormData {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            FormItems.all().forEach(g -> tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,
-                    formTag(new Material.Located(g.material(), FormItems.materials().get(g.material()), g.form()))))
-                    .add(g.item().get()));
+            FormItems.all().forEach(g -> put(tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,
+                    formTag(new Material.Located(g.material(), FormItems.materials().get(g.material()), g.form())))),
+                    net.minecraft.core.registries.BuiltInRegistries.ITEM, g.item().get()));
             listed((located, id) -> tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, formTag(located))).addOptional(id));
         }
     }
@@ -217,9 +255,10 @@ public final class FormData {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             // A generated block form is also in its form's common block tag (c:storage_blocks/<material>).
-            FormItems.all().stream().filter(g -> g.block() != null).forEach(g -> tag(net.minecraft.tags.TagKey.create(
+            FormItems.all().stream().filter(g -> g.block() != null).forEach(g -> put(tag(net.minecraft.tags.TagKey.create(
                     net.minecraft.core.registries.Registries.BLOCK,
-                    formTag(new Material.Located(g.material(), FormItems.materials().get(g.material()), g.form())))).add(g.block().get()));
+                    formTag(new Material.Located(g.material(), FormItems.materials().get(g.material()), g.form())))),
+                    net.minecraft.core.registries.BuiltInRegistries.BLOCK, g.block().get()));
             listed((located, id) -> {
                 if (net.minecraft.core.registries.BuiltInRegistries.BLOCK.containsKey(id))
                     tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, formTag(located))).addOptional(id);
@@ -227,7 +266,7 @@ public final class FormData {
             // A block of foodstuff is cut with a hoe, as vanilla's soft organic blocks are; the rest are stone and metal.
             FormItems.all().stream().filter(g -> g.block() != null).forEach(g -> {
                 boolean food = FormItems.materials().get(g.material()).food().isPresent();
-                tag(food ? BlockTags.MINEABLE_WITH_HOE : BlockTags.MINEABLE_WITH_PICKAXE).add(g.block().get());
+                put(tag(food ? BlockTags.MINEABLE_WITH_HOE : BlockTags.MINEABLE_WITH_PICKAXE), net.minecraft.core.registries.BuiltInRegistries.BLOCK, g.block().get());
             });
             // Vanilla-replacing blocks: same tool tag as the vanilla block they stand in for.
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
@@ -257,21 +296,23 @@ public final class FormData {
                                         net.minecraft.core.BlockPos.ZERO) <= 0.2f
                                 || st.is(BlockTags.MINEABLE_WITH_SHOVEL) || b instanceof io.github.soundgoodizerfan.feedback.item.FormBlock fb && fb.food()) return;
                         String path = e.getKey().location().getPath();
-                        tag(wooden.contains(path)
-                                ? BlockTags.MINEABLE_WITH_AXE : BlockTags.MINEABLE_WITH_PICKAXE).add(b);
+                        put(tag(wooden.contains(path)
+                                ? BlockTags.MINEABLE_WITH_AXE : BlockTags.MINEABLE_WITH_PICKAXE), net.minecraft.core.registries.BuiltInRegistries.BLOCK, b);
                         // A machine housing is built stuff, not terrain: Thaumaturge's taint does not convert it (interop tag, a no-op without that mod).
                         // A portable hole does not eat one either: it holds a tank, a charge or a heat that a hole would spill.
                         if (b instanceof net.minecraft.world.level.block.EntityBlock) {
-                            tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
-                                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("thaumaturge", "taint_conversion_immune"))).add(b);
-                            tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
-                                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("thaumaturge", "portable_hole_blacklist"))).add(b);
+                            put(tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("thaumaturge", "taint_conversion_immune"))),
+                                    net.minecraft.core.registries.BuiltInRegistries.BLOCK, b);
+                            put(tag(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("thaumaturge", "portable_hole_blacklist"))),
+                                    net.minecraft.core.registries.BuiltInRegistries.BLOCK, b);
                         }
                         // Bolted machines and pipes come apart fast with a wrench; wires and stations do not.
                         if (!wooden.contains(path) && !path.equals("cable") && !path.equals("fence")
                                 && !path.equals("xp_wire")
                                 && (b instanceof net.minecraft.world.level.block.EntityBlock || path.equals("lift"))) {
-                            tag(io.github.soundgoodizerfan.feedback.item.WrenchItem.MINEABLE).add(b);
+                            put(tag(io.github.soundgoodizerfan.feedback.item.WrenchItem.MINEABLE), net.minecraft.core.registries.BuiltInRegistries.BLOCK, b);
                         }
                     });
             FormItems.all().stream().filter(g -> g.block() != null && g.form().endsWith("ore"))
@@ -369,9 +410,17 @@ public final class FormData {
         @Override
         protected void buildRecipes(RecipeOutput output) {
             for (Map.Entry<ResourceLocation, Material> e : FormItems.materials().entrySet()) {
-                compress(output, e.getKey(), e.getValue(), "nugget", "ingot");
-                compress(output, e.getKey(), e.getValue(), "ingot", "block");
+                // A conditional material's recipes (and their advancements) carry its conditions, so they load only with its mod.
+                RecipeOutput out = conditioned(output, FormItems.conditionsOf(e.getKey().getPath()));
+                compress(out, e.getKey(), e.getValue(), "nugget", "ingot");
+                compress(out, e.getKey(), e.getValue(), "ingot", "block");
             }
+        }
+
+        private static RecipeOutput conditioned(RecipeOutput output, com.google.gson.JsonArray conditions) {
+            if (conditions == null)
+                return output;
+            return output.withConditions(FormData.conditions(conditions));
         }
 
         private static void compress(RecipeOutput output, ResourceLocation id, Material material,

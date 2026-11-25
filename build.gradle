@@ -31,6 +31,8 @@ neoForge {
         }
         data {
             data()
+            // Conditional materials (Thaumaturge, AE2) generate their data too, each file carrying its condition.
+            systemProperty 'feedback.datagen', 'true'
             programArguments.addAll '--mod', project.mod_id,
                     '--all',
                     '--output', file('src/generated/resources/').absolutePath,

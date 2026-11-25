@@ -60,7 +60,19 @@ public final class FormItems {
     private static Map<String, FormType> types = Map.of();
     private static Map<ResourceLocation, Material> materials = Map.of();
 
+    private static final Map<String, com.google.gson.JsonArray> CONDITIONS = new TreeMap<>();
+
     private FormItems() {}
+
+    /**
+     * The load conditions of the conditional material that a registry path ({@code thaumium_lean_pipe}) is a form of, for datagen to
+     * stamp on what it writes; null for an unconditional one. Recorded when the materials are read, before the filter drops them.
+     */
+    public static com.google.gson.JsonArray conditionsOf(String registryPath) {
+        String path = registryPath.startsWith("molten_") ? registryPath.substring("molten_".length()) : registryPath;
+        return CONDITIONS.entrySet().stream().filter(e -> path.equals(e.getKey()) || path.startsWith(e.getKey() + "_"))
+                .max(java.util.Comparator.comparingInt(e -> e.getKey().length())).map(Map.Entry::getValue).orElse(null);
+    }
 
     public static List<Generated> all() {
         return List.copyOf(ALL);
@@ -181,6 +193,11 @@ public final class FormItems {
             Feedback.LOGGER.error("Could not list {}", dir, e);
         }
         // A file that names another mod's items carries a mod_loaded condition: without that mod it generates nothing.
+        if (directory.equals("material"))
+            out.forEach((id, element) -> {
+                if (element.isJsonObject() && element.getAsJsonObject().has(io.github.soundgoodizerfan.feedback.core.LoadConditions.KEY))
+                    CONDITIONS.put(id.getPath(), element.getAsJsonObject().getAsJsonArray(io.github.soundgoodizerfan.feedback.core.LoadConditions.KEY));
+            });
         return io.github.soundgoodizerfan.feedback.core.LoadConditions.filter(out);
     }
 }

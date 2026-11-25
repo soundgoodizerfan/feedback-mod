@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-25T14:55:04.452208921	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-25T15:16:03.562614304	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
@@ -75,6 +75,9 @@ c1a8e4a84c84b7784799581a4e1998cde9bc080a data/c/tags/item/birdshots/stainless_st
 0b3dabf9a4b280e5bca74f49e5ae0aa275dbaa7d data/c/tags/item/birdshots/stellite.json
 73a063d104df5bac2275c7b723e8cfcad3ddff27 data/c/tags/item/birdshots/synthetic_rubber.json
 dbd7a6a27cfb32b8d2c9458c3b8ea7b15022a880 data/c/tags/item/birdshots/tempered_steel.json
+8df392f347c2500e4a3e2b9bc67662a084e7dee9 data/c/tags/item/birdshots/thaumium.json
+e7dc0bd729e057e64771be2ec01902275f7de61a data/c/tags/item/birdshots/thaumium_lean.json
+0a3a5af3c407add73e1bedaacb2301c5db50a9d1 data/c/tags/item/birdshots/thaumium_rich.json
 92e93bca19d5425f162773328d9c67567cfe1b8b data/c/tags/item/birdshots/thorium.json
 53154032780327fcc905cecb9dcfc593b24df73e data/c/tags/item/birdshots/thorium_fuel_rod.json
 69aee4621ea380929c13911bcfcf25ea832e52d7 data/c/tags/item/birdshots/thorium_tungsten.json
@@ -88,6 +91,7 @@ dbd7a6a27cfb32b8d2c9458c3b8ea7b15022a880 data/c/tags/item/birdshots/tempered_ste
 95404e1daa10a195c981904f440f7f32e8ac6e4c data/c/tags/item/birdshots/uranium_depleted.json
 ee3399e1db4c0bacf99cb08b5941663a2f44ff1a data/c/tags/item/birdshots/uranium_enriched.json
 5a3a1f6e2a585ebfb74775bab2b8030fe0912895 data/c/tags/item/birdshots/vanadium.json
+94495b33a1a85dbf4c20595280b1a3da76522679 data/c/tags/item/birdshots/void_metal.json
 ab02a223ff45adb7d70f26be7a65f5bc298c5a73 data/c/tags/item/birdshots/woods_metal.json
 e92b4f5d9956a6617776395a6f29094cd87c3d6d data/c/tags/item/birdshots/wrought_iron.json
 58e1f14b8d9e24a588deb0fb2063654730e918cc data/c/tags/item/birdshots/zinc.json
@@ -160,6 +164,9 @@ c9cb755cc987fb5b9848c4185280123220684c9b data/c/tags/item/bullets/spent_fuel_rod
 25a0a9fe7f074b6371ebb705d9b7025858683262 data/c/tags/item/bullets/steel.json
 4d6673a1bff367d41dfea8e68b092bd65d353dea data/c/tags/item/bullets/stellite.json
 6bcd9998d28d3e1f561a5c96ebbdf9a427567f06 data/c/tags/item/bullets/synthetic_rubber.json
+11bab4988d104347f8a3f22dc41d0ae33fc33cd1 data/c/tags/item/bullets/thaumium.json
+62d6b53e0ff2ec5394837684fc8b0c3a79aaa423 data/c/tags/item/bullets/thaumium_lean.json
+d10bb4a98b38387dd57f9ed04033956598cebfcc data/c/tags/item/bullets/thaumium_rich.json
 bbde237dbe9dc019c7f19630c56db3ebdc9dd490 data/c/tags/item/bullets/thorium.json
 85e082e010e328e2460dfbc85f7b2b5d109a5a00 data/c/tags/item/bullets/thorium_fuel_rod.json
 4b6758bbc4603acde58715652e1b6db78f88b22f data/c/tags/item/bullets/thorium_tungsten.json
@@ -275,6 +282,9 @@ c25efbe228548fc7963449743d7bec2607c78d0d data/c/tags/item/cases/silver.json
 c4367f592790da03bb9e611d1b9707746a44a210 data/c/tags/item/cases/stainless_steel.json
 d9b258ca5df14d6c43da5ba720c93e252de845ff data/c/tags/item/cases/steel.json
 8d3436b09ed70b15af063b1c7f33abb9eb40df54 data/c/tags/item/cases/stellite.json
+5074725c72a5056265dd3a4883ef1910783fc886 data/c/tags/item/cases/thaumium.json
+6d2479399161a1fe519785c664be45daf1ad5f25 data/c/tags/item/cases/thaumium_lean.json
+390ba63c4ff16664f8223860e1a1f078bee1162b data/c/tags/item/cases/thaumium_rich.json
 1e93a8b124831ace80ea59ade9120a8c2962d0a1 data/c/tags/item/cases/thorium.json
 84b2257bcb0cab270e238a9592912800fa9285ad data/c/tags/item/cases/thorium_fuel_rod.json
 792edc8b303414ffb48ce97cc63f266744e44ce2 data/c/tags/item/cases/thorium_tungsten.json
@@ -361,6 +371,9 @@ a13a50bb7bcea2dd85e0a99918e1b556c51e956c data/c/tags/item/coil_springs/solder_fr
 2f6d538327724f3dae416ee073785a0433b9b32b data/c/tags/item/coil_springs/steel.json
 89b4d51547a8100a5d52847be25063fbdd21ac6a data/c/tags/item/coil_springs/stellite.json
 e5068570f79c56af34b884e9ea53674f1efc48de data/c/tags/item/coil_springs/tempered_steel.json
+f1853e9aa2f5cc539f8fb0718979730eb2fab2f3 data/c/tags/item/coil_springs/thaumium.json
+4a0d4aab92b6ac832a6118d1bc7718842dfad2b9 data/c/tags/item/coil_springs/thaumium_lean.json
+d32f2ec7340bea66c8e652dacf1473534c401dc9 data/c/tags/item/coil_springs/thaumium_rich.json
 facd93d79d71c2dfb379b27b5b98e53b1d564c7e data/c/tags/item/coil_springs/thorium.json
 72e28480a9e0c70bdc35c925d599b18277684e1c data/c/tags/item/coil_springs/thorium_fuel_rod.json
 644c243edeb770950982f4be0d5a3c5dc0f1c46c data/c/tags/item/coil_springs/thorium_tungsten.json
@@ -374,6 +387,7 @@ d226d06cb7c8434366124e357050e020b6903a11 data/c/tags/item/coil_springs/tungsten.
 c731afa5be319b90f2788394a2a85f7df887a980 data/c/tags/item/coil_springs/uranium_depleted.json
 55150a16dd3812b78e711206985089783201f9a4 data/c/tags/item/coil_springs/uranium_enriched.json
 c07d90a0b619052d26ddb8128e036716306efc67 data/c/tags/item/coil_springs/vanadium.json
+f102b6026ecdad9c1e5615aa9623658bcde4eba5 data/c/tags/item/coil_springs/void_metal.json
 ecaf2d119b9f63fd6d96525b6c611b9afcb50d89 data/c/tags/item/coil_springs/woods_metal.json
 7e03861ab32bdb0f6a66e063f3a312545bdcc558 data/c/tags/item/coil_springs/wrought_iron.json
 d8e3176b3a9a40933ef1ab1036d03391300ac5e7 data/c/tags/item/coil_springs/zinc.json
@@ -434,6 +448,9 @@ db384a2c2e01ec1bbc5374de26ff40e9e5a7547b data/c/tags/item/coins/stainless_steel.
 5a597699fce37941ef2878d8ee7fecef36123ecc data/c/tags/item/coins/steel.json
 575dddf3ef3329db6d8219b2b83f88c2c72f32b6 data/c/tags/item/coins/stellite.json
 bbc1c418b7ac73c8c8e09ac8f3c2b798269b6349 data/c/tags/item/coins/tempered_steel.json
+a56155d48cb9f91b7fccbbc45e49a049afd5a564 data/c/tags/item/coins/thaumium.json
+db67540c4067e7bbb1c5d932538fcec33c65a003 data/c/tags/item/coins/thaumium_lean.json
+2e8136ed14d8ac462a79f766208207d8e5112101 data/c/tags/item/coins/thaumium_rich.json
 90aed2f1834373497bf40ab0248751727b60669f data/c/tags/item/coins/thorium.json
 c6bb706f685e319f9dcf1831f7dfea6d3b9f8f1f data/c/tags/item/coins/thorium_fuel_rod.json
 91cc1aa0a6ac55e625b6f19b54e02f7c272b098e data/c/tags/item/coins/thorium_tungsten.json
@@ -531,10 +548,12 @@ b80a9acb48db275b5119282e0c3aff8c8d50a54e data/c/tags/item/crushed/wolframite.jso
 d54432e34f5908b486e6f4dc84e241fa784596df data/c/tags/item/crushed/zinc.json
 d0533cad0932f7611f14832adff23b135c0fd8d0 data/c/tags/item/crystal_plates/amethyst.json
 0c04a3e455707d80c1d4aa4b286e4aa51d54d32f data/c/tags/item/crystal_plates/beryl.json
+5e20097d753f0efc055e0055cd3d9916deecce65 data/c/tags/item/crystal_plates/certus_quartz.json
 6c6c8e47521f045b9c4533faf69224cc4f705cfa data/c/tags/item/crystal_plates/cuprite.json
 398152163a386107d40f2753a2f42ed6d0ff76ce data/c/tags/item/crystal_plates/diamond.json
 9c2705d3dc56b5dfecc6d83ca691841cd185f79e data/c/tags/item/crystal_plates/echo_shard.json
 8d880b9e409fa8d14a38aae3c5b171bbbd7f9bef data/c/tags/item/crystal_plates/emerald.json
+d6349fee054097516621cd9dac5040a73abe3673 data/c/tags/item/crystal_plates/fluix.json
 7c025856560e3cfc94fc40dd02b71ea44dd84030 data/c/tags/item/crystal_plates/galena.json
 fdf1fed2274839d59f2d914d00f6bba5454de288 data/c/tags/item/crystal_plates/garnet.json
 48230205ede3ef6a192016bc0eb9891c4c78c2ef data/c/tags/item/crystal_plates/prismarine.json
@@ -614,6 +633,9 @@ d8c522aaf34306392bcaf45b6afa67d9607281e6 data/c/tags/item/cut_machine_bolts/stai
 db4ba0622dfafcc360fb833474d511e091646360 data/c/tags/item/cut_machine_bolts/steel.json
 b6b3276cd0d6c64a5eb1f17b0720820b22580cd7 data/c/tags/item/cut_machine_bolts/stellite.json
 ba63a8d8386f51013d0df10ff4a30110e151490d data/c/tags/item/cut_machine_bolts/tempered_steel.json
+faff4af084983866019154d2fbe378fd31cd2b3f data/c/tags/item/cut_machine_bolts/thaumium.json
+16277386bb67c9428f4e08d96d8b1a7f2c41430f data/c/tags/item/cut_machine_bolts/thaumium_lean.json
+b24e10f5581bf2f46d6b29209645ad624515c773 data/c/tags/item/cut_machine_bolts/thaumium_rich.json
 a532b339b06beddb340493480bc5969910c2dd7b data/c/tags/item/cut_machine_bolts/thorium.json
 cf31f6caf69ac3bef1b22d49ed436a07dc2aa60c data/c/tags/item/cut_machine_bolts/thorium_fuel_rod.json
 a2ece1f31e2ab02ef04253f2858b3278760c23b9 data/c/tags/item/cut_machine_bolts/thorium_tungsten.json
@@ -627,6 +649,7 @@ acf1a6a402510b4583acb61ab3e0b25cc1fb1058 data/c/tags/item/cut_machine_bolts/tin.
 b6b338a58faaceadd29a7104acf0a5c0d207f13d data/c/tags/item/cut_machine_bolts/uranium_depleted.json
 b4863e1073f9bb7a568c16e8aa80949760130565 data/c/tags/item/cut_machine_bolts/uranium_enriched.json
 a1fbc81bfe065ed0a49c211f8120863988f92fb5 data/c/tags/item/cut_machine_bolts/vanadium.json
+06b7cdea1e62013a4e11bffd772a0e8e5aae03b9 data/c/tags/item/cut_machine_bolts/void_metal.json
 c90290749bc72d8e4b379c724e357519b34d9cfd data/c/tags/item/cut_machine_bolts/woods_metal.json
 024cec9c56fb3aff008fbc8289012f41095f64cf data/c/tags/item/cut_machine_bolts/wrought_iron.json
 299d79e79ddec5bf0cce7fe8b56abf58ca204934 data/c/tags/item/cut_machine_bolts/zinc.json
@@ -699,6 +722,9 @@ e5f72984cbfb0f1cb7d4cd0f63aae3be0e374e70 data/c/tags/item/cut_screws/stainless_s
 6125e82e39d36fba6f3ce61947dd1a98ca58b911 data/c/tags/item/cut_screws/steel.json
 6841c126d6df1d916921a9d9ea4c6d1b460d43b5 data/c/tags/item/cut_screws/stellite.json
 cdbb3add17d06c372690a7ab8de801c57a22deb5 data/c/tags/item/cut_screws/tempered_steel.json
+b69111adb7bc891a7d8ceaa7f7290354f6aa0a8e data/c/tags/item/cut_screws/thaumium.json
+5c9324fe471f8e61bbbc168674b7b97cbfa97162 data/c/tags/item/cut_screws/thaumium_lean.json
+64a0b6bf012ac9e227345b400fd68a5bad998a2b data/c/tags/item/cut_screws/thaumium_rich.json
 e2095831d2517038fb37f4fcd02ec242619a0365 data/c/tags/item/cut_screws/thorium.json
 748b8ee0d62431fab956277de210224b68e6c1ac data/c/tags/item/cut_screws/thorium_fuel_rod.json
 9aac7f2d8adb58038f25753ee078b2df11793e0b data/c/tags/item/cut_screws/thorium_tungsten.json
@@ -712,6 +738,7 @@ f7fb5f117b3b3fc01a7f34704d8b640764a481cc data/c/tags/item/cut_screws/uranium.jso
 f00f152db9c4e9c6693a507b1a88948b41809722 data/c/tags/item/cut_screws/uranium_depleted.json
 4e6698dbe9bb0d8516719fadd671dc0dbef52f77 data/c/tags/item/cut_screws/uranium_enriched.json
 4ae6690e6f8bf6d863baeab009795e602b977bbd data/c/tags/item/cut_screws/vanadium.json
+9f46e0b4563cf42ddc5097597f8960d4aebec830 data/c/tags/item/cut_screws/void_metal.json
 291e988aca3ac09b1fd716ca367e5e746e8b9d25 data/c/tags/item/cut_screws/woods_metal.json
 d81ad1151a8fbf88da17d682a165022c8143fb46 data/c/tags/item/cut_screws/wrought_iron.json
 5d2353f10d9e1297715fe1651186bdf2fa420c8a data/c/tags/item/cut_screws/zinc.json
@@ -784,6 +811,9 @@ e609a241bd1fe1332be4d293812460ca0e978bee data/c/tags/item/cut_thread_rods/spent_
 f369c5a73fe7f81f02d1792464dbe92de4397d99 data/c/tags/item/cut_thread_rods/steel.json
 181b2654aa296e1cdeb8c14c16ceeaeb8a96251a data/c/tags/item/cut_thread_rods/stellite.json
 ef76290613cf7bacc808108bb22aa756d94ffb0a data/c/tags/item/cut_thread_rods/tempered_steel.json
+ed27e486bb3426064e62d26412e3fd008f0a3f75 data/c/tags/item/cut_thread_rods/thaumium.json
+7e45ef4c88e7542125d0cffd58577321934d62e6 data/c/tags/item/cut_thread_rods/thaumium_lean.json
+1a9a3b7e305affed2b7677dce052f85548a00a7c data/c/tags/item/cut_thread_rods/thaumium_rich.json
 0369db0df705d2338976a4765d900d587d9219b4 data/c/tags/item/cut_thread_rods/thorium.json
 b42b28c9ad259ef70eaa4e81ca20458403a1e3de data/c/tags/item/cut_thread_rods/thorium_fuel_rod.json
 1ddd9c75fec528111e07780d210fbd0d05f09d17 data/c/tags/item/cut_thread_rods/thorium_tungsten.json
@@ -797,6 +827,7 @@ b4e4b0e57da7a91c21215c0d42f503d35aa56c8a data/c/tags/item/cut_thread_rods/titani
 438ca8f9705f0fa54d0c7863d3ac8a716eb3502f data/c/tags/item/cut_thread_rods/uranium_depleted.json
 37f21f74dc55c06baff71b2da2699a364659f81c data/c/tags/item/cut_thread_rods/uranium_enriched.json
 a44512789cf340785966274eff725562b921bef3 data/c/tags/item/cut_thread_rods/vanadium.json
+411b8f097b05406ac1a07adac9efc5e6446c4d61 data/c/tags/item/cut_thread_rods/void_metal.json
 a9eb26869c9c83b73b7dc29a936091f2c2ccf73b data/c/tags/item/cut_thread_rods/woods_metal.json
 9a18df119deb9824d8fd8141524da9ad484411db data/c/tags/item/cut_thread_rods/wrought_iron.json
 bf3a107c2666843fa18ff2da302adfdaba67e5d1 data/c/tags/item/cut_thread_rods/zinc.json
@@ -897,6 +928,9 @@ fe78f66d2336e1a7ad010b92f57a7d1592c1311e data/c/tags/item/drilled_plates/shakudo
 9351e01509cf424767763bc36daad36bdd6668b6 data/c/tags/item/drilled_plates/steel.json
 806dcdf376416a112731578039f0eb894c238fd4 data/c/tags/item/drilled_plates/stellite.json
 56e7755b0ea8aee7a512f9c1eceaa41f23cdbe12 data/c/tags/item/drilled_plates/tempered_steel.json
+223f219138d009a6b6ed500c04207ef6736cf280 data/c/tags/item/drilled_plates/thaumium.json
+432e56b205ed033419ade4b5005d323b069484f2 data/c/tags/item/drilled_plates/thaumium_lean.json
+5dc9a41fafd37e1a5e72218e709af8e9b4b595c7 data/c/tags/item/drilled_plates/thaumium_rich.json
 51cd6178a6afdfe76e55dec5bf1a3ba91f702b5f data/c/tags/item/drilled_plates/thorium.json
 9b02bc5736c662f7c18eb65641b0cc779f1be57e data/c/tags/item/drilled_plates/thorium_tungsten.json
 ba53e94ab5b4b5a45c5ed95b6ff8073b98c9db92 data/c/tags/item/drilled_plates/tin.json
@@ -946,6 +980,7 @@ f0a0ebb9c0bba416756df53d3d36afb364c9b2bd data/c/tags/item/dusts/calcite.json
 123a488a1566707c1fd5f0da262ee6a2e53e2e31 data/c/tags/item/dusts/cast_netherite.json
 5830caca44eeeddb400d8f7dcfaa8946c2abbaa3 data/c/tags/item/dusts/ceramic.json
 fc8f9d81b6b7c93b7cc809c2d4d221627eedab50 data/c/tags/item/dusts/cermet.json
+74c175d5904074e5b1e67db611b1d5f4d4fc3867 data/c/tags/item/dusts/certus_quartz.json
 e68f88d724ec14eee8fb433289ffa0ca659776d7 data/c/tags/item/dusts/chalcopyrite.json
 95f99d7b3f86699efafa17f2007e475d6f605820 data/c/tags/item/dusts/chromite.json
 dccc7a09599ff22960585695a54a59f923bd4a71 data/c/tags/item/dusts/chromium.json
@@ -972,6 +1007,7 @@ be8c1ba692834cc7f3e7a0044360e1f987fa9b74 data/c/tags/item/dusts/dolomite.json
 76dd992c35010bcb80bdb83dbf6aa95a7d08eab3 data/c/tags/item/dusts/emerald.json
 104cf6624643eb05388d18fca8b57a0bde32ad65 data/c/tags/item/dusts/end_stone.json
 e107a22d1bc8cf75f63ef507f1904ac785ddaf98 data/c/tags/item/dusts/fertiliser.json
+41a18d3d74d86083670f6a32b292aae11104463f data/c/tags/item/dusts/fluix.json
 7600f999cb9c72bae70da11c091c7bdd0199c32e data/c/tags/item/dusts/galena.json
 0e8b4307fd84ba89176338c1f745df1309369255 data/c/tags/item/dusts/galinstan.json
 d7f83b21e6b02b2d4b915203a11db315766652f9 data/c/tags/item/dusts/gallium.json
@@ -1071,6 +1107,9 @@ a7715c164583bbd07ff08393ee658eef10dcd2d6 data/c/tags/item/dusts/stone.json
 d90f8d4d70e16bc4d56960264fe5b9024658f695 data/c/tags/item/dusts/tarnished_soil.json
 b704a44818449b232d09b58c33f904ecdf34f052 data/c/tags/item/dusts/tempered_steel.json
 a2a64aa6920e25dc5e6519da4b9c9edcdb50167b data/c/tags/item/dusts/terracotta.json
+00809e1c11dcc16e0b1c944704c722d06ce2d4cb data/c/tags/item/dusts/thaumium.json
+f41cbb2e7034217edd9c3a1bf35d4bb2a6b95adc data/c/tags/item/dusts/thaumium_lean.json
+cbd3caa32c46c2d1285ea68d686632768aada50d data/c/tags/item/dusts/thaumium_rich.json
 9a7fc64239a065590b950c4097c3e7daf3aa5497 data/c/tags/item/dusts/thorium.json
 a5cf284bc7a2b55c2d506b835ac85a36ee62aef9 data/c/tags/item/dusts/thorium_tungsten.json
 ebeb4d1e46de86b1f910d48b112088235aea4c90 data/c/tags/item/dusts/tin.json
@@ -1088,6 +1127,7 @@ cb95686101b9cb6d04c451a897d1382598a44afc data/c/tags/item/dusts/uranium_enriched
 d9214ee8eea1bea51b495b6202ead9c76cdc1e27 data/c/tags/item/dusts/uranium_glass.json
 b740308946f7f258d8e0f9313b815f1d6980d548 data/c/tags/item/dusts/vanadinite.json
 acdd122ce96dbbe6f1adcad7bad8922b6ba54910 data/c/tags/item/dusts/vanadium.json
+25e0099e4ee6ece9621b5d160179c839800a9529 data/c/tags/item/dusts/void_metal.json
 41b2f8e97a47b6e17b59bca091c5a607229b6ac9 data/c/tags/item/dusts/wolframite.json
 db2ccb5ea484badeaf505325691949c595cacbaf data/c/tags/item/dusts/woods_metal.json
 32d7862e786efff277ff8472c26b60c435336abd data/c/tags/item/dusts/wrought_iron.json
@@ -1150,6 +1190,9 @@ c9cb7a5075f757e3308c9879f80a479a29eee137 data/c/tags/item/fine_wires/redstone_ch
 cfa6d5fca56d18480d1179c2eae9ab1ab1f20bb6 data/c/tags/item/fine_wires/stainless_steel.json
 1ce57afdf6fbc22d4645ee6cfbde1598bef64ab5 data/c/tags/item/fine_wires/steel.json
 b1f29dbd370f90107427d017e6d26724a42301ff data/c/tags/item/fine_wires/stellite.json
+6b23845d6d489da4b1dc7d0e946d9fc2e0f47cd7 data/c/tags/item/fine_wires/thaumium.json
+9016cb0913c896adead6bf44894733c29c79d4f3 data/c/tags/item/fine_wires/thaumium_lean.json
+05457a9a14488cd89e02d6e51ba64b72d3990d78 data/c/tags/item/fine_wires/thaumium_rich.json
 4f15bf2310cc3cfe2dd50d0c5064802b37912839 data/c/tags/item/fine_wires/thorium.json
 1fb1f1a6349f9fd0b2fdf10630b7da7914b7d35d data/c/tags/item/fine_wires/thorium_tungsten.json
 c25d71d4cd8d9989d9ae7139074863e4ca4a8ff9 data/c/tags/item/fine_wires/tin.json
@@ -1239,6 +1282,9 @@ a941b2bd29b951d22ba17169860b2e2fefc7aea7 data/c/tags/item/flat_nose_bullets/stai
 52bd90fb8337ae23a46a9074d5e4fc8e33bba7b6 data/c/tags/item/flat_nose_bullets/stellite.json
 0568730dd5a9a9b9b32f80c93a54458450868808 data/c/tags/item/flat_nose_bullets/synthetic_rubber.json
 e7ff016fb8b2f7e07461eb961b348b4a0116c4d1 data/c/tags/item/flat_nose_bullets/tempered_steel.json
+07d9a829302869704269acdeb5964e7350bb2422 data/c/tags/item/flat_nose_bullets/thaumium.json
+d94d32ba10f77db9402fd49033424c94ce76d55d data/c/tags/item/flat_nose_bullets/thaumium_lean.json
+9cbe3bf58797f321299aa9e4164a0cf35f33ec9c data/c/tags/item/flat_nose_bullets/thaumium_rich.json
 d4268a5e1b0b25d65356f228818beacfac672cf6 data/c/tags/item/flat_nose_bullets/thorium.json
 80eccc0f1f378778cd96029ae4cd1a2dfc0d51cf data/c/tags/item/flat_nose_bullets/thorium_fuel_rod.json
 710efb872e3a480807f668442aa6de6d63888ab1 data/c/tags/item/flat_nose_bullets/thorium_tungsten.json
@@ -1252,6 +1298,7 @@ fc5328c63f4d665c8b19d50eac188a2ebb3c3671 data/c/tags/item/flat_nose_bullets/uran
 e8fa79b98d8e7cf90fc9a8a1bb547288db0c1e13 data/c/tags/item/flat_nose_bullets/uranium_depleted.json
 2e469ca201f389924213a1bd010212a97f7eb740 data/c/tags/item/flat_nose_bullets/uranium_enriched.json
 6e483be2f1ba8ce9325d7935cdf204d82d4a1189 data/c/tags/item/flat_nose_bullets/vanadium.json
+8d86efd221e6ad4b0cfe84e1a9c6b3ea8cd7c0a7 data/c/tags/item/flat_nose_bullets/void_metal.json
 90b2241c6e04cb008aa1f0afc982f7adfa7f44dc data/c/tags/item/flat_nose_bullets/woods_metal.json
 5ebba7922c6c2b366695db0e51867596abbfdd0c data/c/tags/item/flat_nose_bullets/wrought_iron.json
 edfde97dbadc8ec780d2104591e31f1d9fdf620c data/c/tags/item/flat_nose_bullets/zinc.json
@@ -1331,6 +1378,9 @@ a6364b40ea66a9996950f4859d19ca5634c9c28d data/c/tags/item/flechettes/steel.json
 816fe1a3b7e56aadb05c13e97fec202b42b3a56c data/c/tags/item/flechettes/stellite.json
 4ff694743982ceefe1aa9870b4e3f5927aa852b9 data/c/tags/item/flechettes/synthetic_rubber.json
 7f86225fe572c5057466853f4436f92a84561aac data/c/tags/item/flechettes/tempered_steel.json
+5931938177abe661fc2761f3f6536931c89501f6 data/c/tags/item/flechettes/thaumium.json
+ca5168eafbff9817fd97e16cb77508133c364669 data/c/tags/item/flechettes/thaumium_lean.json
+6f29ef6e8107a35df5c4e0308bac79e086cead9a data/c/tags/item/flechettes/thaumium_rich.json
 b3f9992760c9dafc52923cb11f07f1a4450e8e65 data/c/tags/item/flechettes/thorium.json
 23c68b1186127fe4855b52008003b3f6f799e8c7 data/c/tags/item/flechettes/thorium_fuel_rod.json
 56d5873f06d51ce0b10bc455f2677db86af874d3 data/c/tags/item/flechettes/thorium_tungsten.json
@@ -1344,6 +1394,7 @@ baaa8d16f2429d2d82c5d1d5f9aec99340cfaadf data/c/tags/item/flechettes/tin.json
 9b0e04281ee5f0c20eb1bb24347bca1cb6f512ce data/c/tags/item/flechettes/uranium_depleted.json
 1473a433569ce9c6e4acfde6240b70d74bec7c95 data/c/tags/item/flechettes/uranium_enriched.json
 096222b1211020df7c7e081ac60886bdff1cc9b4 data/c/tags/item/flechettes/vanadium.json
+e577a12b064578a32af3376b0ed07f1a5c628f65 data/c/tags/item/flechettes/void_metal.json
 a0e5c5dd74f017eb7596e1a49e75e4cb072ccfd9 data/c/tags/item/flechettes/woods_metal.json
 6382571588c56633926f7184436b851f1866ddda data/c/tags/item/flechettes/wrought_iron.json
 8223b65b18022f450d3f28c275f08165ade13322 data/c/tags/item/flechettes/zinc.json
@@ -1400,6 +1451,9 @@ e924eca98d68115fc40e8f11d23e3c6d87b0b5f5 data/c/tags/item/foils/shakudo.json
 6777fedbf2557f6b2d61a6fd51eb8440ba2588f5 data/c/tags/item/foils/stainless_steel.json
 35a676d3b102bf452f29dc89cfb4f60f6e8f51c6 data/c/tags/item/foils/steel.json
 2c82b182dcda2686821c727198a25d301275414a data/c/tags/item/foils/stellite.json
+20f284a69a1ae3c486712589a1210d7ea5ec740c data/c/tags/item/foils/thaumium.json
+0c8573b39edded455120058814a11d53b0e7f24b data/c/tags/item/foils/thaumium_lean.json
+15459e16bbe25cd0b3c25ad45abcc120239a39a2 data/c/tags/item/foils/thaumium_rich.json
 734aa9762dceef5eb756937d54361b3a07be63cd data/c/tags/item/foils/thorium.json
 6f13330d8f2e19744e65d076f1501d38c459d337 data/c/tags/item/foils/thorium_tungsten.json
 513caabaa9f153e67e3f576d4c3ac6b07c9fa1fe data/c/tags/item/foils/tin.json
@@ -1503,6 +1557,9 @@ b5ed511f7896ee798d404e4a5631d85fd6fdaf95 data/c/tags/item/grips/spent_fuel_rod.j
 83b9c377c6ddd5e5d3c84d6c560963063ce7ab66 data/c/tags/item/grips/steel.json
 03d2af23f7102b95d1a0676b2382c705cf6c8f28 data/c/tags/item/grips/stellite.json
 b40ed79790c86bc2a5e3f7424d8fb8e83629e56f data/c/tags/item/grips/synthetic_rubber.json
+50ef3c4bc59f9424febcb0aab6327ba3b7763d75 data/c/tags/item/grips/thaumium.json
+5ec16beb679fc6640a5085d5b0a00a1ad42c2994 data/c/tags/item/grips/thaumium_lean.json
+1f8699e5eeb6e1d622e98bf8162c82a44b22c83f data/c/tags/item/grips/thaumium_rich.json
 ac9634c4eb389501d1dd33d40d85f65bba480f8b data/c/tags/item/grips/thorium.json
 0b8ddd889ed3cd3150cb7e358673c5a7ff423523 data/c/tags/item/grips/thorium_fuel_rod.json
 15ec976ed47ff08504949c9c44b552546c1dfd36 data/c/tags/item/grips/thorium_tungsten.json
@@ -1577,6 +1634,9 @@ cf2061c0c6779b7b18d2959df1eae1a9e07aeb15 data/c/tags/item/ground_ingots/redstone
 fda701ac9af85029f8e97cde82345ec587e70e70 data/c/tags/item/ground_ingots/steel.json
 9b53c142b32a090138e60a342bcae2eec2230501 data/c/tags/item/ground_ingots/stellite.json
 f601223699168f8a3b2eccff0a26a17675873b4f data/c/tags/item/ground_ingots/tempered_steel.json
+6443b9405680581f9aa3a33c42c1eb788c7a0f21 data/c/tags/item/ground_ingots/thaumium.json
+30c955e8bcefeffb46417dfca38b60fd34eb6404 data/c/tags/item/ground_ingots/thaumium_lean.json
+1cb6b320ac5dba779830f1ebe9c8621c79f39479 data/c/tags/item/ground_ingots/thaumium_rich.json
 a684cb842fa9c95d3ff483fd5f909e790bab13dc data/c/tags/item/ground_ingots/thorium.json
 d801f6d3bcfaff37648e507e47ac49c904a38dc0 data/c/tags/item/ground_ingots/thorium_fuel_rod.json
 067f849170af55edab1e409281b753f46dcd6005 data/c/tags/item/ground_ingots/thorium_tungsten.json
@@ -1670,6 +1730,9 @@ cfbaabed5771318cb52d978a442e4b9134f6857d data/c/tags/item/hollow_point_bullets/s
 eec14f4ca9cf2109afd8f10f2d69f116a9383b5b data/c/tags/item/hollow_point_bullets/stellite.json
 e83802f8d602ea919c2a6386d2689f12c718b0de data/c/tags/item/hollow_point_bullets/synthetic_rubber.json
 b24cd6df32cf62e03f5665f4c7cbc16a32b89110 data/c/tags/item/hollow_point_bullets/tempered_steel.json
+0c58955d96da7da243de2493928103303e7d7228 data/c/tags/item/hollow_point_bullets/thaumium.json
+b7648f1d8f7aa8e51fe2bc2fef81a57f036bdba3 data/c/tags/item/hollow_point_bullets/thaumium_lean.json
+40a38f29ee17e87aa91a470bbe4db3c0877f4d1d data/c/tags/item/hollow_point_bullets/thaumium_rich.json
 9bca1c39d47c8ba94dc43af0ef8c532619857725 data/c/tags/item/hollow_point_bullets/thorium.json
 01356aa54bc8173952ee0dfb74086f2464a59264 data/c/tags/item/hollow_point_bullets/thorium_fuel_rod.json
 b54f9ea84c1ca62d300407e6039bf9de3247df2e data/c/tags/item/hollow_point_bullets/thorium_tungsten.json
@@ -1683,6 +1746,7 @@ e54952761c1d4ae16d1393dcb939193ea6ad9356 data/c/tags/item/hollow_point_bullets/t
 896441cd06719c923dfedb18b1529c60481d9551 data/c/tags/item/hollow_point_bullets/uranium_depleted.json
 820aecca17dbe17fd4e45f20d63c17b34533485e data/c/tags/item/hollow_point_bullets/uranium_enriched.json
 d05c987450372ab91eea9443c5fec411780bb549 data/c/tags/item/hollow_point_bullets/vanadium.json
+1ccdc772021375a31b2df5f0c968f36b06e3dffd data/c/tags/item/hollow_point_bullets/void_metal.json
 632af1e1b7688686bd326b8d3f8012b584fe81e1 data/c/tags/item/hollow_point_bullets/woods_metal.json
 2e869aecb54184bd198d2b6f5d9b6c191d2e961f data/c/tags/item/hollow_point_bullets/wrought_iron.json
 177ba2a2ce8815b40ff043e89cb993b1aac35f81 data/c/tags/item/hollow_point_bullets/zinc.json
@@ -1782,6 +1846,9 @@ f1ec6c5df93b57103120fb397e4be919368813d7 data/c/tags/item/ingots/silver.json
 f34285474e2bd418a4fafaf6e0447494c03afa21 data/c/tags/item/ingots/stone.json
 55389fdf757d38f4bb166e929763d5d0e0f9ba39 data/c/tags/item/ingots/synthetic_rubber.json
 13ef6d9e28cccb88c982b5f6486b49d09ee8be57 data/c/tags/item/ingots/tempered_steel.json
+7480be7879cb695b86f1fdc97af91fd2010b5d48 data/c/tags/item/ingots/thaumium.json
+5de1b447290196edebc097d2494482ce073f6b03 data/c/tags/item/ingots/thaumium_lean.json
+dad2492ccac5c84dee1cd64aa79c6aa0912e16b4 data/c/tags/item/ingots/thaumium_rich.json
 417a285442b8cdcf8fe64a2a493b1f101b5ea365 data/c/tags/item/ingots/thorium.json
 02ced50e40927ca25584452c77f1075e61f0d1db data/c/tags/item/ingots/thorium_fuel_rod.json
 c409aa8b185add740e8de5c17ac278351b0c68d6 data/c/tags/item/ingots/thorium_tungsten.json
@@ -1796,6 +1863,7 @@ f3b116c26d4dc0e79474541f0e87fa0376cfb709 data/c/tags/item/ingots/tungsten_carbid
 cd14872f9092472913a6009d74d6cc64b75d9f16 data/c/tags/item/ingots/uranium_enriched.json
 10509d483abd3573cc8c66a97ba48963e0a6b3ce data/c/tags/item/ingots/uranium_glass.json
 db55a27c801b004df2d5b19d901da472f5016822 data/c/tags/item/ingots/vanadium.json
+754d1ae63fb4c923ceb48d2b2c1eade38fd2c881 data/c/tags/item/ingots/void_metal.json
 95db7df1ee9f5fd673845c84a913b8ddf8e9cdaf data/c/tags/item/ingots/woods_metal.json
 8775b17928f81a4c18002e5442609c2c0bde5b29 data/c/tags/item/ingots/wrought_iron.json
 5b2351c2245b6eb6a10be92837a231c93a75f9bf data/c/tags/item/ingots/zinc.json
@@ -1887,6 +1955,9 @@ f273ac334807fd12832c444d9e44309fe6630857 data/c/tags/item/large_shots/steel.json
 d6b78c7e58316c2fe91593dbc0e82562ffe5f094 data/c/tags/item/large_shots/stellite.json
 c3fe35aa01a0ad295b9f3f9860159253cf84bf8e data/c/tags/item/large_shots/synthetic_rubber.json
 30c72c75004f5153c5d9c1af13ab75010e5187f2 data/c/tags/item/large_shots/tempered_steel.json
+0f597ad678504de40d67860efca960457ef5e182 data/c/tags/item/large_shots/thaumium.json
+84cfc74995077168775a98c4793d6b564f25ccde data/c/tags/item/large_shots/thaumium_lean.json
+8c41d7677711fd8dfd5651ac2ce6946702f1e2bf data/c/tags/item/large_shots/thaumium_rich.json
 d351824d2f350998095e7e9101821dd533e0e94b data/c/tags/item/large_shots/thorium.json
 2bcca55f433a698d7a01b749fbdb5d4a47e63773 data/c/tags/item/large_shots/thorium_fuel_rod.json
 66502fe12004d3a1c524b00cfe651e040281669f data/c/tags/item/large_shots/thorium_tungsten.json
@@ -1900,6 +1971,7 @@ fa7f509ef4473c738d4fb792de8906049669e8bb data/c/tags/item/large_shots/tungsten_c
 1bdb9fe5b2d07056c0b9e1812144bc77e10ed225 data/c/tags/item/large_shots/uranium_depleted.json
 b6d4b205d1e604b06501606a999ce63e4c27a438 data/c/tags/item/large_shots/uranium_enriched.json
 0c52c8ca39e88a629491409a6805de586f433347 data/c/tags/item/large_shots/vanadium.json
+7ade2fbdf0240dd4ac755e744ab2f89c1e3c0d42 data/c/tags/item/large_shots/void_metal.json
 8b451ab2bec479c2611c69d343476704a68a3e11 data/c/tags/item/large_shots/woods_metal.json
 1de6857ac0939df7240b9599726dfe08d9ed0594 data/c/tags/item/large_shots/wrought_iron.json
 de686fc92ef1412d0be24ef5fa4f3c775fc6ab31 data/c/tags/item/large_shots/zinc.json
@@ -2072,6 +2144,9 @@ a1e0515473e1d611a4fd0458e21356dcb25db75f data/c/tags/item/machine_bolts/redstone
 d54d9202159bacc806ddcf6ca6468539c0308b1e data/c/tags/item/machine_bolts/steel.json
 1cab92f7dc4d642d9ce30e3163da083fbd0a16fe data/c/tags/item/machine_bolts/stellite.json
 2ed9343a538ca343597e7aa6ca463df3fb4561ef data/c/tags/item/machine_bolts/tempered_steel.json
+b256883bb1a1c3d0d53f301302ef79140075916e data/c/tags/item/machine_bolts/thaumium.json
+2a4cb9697bb237e092bdc820905bc22594281aa3 data/c/tags/item/machine_bolts/thaumium_lean.json
+bf63f2d3e3c06647f4667d9873d31a41e74eefb4 data/c/tags/item/machine_bolts/thaumium_rich.json
 5b64b9f56c10556b04d3ac1285ced73833caae52 data/c/tags/item/machine_bolts/thorium.json
 292dbbb226d5765cf80e9bf8b1121a935e3a44a4 data/c/tags/item/machine_bolts/thorium_fuel_rod.json
 a005f8ca5674698356260014d6e15479b6800e50 data/c/tags/item/machine_bolts/thorium_tungsten.json
@@ -2085,6 +2160,7 @@ f0aaf5ea5c8be150285858e13ee567176200795f data/c/tags/item/machine_bolts/titanium
 b09c1a3adcd0f914ffe68869c6cf3e0063789ee9 data/c/tags/item/machine_bolts/uranium_depleted.json
 4e5e7325f63c090b8801e0b75c4184c6cdb26cc4 data/c/tags/item/machine_bolts/uranium_enriched.json
 e5a17699037f3ba1a66c01592da26b6ea36dd7be data/c/tags/item/machine_bolts/vanadium.json
+e8405b34c6ebcd5781496ea2c8c9496d65abdbb9 data/c/tags/item/machine_bolts/void_metal.json
 5369220b7ea0879408657830a7251ed6fe0819c4 data/c/tags/item/machine_bolts/woods_metal.json
 89011eee37eb42ae883809d9f9a6977cb56d0a88 data/c/tags/item/machine_bolts/wrought_iron.json
 3e79090dab2da2efaa1c26999000a12c7e5cf44c data/c/tags/item/machine_bolts/zinc.json
@@ -2148,6 +2224,9 @@ bd74d26d8ca9378b1c503b859823822e1a2edf93 data/c/tags/item/nuggets/silver.json
 408127eaedec84f9eebebdd21e50299869796c08 data/c/tags/item/nuggets/stainless_steel.json
 c1139ab41cb8561c9c3d89c317310ed584cb014a data/c/tags/item/nuggets/steel.json
 cabe95d1f90d5c30629750b3669c6166bb4624bc data/c/tags/item/nuggets/stellite.json
+5897a720f82f6f2bcf9310666672159bd18535ab data/c/tags/item/nuggets/thaumium.json
+8a8a1f50133c0a0c47995129621f90f7fe714e39 data/c/tags/item/nuggets/thaumium_lean.json
+b5a007cd1112312578c437e72478c5848f4a674c data/c/tags/item/nuggets/thaumium_rich.json
 5d6db639ebaabf318034f959b9893d9792ec999a data/c/tags/item/nuggets/thorium.json
 6ffc06987879e733b0be61b19720781824195dfa data/c/tags/item/nuggets/thorium_tungsten.json
 12a48501a77e3b7d336756f205955dd9dda3e279 data/c/tags/item/nuggets/tin.json
@@ -2160,6 +2239,7 @@ b64f290c289c2f89edf09b3ec0edd20a2f24cb49 data/c/tags/item/nuggets/uranium.json
 ececdda121a553af01b22e6f8908286f5c7bbbd8 data/c/tags/item/nuggets/uranium_depleted.json
 af649f979f0520ab77b56a08a19259e254461235 data/c/tags/item/nuggets/uranium_enriched.json
 9adb0fcf02913fa393d8dbde12c2d178caf5c585 data/c/tags/item/nuggets/vanadium.json
+135ff2e68dbb8d593b4de2c139a45f5919938c2d data/c/tags/item/nuggets/void_metal.json
 9a544e65924d9836754659c250c305f4a2ee5608 data/c/tags/item/nuggets/woods_metal.json
 14ce48a9f72491e118b44e75ec88e8a71a9f222b data/c/tags/item/nuggets/wrought_iron.json
 e47bdb7bb7997bb6c62e0c86b469c3222c777df1 data/c/tags/item/nuggets/zinc.json
@@ -2286,6 +2366,9 @@ bc834461587fc6c8fb4cd001d5b7399acc2aeb69 data/c/tags/item/pipes/steel.json
 b49f10d314fe83ae299a7dd5436617b432427368 data/c/tags/item/pipes/stellite.json
 4b3e3a886651f4eddf076a6f89c14eae748dd837 data/c/tags/item/pipes/synthetic_rubber.json
 f3819a544727e6f91a38ac4277df5c6427321194 data/c/tags/item/pipes/tempered_steel.json
+db65465dc1ebc05cd65d9f69444d1a95239440ef data/c/tags/item/pipes/thaumium.json
+d066bc2737817e2b9c8f3144cc6620cce09de04c data/c/tags/item/pipes/thaumium_lean.json
+764d1bcb216535acd1814f479298063b3cf3dd53 data/c/tags/item/pipes/thaumium_rich.json
 8d747cf9d2b0247c38a74bfc6db974811e92d776 data/c/tags/item/pipes/thorium.json
 9dd4e3fab8d62bd99e884b0db6f0511069f431f9 data/c/tags/item/pipes/thorium_fuel_rod.json
 d9e336ad9d225ce1f5319206f539afbe0505cf32 data/c/tags/item/pipes/thorium_tungsten.json
@@ -2370,6 +2453,9 @@ e4699352e9d332d618a5634004179b31bbd1882d data/c/tags/item/plates/stainless_steel
 e7e5b0257fa52fbe2284329a5c6c94aa048794f8 data/c/tags/item/plates/steel.json
 e04274ed722fcf6e1d36f7f9b0c3fa062e5bb018 data/c/tags/item/plates/stellite.json
 3dbc24644963990a8b3d69e9031261eb185113a0 data/c/tags/item/plates/tempered_steel.json
+9401b4a2c04aadcf1d28984c4de324185aa318db data/c/tags/item/plates/thaumium.json
+66ef60ecd08b15634f716c3832bdf51cdeee74bf data/c/tags/item/plates/thaumium_lean.json
+58eb47a7661a9c76168bf35dea5968dc949e1140 data/c/tags/item/plates/thaumium_rich.json
 99b4f6df449d17b3ec6ab908da8d682ab5d964cc data/c/tags/item/plates/thorium.json
 569b83fab182172c86fae00994588fc262a43d77 data/c/tags/item/plates/thorium_tungsten.json
 bbcaa5b0d0fff5bce657e07ec221e1b465594274 data/c/tags/item/plates/tin.json
@@ -2382,6 +2468,7 @@ e8f759a3838933725d76f2200aa881e971a719a0 data/c/tags/item/plates/uranium.json
 25b7d6c14fad5acd4c11fe9ee754d8e7a87a120d data/c/tags/item/plates/uranium_depleted.json
 c7dcaa150c43548a815feb17936ae29be2e2df59 data/c/tags/item/plates/uranium_enriched.json
 1a9e0a3e109c00612335cdc32a9eee5a8f3ae4da data/c/tags/item/plates/vanadium.json
+225bb46f638da668027a2d6cbaebc10914c75d89 data/c/tags/item/plates/void_metal.json
 3862ad5c5b953b992c7576983e3728acbd9a85a2 data/c/tags/item/plates/woods_metal.json
 fec55ae7dc9dba84bd82f3e534299c4a09614fcd data/c/tags/item/plates/wrought_iron.json
 8ef252d4f24d5e4af366bfb3531556e819423dac data/c/tags/item/plates/zinc.json
@@ -2461,6 +2548,9 @@ b5194c8744f8b580af08275e61f3d6726c9476e3 data/c/tags/item/pointed_bullets/steel.
 67ee32aedc430980e3430f09f02e74c48d9316dd data/c/tags/item/pointed_bullets/stellite.json
 2ee457e2895fbe92f96804084a03ac194bb3623b data/c/tags/item/pointed_bullets/synthetic_rubber.json
 66269a8736c875a30355d0be29d224e1cf1443aa data/c/tags/item/pointed_bullets/tempered_steel.json
+ba00ba155390f9061e32c60aab45831878d77966 data/c/tags/item/pointed_bullets/thaumium.json
+2eebad8091f689cb884c4f0e6e1454f19c997e9f data/c/tags/item/pointed_bullets/thaumium_lean.json
+4c75f7fb8c591ca1c93b28ea3a26a648a2412a4a data/c/tags/item/pointed_bullets/thaumium_rich.json
 097e25dbe6d857c1528352cf217f284dc62c7fbb data/c/tags/item/pointed_bullets/thorium.json
 f22a6e8a0831dbdfb0baec665f679eadf37014e7 data/c/tags/item/pointed_bullets/thorium_fuel_rod.json
 7df4ab2b4c16bdebf94768dbba522e0345418b10 data/c/tags/item/pointed_bullets/thorium_tungsten.json
@@ -2474,6 +2564,7 @@ d566729da8c1abbd6b7ef55ce79fe268f5c48cba data/c/tags/item/pointed_bullets/tungst
 7d912a9bb9f320d207a89977adb1d1c2b9045577 data/c/tags/item/pointed_bullets/uranium_depleted.json
 81f7b9ca1681da5f2f5539c9ccdf93ded51a739e data/c/tags/item/pointed_bullets/uranium_enriched.json
 9f8a03fecce5a91824dee93c77e872046ddfbc2e data/c/tags/item/pointed_bullets/vanadium.json
+741922f43a9ccf74c3b9c80d68c383494d36cf7c data/c/tags/item/pointed_bullets/void_metal.json
 eeb0c88d39216a93ce53b07d4c8a2245b4caeb01 data/c/tags/item/pointed_bullets/woods_metal.json
 47af4c0f28a36bf9c974b2d46f0f1bfd74adaab8 data/c/tags/item/pointed_bullets/wrought_iron.json
 a52bd39d57d898d6970beeb95bcecfc46ec61ee8 data/c/tags/item/pointed_bullets/zinc.json
@@ -2545,6 +2636,9 @@ e516db854e83ce2dbd6e5d987ec247d209058919 data/c/tags/item/rivets/shakudo.json
 c3f9885fdd082560041a8a12c4f02fccffe73e5b data/c/tags/item/rivets/steel.json
 79db5fc4593843598b4a7534eb15e5f663be2139 data/c/tags/item/rivets/stellite.json
 152d85d9d50ba47bdaadf3c103b4d60545b1d338 data/c/tags/item/rivets/tempered_steel.json
+04205c20913ad97df871ee4031992983abe5620a data/c/tags/item/rivets/thaumium.json
+7ad1f72541bfb7941c29229e8dfc185ba9bde639 data/c/tags/item/rivets/thaumium_lean.json
+f342d060bd36b6c30ea14e7991d32a1284656a51 data/c/tags/item/rivets/thaumium_rich.json
 ad3c9955baf4451d6cbaa9caa3b843de493c1798 data/c/tags/item/rivets/thorium.json
 83340034f7b1fc907a8df4d43ce8107ccd3a483d data/c/tags/item/rivets/thorium_fuel_rod.json
 f7d6ab42e23c22e5d113a944850c10651254b180 data/c/tags/item/rivets/thorium_tungsten.json
@@ -2558,6 +2652,7 @@ ddc26b51feb68f3707606baa0485756891086ed3 data/c/tags/item/rivets/tungsten_carbid
 52e3f0743bf17de5656b3a047de5c8e46a91da46 data/c/tags/item/rivets/uranium_depleted.json
 e02e4dc1119b898b5c4e70def5b5530127ce140c data/c/tags/item/rivets/uranium_enriched.json
 dea8061e7a86213f46be75f533edcbbc695b3fcf data/c/tags/item/rivets/vanadium.json
+69a1eba88437aa7abc729102e77f8bf81d23ddbe data/c/tags/item/rivets/void_metal.json
 6fafff200369720a560017dc6ee8b56978612b76 data/c/tags/item/rivets/woods_metal.json
 64a83fa63d0b20a2705ccdc189a6f8399c76d591 data/c/tags/item/rivets/wrought_iron.json
 87596a4bf039ba35bcb6c6f49c2e51ce51dde990 data/c/tags/item/rivets/zinc.json
@@ -2642,6 +2737,9 @@ dce1b46409b4658beb30fc55e4b0ff60f7a90930 data/c/tags/item/rods/silica_glass.json
 e740dc4d5d3056a8294254c00a66cfea2e8ad53b data/c/tags/item/rods/steel.json
 3f80ea8a2b04b821776e15912ec73cc9064a673d data/c/tags/item/rods/stellite.json
 bacb060e99e46c7b5972a47a2855fcc50c590124 data/c/tags/item/rods/tempered_steel.json
+665f8d46de3e90c6f6ef6760a133847b5338bec8 data/c/tags/item/rods/thaumium.json
+45d868cec9da253c610f13b7be715f87d3584e41 data/c/tags/item/rods/thaumium_lean.json
+d88b9b20244acc76f9e01c3daf0c6f0bea4fde24 data/c/tags/item/rods/thaumium_rich.json
 5300a516545108998d11f4003a46a487db1b1e27 data/c/tags/item/rods/thorium.json
 2f4be4fb3daf4bd4efcc37780e426bcb2897aa66 data/c/tags/item/rods/thorium_tungsten.json
 13a8b194a4db0dc0f510da3d41e895982f317717 data/c/tags/item/rods/tin.json
@@ -2727,6 +2825,9 @@ a05324dedc7a5ab1e03632c2ec987e0e157cd417 data/c/tags/item/rolled_machine_bolts/s
 36fb8381f43cccbf6fff308966de4d186084d0c6 data/c/tags/item/rolled_machine_bolts/steel.json
 33830e2f201688141a9dc07bb85fb89d79f536a6 data/c/tags/item/rolled_machine_bolts/stellite.json
 0ad46af8a629da44d4152e079f7d2a0dc59c53bc data/c/tags/item/rolled_machine_bolts/tempered_steel.json
+0bb6c0c67ebad8ee6bccaa499d8343205f77f87e data/c/tags/item/rolled_machine_bolts/thaumium.json
+c8cb34b31b5494cd1eca09d894e310911c161ea0 data/c/tags/item/rolled_machine_bolts/thaumium_lean.json
+d30d73262a90ffc0a1a744daa0dbe40e66e1919b data/c/tags/item/rolled_machine_bolts/thaumium_rich.json
 beb2de30a4974943a3e16b06c156c7ee51a7fad0 data/c/tags/item/rolled_machine_bolts/thorium.json
 f1a5bb4a8148149470213152405d55db4f4912bf data/c/tags/item/rolled_machine_bolts/thorium_fuel_rod.json
 f475427bd600caa47c15fe1ca540e998bda63e53 data/c/tags/item/rolled_machine_bolts/thorium_tungsten.json
@@ -2740,6 +2841,7 @@ aca20260a9e0265602751a48cba8d3a5dcc74ce6 data/c/tags/item/rolled_machine_bolts/u
 29b32656e4ab2f83d34198a041b1dc00e2746ed2 data/c/tags/item/rolled_machine_bolts/uranium_depleted.json
 51b5b160aee2d4f92456c3fed1b4cc73f3055c4a data/c/tags/item/rolled_machine_bolts/uranium_enriched.json
 8ae4f10ce3b72874f1110c32650ebef5a53aea21 data/c/tags/item/rolled_machine_bolts/vanadium.json
+9c3cdd007e327cd7968ff8112f3b3909d5ca521a data/c/tags/item/rolled_machine_bolts/void_metal.json
 b2820cc5758a08f909ea876b93d76ffd04a851b7 data/c/tags/item/rolled_machine_bolts/woods_metal.json
 00fe1d0f4a4208a83ae411860c62c7f2d63f6478 data/c/tags/item/rolled_machine_bolts/wrought_iron.json
 a5fef0f1b2a53e7d45012c8507dca29d7d30b55e data/c/tags/item/rolled_machine_bolts/zinc.json
@@ -2812,6 +2914,9 @@ f62adadbac71b04ca1eeef8ced45ea1bbe106a93 data/c/tags/item/rolled_screws/solder_l
 e4dd79979be76f93cacd71f067d6c700a60497ba data/c/tags/item/rolled_screws/steel.json
 d2e7ca46c2115eb7dcf487433286088adbfd67c1 data/c/tags/item/rolled_screws/stellite.json
 0724dd5411f641dd2a9b0dcebe7035273b42df26 data/c/tags/item/rolled_screws/tempered_steel.json
+b536512834e510fe53a7b3040602a5489fb9bd46 data/c/tags/item/rolled_screws/thaumium.json
+beea249bc4b2e675d3cbd271642a88d295d7870a data/c/tags/item/rolled_screws/thaumium_lean.json
+6c06d6995ef79f4a8adef8df0da121e8a5ad254a data/c/tags/item/rolled_screws/thaumium_rich.json
 955fbfddeefe7c783e6c214ef7dce6b7bea1c717 data/c/tags/item/rolled_screws/thorium.json
 232d941787b498536e8b9ae2d6866fb8ab839c6d data/c/tags/item/rolled_screws/thorium_fuel_rod.json
 99effa2bdbf00fd56cc5dec67ed7f259b66ca254 data/c/tags/item/rolled_screws/thorium_tungsten.json
@@ -2825,6 +2930,7 @@ ac78c889f3e8b42dc9c3ceb52b510b847d483242 data/c/tags/item/rolled_screws/titanium
 fe6b0ba8b497047e0c835a2a0fd216d2c6930b7e data/c/tags/item/rolled_screws/uranium_depleted.json
 e04733dd15ddba7d5580e375e8f11e9b6c42bfc9 data/c/tags/item/rolled_screws/uranium_enriched.json
 b842ce5367b16d83eaf3aaa4949b243a6d2d16fc data/c/tags/item/rolled_screws/vanadium.json
+8e99e60cea9d5fdc35bc5e90811c522b7c044f4b data/c/tags/item/rolled_screws/void_metal.json
 62fb63a98a6a8ce20a59bf33d63453ad1e78a1ec data/c/tags/item/rolled_screws/woods_metal.json
 64628f3242985a6d6da4512fad2d555fb8c1cad9 data/c/tags/item/rolled_screws/wrought_iron.json
 47d14973eae700875a8a257af04f8c1d77a9d5f3 data/c/tags/item/rolled_screws/zinc.json
@@ -2897,6 +3003,9 @@ f5e9e1047f86726c08c3b4636c4886771eabf165 data/c/tags/item/rolled_thread_rods/spe
 8131305f05a1019a1324763278623753ac4d8b6a data/c/tags/item/rolled_thread_rods/steel.json
 538f4a5b6752f3cacbddfbbbb78372678ef2f151 data/c/tags/item/rolled_thread_rods/stellite.json
 b8d428ebbc3c00c9062d69ada82b23cfcdfd340b data/c/tags/item/rolled_thread_rods/tempered_steel.json
+64faf18439ffd655ddf32b85eaec60fd30a51fe9 data/c/tags/item/rolled_thread_rods/thaumium.json
+f70a35f75fa7f2acf18ede2ac01bfddd5251ded5 data/c/tags/item/rolled_thread_rods/thaumium_lean.json
+0b2dc1855a39055ac5f83a1fd82ac0f5eb01b907 data/c/tags/item/rolled_thread_rods/thaumium_rich.json
 d8a3d2450e3c2836e804bb4e75256357283e6327 data/c/tags/item/rolled_thread_rods/thorium.json
 9613a1c8342f6684b176cf698bc1f08f3d3787ad data/c/tags/item/rolled_thread_rods/thorium_fuel_rod.json
 d5005234200a2cd094feeaa2bea9b17e74bff304 data/c/tags/item/rolled_thread_rods/thorium_tungsten.json
@@ -2910,6 +3019,7 @@ fef05fa8349027d025f73a0783635aac091d2c7b data/c/tags/item/rolled_thread_rods/ura
 f593067a0df4ff584fc97ccf7ca39148a7ae5ae8 data/c/tags/item/rolled_thread_rods/uranium_depleted.json
 27f9fce9d8afdaaa20d0f8eb351fb4db72c1358f data/c/tags/item/rolled_thread_rods/uranium_enriched.json
 cd8e6eb74dbaa9267d82f536076e0f1472123479 data/c/tags/item/rolled_thread_rods/vanadium.json
+eee2d823e00b93157ed981778249036f3ea09c42 data/c/tags/item/rolled_thread_rods/void_metal.json
 33d1aa609dd6b3d5029aa68006e28a1400642649 data/c/tags/item/rolled_thread_rods/woods_metal.json
 f23584e30829b151f77218a068b066f6ba4b0e38 data/c/tags/item/rolled_thread_rods/wrought_iron.json
 7aecefca013c8b6256d69819c0f247c49f9eebcc data/c/tags/item/rolled_thread_rods/zinc.json
@@ -2989,6 +3099,9 @@ c1d1dff8f0a48b639e13feb5aff725002830afc1 data/c/tags/item/round_balls/soul_resin
 9109be566caa24fcaff7290d9ae3aa7449164ba9 data/c/tags/item/round_balls/stellite.json
 41b6bd5d5fc0995b6a8a620f434ea0b8d228fceb data/c/tags/item/round_balls/synthetic_rubber.json
 a146415b4d2e9b41dc45feb61bf9e4d3cac98cc4 data/c/tags/item/round_balls/tempered_steel.json
+45ce387bb987032d8cd3a39b85f2ae1643767492 data/c/tags/item/round_balls/thaumium.json
+fd7dfa460d7c4ea28a5e5f7b4e8da0102f9696e5 data/c/tags/item/round_balls/thaumium_lean.json
+609463116d1f9209e86035de928384863a62a7ef data/c/tags/item/round_balls/thaumium_rich.json
 00dcdf0e88ea29c9b4dc06c1360f04e55b4604ef data/c/tags/item/round_balls/thorium.json
 bba7653b3062670b37d20216e810f735dd8d542d data/c/tags/item/round_balls/thorium_fuel_rod.json
 1a83966e6ce586092c5e9e34b152ca63a17b6c9f data/c/tags/item/round_balls/thorium_tungsten.json
@@ -3002,6 +3115,7 @@ a580aecbac9afcdba331ec926b1355b79c159788 data/c/tags/item/round_balls/tungsten.j
 38d3610eee574dcc6ea7edb46f09368c8a04afef data/c/tags/item/round_balls/uranium_depleted.json
 eedf1dee7a30a6fc3943b46c06394e227794fff0 data/c/tags/item/round_balls/uranium_enriched.json
 5a3912d43b830f58ff965101a396efe7e5f7ce38 data/c/tags/item/round_balls/vanadium.json
+3012ff4996d7886e72caa61a45ba9c1a8fca36fe data/c/tags/item/round_balls/void_metal.json
 30efc59a17885f9c5a80d2896b40eff63cb277c0 data/c/tags/item/round_balls/woods_metal.json
 beca31bb9f889b8c332edf4c3586f1e71146f25a data/c/tags/item/round_balls/wrought_iron.json
 a7eb181e2dce7e96250a085cd85d27c590773e44 data/c/tags/item/round_balls/zinc.json
@@ -3053,6 +3167,9 @@ b4616ea0ef2bc5e74e357d0cd650af898ebb8094 data/c/tags/item/scraps/silver.json
 4b355bf55906911fdd9a2e974a83d31d29eb8d79 data/c/tags/item/scraps/stainless_steel.json
 14d3b930b1361c5e809157779f37fb55b92a264f data/c/tags/item/scraps/steel.json
 33ea1ed7ebbca5527ac4bc9b3737631dc8c065bd data/c/tags/item/scraps/stellite.json
+44ea8b61d91c495440db4fddee22c49a2afffb9c data/c/tags/item/scraps/thaumium.json
+5eb6c7a8dd88eed67599fca7b55a0e7d8cf27733 data/c/tags/item/scraps/thaumium_lean.json
+9aaec7f981cc05e9c77048acf2171192cb607d4e data/c/tags/item/scraps/thaumium_rich.json
 180ebe7c213791eaf7f72b10a6f92b565ee99274 data/c/tags/item/scraps/thorium.json
 289cc8c1322823218ade63d51bdbcd4fabbe653f data/c/tags/item/scraps/thorium_tungsten.json
 14a192863f1ab019c5eae4e6cfaf275dc8ffac37 data/c/tags/item/scraps/tin.json
@@ -3136,6 +3253,9 @@ faa19397d563997fb310886a58e5b136f89caf52 data/c/tags/item/screws/solder_leaded.j
 d9af05f0945c639589f2afdd0bcfbc7aaff8855c data/c/tags/item/screws/steel.json
 9df4afcafc49d21f22fdba974d71b7ada72cb423 data/c/tags/item/screws/stellite.json
 4235d1f51694b05da3ec7d9e3af3acc307261231 data/c/tags/item/screws/tempered_steel.json
+3636730a4a3e8a1badd4bd8295007c8075ba4525 data/c/tags/item/screws/thaumium.json
+8a3690f3919bdded247113003832d6922b59a62d data/c/tags/item/screws/thaumium_lean.json
+613c98693eaa0d9de6675cfc176b7745b15ff4e5 data/c/tags/item/screws/thaumium_rich.json
 bb547a354aaa8e4bc68e160d9d056047ba08ac22 data/c/tags/item/screws/thorium.json
 afca6ce38a2524074e6cf48d08ff5da2867f6762 data/c/tags/item/screws/thorium_fuel_rod.json
 66a85982fd5ab669c2fabb2afd43b360c3cadd85 data/c/tags/item/screws/thorium_tungsten.json
@@ -3149,6 +3269,7 @@ c3840680f3a2b4091fe1042d8943cdf610a4d74d data/c/tags/item/screws/titanium_carbid
 39100fe1fbb708af3fe00717878ca2b0136afb93 data/c/tags/item/screws/uranium_depleted.json
 b60cf7d6ad1bce4566420e51ec0d87af2eef98f1 data/c/tags/item/screws/uranium_enriched.json
 156715a0941aed00220ce378d4cab6b25ffc543b data/c/tags/item/screws/vanadium.json
+1e143a878ab1fca48a28bc66dfcd6bbc0e5ac1da data/c/tags/item/screws/void_metal.json
 fe954425c0bb2581efc6e7f3b2f43bdb4134a0be data/c/tags/item/screws/woods_metal.json
 58773a85e23ac994025abeb441446a624f481d85 data/c/tags/item/screws/wrought_iron.json
 0f76965fd737e97dbaea6c7479cc01691f90bd3b data/c/tags/item/screws/zinc.json
@@ -3316,6 +3437,9 @@ c067fbd265c54d3d011baf08c7010069a500e126 data/c/tags/item/storage_blocks/stone.j
 4c06813d634808c298b5a4d7d1f2cfc3f27b304d data/c/tags/item/storage_blocks/synthetic_rubber.json
 e8a1b57197c52a91f01e1deff63d5eadcb5d6d6e data/c/tags/item/storage_blocks/tarnished_soil.json
 ba640fbb3b1bc2ebd73ac98581c5818844570468 data/c/tags/item/storage_blocks/terracotta.json
+8083ab4ad54489778c81ca788c8a33ecdb922bac data/c/tags/item/storage_blocks/thaumium.json
+fdde0503934181f213d8948c6d9cad2b4a281e1d data/c/tags/item/storage_blocks/thaumium_lean.json
+814c4696402b8ab8dcaa48c02e17ab02c2839d0f data/c/tags/item/storage_blocks/thaumium_rich.json
 625074b0207e170b0a30043956a4339f157b855c data/c/tags/item/storage_blocks/thorium.json
 e6cc1469b5001929292cb05915fcbf78c5255db2 data/c/tags/item/storage_blocks/thorium_tungsten.json
 8ed38bf28c34e38945cfe45888045d92d4e98d08 data/c/tags/item/storage_blocks/tin.json
@@ -3331,6 +3455,7 @@ e8a30157cfeb5c155cf9a174c8ba0c432fd91d90 data/c/tags/item/storage_blocks/uranium
 716e1995c7caa7fafb4b139b11a884a1b5a7603f data/c/tags/item/storage_blocks/uranium_enriched.json
 51eeb8198ee32b82b699bfa66509363126268a44 data/c/tags/item/storage_blocks/uranium_glass.json
 f0e6e7fd112e766051ef90ca812d1f29e8e55368 data/c/tags/item/storage_blocks/vanadium.json
+ffcca44642f456f3e6f9535ad08e673534afa467 data/c/tags/item/storage_blocks/void_metal.json
 350c36a1d855833cea93ab644457a37e66f2641b data/c/tags/item/storage_blocks/woods_metal.json
 bc25e94ac1db7f5244adecf6ac0ff2275cbcd915 data/c/tags/item/storage_blocks/wrought_iron.json
 5d3ada3fbceaf4e9e91cdb9532b2abd36bcabd9d data/c/tags/item/storage_blocks/zinc.json
@@ -3410,6 +3535,9 @@ c449c192a82e965c654df70d0d7d47ca4412e544 data/c/tags/item/swarfs/silver.json
 62703d4bc373031353cf2c09b01e25d4b0411443 data/c/tags/item/swarfs/steel.json
 65aae21314bb6fdfa55cbbe3e661246990ee7259 data/c/tags/item/swarfs/stellite.json
 d19050cf8ff811cbe590341c27ce0f87e960f248 data/c/tags/item/swarfs/tempered_steel.json
+fa3ebd15110fa9d8a1740a26de38a3a72b8042d9 data/c/tags/item/swarfs/thaumium.json
+df6145d2b25179855975b558eccece45fc410766 data/c/tags/item/swarfs/thaumium_lean.json
+75dcf2c930b7718aa00c9b5f2bd3aa31222b93e3 data/c/tags/item/swarfs/thaumium_rich.json
 31d4f5e23c7f65704b2a90f0ce8fc3f77daf3391 data/c/tags/item/swarfs/thorium.json
 779826aa2599659cfddda9f38ef39fc27bdae20a data/c/tags/item/swarfs/thorium_fuel_rod.json
 7242aa7ef943cd896f3547ab85ce7495435b25cc data/c/tags/item/swarfs/thorium_tungsten.json
@@ -3517,6 +3645,9 @@ a3ccca7098092665c2cab7a71995ae2d3068c24c data/c/tags/item/turned_rods/silver.jso
 1f0c3407b11b2e405a1d167e79dcd77bf79aba70 data/c/tags/item/turned_rods/steel.json
 79ef4ba8eec8fc2e196c84dbe164de448a787fca data/c/tags/item/turned_rods/stellite.json
 ca7103490901db24c64d101115bf739a0663c2ed data/c/tags/item/turned_rods/tempered_steel.json
+02d5a95663699b13344b91e3a6a4c021ad942edd data/c/tags/item/turned_rods/thaumium.json
+f8aa36322d4f29b456707cc59647523dd1d8b949 data/c/tags/item/turned_rods/thaumium_lean.json
+25100f2a802849acc22da1ae7b9886b225b33f9d data/c/tags/item/turned_rods/thaumium_rich.json
 bdbbc3274779198263c9873611f7e7e3cb54c9ab data/c/tags/item/turned_rods/thorium.json
 86ab1a56016c15b3e9383f604b29710d7d114296 data/c/tags/item/turned_rods/thorium_tungsten.json
 d165eff234c70eae2b9121ef0e35fed91c32a115 data/c/tags/item/turned_rods/tin.json
@@ -3600,6 +3731,9 @@ a036be8ea2acae0caa34d08368a49fabcb2efd24 data/c/tags/item/welding_rods/stainless
 bd8edf639ce0f44ba3c4a2a6337d0bbb2be8b06d data/c/tags/item/welding_rods/steel.json
 d06d0db1aaae24f09531dd6b95d430ed3a3d5d65 data/c/tags/item/welding_rods/stellite.json
 f51187aef986216c203c735316d10ee34f84e0eb data/c/tags/item/welding_rods/tempered_steel.json
+6a5d6cfbbc54c78cbff5e12e644be2c06d13cb31 data/c/tags/item/welding_rods/thaumium.json
+f497753b8c34d47f117a9c46b57ac5b2557d8715 data/c/tags/item/welding_rods/thaumium_lean.json
+27b502e46dad3ec0bd7270fc70ed8eb72307d1aa data/c/tags/item/welding_rods/thaumium_rich.json
 c7aea94a91d6c74431a2c41a1e46506e10a3a510 data/c/tags/item/welding_rods/thorium.json
 9bece521cfa9a78d325eee5c4f78620df7fc331f data/c/tags/item/welding_rods/thorium_fuel_rod.json
 e98b733bc4b0b8ac70f57c5858049ec720f9cb61 data/c/tags/item/welding_rods/thorium_tungsten.json
@@ -3613,6 +3747,7 @@ ad59599353151a9f47d444b8f19c37261dc0883f data/c/tags/item/welding_rods/titanium.
 01dbbc8cc3a319e2860695bde98d344762533ce7 data/c/tags/item/welding_rods/uranium_depleted.json
 e98279fb472e9f02cfcfa11084297632fe0380d8 data/c/tags/item/welding_rods/uranium_enriched.json
 b50cfba58bafec2a488b76f0f8a44e2f8c0fe694 data/c/tags/item/welding_rods/vanadium.json
+038df0be98ccd229f090b80b45d6e940252e25e2 data/c/tags/item/welding_rods/void_metal.json
 8e2cd6fd76a4461654e76066d442a3383c3b9e6d data/c/tags/item/welding_rods/woods_metal.json
 ba9c25877187aeaedf3cb81ce980ef556397c2e9 data/c/tags/item/welding_rods/wrought_iron.json
 1b10b5f1a461aecb0342764ab5be56781f2f73a1 data/c/tags/item/welding_rods/zinc.json
@@ -3667,6 +3802,9 @@ bb0af0fe6de079e840930b6c334b9e7be7997463 data/c/tags/item/wires/redstone_superco
 6fe190568264fba980101d084129e88311813882 data/c/tags/item/wires/steel.json
 346aa2149a5b88cb30f64f3e1edf94b355c2f120 data/c/tags/item/wires/stellite.json
 60fd8dccbebdf44596dfd284d144feb9a57bf129 data/c/tags/item/wires/tempered_steel.json
+85669cd2739dda8e47ac511b591377f4575188bc data/c/tags/item/wires/thaumium.json
+0472160c8849ea8d3c8e590c31515ec74ff17407 data/c/tags/item/wires/thaumium_lean.json
+b2ce17e5b7654280598b66fc89b79488f0d1cf97 data/c/tags/item/wires/thaumium_rich.json
 2fc1ba59eecc6457ec6bf54fde6bec9a8bc15f5e data/c/tags/item/wires/thorium.json
 e4785f52cf4597e087b61377b06e3d4cb6a19718 data/c/tags/item/wires/thorium_tungsten.json
 c0943b383b97634366cec6174c5f17ed97943a40 data/c/tags/item/wires/tin.json

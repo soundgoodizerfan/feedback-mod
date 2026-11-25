@@ -47,8 +47,8 @@ public final class FluidTagsGen extends FluidTagsProvider {
             String name = id.getPath().endsWith("_flowing")
                     ? id.getPath().substring(0, id.getPath().length() - "_flowing".length())
                     : id.getPath();
-            tag(TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("c", name))).add(fluid);
-            if (fluid.getFluidType().getDensity() < 0) tag(Tags.Fluids.GASEOUS).add(fluid);
+            FormData.put(tag(TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("c", name))), BuiltInRegistries.FLUID, fluid);
+            if (fluid.getFluidType().getDensity() < 0) FormData.put(tag(Tags.Fluids.GASEOUS), BuiltInRegistries.FLUID, fluid);
         }
     }
 }

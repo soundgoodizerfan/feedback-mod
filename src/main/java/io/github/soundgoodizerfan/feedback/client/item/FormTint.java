@@ -183,7 +183,10 @@ public final class FormTint {
         // Every other item (vanilla's iron ingot, another mod's brass plate) keeps its own sprite and takes only the heat: tags are not loaded
         // yet, so each stack asks the material table when it is drawn, and a stack with no temperature draws untouched.
         for (Item item : BuiltInRegistries.ITEM) {
-            if (colors.containsKey(item) || event.getItemColors().getColor(new net.minecraft.world.item.ItemStack(item), 0) != -1)
+            // Our own items carry their own tint (a modular piece's handler answers -1 for a blank stack, so the probe below cannot see it,
+            // and a white handler here would blank every modular item): only foreign items get this one.
+            if (colors.containsKey(item) || Feedback.MOD_ID.equals(BuiltInRegistries.ITEM.getKey(item).getNamespace())
+                    || event.getItemColors().getColor(new net.minecraft.world.item.ItemStack(item), 0) != -1)
                 continue;
             event.register((stack, layer) -> layer != 0 || !stack.has(FDataComponents.TEMPERATURE.get()) || !foreignGlows(stack.getItem())
                     ? 0xFFFFFFFF : 0xFF000000 | GlowColours.heated(0xFFFFFF, stack), item);

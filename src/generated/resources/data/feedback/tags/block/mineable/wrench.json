@@ -269,6 +269,18 @@
     "feedback:synthetic_rubber_pipe",
     "feedback:tempered_steel_pipe",
     "feedback:tension_gauge",
+    {
+      "id": "feedback:thaumium_lean_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_rich_pipe",
+      "required": false
+    },
     "feedback:thermal_store",
     "feedback:thermal_valve",
     "feedback:thermocouple_probe",

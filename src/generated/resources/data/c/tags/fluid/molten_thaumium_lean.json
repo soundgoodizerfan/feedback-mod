@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_lean",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_lean_flowing",
+      "required": false
+    }
+  ]
+}

@@ -23,6 +23,12 @@ public final class LoadConditions {
 
     public static final String KEY = "neoforge:conditions";
 
+    /**
+     * True in the data run ({@code -Dfeedback.datagen=true}, set by build.gradle). Datagen has no Thaumaturge or AE2 to load, yet the
+     * data of a conditional material must still be generated, each file carrying its condition, so every {@code mod_loaded} holds there.
+     */
+    public static final boolean DATAGEN = Boolean.getBoolean("feedback.datagen");
+
     private LoadConditions() {
     }
 
@@ -53,7 +59,7 @@ public final class LoadConditions {
         String type = o.has("type") ? o.get("type").getAsString() : "";
         switch (type) {
             case "neoforge:mod_loaded":
-                return ModList.get().isLoaded(o.get("modid").getAsString());
+                return DATAGEN || ModList.get().isLoaded(o.get("modid").getAsString());
             case "neoforge:not":
                 return !holds(o.get("value"));
             case "neoforge:and":

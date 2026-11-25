@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-25T13:19:23.686878721	Loot Tables
+// 1.21.1	2026-11-25T15:16:03.557839272	Loot Tables
 3ec2d8235a145e9ecd4bc49404e31bff70407cfb data/feedback/loot_table/blocks/alnico_block.json
 7ceaa2b8bfe1b647eb0a2c985f24c7b8138994b8 data/feedback/loot_table/blocks/alnico_pipe.json
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
@@ -262,6 +262,11 @@ bbd6e49940745a0d3190e50257a81d2eaf570227 data/feedback/loot_table/blocks/stibnit
 fe8028052a771e9755cc86a1c1b72d2e5da15354 data/feedback/loot_table/blocks/synthetic_rubber_block.json
 7355ce5ff4af11d18be8bbd41fd3540d8252f52e data/feedback/loot_table/blocks/synthetic_rubber_pipe.json
 988c9ecaf98ea75bff7014e54a79943329851ffd data/feedback/loot_table/blocks/tempered_steel_pipe.json
+1b2e4bea092810c170653b1d0ae9f322a886d13c data/feedback/loot_table/blocks/thaumium_lean_block.json
+8f27690d95628f146b93f58047844023319946fb data/feedback/loot_table/blocks/thaumium_lean_pipe.json
+a4fa6ab6ca54e4af123e0a03ff961836fa632562 data/feedback/loot_table/blocks/thaumium_pipe.json
+87f57df4f59380ee10f006150502eac1a9e6e798 data/feedback/loot_table/blocks/thaumium_rich_block.json
+dc2f11d0ca626d50badac7d5ef79d583e1b6602d data/feedback/loot_table/blocks/thaumium_rich_pipe.json
 5460f218da28535cfe64ba8c01a4ce4a99748ad5 data/feedback/loot_table/blocks/thorium_block.json
 6f37c46e5108fb16f0df2d4c9f697bf6c571b4d9 data/feedback/loot_table/blocks/thorium_fuel_rod_pipe.json
 37c2227cf86acd230f931ac38bdf159632813cb2 data/feedback/loot_table/blocks/thorium_pipe.json
