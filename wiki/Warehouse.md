@@ -1,6 +1,6 @@
 # Warehouse
 
-An aisle of racks served by a carriage on a rail. You feed goods in at one end, the carriage files them away, and you ask for them back by name. It is made of a [Warehouse Dock](Warehouse_Dock.md), a Shuttle Head, Warehouse Rail and [Pallet Racks](Pallet_Rack.md).
+An aisle of racks served by a carriage on a rail. You feed goods in at one end, the carriage files them away, and you ask for them back by name. It is made of a [Warehouse Dock](Warehouse_Dock.md), a Shuttle Head, Warehouse Rail and [Pallet Racks](Pallet_Rack.md). A [Catalog Desk](Catalog_Desk.md) gathers several aisles into one list.
 
 ## Layout
 

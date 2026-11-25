@@ -82,6 +82,7 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
                 }
             b.lots.clear();
         }
+        AisleChanges.bumpStock();
         setChanged();
     }
 
@@ -103,6 +104,7 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
 
     /** Stock or fittings changed: saved, and shown to players near. */
     public void changed() {
+        AisleChanges.bumpStock();
         setChanged();
         if (level != null && !level.isClientSide)
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
@@ -111,6 +113,12 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
     @Override
     public void onLoad() {
         super.onLoad();
+        AisleChanges.bump();
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
         AisleChanges.bump();
     }
 

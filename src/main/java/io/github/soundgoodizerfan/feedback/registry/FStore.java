@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.logistics.store.DeskBlock;
+import io.github.soundgoodizerfan.feedback.logistics.store.DeskBlockEntity;
+import io.github.soundgoodizerfan.feedback.logistics.store.DeskMenu;
 import io.github.soundgoodizerfan.feedback.logistics.store.DockBlock;
 import io.github.soundgoodizerfan.feedback.logistics.store.DockBlockEntity;
 import io.github.soundgoodizerfan.feedback.logistics.store.DockMenu;
@@ -93,6 +96,18 @@ public final class FStore {
     public static final DeferredHolder<MenuType<?>, MenuType<DockMenu>> DOCK_MENU =
             MENUS.register("warehouse_dock", () -> IMenuTypeExtension.create(DockMenu::new));
 
+    public static final DeferredBlock<DeskBlock> DESK = BLOCKS.register("catalogue_desk",
+            () -> new DeskBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD).noOcclusion()));
+
+    public static final DeferredItem<BlockItem> DESK_ITEM = ITEMS.registerSimpleBlockItem(DESK);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeskBlockEntity>> DESK_ENTITY =
+            BLOCK_ENTITIES.register("catalogue_desk", () -> BlockEntityType.Builder.of(DeskBlockEntity::new, DESK.get()).build(null));
+
+    /** Extended: the desk's position rides in the open packet. */
+    public static final DeferredHolder<MenuType<?>, MenuType<DeskMenu>> DESK_MENU =
+            MENUS.register("catalogue_desk", () -> IMenuTypeExtension.create(DeskMenu::new));
+
     private FStore() {
     }
 
@@ -111,6 +126,7 @@ public final class FStore {
     /** The warehouse blocks, fittings and one rack per metal, for the creative tab. */
     public static void fill(net.minecraft.world.item.CreativeModeTab.Output output) {
         output.accept(DOCK_ITEM.get());
+        output.accept(DESK_ITEM.get());
         output.accept(HEAD_ITEM.get());
         output.accept(RAIL_ITEM.get());
         FITTINGS.values().forEach(i -> output.accept(i.get()));

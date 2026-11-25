@@ -245,8 +245,10 @@ public class FClientSetup {
         event.register(FMenus.COUNTER.get(), CounterScreen::new);
         event.register(FMenus.BOARD.get(), BoardScreen::new);
         event.register(FMenus.DEPOT.get(), DepotScreen::new);
-        event.register(io.github.soundgoodizerfan.feedback.registry.FStore.DOCK_MENU.get(),
-                io.github.soundgoodizerfan.feedback.client.store.DockScreen::new);
+        event.<io.github.soundgoodizerfan.feedback.logistics.store.DockMenu, io.github.soundgoodizerfan.feedback.client.store.StoreScreen<io.github.soundgoodizerfan.feedback.logistics.store.DockMenu>>register(
+                io.github.soundgoodizerfan.feedback.registry.FStore.DOCK_MENU.get(), io.github.soundgoodizerfan.feedback.client.store.StoreScreen::dock);
+        event.<io.github.soundgoodizerfan.feedback.logistics.store.DeskMenu, io.github.soundgoodizerfan.feedback.client.store.StoreScreen<io.github.soundgoodizerfan.feedback.logistics.store.DeskMenu>>register(
+                io.github.soundgoodizerfan.feedback.registry.FStore.DESK_MENU.get(), io.github.soundgoodizerfan.feedback.client.store.StoreScreen::desk);
     }
 
     /**

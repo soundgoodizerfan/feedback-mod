@@ -20,4 +20,15 @@ public final class AisleChanges {
     public static int generation() {
         return generation;
     }
+
+    private static int stock = 1;
+
+    /** Some rack's contents changed, or a rack went with its chunk: docks count their stock again when next asked. */
+    public static void bumpStock() {
+        stock++;
+    }
+
+    public static int stockGeneration() {
+        return stock;
+    }
 }

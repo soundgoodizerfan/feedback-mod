@@ -19,6 +19,8 @@ public final class Job {
     public final ItemStack item;
     /** How many a retrieval set out to bring. */
     public final int planned;
+    /** The id of the request a retrieval serves, 0 for storing. */
+    public int request;
     /** How many ride the carriage now. */
     public int load;
     public boolean returning;
@@ -48,6 +50,7 @@ public final class Job {
         tag.put("Item", item.save(registries));
         tag.putInt("Planned", planned);
         tag.putInt("Load", load);
+        tag.putInt("Request", request);
         tag.putBoolean("Returning", returning);
         tag.putFloat("Progress", progress);
         return tag;
@@ -61,6 +64,7 @@ public final class Job {
         Aisle.Cell cell = new Aisle.Cell(BlockPos.of(tag.getLong("Pos")), tag.getInt("Rail"), tag.getInt("Height"), tag.getInt("Side"));
         Job job = new Job(tag.getBoolean("Fetch"), cell, tag.getInt("Bay"), item, tag.getInt("Planned"));
         job.load = tag.getInt("Load");
+        job.request = tag.getInt("Request");
         job.returning = tag.getBoolean("Returning");
         job.progress = tag.getFloat("Progress");
         return job;

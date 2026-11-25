@@ -51,7 +51,7 @@ public class DockBlock extends Block implements EntityBlock {
         // Sneaking with an empty hand takes the waiting intake back.
         if (player.isShiftKeyDown() && level.getBlockEntity(pos) instanceof DockBlockEntity dock && dock.returnIntake(player))
             return InteractionResult.CONSUME;
-        if (player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof DockBlockEntity)
+        if (player instanceof ServerPlayer sp && level.getBlockEntity(pos) instanceof DockBlockEntity dock)
             sp.openMenu(new SimpleMenuProvider((id, inv, p) -> new DockMenu(id, inv, pos),
                     Component.translatable(getDescriptionId())), pos);
         return InteractionResult.CONSUME;

@@ -10248,6 +10248,28 @@
         "aspect": "thaumaturge:ignis"
       }
     ],
+    "feedback:catalogue_desk": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 26,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 16,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 20,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
     "feedback:catalyst_tap": [
       {
         "amount": 4,

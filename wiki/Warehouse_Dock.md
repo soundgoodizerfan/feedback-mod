@@ -29,9 +29,10 @@ Goods that no bay takes stay in the intake. **Sneak and right-click the dock wit
 
 **Right-click** the dock to open it.
 
+- Click the title and type to name the dock (up to 32 characters). The name is kept when the dock is broken, and a [Catalog Desk](Catalog_Desk.md) lists the dock by it.
 - The list on the left shows each distinct stack on the aisle with its count. Type in **Search** to narrow it by name.
 - Click a line, set the **Amount** (64 to begin with; **All** fills in the whole count), then press **Fetch** or Enter.
-- **Queue**, on the right, lists the retrievals waiting. Click one to drop it. The queue holds up to 32 different stacks.
+- **Queue**, on the right, lists the retrievals waiting. Click one to drop it. The queue holds up to 32 lines: asking again for a stack adds to its line, and each [Catalog Desk](Catalog_Desk.md) order takes a line of its own.
 - The top corner shows the number of racks on the aisle and, while the shaft turns, the time of a round trip to the farthest one.
 
 Retrievals go before storing. While the output is full, retrievals wait and storing carries on.
@@ -45,6 +46,10 @@ Retrievals go before storing. While the output is full, retrievals wait and stor
 | Output full: collect it | The next retrieval has no room in the output. |
 
 [Jade](Mod_Compats.md#jade) shows the same status when you look at the dock.
+
+## Catalog Desk
+
+A [Catalog Desk](Catalog_Desk.md) lists and orders the stock of several docks at once. Link a dock to it with the [Data Connector](Data_Connector.md).
 
 ## Breaking it
 

@@ -46,6 +46,7 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(ReactorServerData.INSTANCE, net.minecraft.world.level.block.entity.BlockEntity.class);
         registration.registerBlockDataProvider(StoreServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.store.RackBlockEntity.class);
         registration.registerBlockDataProvider(StoreServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.store.DockBlockEntity.class);
+        registration.registerBlockDataProvider(StoreServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.store.DeskBlockEntity.class);
         registration.registerBlockDataProvider(BeltServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.belt.BeltBlockEntity.class);
         registration.registerBlockDataProvider(BeltServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.belt.BeltHeadBlockEntity.class);
         registration.registerBlockDataProvider(PenServerData.INSTANCE, io.github.soundgoodizerfan.feedback.machine.creeper.CreeperPenBlockEntity.class);

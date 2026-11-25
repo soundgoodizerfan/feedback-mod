@@ -5,6 +5,7 @@ package io.github.soundgoodizerfan.feedback.logistics.store;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,12 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenCustomHashMap;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStackLinkedSet;
 
+import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
 import io.github.soundgoodizerfan.feedback.logistics.belt.BeltTargets;
 import io.github.soundgoodizerfan.feedback.registry.FStore;
 
@@ -44,18 +50,28 @@ import net.neoforged.neoforge.items.IItemHandler;
  * stock listed as a union over separate stores keyed on item plus components, and stock kept on a broken store's item.
  * Rejected: any container joining the list, an instant distance-free grid, channels, capacity tiers and autocrafting.
  */
-public class DockBlockEntity extends BlockEntity {
+public class DockBlockEntity extends BlockEntity implements DataNode {
 
-    /** A retrieval asked for: what, and how many are still to fetch. */
+    /** A retrieval asked for: what, how many are still to fetch, and the desk order it is a share of (0 for the dock's own). */
     public static final class Request {
         public final ItemStack item;
+        public final int order;
+        /** Drawn at random, so it names this request among every dock's. */
+        public final int id;
         public int remaining;
 
-        public Request(ItemStack item, int remaining) {
+        public Request(ItemStack item, int remaining, int order, int id) {
             this.item = item.copyWithCount(1);
             this.remaining = remaining;
+            this.order = order;
+            this.id = id;
         }
     }
+
+    /** The name the dock was given before it was placed, or null. */
+    private Component name;
+    private List<Lot> counted;
+    private int countedAisle, countedStock;
 
     private final List<ItemStack> intake = new ArrayList<>();
     private final List<ItemStack> output = new ArrayList<>();
@@ -106,12 +122,48 @@ public class DockBlockEntity extends BlockEntity {
         return level.isLoaded(pos) && level.getBlockEntity(pos) instanceof RackBlockEntity r ? r : null;
     }
 
-    /** Everything on the aisle's loaded racks, one lot per distinct stack. */
+    /** Everything on the aisle's loaded racks, one lot per distinct stack; counted again only after something moved. Do not change it. */
     public List<Lot> stock() {
+        aisle();
+        if (counted == null || countedAisle != aisleRead || countedStock != AisleChanges.stockGeneration()) {
+            countedAisle = aisleRead;
+            countedStock = AisleChanges.stockGeneration();
+            counted = count(Set.of());
+        }
+        return counted;
+    }
+
+    /** The stock of the racks not yet in {@code counted}, adding this aisle's to it. */
+    List<Lot> stockExcept(Set<BlockPos> counted) {
+        boolean shared = false;
+        for (Aisle.Cell cell : aisle().racks())
+            shared |= counted.contains(cell.pos());
+        List<Lot> out = shared ? count(counted) : stock();
+        for (Aisle.Cell cell : aisle().racks())
+            counted.add(cell.pos());
+        return out;
+    }
+
+    /** How many of {@code item} are asked for and not yet delivered. */
+    int pending(ItemStack item) {
+        int n = 0;
+        for (Request r : requests)
+            if (ItemStack.isSameItemSameComponents(r.item, item))
+                n += r.remaining;
+        return n;
+    }
+
+    @Override
+    public boolean canLinkTo(DataNode other) {
+        // A desk's own cap holds whichever end the link is started from.
+        return DataNode.super.canLinkTo(other) && (!(other instanceof DeskBlockEntity desk) || desk.canLinkTo(this));
+    }
+
+    private List<Lot> count(Set<BlockPos> skip) {
         Map<ItemStack, Lot> out = new Object2ObjectLinkedOpenCustomHashMap<>(ItemStackLinkedSet.TYPE_AND_TAG);
         for (Aisle.Cell cell : aisle().racks()) {
             RackBlockEntity rack = rackAt(cell.pos());
-            if (rack == null)
+            if (rack == null || skip.contains(cell.pos()))
                 continue;
             for (int i = 0; i < StoreTuning.BAYS_PER_CELL; i++)
                 for (Lot lot : rack.bay(i).lots) {
@@ -130,23 +182,70 @@ public class DockBlockEntity extends BlockEntity {
     }
 
     /** What holds the dock up, if anything. */
-    public DockView.State state() {
+    public StoreView.State state() {
         if (aisle().head() == null)
-            return DockView.State.NO_HEAD;
+            return StoreView.State.NO_HEAD;
         if (speed() <= 0f)
-            return DockView.State.STILL;
+            return StoreView.State.STILL;
         if (!requests.isEmpty() && outputRoom(requests.get(0).item) <= 0)
-            return DockView.State.OUTPUT_FULL;
-        return noRoom && !intake.isEmpty() ? DockView.State.NO_ROOM : DockView.State.READY;
+            return StoreView.State.OUTPUT_FULL;
+        return noRoom && !intake.isEmpty() ? StoreView.State.NO_ROOM : StoreView.State.READY;
+    }
+
+    /** This dock as a screen lists it. */
+    StoreView.Source source(Component called) {
+        Aisle a = aisle();
+        float speed = speed();
+        float far = a.racks().isEmpty() ? 0f : a.racks().get(a.racks().size() - 1).distance();
+        return new StoreView.Source(called, state(), a.racks().size(), speed <= 0f ? 0 : Math.round(2f * far / speed));
+    }
+
+    @Nullable
+    public Component customName() {
+        return name;
+    }
+
+    /** Names the dock; blank takes the name off. */
+    void rename(String to) {
+        String clean = net.minecraft.util.StringUtil.filterText(to).trim();
+        if (clean.length() > StoreTuning.DOCK_NAME_MAX)
+            clean = clean.substring(0, StoreTuning.DOCK_NAME_MAX);
+        name = clean.isEmpty() ? null : Component.literal(clean);
+        setChanged();
     }
 
     /**
-     * Queues a retrieval of up to {@code count} of {@code item}, never more than the aisle holds beyond what is already
-     * asked for. False when the queue has no place left for it.
+     * Roughly how soon this dock could begin handing out {@code item}: the trips ahead of it and the run to the nearest bay
+     * holding it, in ticks. A dock that cannot deliver now ranks after every one that can.
      */
-    public boolean request(ItemStack item, int count) {
+    float estimate(ItemStack item) {
+        float speed = speed();
+        float nearest = Float.MAX_VALUE;
+        for (Aisle.Cell cell : aisle().racks()) {
+            RackBlockEntity rack = rackAt(cell.pos());
+            if (rack == null)
+                continue;
+            for (int i = 0; i < StoreTuning.BAYS_PER_CELL && nearest == Float.MAX_VALUE; i++)
+                if (rack.bay(i).find(item) != null)
+                    nearest = cell.distance();
+            if (nearest != Float.MAX_VALUE)
+                break;
+        }
+        if (speed <= 0f || nearest == Float.MAX_VALUE || outputRoom(item) <= 0)
+            return Float.MAX_VALUE;
+        int ahead = requests.size() + (job == null ? 0 : 1);
+        float far = aisle().racks().get(aisle().racks().size() - 1).distance();
+        return (ahead * far + nearest) * 2f / speed;
+    }
+
+    /**
+     * Queues a retrieval of up to {@code count} of {@code item} for desk order {@code order} (0 for the dock's own), never
+     * more than the aisle holds beyond what is already asked for. How many were queued, or -1 when there were some to
+     * give and the queue had no place left.
+     */
+    public int request(ItemStack item, int count, int order) {
         if (level == null || level.isClientSide || count <= 0)
-            return true;
+            return 0;
         // What is riding home still counts as held: its request has not been marked down yet.
         int held = job != null && job.fetch && job.returning && ItemStack.isSameItemSameComponents(job.item, item) ? job.load : 0;
         for (Lot l : stock())
@@ -155,21 +254,22 @@ public class DockBlockEntity extends BlockEntity {
         Request same = null;
         for (Request r : requests)
             if (ItemStack.isSameItemSameComponents(r.item, item)) {
-                same = r;
+                if (r.order == order)
+                    same = r;
                 held -= r.remaining;
             }
         int n = Math.min(count, held);
         if (n <= 0)
-            return true;
+            return 0;
         if (same != null)
             same.remaining += n;
         else if (requests.size() < StoreTuning.MAX_REQUESTS)
-            requests.add(new Request(item, n));
+            requests.add(new Request(item, n, order, level.random.nextInt(Integer.MAX_VALUE - 1) + 1));
         else
-            return false;
+            return -1;
         fetchWait = 0;
         setChanged();
-        return true;
+        return n;
     }
 
     /** Hands everything waiting in the intake back to {@code player}: the way out for cargo no bay takes. */
@@ -185,11 +285,22 @@ public class DockBlockEntity extends BlockEntity {
         return true;
     }
 
-    public void cancel(int index) {
-        if (index >= 0 && index < requests.size()) {
-            requests.remove(index);
+    /** Drops the request of that id, if it is here. */
+    public void cancel(int id) {
+        if (requests.removeIf(r -> r.id == id))
             setChanged();
-        }
+    }
+
+    /** Drops requests for goods no rack of a wholly loaded aisle holds (another dock took them from a shared rack, or the rack went). */
+    private void forgetGone() {
+        if (aisle().partial())
+            return;
+        for (Aisle.Cell cell : aisle().racks())
+            if (rackAt(cell.pos()) == null)
+                return;
+        List<Lot> held = stock();
+        if (requests.removeIf(r -> held.stream().noneMatch(l -> l.matches(r.item))))
+            setChanged();
     }
 
     // --- the tick ---------------------------------------------------------------------------
@@ -234,6 +345,7 @@ public class DockBlockEntity extends BlockEntity {
             fetchWait--;
             return false;
         }
+        forgetGone();
         for (Request r : requests) {
             float unit = Goods.unitMass(r.item);
             int room = outputRoom(r.item);
@@ -248,7 +360,9 @@ public class DockBlockEntity extends BlockEntity {
                     if (lot == null)
                         continue;
                     int n = Math.min(Math.min(r.remaining, lot.count), Math.min(room, fits(StoreTuning.SHUTTLE_MASS_MU, unit)));
-                    begin(new Job(true, cell, i, r.item, n));
+                    Job next = new Job(true, cell, i, r.item, n);
+                    next.request = r.id;
+                    begin(next);
                     return true;
                 }
             }
@@ -360,7 +474,8 @@ public class DockBlockEntity extends BlockEntity {
         add(output, job.item, job.load);
         for (int i = 0; i < requests.size(); i++) {
             Request r = requests.get(i);
-            if (ItemStack.isSameItemSameComponents(r.item, job.item)) {
+            // Charged only to the request it was fetched for; a cancelled one's cargo is charged to nothing.
+            if (r.id == job.request) {
                 r.remaining -= job.load;
                 if (r.remaining <= 0)
                     requests.remove(i);
@@ -588,11 +703,15 @@ public class DockBlockEntity extends BlockEntity {
             CompoundTag one = new CompoundTag();
             one.put("Item", r.item.save(registries));
             one.putInt("Count", r.remaining);
+            one.putInt("Order", r.order);
+            one.putInt("Id", r.id);
             asked.add(one);
         }
         tag.put("Requests", asked);
         if (job != null)
             tag.put("Job", job.save(registries));
+        if (name != null)
+            tag.putString("CustomName", Component.Serializer.toJson(name, registries));
     }
 
     /** Reads both the saved tag and the smaller one a client is sent (carriage and speed only). */
@@ -612,8 +731,44 @@ public class DockBlockEntity extends BlockEntity {
         for (int i = 0; i < asked.size(); i++) {
             ItemStack item = ItemStack.parseOptional(registries, asked.getCompound(i).getCompound("Item"));
             if (!item.isEmpty())
-                requests.add(new Request(item, asked.getCompound(i).getInt("Count")));
+                requests.add(new Request(item, asked.getCompound(i).getInt("Count"), asked.getCompound(i).getInt("Order"),
+                        asked.getCompound(i).getInt("Id")));
         }
+        name = tag.contains("CustomName") ? Component.Serializer.fromJson(tag.getString("CustomName"), registries) : null;
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        name = input.get(DataComponents.CUSTOM_NAME);
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        components.set(DataComponents.CUSTOM_NAME, name);
+    }
+
+    // --- data node (a catalogue desk links to it) -------------------------------------------
+
+    @Override
+    public BlockPos getNodePos() {
+        return worldPosition;
+    }
+
+    @Override
+    public Direction getNodeSide() {
+        return null;
+    }
+
+    @Override
+    public Level getNodeLevel() {
+        return level;
+    }
+
+    @Override
+    public BlockEntity getNodeOwner() {
+        return this;
     }
 
     @Override

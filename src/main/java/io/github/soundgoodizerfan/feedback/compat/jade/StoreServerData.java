@@ -33,6 +33,9 @@ public class StoreServerData implements IServerDataProvider<BlockAccessor> {
             data.putBoolean(WORN, rack.condition() < 1f);
         } else if (accessor.getBlockEntity() instanceof DockBlockEntity dock) {
             data.putString(STATE, dock.state().name().toLowerCase(Locale.ROOT));
+        } else if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.logistics.store.DeskBlockEntity desk
+                && desk.down() != null) {
+            data.putString(STATE, desk.down().name().toLowerCase(Locale.ROOT));
         }
     }
 

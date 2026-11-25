@@ -10868,5 +10868,20 @@
   "config.jade.plugin_feedback.warehouse": "Warehouse",
   "figure.feedback.block.Condition": "Condition: %s%%",
   "figure.feedback.block.Condition.label": "Condition",
-  "message.feedback.dock.queue_full": "The dock queue is full"
+  "message.feedback.dock.queue_full": "The dock queue is full",
+  "block.feedback.catalogue_desk": "Catalog Desk",
+  "screen.feedback.dock.state.away": "Away: its chunk is not loaded",
+  "screen.feedback.dock.state.no_circuit": "No working circuit",
+  "screen.feedback.dock.state.no_power": "No current",
+  "screen.feedback.dock.state.no_docks": "No docks linked",
+  "screen.feedback.desk.dock": "Dock %s (%s blocks)",
+  "screen.feedback.desk.ready": "Docks ready: %s",
+  "screen.feedback.desk.held": "Docks held up: %s",
+  "screen.feedback.desk.docks": "Docks: %s",
+  "screen.feedback.desk.share": "%s: %s",
+  "screen.feedback.desk.source": "%s: %s",
+  "screen.feedback.desk.more": "and %s more",
+  "screen.feedback.desk.order": "Order %s",
+  "feedback.jei.info.catalogue_desk": "One index over several warehouse aisles. Use the Data Connector on the desk and then on a Warehouse Dock to link them; a better circuit reads more docks. It needs its built-in circuit and a little LV current from a wire beside it. Search the list and ask for an amount: the order is shared among the docks holding it, soonest first, and each share leaves from its own dock. Hover a line to see which docks hold it and the status line to see how each dock is doing. Type a name over the title of a dock screen to tell the docks apart.",
+  "screen.feedback.dock.name": "Dock name"
 }

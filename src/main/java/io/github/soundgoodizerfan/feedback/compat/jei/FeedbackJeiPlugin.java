@@ -547,6 +547,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FStore.RAIL_ITEM.get(), "warehouse_rail");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FStore.HEAD_ITEM.get(), "shuttle_head");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FStore.DOCK_ITEM.get(), "warehouse_dock");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FStore.DESK_ITEM.get(), "catalogue_desk");
         io.github.soundgoodizerfan.feedback.registry.FStore.FITTINGS.forEach((fitting, item) -> info(registration, item.get(), "rack_fitting_" + fitting.id()));
         info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.REDSTONE_EMITTER.get(), "redstone_emitter");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.REDSTONE_RECEIVER.get(), "redstone_receiver");

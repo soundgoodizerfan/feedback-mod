@@ -4,105 +4,67 @@ package io.github.soundgoodizerfan.feedback.logistics.store;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.net.DockViewPayload;
+import org.jetbrains.annotations.Nullable;
+
 import io.github.soundgoodizerfan.feedback.registry.FStore;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
 
-/** The dock's screen: no slots. The server sends a {@link DockView} when what it shows changes. */
-public class DockMenu extends AbstractContainerMenu {
-
-    private static final int LOOK_TICKS = 10;
-
-    private final BlockPos pos;
-    private final Player player;
-    private DockView view = DockView.EMPTY;
-    private DockView sent;
-    private int wait;
+/** The dock's screen: its own aisle's stock and queue. */
+public class DockMenu extends StoreMenu {
 
     public DockMenu(int id, Inventory inv, FriendlyByteBuf buf) {
         this(id, inv, buf.readBlockPos());
     }
 
     public DockMenu(int id, Inventory inv, BlockPos pos) {
-        super(FStore.DOCK_MENU.get(), id);
-        this.pos = pos;
-        this.player = inv.player;
+        super(FStore.DOCK_MENU.get(), id, inv.player, pos);
     }
 
-    public DockView view() {
-        return view;
-    }
-
-    public void accept(DockView next) {
-        view = next;
-    }
-
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     private DockBlockEntity dock() {
         return player.level().getBlockEntity(pos) instanceof DockBlockEntity d ? d : null;
     }
 
-    /** A retrieval asked for from the screen. */
-    public void request(ItemStack item, int count) {
+    @Override
+    protected boolean ask(ItemStack item, int count) {
         DockBlockEntity d = dock();
-        if (d != null) {
-            if (!d.request(item, count) && player instanceof ServerPlayer sp)
-                io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(sp,
-                        net.minecraft.network.chat.Component.translatable("message.feedback.dock.queue_full"), 60);
-            wait = 0;
-        }
-    }
-
-    public void cancel(int index) {
-        DockBlockEntity d = dock();
-        if (d != null) {
-            d.cancel(index);
-            wait = 0;
-        }
+        return d == null || d.request(item, count, 0) >= 0;
     }
 
     @Override
-    public void broadcastChanges() {
-        super.broadcastChanges();
-        if (!(player instanceof ServerPlayer sp) || --wait > 0)
-            return;
-        wait = LOOK_TICKS;
+    protected void drop(int key) {
+        DockBlockEntity d = dock();
+        if (d != null)
+            d.cancel(key);
+    }
+
+    @Override
+    protected Snapshot look() {
         DockBlockEntity d = dock();
         if (d == null)
-            return;
-        DockView now = view(d);
-        if (sent == null || !now.same(sent)) {
-            sent = now;
-            PacketDistributor.sendToPlayer(sp, new DockViewPayload(containerId, now));
-        }
-    }
-
-    private static DockView view(DockBlockEntity d) {
-        List<DockView.Line> stock = new ArrayList<>();
+            return null;
+        Map<ItemStack, StoreView.Line> stock = lines();
         for (Lot l : d.stock())
-            stock.add(new DockView.Line(l.item, l.count));
-        List<DockView.Line> queue = new ArrayList<>();
+            stock.put(l.item, new StoreView.Line(l.item, List.of(new StoreView.Share(0, l.count))));
+        List<StoreView.Queued> queue = new ArrayList<>();
         for (DockBlockEntity.Request r : d.requests())
-            queue.add(new DockView.Line(r.item, r.remaining));
-        Aisle aisle = d.aisle();
-        float speed = d.speed();
-        float far = aisle.racks().isEmpty() ? 0f : aisle.racks().get(aisle.racks().size() - 1).distance();
-        int trip = speed <= 0f ? 0 : Math.round(2f * far / speed);
-        return new DockView(stock, queue, d.state(),aisle.racks().size(), trip);
+            queue.add(new StoreView.Queued(r.item, r.remaining, 0, r.order, r.id));
+        // The one source's name is the dock's own, empty while it has none: the screen's name box shows it.
+        return new Snapshot(stock, queue, List.of(d.source(d.customName() != null ? d.customName() : Component.empty())), d.state());
     }
 
-    @Override
-    public ItemStack quickMoveStack(Player p, int index) {
-        return ItemStack.EMPTY;
+    public void rename(String name) {
+        DockBlockEntity d = dock();
+        if (d != null)
+            d.rename(name);
     }
 
     @Override

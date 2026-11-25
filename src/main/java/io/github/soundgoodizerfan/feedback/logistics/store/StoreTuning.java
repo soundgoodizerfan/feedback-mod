@@ -45,6 +45,14 @@ public final class StoreTuning {
     /** Ticks a nearly empty intake waits for more before the carriage sets out, and between reads of a partly unloaded aisle. */
     public static final int SETTLE_TICKS = 40;
     public static final int PARTIAL_READ_TICKS = 100;
+    /** Docks a catalogue desk reads with the slowest and the fastest circuit, and the LV current it draws. */
+    public static final int DESK_MIN_DOCKS = 4;
+    public static final int DESK_MAX_DOCKS = 32;
+    public static final float DESK_AMPS = 0.5f;
+    /** The share of its wanted work below which the desk is dark. */
+    public static final float DESK_MIN_FEED = 0.5f;
+    /** Longest name a dock takes. */
+    public static final int DOCK_NAME_MAX = 32;
     /** Most retrievals a dock queues. */
     public static final int MAX_REQUESTS = 32;
 
