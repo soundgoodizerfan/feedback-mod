@@ -181,6 +181,10 @@ Feedback machines are immune to Thaumaturge's taint: it does not convert them. A
 
 Core Slag, Crude Pools, Tar Seeps and Soul Seeps count as physical flux for Thaumaturge: they feed a chunk's flux floor and taint outbreaks, where Thaumaturge's options for that are on. Crude Pools, Tar Seeps and Soul Seeps can also be cleared by Thaumaturge's scrubbers. Without Thaumaturge, nothing changes.
 
+### Spectrometer and aspects
+
+With Thaumaturge installed, the [Spectrometer](Instruments.md#spectrometer) adds a line to an item's tooltip listing its aspects and amounts, but only the aspects you have already discovered. Undiscovered aspects stay hidden.
+
 ### Survey Meter and warp
 
 With Thaumaturge installed, the [Survey Meter](Instruments.md#survey-meter) adds a line, **Field anomaly, no ore**, with a bearing towards the chunk within 16 blocks whose vis is the highest share of its base aura, from 1.2 times base up. A chunk near that mark shows only some of the time.

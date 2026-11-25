@@ -9,6 +9,7 @@ Nothing is locked behind an instrument; they are how you do on purpose what you 
 | [Calipers](#calipers) | Work done on a piece, machine wear, gun barrel size | Wear to 5%; barrel to 0.1 mm |
 | [Balance Scale](#balance-scale) | Mass of a tool, weapon or armor piece | 0.1 Mu |
 | [Scratch File Set](#scratch-file-set) | Hardness of an edge or plate | One of eight rungs, not a number |
+| [Spectrometer](#spectrometer) | Makeup of an alloy, metals an ore bears | Shares to the nearest 5% |
 | [Impact Pendulum](#impact-pendulum) | Toughness of a made tool's edge, or of a made armor piece | Nearest 5; nearest 1 when the piece is broken |
 | [Strike Post](#strike-post) | Work a blow carries and the damage it deals | Nearest 0.5 |
 | [Test Strip](#test-strip) | Toxin in a food | Steps of 0.025 Qu/mB |
@@ -106,6 +107,19 @@ I is an ingot of a soft metal (hardness 12 or less), S is an ingot of a harder m
 Carry it anywhere in your inventory. A modular item's tooltip gains a line like *"Scratch files: scratched by file 5, not by file 4"*. The set has eight files, each harder than the last. A file scratches anything softer than itself, so the reading is a **rung**, not a number: your edge is harder than file 4 and softer than file 5.
 
 Hardness decides what a tool can dig (see [Tools and Weapons](Tools_and_Weapons.md#what-the-parts-do)) and how hard a plate is to pierce. [Materials](Materials.md) lists the numbers if you would rather look them up than measure.
+
+## Spectrometer
+
+Tells you what an alloy is made of and which metals an ore bears.
+
+```
+L G
+X P
+```
+
+L is an Optical Glass Lens, G is a Quartz Glass Ingot (the prism), X is a [Photocell](Sensors.md) and P is a Wrought Iron Plate (the housing). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row, 1 screw ([Fasteners](Fasteners.md)) and Electrical Treatise I: Cells and Static Charge ([Treatise](Treatise.md)).
+
+Carry it anywhere in your inventory. The tooltip of an alloy gains a line listing its constituents and their shares, like *"Spectrometer: Makeup: Copper 90%, Tin 10%"*. The tooltip of an ore lists the metals it bears and how much of each. Shares are told to the nearest 5%. With the Thaumaturge mod, a further line lists the aspects of the sample you have already discovered; see [Mod Compats](Mod_Compats.md#spectrometer-and-aspects).
 
 ## Impact Pendulum
 
