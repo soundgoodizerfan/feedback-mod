@@ -155,7 +155,7 @@ Each aspect has its own alloy. The six primals come first, then the compounds in
 
 | Aspect | Alloy |
 |---|---|
-| Aer | Aellium |
+| Aer | Aerialite |
 | Terra | Chthonium |
 | Ignis | Cindersteel |
 | Aqua | Thalassium |
@@ -200,7 +200,7 @@ Thaumium and some of the aspect alloys, the primals first:
 | Alloy | Hardness | Toughness | Enchantability | Stands out for |
 |---|---|---|---|---|
 | Thaumium | 14 | 60 | 22 | The alloy of Thaumaturge's own items |
-| Aellium | 7 | 22 | 24 | Lighter than most |
+| Aerialite | 7 | 22 | 24 | Lighter than most |
 | Chthonium | 18 | 83 | 14 | Highest melting point and service temperature |
 | Cindersteel | 10 | 27 | 20 | Glows |
 | Thalassium | 5 | 36 | 18 | Soft, low friction |
