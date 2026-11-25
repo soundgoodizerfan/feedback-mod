@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-25T13:34:12.060252632	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-25T13:51:31.14727695	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
@@ -1024,6 +1024,7 @@ cc2f0a03905adcbc2ed01a9731ceb83fa393cd4b data/c/tags/item/dusts/hematite.json
 5df68f40b592c037989484813838f22fda413eb1 data/c/tags/item/dusts/high_speed_steel.json
 2c9eb9b736830343ea2460c9d2263feefec256c2 data/c/tags/item/dusts/ilmenite.json
 71324953686de8dd398110cca0cb516238d10834 data/c/tags/item/dusts/indium.json
+aa2920393a5e2beeb021da303e3913ca0742739c data/c/tags/item/dusts/inert_blaze.json
 0516592b895adbdcf7419b2d2ec41d83df469925 data/c/tags/item/dusts/invar.json
 d16907c227b1cc05c599b3cbfd5d04f3d3c8b043 data/c/tags/item/dusts/iridium.json
 a0236a294d50ef9bc246fe00cc6826b0d66aba16 data/c/tags/item/dusts/iron.json
@@ -2724,6 +2725,7 @@ dce1b46409b4658beb30fc55e4b0ff60f7a90930 data/c/tags/item/rods/silica_glass.json
 8ca7900a9e8ee1cf000ecfb893e8da458e06f022 data/c/tags/item/rods/silicon.json
 0f7f3fb78c0a815c1d5dd432f77f9cc9462daeb8 data/c/tags/item/rods/silicon_crude.json
 97f6a9daec045e9b841764cfdcf028a2123519d9 data/c/tags/item/rods/silver.json
+89ba09d53e8b33e992e20d0b75971742794cc54d data/c/tags/item/rods/spent_blaze.json
 486ba25a638cf12fb1ea69fdf56dc9c2c81175c7 data/c/tags/item/rods/stainless_steel.json
 e740dc4d5d3056a8294254c00a66cfea2e8ad53b data/c/tags/item/rods/steel.json
 3f80ea8a2b04b821776e15912ec73cc9064a673d data/c/tags/item/rods/stellite.json

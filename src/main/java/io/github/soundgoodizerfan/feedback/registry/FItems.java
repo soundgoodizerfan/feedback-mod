@@ -501,6 +501,10 @@ public class FItems {
     public static final DeferredItem<Item> ENRICHED_FUEL_ROD = ITEMS.registerSimpleItem("enriched_fuel_rod");
     public static final DeferredItem<Item> BREEDER_ROD = ITEMS.registerSimpleItem("breeder_rod");
     public static final DeferredItem<Item> SPENT_FUEL_ROD = ITEMS.registerSimpleItem("spent_fuel_rod");
+    /** A blaze rod that has given up its charge; a hot rod is the vanilla one. Never a percentage, two states. */
+    public static final DeferredItem<Item> SPENT_BLAZE_ROD = ITEMS.registerSimpleItem("spent_blaze_rod");
+    /** What a spent rod grinds to: powder with nothing left to burn. */
+    public static final DeferredItem<Item> INERT_BLAZE_DUST = ITEMS.registerSimpleItem("inert_blaze_dust");
     public static final DeferredItem<BlockItem> MAGMA_HEAD = ITEMS.registerSimpleBlockItem(FBlocks.MAGMA_HEAD);
     public static final DeferredItem<BlockItem> SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SEEP);
     public static final DeferredItem<BlockItem> SOUL_SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_SEEP);

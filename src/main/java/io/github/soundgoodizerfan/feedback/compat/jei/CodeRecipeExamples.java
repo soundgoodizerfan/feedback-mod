@@ -274,6 +274,13 @@ final class CodeRecipeExamples {
                     in, layout.getWidth(), layout.getHeight(), List.of(made)));
         }
         modular(materials, out);
+
+        // A charged blaze rod ground in a mortar gives powder that burns; a spent one gives dust with nothing left to burn.
+        ItemStack mortar = new ItemStack(FItems.MORTAR.get());
+        out.add(holder("blaze_grind_charged", List.of(List.of(mortar), List.of(new ItemStack(Items.BLAZE_ROD))), 2, 1,
+                List.of(new ItemStack(Items.BLAZE_POWDER, 2))));
+        out.add(holder("blaze_grind_spent", List.of(List.of(mortar), List.of(new ItemStack(FItems.SPENT_BLAZE_ROD.get()))), 2, 1,
+                List.of(new ItemStack(FItems.INERT_BLAZE_DUST.get(), 2))));
         return out;
     }
 

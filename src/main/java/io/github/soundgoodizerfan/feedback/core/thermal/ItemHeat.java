@@ -157,7 +157,8 @@ public final class ItemHeat {
      * touched by anything of ours.
      */
     public static void settle(ItemStack stack, Level level) {
-        if (stack.has(FDataComponents.TEMPERATURE.get())
+        // A rod that stores heat keeps its stamp when it goes cold: the stamp is how a spent rod is told from one fresh from the world.
+        if (stack.has(FDataComponents.TEMPERATURE.get()) && !stack.is(io.github.soundgoodizerfan.feedback.registry.FTags.CHARGED_RODS)
                 && get(stack, level).value() <= ThermalTuning.WARM_TU.value())
             clear(stack);
     }

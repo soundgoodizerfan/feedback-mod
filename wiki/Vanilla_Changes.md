@@ -26,6 +26,17 @@ Any vanilla bed that turns up in a world, village or structure, or that is place
 
 A placed bed cannot be dyed. Take it up and rework its parts to change the cover. Breaking a found bed returns it as one item with its parts, as with any placed bed.
 
+## Blaze powder and blaze rods
+
+**What vanilla does:** a blaze drops a blaze rod. One rod crafts into two blaze powder, and a rod or powder fuels furnaces and brewing stands.
+
+**What Feedback does:** a blaze drops a **charged** Blaze Rod, a hot item that cools very slowly, over about 20 minutes. When it has cooled it becomes a **Spent Blaze Rod**. A rod is not a fuel and the crafting recipe for blaze powder does not exist. Put a [Mortar](Brewing_Stand.md#mortar) and one rod in a crafting grid to grind it:
+
+- A hot rod gives 2 Blaze Powder, which is the fuel ([Firebox](Firebox.md#fuels)).
+- A cold or spent rod gives 2 Inert Blaze Dust, which does not burn.
+
+The mortar is kept. A spent rod heated anywhere between 700 Tu and 1100 Tu (any heat source) becomes a charged rod again. See [Heat](Heat.md).
+
 ## Comparator
 
 **What vanilla does:** a comparator reads how full the container behind it is and puts out a redstone signal of that strength. It also compares or subtracts two signals and delays them.

@@ -1,0 +1,46 @@
+{
+  "kind": "granular",
+  "traits": [
+    "fireproof"
+  ],
+  "hardness": 1.5,
+  "density": 1.2,
+  "thermal": {
+    "expansion": 1e-5,
+    "cooling_rate": 1.61,
+    "conductivity": 7.48e-05,
+    "oxidation_temperature": 1200,
+    "melting_point": 1200,
+    "specific_heat": 1.5,
+    "latent_heat_fusion": 150,
+    "boiling_point": 2800,
+    "latent_heat_vaporisation": 5000,
+    "service_temperature": 720
+  },
+  "mechanical": {
+    "friction": 0.4,
+    "abrasiveness": 0,
+    "yield_strength": 0.5,
+    "toughness": 0.5
+  },
+  "separation": {
+    "reflectivity": 0.3
+  },
+  "forms": {
+    "dust": "feedback:inert_blaze_dust"
+  },
+  "food": {
+    "moisture": 0,
+    "compounds": {
+      "mineral": 0.02
+    }
+  },
+  "corrosion_resistance": 0.5,
+  "toxicity": 0.2,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.08,
+    "shear_thickening": 0
+  },
+  "enchantability": 1
+}

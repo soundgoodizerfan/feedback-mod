@@ -1,0 +1,19 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:spent_blaze",
+      "forms": [
+        "rod"
+      ]
+    }
+  ],
+  "min_temperature": 700,
+  "optimal_temperature": 900,
+  "max_temperature": 1100,
+  "required_tpu": 1200,
+  "spoil_temperature": 1300,
+  "result": {
+    "id": "minecraft:blaze_rod"
+  }
+}

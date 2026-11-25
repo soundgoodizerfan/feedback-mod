@@ -164,7 +164,8 @@ public class FCreativeTabs {
             FItems.INGOT_MOLD, FItems.TUBE_MOLD, FItems.GLASS_BLOCK_MOLD, FItems.GLASS_PANE_MOLD,
             FItems.GLASS_BOTTLE_MOLD, FItems.PICKAXE_HEAD_MOLD, FItems.AXE_HEAD_MOLD, FItems.SHOVEL_HEAD_MOLD,
             FItems.HOE_HEAD_MOLD, FItems.SICKLE_HEAD_MOLD, FItems.HAMMER_HEAD_MOLD, FItems.SAW_BLADE_MOLD, FItems.ATOMISING_MOLD,
-            FItems.ICE_BOX, FItems.REFRIGERATION_UNIT, FItems.CRYOCOOLER, FItems.VACUUM_DRYER, FItems.THRESHER);
+            FItems.ICE_BOX, FItems.REFRIGERATION_UNIT, FItems.CRYOCOOLER, FItems.VACUUM_DRYER, FItems.THRESHER,
+            FItems.SPENT_BLAZE_ROD, FItems.INERT_BLAZE_DUST);
 
     /** Shaping metal: hammer, draw, roll, press, drill, turn; then the test rigs. */
     private static final List<DeferredItem<?>> METALWORKING = of(FItems.MECHANICAL_HAMMER, FItems.WIRE_DRAWER,

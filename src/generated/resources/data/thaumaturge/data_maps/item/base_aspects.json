@@ -19420,20 +19420,16 @@
     ],
     "feedback:gear_cutter": [
       {
-        "amount": 2,
+        "amount": 7,
+        "aspect": "thaumaturge:machina"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:instrumentum"
+      },
+      {
+        "amount": 3,
         "aspect": "thaumaturge:fabrico"
-      },
-      {
-        "amount": 20,
-        "aspect": "thaumaturge:metallum"
-      },
-      {
-        "amount": 16,
-        "aspect": "thaumaturge:motus"
-      },
-      {
-        "amount": 24,
-        "aspect": "thaumaturge:ordo"
       }
     ],
     "feedback:gear_set": [
@@ -22408,6 +22404,20 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:machina"
+      }
+    ],
+    "feedback:inert_blaze_dust": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:victus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
       }
     ],
     "feedback:ingot_mold": [
@@ -42396,6 +42406,16 @@
         "aspect": "thaumaturge:vitreus"
       }
     ],
+    "feedback:spent_blaze_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:victus"
+      }
+    ],
     "feedback:spent_fuel_pool": [
       {
         "amount": 5,
@@ -56678,10 +56698,6 @@
       {
         "amount": 3,
         "aspect": "thaumaturge:terra"
-      },
-      {
-        "amount": 6,
-        "aspect": "thaumaturge:ignis"
       },
       {
         "amount": 3,

@@ -18,6 +18,10 @@ public final class FTags {
 
     /** What a Controller or Programmer accepts as its program card. */
     /** Media a Programmer can erase and print over (controller spec section 2): Floppy Disk and USB Drive. */
+    /** Rods that arrive charged with heat from where they are made and become their spent form once they cool (a blaze rod). */
+    public static final TagKey<Item> CHARGED_RODS = TagKey.create(Registries.ITEM, Feedback.id("charged_rods"));
+    /** Rods that have given up their charge. */
+    public static final TagKey<Item> SPENT_RODS = TagKey.create(Registries.ITEM, Feedback.id("spent_rods"));
     /** Wire a radio set's antenna can be wound from. */
     public static final TagKey<Item> RADIO_ANTENNA_WIRE = TagKey.create(Registries.ITEM, Feedback.id("radio_antenna_wire"));
     public static final TagKey<Item> SOFT_CARDS = TagKey.create(Registries.ITEM, Feedback.id("soft_cards"));

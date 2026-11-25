@@ -116,6 +116,7 @@ public final class ElectronicsCrafting {
         crafting.addExtension(MassProbeRecipe.class, new ExtensionOf<>(ext));
         crafting.addExtension(BoardRecipe.class, new ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.item.InstrumentFitRecipe.class, new ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.item.RodGrindRecipe.class, new ExtensionOf<>(ext));
     }
 
     /** Re-types the one extension for each recipe class JEI asks about. */
