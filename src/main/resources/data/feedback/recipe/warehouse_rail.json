@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": { "item": "feedback:wrought_iron_rod" },
+    "P": { "item": "feedback:wrought_iron_plate" }
+  },
+  "pattern": [ "R R", "PPP", "R R" ],
+  "result": { "count": 4, "id": "feedback:warehouse_rail" }
+}

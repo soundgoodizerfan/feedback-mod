@@ -543,6 +543,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.DYNAMOTOR.get(), "dynamotor");
         info(registration, FModular.CONVEYOR_BELT.get(), "conveyor_belt");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FLogistics.HEAD_ITEM.get(), "belt_head");
+        info(registration, FModular.PALLET_RACK.get(), "pallet_rack");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FStore.RAIL_ITEM.get(), "warehouse_rail");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FStore.HEAD_ITEM.get(), "shuttle_head");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FStore.DOCK_ITEM.get(), "warehouse_dock");
+        io.github.soundgoodizerfan.feedback.registry.FStore.FITTINGS.forEach((fitting, item) -> info(registration, item.get(), "rack_fitting_" + fitting.id()));
         info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.REDSTONE_EMITTER.get(), "redstone_emitter");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.REDSTONE_RECEIVER.get(), "redstone_receiver");
         io.github.soundgoodizerfan.feedback.registry.FAutomation.SENSOR_ITEMS.forEach((kind, item) -> info(registration, item.get(), kind.id()));

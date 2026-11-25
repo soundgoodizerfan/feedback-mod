@@ -154,6 +154,10 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FLogistics.BELT_ENTITY.get(), BeltModuleRenderer::new);
         event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FLogistics.HEAD_ENTITY.get(), BeltHeadRenderer::new);
         event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FAutomation.PIVOT_ENTITY.get(), PivotMastRenderer::new);
+        event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FStore.RACK_ENTITY.get(),
+                io.github.soundgoodizerfan.feedback.client.store.RackRenderer::new);
+        event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FStore.DOCK_ENTITY.get(),
+                io.github.soundgoodizerfan.feedback.client.store.DockRenderer::new);
     }
 
     /**
@@ -241,6 +245,8 @@ public class FClientSetup {
         event.register(FMenus.COUNTER.get(), CounterScreen::new);
         event.register(FMenus.BOARD.get(), BoardScreen::new);
         event.register(FMenus.DEPOT.get(), DepotScreen::new);
+        event.register(io.github.soundgoodizerfan.feedback.registry.FStore.DOCK_MENU.get(),
+                io.github.soundgoodizerfan.feedback.client.store.DockScreen::new);
     }
 
     /**

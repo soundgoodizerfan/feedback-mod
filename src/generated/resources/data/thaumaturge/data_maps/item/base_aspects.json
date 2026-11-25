@@ -40496,6 +40496,24 @@
         "aspect": "thaumaturge:terra"
       }
     ],
+    "feedback:shuttle_head": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 25,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 20,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 25,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:sickle_head": [
       {
         "amount": 3,
@@ -54838,6 +54856,24 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:machina"
+      }
+    ],
+    "feedback:warehouse_dock": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 25,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 20,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 25,
+        "aspect": "thaumaturge:ordo"
       }
     ],
     "feedback:water_wheel": [

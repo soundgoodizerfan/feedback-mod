@@ -44,6 +44,8 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(ArcServerData.INSTANCE, io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlockEntity.class);
         registration.registerBlockDataProvider(PreheatServerData.INSTANCE, io.github.soundgoodizerfan.feedback.machine.induction.PreheatCoilBlockEntity.class);
         registration.registerBlockDataProvider(ReactorServerData.INSTANCE, net.minecraft.world.level.block.entity.BlockEntity.class);
+        registration.registerBlockDataProvider(StoreServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.store.RackBlockEntity.class);
+        registration.registerBlockDataProvider(StoreServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.store.DockBlockEntity.class);
         registration.registerBlockDataProvider(BeltServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.belt.BeltBlockEntity.class);
         registration.registerBlockDataProvider(BeltServerData.INSTANCE, io.github.soundgoodizerfan.feedback.logistics.belt.BeltHeadBlockEntity.class);
         registration.registerBlockDataProvider(PenServerData.INSTANCE, io.github.soundgoodizerfan.feedback.machine.creeper.CreeperPenBlockEntity.class);
@@ -90,6 +92,7 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(RadiationComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(ReactorComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(PreheatComponent.INSTANCE, Block.class);
+        registration.registerBlockComponent(StoreComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(BeltComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(EnderPortComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(DataNodeComponent.INSTANCE, Block.class);

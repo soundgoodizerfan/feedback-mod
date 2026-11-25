@@ -55,14 +55,27 @@ public class ModularBlockItem extends BlockItem implements Modular {
         if (fine(stack))
             tooltip.add(Component.translatable("tooltip.feedback.fine_build").withStyle(net.minecraft.ChatFormatting.AQUA));
         ModularTooltip.add(stack, tooltip);
+        if (io.github.soundgoodizerfan.feedback.logistics.store.RackStock.mass(stack) > 0f)
+            tooltip.add(Component.translatable("tooltip.feedback.rack_loaded").withStyle(net.minecraft.ChatFormatting.GOLD));
         CompoundTag figs = stack.get(FDataComponents.BLOCK_FIGURES.get());
         if (figs != null)
             for (String key : figs.getAllKeys())
                 if (!key.startsWith("_"))
-                tooltip.add(key.equals("Band")
+                tooltip.add(key.equals("Condition")
+                        ? Component.translatable("figure.feedback.block.Condition", Math.round(figs.getFloat(key) * 100f))
+                        : key.equals("Band")
                         ? Component.translatable("figure.feedback.block.Band", Component.translatable(
                                 io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.values()[(int) figs.getFloat(key)].key()))
                         : Component.translatable("figure.feedback.block." + key, String.format(Locale.ROOT, "%.3g", figs.getFloat(key))));
+    }
+
+    /** A loaded rack destroyed as an item leaves its stock behind, as a shulker box does. */
+    @Override
+    public void onDestroyed(net.minecraft.world.entity.item.ItemEntity entity, net.minecraft.world.damagesource.DamageSource source) {
+        if (!entity.level().isClientSide)
+            io.github.soundgoodizerfan.feedback.logistics.store.RackStock.spill(entity.getItem(), entity.level(),
+                    entity.getX(), entity.getY(), entity.getZ());
+        super.onDestroyed(entity, source);
     }
 
     @Override

@@ -395,6 +395,7 @@ public class FCreativeTabs {
         all(out, FLUIDS);
         all(out, HANDLING);
         FLogistics.fill(out);
+        FStore.fill(out);
         all(out, TUBES);
         all(out, CULTURES);
         all(out, REACTORS);

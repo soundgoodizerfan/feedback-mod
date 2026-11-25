@@ -1,0 +1,62 @@
+{
+  "family": "block",
+  "measures": {
+    "show": [
+      "block.Rating",
+      "block.ServiceTu"
+    ]
+  },
+  "required": [
+    "S",
+    "D"
+  ],
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "D",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "rack_frame",
+      "class": "housing",
+      "forms": [
+        "rack_frame"
+      ],
+      "litres": 0.25,
+      "layer": 0,
+      "part": {
+        "item": "feedback:rack_frame",
+        "cells": 4,
+        "stock": [
+          "rod"
+        ]
+      }
+    },
+    "D": {
+      "name": "rack_shelf",
+      "class": "housing",
+      "forms": [
+        "rack_shelf"
+      ],
+      "litres": 0.25,
+      "layer": 1,
+      "part": {
+        "item": "feedback:rack_shelf",
+        "cells": 4,
+        "stock": [
+          "plate"
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "S",
+      "D"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:iron",
+    "D": "feedback:iron"
+  }
+}

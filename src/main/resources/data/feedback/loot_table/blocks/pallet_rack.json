@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "feedback:pallet_rack",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "feedback:block_figures",
+                "feedback:modular_design",
+                "feedback:modular_figures",
+                "feedback:rack_stock"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

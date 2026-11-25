@@ -37,6 +37,7 @@ public final class FigureTint {
     /** Tint index to the part role it takes its material from, per block. */
     private static Map<Block, String[]> roles() {
         return Map.ofEntries(
+                Map.entry(io.github.soundgoodizerfan.feedback.registry.FStore.RACK.get(), new String[]{"S", "D"}), // 0 the frame, 1 the shelves
                 Map.entry(FBlocks.LEYDEN_JAR.get(), new String[]{"S", "F"}),   // 0 the glass, 1 the foil
                 Map.entry(FBlocks.ELECTROMAGNET.get(), new String[]{"S"}),     // 0 the core and winding metal
                 Map.entry(FBlocks.LAMP.get(), new String[]{"S"}),              // 0 the whole panel: the filament's colour

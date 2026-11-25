@@ -59,8 +59,9 @@ public final class SortReader {
             if (plated != null && plated.separation().reflectivity().isPresent())
                 reflectivity += (plated.separation().reflectivity().get() - reflectivity) * coat.intact();
         }
+        float unit = f.unitMass + io.github.soundgoodizerfan.feedback.logistics.store.RackStock.mass(stack);
         return new Reading(f.unknown, f.magnetic, f.curie, reflectivity, f.density, f.hardness, f.friction, f.kind, temp,
-                f.unitMass * stack.getCount(), f.unitMass, f.brittle, f.sticky,
+                unit * stack.getCount(), unit,f.brittle, f.sticky,
                 stack.has(FDataComponents.PLATING.get()) ? f.tell * LogisticsTuning.KIND_COATED_TELL : f.tell);
     }
 
@@ -74,7 +75,7 @@ public final class SortReader {
 
     /** Mass in Mu of one item of {@code stack}'s kind. */
     public static float unitMass(ItemStack stack) {
-        return ModularBackpack.massOf(stack.getItem());
+        return io.github.soundgoodizerfan.feedback.logistics.store.Goods.unitMass(stack);
     }
 
     private static Fixed fixed(ItemStack stack) {

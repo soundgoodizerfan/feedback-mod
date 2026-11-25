@@ -252,7 +252,7 @@ public class ModularBackpack extends ModularItem {
         ModularFigures f = ModularStacks.figures(bag);
         float total = f == null ? 0f : f.get(Fig.MASS);
         for (ItemStack s : bag.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).nonEmptyItems())
-            total += massOf(s.getItem()) * s.getCount();
+            total += io.github.soundgoodizerfan.feedback.logistics.store.Goods.unitMass(s) * s.getCount();
         return total;
     }
 

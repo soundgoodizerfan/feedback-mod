@@ -85,6 +85,9 @@ public final class EngineeringRework {
     }
 
     private static ModularType typeOf(ItemStack item, Level level) {
+        // A rack with stock or fittings still on it is not worked on: taking it apart would lose them.
+        if (item.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.RACK_STOCK.get()))
+            return null;
         ModularDesign design = ModularStacks.design(item);
         ModularType type = design == null ? null : EngineeringAssembly.types(level).get(design.type());
         // A hafted build holding a gated face is gated by that face's school.

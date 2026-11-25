@@ -110,6 +110,13 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());
 
+    /** What a broken warehouse rack keeps on its shelves ({@code logistics/store/RackStock}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> RACK_STOCK =
+            COMPONENTS.register("rack_stock", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
+                    .persistent(net.minecraft.nbt.CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
     /** A pressure vessel's baked figures (room, danger and critical pressure, weight), carried by the item and the block alike. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> PRESSURE_VESSEL =
             COMPONENTS.register("pressure_vessel", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()

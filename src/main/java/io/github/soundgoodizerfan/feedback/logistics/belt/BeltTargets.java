@@ -19,7 +19,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
  * Where a belt hands cargo: another belt, an item handler on a face, or the open air. A belt does
  * not know a furnace from a chest; it only offers the stack to whatever handler the face presents.
  */
-final class BeltTargets {
+public final class BeltTargets {
 
     private BeltTargets() {
     }
@@ -46,7 +46,7 @@ final class BeltTargets {
      * on face {@code side} takes what fits, open air takes it as a dropped item when {@code drop}.
      * Returns what was not taken.
      */
-    static ItemStack deliver(Level level, BlockPos target, Direction side, ItemStack stack, boolean simulate, boolean drop) {
+    public static ItemStack deliver(Level level, BlockPos target, Direction side, ItemStack stack, boolean simulate, boolean drop) {
         if (!level.isLoaded(target))
             return stack;
         BlockState s = level.getBlockState(target);

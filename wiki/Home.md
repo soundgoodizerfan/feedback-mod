@@ -79,7 +79,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Finespace and vehicles:** [Finespace](Finespace.md) · [Joints](Joints.md) · [Rotary Bearing](Rotary_Bearing.md) · [Ring Gear](Ring_Gear.md) · [Tire](Tire.md) · [Vehicles](Vehicles.md)
 
-**Logistics:** [Conveyor Belt](Conveyor_Belt.md) · [Belt Modules](Belt_Modules.md) · [Pneumatic Tube](Pneumatic_Tube.md) · [Carrier](Carrier.md) · [Tube Station](Tube_Station.md) · [Ender Port](Ender_Port.md) · [Data Port](Data_Port.md) · [Liquid Teleportant](Liquid_Teleportant.md) · [Synthetic Pearl](Synthetic_Pearl.md) · [Tuned Eye](Tuned_Eye.md)
+**Logistics:** [Conveyor Belt](Conveyor_Belt.md) · [Belt Modules](Belt_Modules.md) · [Pneumatic Tube](Pneumatic_Tube.md) · [Warehouse](Warehouse.md) · [Warehouse Dock](Warehouse_Dock.md) · [Pallet Rack](Pallet_Rack.md) · [Carrier](Carrier.md) · [Tube Station](Tube_Station.md) · [Ender Port](Ender_Port.md) · [Data Port](Data_Port.md) · [Liquid Teleportant](Liquid_Teleportant.md) · [Synthetic Pearl](Synthetic_Pearl.md) · [Tuned Eye](Tuned_Eye.md)
 
 **Automation:** [Auto Engineer](Auto_Engineer.md) · [Pivot Mast](Pivot_Mast.md) · [Dark Cell](Dark_Cell.md) · [Sensors](Sensors.md) · [Aura Sensor](Aura_Sensor.md) · [Redstone Bridges](Redstone_Bridges.md) · [Counter](Counter.md) · [Ledger Board](Ledger_Board.md) · [Block Camera](Block_Camera.md)
 

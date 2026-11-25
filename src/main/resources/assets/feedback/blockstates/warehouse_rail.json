@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=z": {
+      "model": "feedback:block/warehouse_rail"
+    },
+    "axis=x": {
+      "model": "feedback:block/warehouse_rail",
+      "y": 90
+    }
+  }
+}

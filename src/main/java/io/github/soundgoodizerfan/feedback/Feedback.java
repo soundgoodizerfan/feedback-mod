@@ -66,6 +66,7 @@ public class Feedback {
         FItems.register(modBus);
         FVehicles.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FLogistics.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FStore.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FAutomation.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FWeapons.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FSounds.register(modBus);
@@ -262,6 +263,12 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.DockViewPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.DockViewPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.DockViewPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.DockRequestPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.DockRequestPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.DockRequestPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.BeltRunPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.BeltRunPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.BeltRunPayload::handle)

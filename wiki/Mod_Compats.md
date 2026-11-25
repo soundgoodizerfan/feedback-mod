@@ -54,7 +54,7 @@ The [Engineering Table](Engineering_Table.md) screen and the [Computer](Electric
 
 ## Jade
 
-**Optional.** With Jade installed, looking at a block shows a readout of its state: rotation on [shafts and machines](Rotation.md), temperature on [heat machines](Heat.md), the band on [electric lines](Electricity.md), food equipment, [experience](Experience.md) stores, the [Fission Reactor](Fission_Reactor.md), a worn or workpiece-holding block, and a villager's standing with you (see [Villages](Villages.md)).
+**Optional.** With Jade installed, looking at a block shows a readout of its state: rotation on [shafts and machines](Rotation.md), temperature on [heat machines](Heat.md), the band on [electric lines](Electricity.md), food equipment, [experience](Experience.md) stores, the [Fission Reactor](Fission_Reactor.md), a worn or workpiece-holding block, a [Pallet Rack](Pallet_Rack.md) and a [Warehouse Dock](Warehouse_Dock.md), and a villager's standing with you (see [Villages](Villages.md)).
 
 Readouts follow the instrument rule: a requirement printed on a part shows exactly, but a state such as a temperature, a speed or a band shows as a word until you carry an [instrument](Instruments.md) that reads it. Then it shows a figure.
 

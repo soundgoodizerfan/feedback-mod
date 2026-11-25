@@ -5,6 +5,7 @@ package io.github.soundgoodizerfan.feedback.modular.bake;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+import io.github.soundgoodizerfan.feedback.logistics.store.StoreTuning;
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +48,7 @@ public final class BlockFigures {
                 case "thermal_store/F" -> material.density().muPerMb() > 0;
                 case "leyden_jar/F" -> material.ampacity().isPresent();
                 case "leyden_jar/W" -> material.electrical().insulation().isPresent();
+                case "pallet_rack/D" -> material.density().muPerMb() > 0 && material.mechanical().yieldStrength().isPresent() && serviceTu(material) > 0f;
                 default -> true;
             };
         return switch (idOf(type)) {
@@ -74,6 +76,7 @@ public final class BlockFigures {
             case "thermal_store" -> material.thermal().conductivity().isPresent() && material.density().muPerMb() > 0;
             case "crucible" -> material.density().muPerMb() > 0 && material.failureTemperature().isPresent() && material.thermal().specificHeat().isPresent();
             case "leyden_jar" -> material.electrical().insulation().isPresent();
+            case "pallet_rack" -> material.density().muPerMb() > 0 && material.mechanical().yieldStrength().isPresent();
             default -> true;
         };
     }
@@ -120,6 +123,17 @@ public final class BlockFigures {
         ModularType.Role role = type.roles().get(ROLE);
         CompoundTag out = new CompoundTag();
         switch (design.type().getPath()) {
+            // A bay holds what the weaker of its frame and its shelf bears, against the reference metal; the shelf's own
+            // service temperature is what hot cargo wears it past.
+            case "pallet_rack" -> {
+                Part shelf = design.part("D");
+                Material sm = shelf == null ? null : materials.get(shelf.material());
+                if (sm == null || !suits(type, "D", sm))
+                    return Optional.empty();
+                float frame = m.mechanical().yieldStrength().get().value() / StoreTuning.REF_FRAME_YIELD;
+                float deck = sm.mechanical().yieldStrength().get().value() / StoreTuning.REF_SHELF_YIELD;
+                out.putFloat("Rating", Math.max(StoreTuning.RATING_MIN, Math.min(StoreTuning.RATING_MAX, Math.min(frame, deck))));
+                out.putFloat("ServiceTu", serviceTu(sm));            }
             // Tubes carry heat as well as their metal conducts it, in proportion to the area they present. Copper at the
             // default area is the old fixed exchanger's 0.1.
             case "heat_exchanger" -> {
