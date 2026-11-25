@@ -87,8 +87,23 @@ public final class FumeCloud {
         if (lost.isEmpty())
             return;
         Material m = MaterialTable.get().materials().get(BuiltInRegistries.FLUID.getKey(lost.getFluid()));
-        if (m != null)
-            release(level, at, Fumes.level(m));
+        if (m == null)
+            return;
+        // A gas denser than air does not hang where it was let go: it sinks to the floor and settles there (chlorine, sulfur dioxide).
+        Material air = MaterialTable.get().materials().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "air"));
+        boolean heavy = air != null && m.density().muPerMb() > air.density().muPerMb() * HazardTuning.HEAVY_GAS_DENSITY_RATIO;
+        release(level, heavy ? settle(level, at) : at, Fumes.level(m));
+    }
+
+    /** Where a heavy gas let go at {@code at} comes to rest: straight down through open air to the first floor, at most {@link HazardTuning#HEAVY_GAS_SINK_BLOCKS}. */
+    private static Vec3 settle(Level level, Vec3 at) {
+        net.minecraft.core.BlockPos.MutableBlockPos p = new net.minecraft.core.BlockPos.MutableBlockPos(at.x, at.y, at.z);
+        for (int i = 0; i < HazardTuning.HEAVY_GAS_SINK_BLOCKS; i++) {
+            p.move(0, -1, 0);
+            if (!level.getBlockState(p).getCollisionShape(level, p).isEmpty() || level.isOutsideBuildHeight(p))
+                return new Vec3(at.x, p.getY() + 1.4, at.z);
+        }
+        return new Vec3(at.x, at.y - HazardTuning.HEAVY_GAS_SINK_BLOCKS, at.z);
     }
 
     @SubscribeEvent

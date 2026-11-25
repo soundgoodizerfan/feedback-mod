@@ -86,6 +86,9 @@ public final class HazardTuning {
 
     /** Placeholder. Fumes: radius in blocks around hot toxic solder, ticks of poison per level of the toxic perk, ticks between doses. */
     public static final float FUME_RADIUS_BLOCKS = 3f;
+    /** A gas this many times denser than air settles to the floor when vented ({@code FumeCloud}), sinking at most this many blocks. */
+    public static final float HEAVY_GAS_DENSITY_RATIO = 1.5f;
+    public static final int HEAVY_GAS_SINK_BLOCKS = 16;
 
     public static final int FUME_POISON_TICKS_PER_LEVEL = 100;
 
