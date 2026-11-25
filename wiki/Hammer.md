@@ -22,7 +22,7 @@ Shape a **Hammer Head** (ingots, blocks, gems, planks or cobblestone) at a bench
 
 ## Using it
 
-Hold the hammer in one hand and **one** workpiece in the other, then **hold right-click**. The hammer takes the piece and lands a blow about every third of a second (2.5 a second). Each blow does what a machine's blow does and wears the hammer a point. It plays the hammer's noise and sprays bits of the piece.
+Hold the hammer in one hand and **one** workpiece in the other, then **hold right-click**. The piece shows in front of your view while you work ([Hand Tools](Hand_Tools.md#working-in-your-hands)). The hammer takes the piece and lands a blow about every third of a second (2.5 a second). Each blow does what a machine's blow does and wears the hammer a point. It plays the hammer's noise and sprays bits of the piece.
 
 The hammer keeps striking until you let go, swap to another item, or no blow can land (the metal is too hard for the swing, or has gone cold). **Letting go hands the piece back as it is**, with no cost. Only one piece is worked at a time.
 

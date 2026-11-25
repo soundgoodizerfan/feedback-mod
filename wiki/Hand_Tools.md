@@ -14,6 +14,10 @@ The hand tools are the ones you carry and use yourself: a hammer, a file and a d
 - [Spoon](#spoon): stirs and skims a [Stockpot](Stockpot.md), and tastes a dish. Made from a spoon bowl shaped from plate, planks or bone (metal is shaped hot), put with a handle.
 - [Tongs](Hazards.md#tongs): hold hot work so it doesn't burn your hand. Made from two rods of one metal at working temperature, a grip and a hammer, in a crafting grid.
 
+## Working in your hands
+
+The hammer, file and drill all work a piece the same way: the tool in one hand, the piece in the other, **hold right-click**. In first person the piece is shown in front of your view while you work, since your other hand is empty. It dips and tilts on every stroke, and glows by its temperature when it is hot. With reduce motion on, it does not dip. The piece is not shown when you work at a vice (the vice shows its own piece) or in third person.
+
 ## File
 
 A **File** is a toothed bar on a handle. Shape a **File Head** from a plate or an ingot at a bench (the [Smithing Table](Smithing_Table.md) for metal), then put it with a haft (a stick, a rod or bone) in a crafting grid; it is a [hafted tool](Hafted_Tool.md) whose face is a file head. The head alone is a file too. The head's material sets how long the file lasts.
