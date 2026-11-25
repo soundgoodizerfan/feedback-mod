@@ -37,7 +37,17 @@ While the linkage turns, a copper head clamp on a bronze guide rod lifts and dro
 
 ## Forging at a bench
 
-A driven Mechanical Hammer with a head seated, standing against a part bench ([Anvil](Anvil.md)), plays a forged shape's pattern itself. Pick the shape in the fan as usual; no hand hammer is needed in the bench's hammer slot. The hammer lands every note of the pattern, with the one force its throw and gearing give it, and holds the part until the last note has landed (a harder metal plays slower, so it takes longer). The part then goes to the player who started it, with the usual result line, or drops above the hammer if they have left. The hammer takes no second job while it works. A blow it cannot land wears the head, not your hand hammer.
+A driven Mechanical Hammer with a head seated, standing against a part bench ([Anvil](Anvil.md)), plays a forged shape's pattern itself. Pick the shape in the fan as usual; no hand hammer is needed in the bench's hammer slot. The hammer strikes the notes of the [Hammer Cam](#the-hammer-cam) seated in it, with the one force its throw and gearing give it, and holds the part until the last note has landed (a harder metal plays slower, so it takes longer). The part then goes to the player who started it, with the usual result line, or drops above the hammer if they have left. The hammer takes no second job while it works. A blow it cannot land wears the head, not your hand hammer.
+
+The part is judged against the shape you asked for, not the shape the cam plays. With a cam cut for another shape the hammer strikes the wrong notes and the part comes out worse. With no cam seated the hammer plays nothing and says *The hammer has no cam seated.*
+
+## The hammer cam
+
+A **Hammer Cam** carries one forged shape's pattern. Cut it in a crafting grid: one part of a forged shape (a part whose shape is played as a rhythm at the [Anvil](Anvil.md)) plus one metal plate, shapeless. The part comes back; the plate is used. The cam is named for the shape, and its tooltip reads *Cut for:* that shape. A blank cam, with no pattern, plays nothing.
+
+- **Right-click the hammer with a cam** to seat it. A cam already seated comes back to your hand.
+- **Right-click with an empty hand**, with no workpiece on the anvil, to take the cam out. With a workpiece on the anvil, an empty hand takes the workpiece first.
+- Breaking the hammer drops the cam.
 
 ## Crushing ore
 
