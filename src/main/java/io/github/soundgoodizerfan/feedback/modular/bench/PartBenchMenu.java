@@ -1427,11 +1427,18 @@ public class PartBenchMenu extends AbstractContainerMenu {
             io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("forge.feedback.unmovable"), 60);
             return;
         }
+        // The head strikes the cam's notes, whatever shape was asked for: no cam, nothing to play; the wrong cam, the wrong notes.
+        String pattern = io.github.soundgoodizerfan.feedback.item.HammerCamItem.pattern(machine.getCam());
+        String played = pattern.isEmpty() ? "" : camRhythm(level, pattern);
+        if (played.isEmpty()) {
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("message.feedback.hammer.no_cam"), 60);
+            return;
+        }
         int step = ForgeRhythm.step(material);
         List<ForgeRhythm.Hit> hits = new java.util.ArrayList<>();
-        for (int i = 0; i < rhythm.length(); i++)
-            if (ForgeRhythm.note(rhythm.charAt(i)))
-                hits.add(new ForgeRhythm.Hit(ForgeRhythm.noteTick(i, step), rhythm.charAt(i) == 'h'));
+        for (int i = 0; i < played.length(); i++)
+            if (ForgeRhythm.note(played.charAt(i)))
+                hits.add(new ForgeRhythm.Hit(ForgeRhythm.noteTick(i, step), played.charAt(i) == 'h'));
         int[] live = ForgeRhythm.live(material, stock.get().coldest(), hold());
         net.minecraft.util.RandomSource noise = net.minecraft.util.RandomSource.create(level.getGameTime() ^ hits.hashCode());
         ForgeRhythm.Result result = ForgeRhythm.judge(rhythm, step, hits, live, noise);
@@ -1442,6 +1449,14 @@ public class PartBenchMenu extends AbstractContainerMenu {
         for (ForgeRhythm.Hit h : hits)
             last = Math.max(last, h.tick());
         complete(server, option, stock.get(), result, work, 0, machine, last + ForgeRhythm.LEAD_OUT_TICKS);
+    }
+
+    /** The notes of the forged shape named {@code pattern}, or empty if no loaded shape has that name. */
+    private String camRhythm(Level level, String pattern) {
+        for (PartBenchShaping.Option o : PartBenchShaping.options(shapes(level)))
+            if (o.forged() && o.variant().name().equals(pattern))
+                return o.variant().rhythm();
+        return "";
     }
 
     /** Make the part the playing earned and hand it over; {@code hammerPoints} come off the hand hammer. */

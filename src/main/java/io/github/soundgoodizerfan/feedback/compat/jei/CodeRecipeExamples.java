@@ -41,6 +41,7 @@ final class CodeRecipeExamples {
         var crafting = registration.getCraftingCategory();
         var ext = new ElectronicsCrafting.Extension();
         crafting.addExtension(io.github.soundgoodizerfan.feedback.item.TongsRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.item.HammerCamRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(GearRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.cable.FenceRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.breaker.BreakerRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));

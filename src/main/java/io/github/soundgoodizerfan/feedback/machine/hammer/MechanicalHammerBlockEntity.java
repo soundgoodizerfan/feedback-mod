@@ -102,6 +102,30 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         return true;
     }
 
+    // --- the cam ---------------------------------------------------------------------------------
+
+    /** The cam seated in the hammer, or empty: it names the pattern the head strikes. */
+    private ItemStack cam = ItemStack.EMPTY;
+
+    public ItemStack getCam() {
+        return cam;
+    }
+
+    /** Seats one of {@code stack} as the cam; the one it replaces comes back. */
+    public ItemStack seatCam(ItemStack stack) {
+        ItemStack old = cam;
+        cam = stack.split(1);
+        sync();
+        return old;
+    }
+
+    public ItemStack removeCam() {
+        ItemStack old = cam;
+        cam = ItemStack.EMPTY;
+        sync();
+        return old;
+    }
+
     // --- a pattern in play ---------------------------------------------------------------------
 
     /** The part the hammer is forging and for whom: it is handed over when its last note has landed ({@link #finish}). */
@@ -331,6 +355,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Workpiece", workpiece.saveOptional(registries));
+        tag.put("Cam", cam.saveOptional(registries));
         head.save(tag, registries);
         if (!pending.isEmpty()) {
             tag.put("Pending", pending.saveOptional(registries));
@@ -345,6 +370,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         workpiece = ItemStack.parseOptional(registries, tag.getCompound("Workpiece"));
+        cam = ItemStack.parseOptional(registries, tag.getCompound("Cam"));
         head.load(tag, registries);
         pending = tag.contains("Pending") ? ItemStack.parseOptional(registries, tag.getCompound("Pending")) : ItemStack.EMPTY;
         pendingFor = tag.hasUUID("PendingFor") ? tag.getUUID("PendingFor") : null;

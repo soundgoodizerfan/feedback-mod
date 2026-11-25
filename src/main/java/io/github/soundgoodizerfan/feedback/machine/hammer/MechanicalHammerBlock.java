@@ -86,6 +86,12 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
         if (!(level.getBlockEntity(pos) instanceof MechanicalHammerBlockEntity hammer))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.HammerCamItem) {
+            if (!level.isClientSide)
+                give(player, hammer.seatCam(stack));
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+
         if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.has(stack, "head_blank")) {
             if (!level.isClientSide)
                 give(player, hammer.seatHead(stack));
@@ -112,7 +118,7 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
         if (!(level.getBlockEntity(pos) instanceof MechanicalHammerBlockEntity hammer))
             return InteractionResult.PASS;
         if (!level.isClientSide)
-            give(player, player.isShiftKeyDown() ? hammer.removeHead() : hammer.removeWorkpiece());
+            give(player, player.isShiftKeyDown() ? hammer.removeHead() : !hammer.getWorkpiece().isEmpty() ? hammer.removeWorkpiece() : hammer.removeCam());
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -128,6 +134,7 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof MechanicalHammerBlockEntity hammer) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), hammer.getWorkpiece());
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), hammer.getHead().get());
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), hammer.getCam());
         }
         super.onRemove(state, level, pos, newState, moved);
     }

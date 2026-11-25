@@ -228,6 +228,9 @@ public final class FModular {
 
     public static final DeferredItem<Item> BALANCE_SCALE = ITEMS.registerItem("balance_scale",
             io.github.soundgoodizerfan.feedback.item.BalanceScaleItem::new, new Item.Properties().stacksTo(1));
+    /** A cam for the Mechanical Hammer, cut for one forged pattern (HammerCamRecipe). */
+    public static final DeferredItem<Item> HAMMER_CAM = ITEMS.registerItem("hammer_cam",
+            io.github.soundgoodizerfan.feedback.item.HammerCamItem::new, new Item.Properties().stacksTo(1));
     /** A hand-held radio set: band, antenna, push to talk (compat/voicechat carries the voice). */
     public static final DeferredItem<Item> RADIO_SET = ITEMS.registerItem("radio_set",
             io.github.soundgoodizerfan.feedback.item.RadioSetItem::new, new Item.Properties().stacksTo(1));

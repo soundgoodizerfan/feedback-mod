@@ -33,6 +33,11 @@ public class FRecipes {
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<io.github.soundgoodizerfan.feedback.item.HotToolRecipe>>
             HOT_TOOL = SERIALIZERS.register("hot_tool", io.github.soundgoodizerfan.feedback.item.HotToolRecipe.Serializer::new);
 
+    /** A forged part and a metal plate -> a Mechanical Hammer cam for that part's pattern; the part comes back. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.HammerCamRecipe>>
+            HAMMER_CAM = SERIALIZERS.register("hammer_cam",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.HammerCamRecipe::new));
+
     /** A ringing crystal plate and a metal plate -> a mass probe carrying the plate's cut. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.MassProbeRecipe>>
             MASS_PROBE = SERIALIZERS.register("mass_probe",

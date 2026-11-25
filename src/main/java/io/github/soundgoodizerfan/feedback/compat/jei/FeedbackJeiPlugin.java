@@ -478,6 +478,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.GALVANOMETER.get(), "galvanometer");
         info(registration, FItems.CURRENT_SENSOR.get(), "current_sensor");
         info(registration, FModular.BALANCE_SCALE.get(), "balance_scale");
+        info(registration, FModular.HAMMER_CAM.get(), "hammer_cam");
         info(registration, FModular.DRAW_GAUGE.get(), "draw_gauge");
         info(registration, FModular.SURVEY_METER.get(), "survey_meter");
         info(registration, FItems.XP_METER.get(), "xp_meter");

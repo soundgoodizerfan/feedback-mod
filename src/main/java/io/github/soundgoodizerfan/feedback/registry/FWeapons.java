@@ -76,6 +76,13 @@ public class FWeapons {
                     .networkSynchronized(FireMode.STREAM_CODEC)
                     .build());
 
+    /** A Mechanical Hammer cam's pattern: the name of the forged shape (a variant with a rhythm) whose notes it plays. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> HAMMER_CAM =
+            COMPONENTS.register("hammer_cam", () -> DataComponentType.<String>builder()
+                    .persistent(com.mojang.serialization.Codec.STRING)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8)
+                    .build());
+
     /** A radio set's band, 1 to {@code RadioTuning.BANDS}; absent reads 1. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RADIO_BAND =
             COMPONENTS.register("radio_band", () -> DataComponentType.<Integer>builder()
