@@ -85,6 +85,14 @@ public class Feedback {
         io.github.soundgoodizerfan.feedback.registry.FCombat.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FWorldgen.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FVillage.register(modBus);
+        // Thaumaturge's wand parts in Feedback's materials: reached by reflection, only when it is loaded (compat/thaumaturge/api is compile-only against its API).
+        if (net.neoforged.fml.ModList.get().isLoaded("thaumaturge")) {
+            try {
+                Class.forName("io.github.soundgoodizerfan.feedback.compat.thaumaturge.api.ThaumaturgeWands").getMethod("init", IEventBus.class).invoke(null, modBus);
+            } catch (ReflectiveOperationException | LinkageError e) {
+                LOGGER.warn("Thaumaturge is present but its wand parts could not be registered: {}", e.toString());
+            }
+        }
 
         container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, io.github.soundgoodizerfan.feedback.robot.RobotConfig.SPEC);
         modBus.addListener(io.github.soundgoodizerfan.feedback.robot.RobotTickets::register);
