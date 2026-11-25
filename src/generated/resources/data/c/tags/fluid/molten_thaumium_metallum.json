@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_metallum",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_metallum_flowing",
+      "required": false
+    }
+  ]
+}

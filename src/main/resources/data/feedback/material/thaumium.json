@@ -1,6 +1,9 @@
 {
   "neoforge:conditions": [
-    { "type": "neoforge:mod_loaded", "modid": "thaumaturge" }
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumaturge"
+    }
   ],
   "fastener": 3,
   "color": "#7c6fa6",
@@ -13,7 +16,7 @@
   "max_temperature": 1400,
   "density": 7.04,
   "thermal": {
-    "expansion": 1.2e-5,
+    "expansion": 1.2e-05,
     "melting_point": 1520,
     "boiling_point": 2862,
     "cooling_rate": 1.62,
@@ -53,7 +56,8 @@
   "corrosion_resistance": 0.4,
   "composition": {
     "feedback:iron": 0.94,
-    "feedback:essentia": 0.06
+    "feedback:essentia_praecantatio": 0.03,
+    "feedback:essentia_terra": 0.03
   },
   "forms": {
     "ingot": "thaumaturge:ingot_thaumium",
@@ -62,16 +66,36 @@
     "block": "thaumaturge:metal_thaumium"
   },
   "accepts": {
-    "sword": ["thaumaturge:thaumium_sword"],
-    "pickaxe": ["thaumaturge:thaumium_pickaxe"],
-    "axe": ["thaumaturge:thaumium_axe"],
-    "shovel": ["thaumaturge:thaumium_shovel"],
-    "hoe": ["thaumaturge:thaumium_hoe"],
-    "tool": ["thaumaturge:thaumium_shield"],
-    "helmet": ["thaumaturge:thaumium_helm"],
-    "chestplate": ["thaumaturge:thaumium_chest"],
-    "leggings": ["thaumaturge:thaumium_legs"],
-    "boots": ["thaumaturge:thaumium_boots"]
+    "sword": [
+      "thaumaturge:thaumium_sword"
+    ],
+    "pickaxe": [
+      "thaumaturge:thaumium_pickaxe"
+    ],
+    "axe": [
+      "thaumaturge:thaumium_axe"
+    ],
+    "shovel": [
+      "thaumaturge:thaumium_shovel"
+    ],
+    "hoe": [
+      "thaumaturge:thaumium_hoe"
+    ],
+    "tool": [
+      "thaumaturge:thaumium_shield"
+    ],
+    "helmet": [
+      "thaumaturge:thaumium_helm"
+    ],
+    "chestplate": [
+      "thaumaturge:thaumium_chest"
+    ],
+    "leggings": [
+      "thaumaturge:thaumium_legs"
+    ],
+    "boots": [
+      "thaumaturge:thaumium_boots"
+    ]
   },
   "enchantability": 22,
   "attuning": {

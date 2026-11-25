@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_aqua",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_aqua_flowing",
+      "required": false
+    }
+  ]
+}

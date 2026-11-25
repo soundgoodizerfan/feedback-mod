@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 
@@ -31,7 +32,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 public final class MoltenMetals {
 
     /** Material ids that get a generated molten fluid. A new metal adds its id here. */
-    public static final List<String> IDS = List.of(
+    public static final List<String> IDS = Stream.of(List.of(
             "tin", "copper", "zinc", "lead", "gold", "silver", "iron", "uranium",
             "chromium", "nickel", "cobalt", "manganese", "aluminium", "titanium", "tungsten", "thorium",
             "silicon", "silicon_crude", "silica_glass", "optical_glass", "steel", "stainless_steel", "manganese_steel",
@@ -39,7 +40,17 @@ public final class MoltenMetals {
             "magnesium", "lithium", "bismuth", "beryllium", "platinum", "gallium", "molybdenum", "palladium", "cadmium",
             "duralumin", "nichrome", "woods_metal", "beryllium_copper", "invar", "electrum", "amethyst_bronze", "borosilicate_glass", "uranium_glass",
             "antimony", "vanadium", "indium", "mercury", "galinstan", "constantan", "cupronickel", "alnico", "high_speed_steel", "titanium_6al_4v", "stellite", "pewter", "babbitt", "bell_metal", "shakudo", "aluminium_foam", "lumen_glass",
-            "essentia", "thaumium_lean", "thaumium", "thaumium_rich", "ruby", "jade", "garnet", "tourmaline");
+            "thaumium", "ruby", "jade", "garnet", "tourmaline"), essentiaIds()).flatMap(List::stream).toList();
+
+    /** Each Thaumaturge aspect's essentia and the iron alloy it makes ({@code scripts/gen_essentia_materials.py} writes the files). */
+    private static List<String> essentiaIds() {
+        // A method, not a constant: IDS is initialised above this point in the file.
+        return Stream.of("aer", "terra", "ignis", "aqua", "ordo", "perditio", "vacuos", "lux", "motus", "gelum", "vitreus", "metallum",
+                "victus", "permutatio", "potentia", "volatus", "vinculum", "tenebrae", "mortuus", "herba", "praecantatio", "instrumentum",
+                "alienis", "spiritus", "auram", "alkimia", "vitium", "fabrico", "machina", "exanimis", "bestia", "cognitio", "sensus",
+                "aversio", "praemunio", "desiderium", "humanus")
+                .flatMap(a -> Stream.of("essentia_" + a, "thaumium_" + a)).toList();
+    }
 
     /**
      * Materials that are liquid at room temperature: their fluid is a cool, dark, runny liquid held in vessels and buckets, not a glowing
@@ -57,8 +68,8 @@ public final class MoltenMetals {
 
     static {
         for (String id : IDS) {
-            // The thaumium grades exist only with Thaumaturge (their material files carry the condition).
-            if (id.startsWith("thaumium") && !io.github.soundgoodizerfan.feedback.core.LoadConditions.DATAGEN && !net.neoforged.fml.ModList.get().isLoaded("thaumaturge"))
+            // Essentia and thaumium exist only with Thaumaturge (their material files carry the condition).
+            if ((id.startsWith("thaumium") || id.startsWith("essentia_")) && !io.github.soundgoodizerfan.feedback.core.LoadConditions.DATAGEN && !net.neoforged.fml.ModList.get().isLoaded("thaumaturge"))
                 continue;
             String name = "molten_" + id;
             boolean cool = LIQUID_AT_AMBIENT.contains(id);

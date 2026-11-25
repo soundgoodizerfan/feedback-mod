@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_potentia",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_potentia_flowing",
+      "required": false
+    }
+  ]
+}

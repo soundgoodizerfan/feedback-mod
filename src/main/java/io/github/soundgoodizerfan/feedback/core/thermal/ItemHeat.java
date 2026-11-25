@@ -74,7 +74,7 @@ public final class ItemHeat {
     public static TuRate coolingRate(ItemStack stack) {
         if (stack.getItem() instanceof Cooling c)
             return c.coolingRate(stack);
-        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(stack.getItem())
+        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(stack)
                 .map(l -> l.material().looseCooling()).orElse(ThermalTuning.ITEM_COOLING_TU_PER_TICK);
     }
 

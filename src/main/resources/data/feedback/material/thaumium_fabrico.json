@@ -1,0 +1,70 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumaturge"
+    }
+  ],
+  "fastener": 3,
+  "color": "#848c86",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 16,
+  "min_temperature": 900,
+  "max_temperature": 1400,
+  "density": 7.07,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 1511,
+    "boiling_point": 2862,
+    "cooling_rate": 1.62,
+    "conductivity": 0.0252,
+    "oxidation_temperature": 570,
+    "anneal_temperature": 675,
+    "service_temperature": 471,
+    "specific_heat": 0.4408,
+    "latent_heat_fusion": 250,
+    "latent_heat_vaporisation": 6090
+  },
+  "mechanical": {
+    "toughness": 110.7,
+    "ductility": 10,
+    "work_hardening": 1,
+    "yield_strength": 10.78,
+    "friction": 0.6083,
+    "abrasiveness": 0.3598
+  },
+  "molten": {
+    "viscosity": 2.734,
+    "density": 6.3,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 770,
+    "reflectivity": 0.5181
+  },
+  "electrical": {
+    "conductivity": 0.2196,
+    "drop": 0.228,
+    "core_loss": 0.06,
+    "electrode_potential": -0.44
+  },
+  "ampacity": 0.29,
+  "corrosion_resistance": 0.3124,
+  "composition": {
+    "feedback:iron": 0.94,
+    "feedback:essentia_fabrico": 0.06
+  },
+  "enchantability": 21,
+  "attuning": {
+    "temperature": 700,
+    "lock": 520,
+    "coercive": 0.3375,
+    "loop_width": 0.3675,
+    "lag": 7
+  },
+  "toxicity": 0.1
+}

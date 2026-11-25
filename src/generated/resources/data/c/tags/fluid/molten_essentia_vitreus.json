@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_vitreus",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_vitreus_flowing",
+      "required": false
+    }
+  ]
+}

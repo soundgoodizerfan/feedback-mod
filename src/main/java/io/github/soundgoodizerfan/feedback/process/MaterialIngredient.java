@@ -103,6 +103,12 @@ public record MaterialIngredient(Optional<String> form, Optional<TagKey<Item>> t
         return LOCATED.computeIfAbsent(item, i -> Material.find(now, i));
     }
 
+    /** As {@link #locate(Item)}, and by its components for an item that is a different material for each ({@link Material#componentKeyed}). */
+    public static Optional<Material.Located> locate(ItemStack stack) {
+        Map<ResourceLocation, Material> now = materialsNow();
+        return Material.componentKeyed(now, stack.getItem()) ? Material.find(now, stack) : locate(stack.getItem());
+    }
+
     /** Whether this asks for a material in a list of forms rather than one form: a row with such an input is form-agnostic. */
     public boolean agnostic() {
         return material.isPresent() || !forms.isEmpty();
@@ -117,7 +123,7 @@ public record MaterialIngredient(Optional<String> form, Optional<TagKey<Item>> t
         // A shaped part is one item for every material and is told by its MadeOf, so it is located from the stack.
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem)
             return Material.find(materialsNow(), stack).filter(this::accepts).isPresent();
-        return locate(stack.getItem()).filter(this::accepts).isPresent();
+        return locate(stack).filter(this::accepts).isPresent();
     }
 
     /** Whether a located item is what this asks for: the form, and the figure in range. */
@@ -145,7 +151,9 @@ public record MaterialIngredient(Optional<String> form, Optional<TagKey<Item>> t
                     .filter(f -> accepts(new Material.Located(id, own, f)))
                     .flatMap(f -> own.stack(id, f).stream());
         } else if (form.isPresent()) {
-            stacks = materials.entrySet().stream().flatMap(e -> e.getValue().stack(e.getKey(), form.get()).stream()
+            // A form the material has no item of its own in is shown as the other mod's stacks it accepts.
+            stacks = materials.entrySet().stream().flatMap(e -> e.getValue().stack(e.getKey(), form.get()).map(Stream::of)
+                    .orElseGet(() -> e.getValue().acceptedStacks(form.get()).stream())
                     .filter(s -> accepts(new Material.Located(e.getKey(), e.getValue(), form.get()))));
         } else if (tag.isEmpty()) {
             // a list of forms with no material named: the stock of every material in any of them

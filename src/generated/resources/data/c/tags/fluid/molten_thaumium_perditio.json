@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_perditio",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_perditio_flowing",
+      "required": false
+    }
+  ]
+}

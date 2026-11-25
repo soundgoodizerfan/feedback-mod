@@ -61,7 +61,7 @@ public class OpticalTerminalBlockEntity extends ElectricNode implements OpticalE
     public static float rectifying(ItemStack stack) {
         if (stack.isEmpty())
             return 0f;
-        return Material.find(MaterialTable.get().materials(), stack.getItem())
+        return Material.find(MaterialTable.get().materials(), stack)
                 .flatMap(l -> l.material().electrical().rectifying()).orElse(0f);
     }
 

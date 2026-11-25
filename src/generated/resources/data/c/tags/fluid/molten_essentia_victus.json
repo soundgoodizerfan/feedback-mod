@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_victus",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_victus_flowing",
+      "required": false
+    }
+  ]
+}

@@ -819,7 +819,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param refractiveIndex how strongly it bends light, 1 (vacuum) to about 2.5 (real: glass 1.5, quartz 1.55, diamond 2.42); absent for an
      *                        opaque material. Read by a telescope's lens parts.
      * @param accepts foreign items that are this material in a form, by form name: each entry an item id ({@code thaumaturge:cluster_copper}) or a
-     *                {@code #tag}. Only {@link #find} and the recipe browser's item box read it; nothing is generated from it and no step outputs
+     *                {@code #tag}, or an item told apart by a component, {@code item[component={"field":"id"}]} ({@link ComponentItem}), for another
+     *                mod's one item that holds many stuffs (an essentia crystal of each aspect). Only {@link #find}, a derived crystal melt and the recipe browser read it; nothing is generated from it and no step outputs
      *                it, so it is the compat key for another mod's mercury, cluster or finished gear. An id or tag nothing registers is ignored.
      * @param abundance how much of the crust is this stuff, in parts per million by mass (Earth's crust, bent for play where
      *                  the game's rock differs). Only on a material a vein yields: it sets the default weight of that
@@ -1014,8 +1015,45 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 .findFirst();
     }
 
-    /** Item to where it sits, and common tag to where it points, first material in table order winning. */
-    private record Index(Map<Item, Located> items, Map<ResourceLocation, Located> tags) {}
+    /**
+     * Item to where it sits, common tag to where it points, and item to the materials its components choose between,
+     * first material in table order winning.
+     */
+    private record Index(Map<Item, Located> items, Map<ResourceLocation, Located> tags, Map<Item, List<Keyed>> keyed) {}
+
+    private record Keyed(ComponentItem entry, Located at) {}
+
+    /** Whether {@code item} is a different material for different components, so that only its stack says which. */
+    public static boolean componentKeyed(Map<ResourceLocation, Material> materials, Item item) {
+        return index(materials).keyed().containsKey(item);
+    }
+
+    /** The stacks {@code accepts} names for {@code form}: plain foreign items, and component-told ones with the component set. */
+    public List<net.minecraft.world.item.ItemStack> acceptedStacks(String form) {
+        List<net.minecraft.world.item.ItemStack> out = new java.util.ArrayList<>();
+        for (String entry : accepts().getOrDefault(form, List.of())) {
+            var keyed = ComponentItem.parse(entry);
+            if (keyed.isPresent()) {
+                keyed.get().stack().ifPresent(out::add);
+                continue;
+            }
+            ResourceLocation id = ResourceLocation.tryParse(entry);
+            if (id != null)
+                BuiltInRegistries.ITEM.getOptional(id).ifPresent(i -> out.add(new net.minecraft.world.item.ItemStack(i)));
+        }
+        return out;
+    }
+
+    /** Every stack the recipe browser shows as this material: its own items, then other mods'. */
+    public List<net.minecraft.world.item.ItemStack> shownStacks(ResourceLocation id) {
+        java.util.Set<Item> plain = new java.util.LinkedHashSet<>(items(id).values());
+        plain.addAll(foreignItems(id));
+        List<net.minecraft.world.item.ItemStack> out = new java.util.ArrayList<>();
+        plain.forEach(i -> out.add(new net.minecraft.world.item.ItemStack(i)));
+        accepts().values().forEach(entries -> entries.forEach(entry ->
+                ComponentItem.parse(entry).flatMap(ComponentItem::stack).ifPresent(out::add)));
+        return out;
+    }
 
     /** Rebuilt only when the table instance changes (a reload or sync). */
     private static final Map<Map<ResourceLocation, Material>, Index> INDEXES = new java.util.IdentityHashMap<>();
@@ -1044,10 +1082,17 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                         io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form) + "/" + e.getKey().getPath()),
                         new Located(e.getKey(), e.getValue(), form));
         // Foreign items a file names under `accepts` come after every own form, so they never displace one.
+        Map<Item, List<Keyed>> keyed = new java.util.IdentityHashMap<>();
         for (Map.Entry<ResourceLocation, Material> e : materials.entrySet())
             e.getValue().accepts().forEach((form, entries) -> {
                 Located at = new Located(e.getKey(), e.getValue(), form);
                 for (String entry : entries) {
+                    var component = ComponentItem.parse(entry);
+                    if (component.isPresent()) {
+                        BuiltInRegistries.ITEM.getOptional(component.get().item())
+                                .ifPresent(item -> keyed.computeIfAbsent(item, i -> new java.util.ArrayList<>()).add(new Keyed(component.get(), at)));
+                        continue;
+                    }
                     boolean tag = entry.startsWith("#");
                     ResourceLocation id = ResourceLocation.tryParse(tag ? entry.substring(1) : entry);
                     if (id == null)
@@ -1058,7 +1103,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                         BuiltInRegistries.ITEM.getOptional(id).ifPresent(item -> built.putIfAbsent(item, at));
                 }
             });
-        Index made = new Index(built, tags);
+        Index made = new Index(built, tags, keyed);
         INDEXES.put(materials, made);
         return made;
     }
@@ -1077,8 +1122,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         }
         MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
         // Raw stock the enchanting table stamped (a rod, a grip) is still found by its item: the stamp only carries the attunement.
-        if (made == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem))
+        if (made == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem)) {
+            for (Keyed k : index(materials).keyed().getOrDefault(stack.getItem(), List.of()))
+                if (k.entry().matches(stack))
+                    return Optional.of(k.at());
             return find(materials, stack.getItem());
+        }
         Material m = materials.get(made.material());
         return m == null ? Optional.empty()
                 : Optional.of(new Located(made.material(), m, BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()));

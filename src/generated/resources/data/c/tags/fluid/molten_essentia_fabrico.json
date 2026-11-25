@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_fabrico",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_fabrico_flowing",
+      "required": false
+    }
+  ]
+}

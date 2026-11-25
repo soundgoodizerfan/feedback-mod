@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_herba",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_herba_flowing",
+      "required": false
+    }
+  ]
+}

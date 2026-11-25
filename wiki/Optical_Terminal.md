@@ -14,7 +14,7 @@ P is a Brass Plate, T is Glass Tubing and W is Copper Fine Wire. Craft it at the
 ## Using it
 
 - **Power it.** A terminal is a sink on an [LV](Electricity.md#bands-and-amps) line and draws a small standing current while a crystal is seated. With no power or no crystal, the fiber it ends is dark. A line of a higher band burns the crystal out; the terminal itself is unharmed.
-- **Seat a crystal.** Right-click with a crystal: quartz, cuprite, galena, pyrite or essentia (any item whose material rectifies). The crystal is the light source and the detector at this end.
+- **Seat a crystal.** Right-click with a crystal: quartz, cuprite, galena or pyrite (any item whose material rectifies). The crystal is the light source and the detector at this end.
 - **Seat a circuit.** Right-click with a [circuit](Basic_Electronic_Circuit.md). Sneak and right-click with an empty hand takes the circuit out, then the crystal.
 - **Right-click** empty-handed to read it: *no crystal*, *lit* or *dark*.
 - **Link nodes to it** with ordinary wire, with the [Data Connector](Data_Connector.md#linking-nodes), as to any node. Join two terminals with [fiber](Data_Connector.md#fiber), made from glass rods at the [Wire Drawer](Wire_Drawer.md#what-it-makes).

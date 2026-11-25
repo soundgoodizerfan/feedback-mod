@@ -75,7 +75,7 @@ public class MaterialProbeScreen extends SkinnedScreen<MaterialProbeMenu> {
         List<MaterialDescription.Row> out = new ArrayList<>();
         out.add(new MaterialDescription.Row(0, Component.translatable("screen.feedback.probe.row.item"),
                 BuiltInRegistries.ITEM.getKey(stack.getItem()).toString(), Component.translatable("screen.feedback.probe.row.item.tip")));
-        Material.find(ClientMaterials.on(minecraft.level), stack.getItem())
+        Material.find(ClientMaterials.on(minecraft.level), stack)
                 .ifPresent(found -> out.addAll(MaterialDescription.of(found.id(), found.material(), found.form())));
         rows = out;
     }

@@ -154,7 +154,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         for (ItemStack stack : processSlots()) {
             if (stack.isEmpty())
                 continue;
-            var located = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(stack.getItem());
+            var located = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(stack);
             if (located.isPresent())
                 total += stack.getCount() * io.github.soundgoodizerfan.feedback.registry.FormItems.volume(located.get().form())
                         * located.get().material().density().muPerMb() * heatPerMu(located.get().material());
@@ -184,7 +184,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
 
     /** What melting {@code mB} of {@code first}'s material takes out of the vessel, in Tu: its latent heat of fusion over the vessel's thermal mass. */
     private float fusionCost(ItemStack first, int mB) {
-        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(first.getItem()).map(l -> {
+        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(first).map(l -> {
             float work = l.material().thermal().latentHeatFusion().map(h -> h.workPerMu()).orElse(0f)
                     * mB * l.material().density().muPerMb();
             return work / Math.max(1f, getThermalMass().workPerTu());
@@ -427,7 +427,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         // Grit stirred into a melt: stock of a material some melt row names as dispersed joins the ledger as a suspended solid, a piece at a time.
         if (alloy.amount() > 0 && level.getGameTime() % 10 == 0 && takesMelt()
                 && !io.github.soundgoodizerfan.feedback.process.MixtureTable.get().dispersed().isEmpty()) {
-            var located = Material.find(MaterialTable.get().materials(), input.getItem());
+            var located = Material.find(MaterialTable.get().materials(), input);
             if (located.isPresent() && io.github.soundgoodizerfan.feedback.process.MixtureTable.get().dispersed().contains(located.get().id())) {
                 int mb = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(located.get().form());
                 if (mb <= tank.getCapacity() - alloy.amount()) {
@@ -564,7 +564,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         if (!gassed) {
             placeHot(Failure.ruined(process, first));
             // A toxic material heated without its gas gives off its fume (osmium powder oxidising to the tetroxide in air).
-            Material.find(MaterialTable.get().materials(), first.getItem()).ifPresent(l ->
+            Material.find(MaterialTable.get().materials(), first).ifPresent(l ->
                     io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud.release(level,
                             net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), io.github.soundgoodizerfan.feedback.core.hazard.Fumes.level(l.material())));
         }

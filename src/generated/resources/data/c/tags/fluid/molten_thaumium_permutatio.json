@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_permutatio",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_permutatio_flowing",
+      "required": false
+    }
+  ]
+}

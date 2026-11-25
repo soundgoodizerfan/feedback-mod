@@ -25,7 +25,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -54,7 +53,7 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
     public static List<Card> cards(Map<ResourceLocation, Material> materials) {
         List<Card> out = new ArrayList<>();
         materials.forEach((id, m) -> {
-            if (!m.items(id).isEmpty() || !m.foreignItems(id).isEmpty())
+            if (!m.shownStacks(id).isEmpty())
                 out.add(new Card(id, m));
         });
         return out;
@@ -87,11 +86,10 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Card card, IFocusGroup focuses) {
-        List<Item> items = new ArrayList<>(card.material().items(card.id()).values());
         // Other mods' items that are this material (their tagged brass ingot, an accepted cluster): right-clicking one lands here too.
-        items.addAll(card.material().foreignItems(card.id()));
+        List<ItemStack> items = card.material().shownStacks(card.id());
         builder.addInputSlot(WIDTH - 19, 1).setStandardSlotBackground()
-                .addItemStacks(items.stream().map(ItemStack::new).toList());
+                .addItemStacks(items);
     }
 
     private static void add(List<String[]> rows, String key, Optional<? extends Unit> unit) {

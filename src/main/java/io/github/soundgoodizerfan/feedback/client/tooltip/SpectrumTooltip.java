@@ -37,7 +37,7 @@ public final class SpectrumTooltip {
         if (!Readout.instrumented(Quantity.COMPOSITION) || Minecraft.getInstance().level == null)
             return;
         var materials = ClientMaterials.on(Minecraft.getInstance().level);
-        Material.find(materials, event.getItemStack().getItem()).ifPresent(found -> {
+        Material.find(materials, event.getItemStack()).ifPresent(found -> {
             Material m = found.material();
             List<Component> lines = new ArrayList<>();
             if (!m.composition().isEmpty())

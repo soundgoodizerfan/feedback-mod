@@ -78,10 +78,10 @@ public class MixtureCategory implements IRecipeCategory<Mixture> {
                 continue;
             }
             var material = materials.get(id);
-            if (material == null || material.items(id).isEmpty())
+            var shown = material == null ? java.util.List.<ItemStack>of() : material.shownStacks(id);
+            if (shown.isEmpty())
                 continue;
-            builder.addInputSlot(x, 84).setStandardSlotBackground()
-                    .addItemStacks(material.items(id).values().stream().map(ItemStack::new).toList());
+            builder.addInputSlot(x, 84).setStandardSlotBackground().addItemStacks(shown);
             x += 18;
         }
         if (recipe.hasFluidResult())
