@@ -24,6 +24,18 @@ The world has a yellow-green sky and fog, acid-green water and rain, and no mobs
 
 Its crust is rich in osmiridium, from y 20 to 90 ([Ores](Ores.md)).
 
+## The frozen moon by rocket
+
+The frozen moon is a point in the Gap along its own fixed bearing, the pale blue-white disc in the sky. A craft that gets within its capture sphere while heading toward it arrives on the moon at full size, high up, coming in fast and descending. A craft that misses coasts on. The moon grows in the sky as the craft closes on it.
+
+The world has no weather, and its water freezes. The air is very thin: density 0.15 at the ground, thinning with height to zero at y 220. It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is -150 Tu. Flying up out of the air returns the craft to the Gap just short of the moon, shrunk again.
+
+## The crystal world by rocket
+
+The crystal world is a point in the Gap along its own fixed bearing, the violet disc in the sky. A craft that gets within its capture sphere while heading toward it arrives in the crystal world at full size, high up, coming in fast and descending. A craft that misses coasts on. The planet grows in the sky as the craft closes on it.
+
+The world lies under a violet haze, with amethyst geodes in the ground. The air is thin: density 0.8 at the ground, thinning with height to zero at y 300. It holds some oxygen, a share of 0.4, but too little to breathe unaided, so a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 15 Tu. Flying up out of the air returns the craft to the Gap just short of the planet, shrunk again.
+
 ## Coming back
 
 A body moving fast through air heats on its leading face. Blocks on the windward side burn off a voxel at a time when the heat passes what their material can take: burnable ones oxidize and metals melt. A block counts by the material it is a form of, so an iron block holds until iron melts and a wool block burns away at wool's oxidation temperature. A block that is no material's form does not burn. Thick burnable layers last longer, and refractory plates hold. Blocks that are only touching are not broken. A hard landing hurts everyone aboard like a fall of the speed change.
@@ -48,7 +60,7 @@ Four planets hang at fixed bearings, so each one is a landmark to steer toward:
 - **Crystal world.** Violet and teal.
 - **The End's gas giant.** Banded, low on the horizon and small.
 
-The frozen moon and the crystal world keep their size as you travel. The gas giant starts small and grows as you close on the End, and the acid-cloud world grows as you close on it.
+Each planet grows as you close on it: the gas giant as you close on the End, the others as you close on their own worlds.
 
 ## Radiation
 
