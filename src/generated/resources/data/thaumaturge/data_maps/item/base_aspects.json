@@ -8458,6 +8458,28 @@
         "aspect": "thaumaturge:instrumentum"
       }
     ],
+    "feedback:camera": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 11,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:vitreus"
+      }
+    ],
     "feedback:campfire": [
       {
         "amount": 4,
@@ -11630,6 +11652,28 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:coherer_clapper": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 16,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
       }
     ],
     "feedback:coil_element": [
