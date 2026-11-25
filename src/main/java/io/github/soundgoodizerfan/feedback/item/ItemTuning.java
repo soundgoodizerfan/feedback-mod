@@ -74,18 +74,6 @@ public final class ItemTuning {
      */
     public static final Pu PRESSURE_GAUGE_RESOLUTION_PU = new Pu(0.5f);
 
-    /** Invented: a thermometer's glass and foil survive to 600 Tu; dipped in hotter it strains and reads low afterwards. */
-    public static final float THERMOMETER_LIMIT_TU = 600f;
-
-    /** Invented: a gauge's spring survives to 8 Pu, a step above the critical line; past it the needle reads low. */
-    public static final float PRESSURE_GAUGE_LIMIT_PU = 8f;
-
-    /** Invented: one strain or one knock moves an instrument this many of its own steps; the offset stops at the cap. */
-    public static final float DRIFT_STEPS_PER_MISUSE = 1.5f, DRIFT_CAP_STEPS = 6f;
-
-    /** Invented: a fall of this many blocks knocks every instrument carried. */
-    public static final float DRIFT_FALL_BLOCKS = 4f;
-
     /** The XP meter's step for a level: whole levels, so a finer reading needs a fitted circuit. [OPEN] until played */
     public static final float XP_METER_RESOLUTION_LEVEL = 1f;
 
@@ -130,18 +118,6 @@ public final class ItemTuning {
 
     /** A light meter's step, in light levels: a photocell tells a lit room from a lamp, not level 7 from level 8. Invented. */
     public static final float LIGHT_METER_RESOLUTION = 2f;
-
-    /** The brightest a light meter reads without saturating, in levels: read at a face lit past it (a lamp beside it) and the cell drifts. Invented. */
-    public static final float LIGHT_METER_LIMIT = 13f;
-
-    /** A galvanometer's band, in amps: a line carrying more than this swings the needle past its stop and it drifts. Invented. */
-    public static final float GALVANOMETER_LIMIT_AMPS = 20f;
-
-    /** The temperature, in Tu, past which a carried instrument soaks in the heat and drifts (the glass and fill it is made of give). Invented. */
-    public static final float HEAT_SOAK_TU = 600f;
-
-    /** Ticks between checks of the heat a carried instrument stands in. */
-    public static final int HEAT_SOAK_INTERVAL = 40;
 
     public static final float ELECTROSCOPE_RESOLUTION_BANDS = 1f;
 

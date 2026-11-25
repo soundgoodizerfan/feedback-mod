@@ -42,16 +42,6 @@ public interface Instrument {
      */
     float resolution(Quantity quantity);
 
-    /** The largest true figure this device survives reading; past it the reading strains the device (drift). Unlimited by default. */
-    default float limit(Quantity quantity) {
-        return Float.POSITIVE_INFINITY;
-    }
-
-    /** How far this device reads off true for the quantity, in its units: zero unless it has been misused. */
-    default float offset(Quantity quantity) {
-        return 0f;
-    }
-
     /**
      * The faintest true figure this device reads on its own, in the quantity's units; zero (the default) for a device with no faint tail.
      * Fainter than {@link Instruments#faintest} (the floor over what a fitted circuit's gain buys) it gives no reading at all, which is
@@ -61,9 +51,9 @@ public interface Instrument {
         return 0f;
     }
 
-    /** What this device shows for a true figure: the offset added, then quantised to the step. */
+    /** What this device shows for a true figure: quantised to the step. */
     default float shown(Quantity quantity, float truth) {
-        return Instruments.quantise(truth + offset(quantity), resolution(quantity));
+        return Instruments.quantise(truth, resolution(quantity));
     }
 
     /** What to sign a reading with. Every figure the mod shows names the device that took it. */

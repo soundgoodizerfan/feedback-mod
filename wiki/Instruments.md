@@ -181,7 +181,7 @@ Carry it anywhere in your inventory; you do not need to hold it.
 - **Crucibles**, cable, the Improved Furnace and other open blocks show a figure in Jade.
 - **Right-click** any hot block, even a **sealed** furnace, to take one reading through the door. Sealed furnaces cannot be *watched* (Jade says *"Sealed - cannot be measured"*), but you can always check them by hand.
 
-It reads in steps of **25 Tu**. Steel's window is 60 Tu wide, so that is about two steps: you know you are in it but not exactly where. It is enough to make steel reliably by hand: heat, check, wait, check, adjust. For finer readings, and readings a Controller can use, bolt on a [Temperature Sensor](#temperature-sensor); for distance, use the [Pyrometer](Optics.md#pyrometer). A circuit can narrow the step ([below](#fitting-a-circuit)). Reading something hotter than **600 Tu** strains it; see [Drift](#drift).
+It reads in steps of **25 Tu**. Steel's window is 60 Tu wide, so that is about two steps: you know you are in it but not exactly where. It is enough to make steel reliably by hand: heat, check, wait, check, adjust. For finer readings, and readings a Controller can use, bolt on a [Temperature Sensor](#temperature-sensor); for distance, use the [Pyrometer](Optics.md#pyrometer). A circuit can narrow the step ([below](#fitting-a-circuit)).
 
 ## Temperature Sensor
 
@@ -213,7 +213,7 @@ P
 
 G is a Glass Pane, T is a Copper Tubing and P is a [Brass Plate](Mechanical_Hammer.md).
 
-**Right-click** a Boiler, a Pressure Vessel, a [Pipe](Pipe.md) or a [Gas Tank](Gas_Tank.md) to read its pressure in Pu on the card. It only reads; it cannot vent or relieve anything. It reads in steps of **0.5 Pu**. A boiler's danger line is 5 Pu, its critical pressure 7, and it starts to seep at 3.5, so you can see the danger line coming without the exact figure. A circuit can narrow the step ([below](#fitting-a-circuit)). Reading a holder above **8 Pu** strains it; see [Drift](#drift).
+**Right-click** a Boiler, a Pressure Vessel, a [Pipe](Pipe.md) or a [Gas Tank](Gas_Tank.md) to read its pressure in Pu on the card. It only reads; it cannot vent or relieve anything. It reads in steps of **0.5 Pu**. A boiler's danger line is 5 Pu, its critical pressure 7, and it starts to seep at 3.5, so you can see the danger line coming without the exact figure. A circuit can narrow the step ([below](#fitting-a-circuit)).
 
 ## Electroscope
 
@@ -248,7 +248,6 @@ W is [Copper Wire](Wire_Drawer.md), N is a Wrought Iron Nugget and G is a Glass 
 - **Right-click** any electrical block to read the current on the card, e.g. *1.00 A*, in steps of **0.25 A**.
 - On a **machine**, it shows what the machine is getting next to what it wants, e.g. *"0.50 of 1.00 A"*: the quickest way to tell a starved machine from one that is simply weak.
 - **Carry it anywhere in your inventory** and Jade's tooltip on electrical blocks gains an amps line.
-- Reading a line carrying more than **20 A** slams the needle and it drifts; see [Drift](#drift). Set against a dead line it reads zero again.
 
 Reading a live cable is free and safe while it is insulated, and nothing has to stop while you measure. Right-clicking a **bare** live cable or a live [fence](Electrified_Fence.md) is a hand on the wire: you still get the reading, and it shocks you as touching it would. A glove rated for the band stops it. Idle wires shock nothing.
 
@@ -463,26 +462,6 @@ The [Computer](Electric_Controller.md#built-in-apps)'s **Diagram** app shows the
 ## Fitting a circuit
 
 The Thermometer, Pressure Gauge, Electroscope, Galvanometer, [Light Meter](Light_Meter.md), Dosimeter, Geiger Counter, Survey Meter, Flux Meter, Pyrometer and Component Tester can carry a circuit. Put the instrument and a live [Basic Electronic Circuit](Basic_Electronic_Circuit.md) in a crafting grid, in any arrangement: the instrument comes out carrying the circuit and reads in finer steps than the usual figure in the table. A quiet circuit takes the step down to about half; a noisy one, such as a cold joint, helps little; a dead one cannot be fitted. A fitted instrument still never reads the exact figure. Its tooltip says how fine it reads, and its signature on readings says it is circuit-fitted.
-
-## Drift
-
-Plain use never wears an instrument. Misuse knocks it off true, so it reads high or low by a few of its own steps until you set it right:
-
-- A Thermometer read on something hotter than 600 Tu reads low afterward.
-- A Pressure Gauge read on a holder above 8 Pu reads low afterward.
-- A [Galvanometer](#galvanometer) read on a line above 20 A reads off afterward.
-- A [Light Meter](Light_Meter.md) read at a face brighter than level 13 reads off afterward.
-- A fall of 4 blocks or more knocks every instrument you carry, high or low, including those in an [Instrument Bag](#instrument-bag).
-- Standing in heat above 600 Tu soaks every instrument you carry, in a bag too, so it reads high.
-
-A drifted instrument says **Reads off** on its tooltip; it does not say by how much. The offset stops growing after a few steps. Set it against a known reference to put it back on true:
-
-- **Thermometer**: right-click melting ice, or any block sitting at its own melting point. The [Pyrometer](Optics.md#pyrometer) does the same when aimed at one.
-- **Pressure Gauge**: right-click a block face that is open to air; it reads 0 Pu.
-- **Galvanometer**: right-click a dead line; it reads zero.
-- **Light Meter**: right-click a lamp or torch; it reads that light's own level.
-
-The reference reading shows on the card as usual. Each quantity is set on its own.
 
 ## Instrument Bag
 
