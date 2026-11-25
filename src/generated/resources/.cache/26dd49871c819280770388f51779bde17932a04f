@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-24T16:06:40.537610057	Tags for minecraft:fluid mod id feedback
+// 1.21.1	2026-11-25T13:19:23.692975889	Tags for minecraft:fluid mod id feedback
 5ae7af34ed7ee675d2dc65d80ea3c8397e250dfd data/c/tags/fluid/acetaldehyde.json
 c203a55f68fcb3630c88c0f962262cf2dc8345a3 data/c/tags/fluid/air.json
 1902902e70065592c2e3734fc2d5ce39c1036b7e data/c/tags/fluid/alkaline_water.json
@@ -118,9 +118,6 @@ b4fa6b04a41c0bf7610daac66ccf104b7341370e data/c/tags/fluid/molten_solder_free.js
 c360eadbd0a80c8aa3deec1527527b1139148b37 data/c/tags/fluid/molten_stainless_steel.json
 3f2802a3ccb2e52c7f5296be84a3e234798b4875 data/c/tags/fluid/molten_steel.json
 f88562aa766c04cc9069815c98a17ac939df1081 data/c/tags/fluid/molten_stellite.json
-f43c426e101a832f550240d1e5f224aead27b1dd data/c/tags/fluid/molten_thaumium.json
-f51a6c9d4493741e5c3d42250a6ab2d084ad12c2 data/c/tags/fluid/molten_thaumium_lean.json
-8d71d391ffafb299e53b4b50ff6623bdaabdd4a6 data/c/tags/fluid/molten_thaumium_rich.json
 c23840dfd53b132ad5f8075a81c01986900c5839 data/c/tags/fluid/molten_thorium.json
 726a5c8c24b21b80e914f0a6957fb9c8012ac4c2 data/c/tags/fluid/molten_thorium_tungsten.json
 fa19b5766d020d38eb936f480590a3f06525d626 data/c/tags/fluid/molten_tin.json
