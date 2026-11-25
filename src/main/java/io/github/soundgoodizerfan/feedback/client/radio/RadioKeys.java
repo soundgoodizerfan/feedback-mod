@@ -20,7 +20,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class RadioKeys {
 
-    public static final KeyMapping TALK = new KeyMapping("key.feedback.radio_talk", InputConstants.KEY_B, "key.categories.feedback");
+    public static final KeyMapping TALK = new KeyMapping("key.feedback.radio_talk", InputConstants.KEY_PERIOD, "key.categories.feedback");
     private static boolean sent;
 
     private RadioKeys() {

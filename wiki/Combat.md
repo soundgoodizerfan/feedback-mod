@@ -14,6 +14,7 @@ All of these can be rebound under the *Feedback* category in Controls.
 | **Z**, **Y**, **G** | [Cast slots](#casts-and-stamina) 1, 2 and 3. Slots 4 and 5 are unbound until you set them. |
 | **C** | Cast radial: tap to cast the selected technique, hold to choose another |
 | **B** | Toggle [barehanded mode](#barehanded-mode) |
+| **.** (period) | Push to talk on a [Radio Set](Radio_Set.md), while one is held |
 | **K** | [Skill tree](Skills.md) |
 | *(unbound)* | Off-hand attack |
 
