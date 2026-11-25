@@ -107,6 +107,22 @@ Melting, smelting, steel, ceramics, tempering, boiling and condensing, quenching
 - **Hold**: how long it takes if you keep it exactly at the optimum. Further from the optimum, it takes longer.
 - **Max rate**: if listed, how fast the temperature may be changing while it works.
 - **Spoils**: above this temperature the batch is **ruined instantly** (for example, iron burns to *Burnt Iron*).
+- **Containers**: a row of icons along the bottom, one for each thing that can run the card. Click an icon to look it up; looking up the uses of a container or a mold (`U`) lists the cards that show it.
+
+Which icons a card shows follows from what it asks for:
+
+| Card | Containers shown |
+| --- | --- |
+| Heating a charge | The crucibles and furnaces able to reach its temperature. A card that needs no air shows sealed furnaces, and a puddling card the [Puddling Furnace](Puddling_Furnace.md). |
+| Chemical reaction | [Reactor](Reactor.md) |
+| Electrolysis | [Electrolyser](Electrolyser.md) |
+| Boiling and condensing | Crucibles and furnaces able to reach its temperature, and the [Condenser](Condenser.md); the [Boiler](Boiler.md) for water, the [Reboiler](Fractionating_Column.md#reboiler) for distillation shares |
+| Water quench | Water Bucket |
+| Oil quench | Crucibles and furnaces |
+| Dip | Crucibles and furnaces able to reach its temperature; a potion soak shows none |
+| Freezing in a mold | The matching mold and the [Casting Basin](Casting.md#casting-basin) |
+
+A card with a single input and no puddling can also show the [Kiln Zone](Furnaces.md#kiln-zone), for open-air work that makes an item and asks for no particular fire or atmosphere, or a [buried campfire](Campfire.md#buried-making-charcoal), for a cool airless card that makes an item and asks for no particular atmosphere. **Max rate** leaves every icon in place: a gently fired small vessel can hold a slow rate.
 
 Open a vessel's screen and look the recipe up in JEI within about a minute, and a card with a temperature requirement also lists that vessel's name with the temperature it **reaches**, and a *Your reading* line: the finest temperature instrument you carry and its step, or *by eye: words only* when you carry none.
 

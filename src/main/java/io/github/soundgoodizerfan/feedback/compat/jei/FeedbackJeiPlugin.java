@@ -660,34 +660,18 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAFTED_TOOL.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.BALL_MOLD.get(), FItems.TUBE_MOLD.get(),
-                FItems.GLASS_BLOCK_MOLD.get(), FItems.GLASS_PANE_MOLD.get(), FItems.GLASS_BOTTLE_MOLD.get(),
-                FItems.PICKAXE_HEAD_MOLD.get(), FItems.AXE_HEAD_MOLD.get(), FItems.SHOVEL_HEAD_MOLD.get(), FItems.HOE_HEAD_MOLD.get(), FItems.SICKLE_HEAD_MOLD.get(), FItems.HAMMER_HEAD_MOLD.get(), FItems.SAW_BLADE_MOLD.get(), FItems.ATOMISING_MOLD.get());
         registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(SeparationCategory.TYPE, FModular.ELECTROMAGNET.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get());
         registration.addRecipeCatalysts(OreProcessingCategory.TYPE, FItems.MECHANICAL_HAMMER.get(), FItems.ROLLING_MILL.get(),
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), FModular.ELECTROMAGNET.get(), FItems.REACTOR.get(), FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(FuelCategory.TYPE, FItems.FIREBOX.get(), FModular.BURNER.get());
         registration.addRecipeCatalysts(PotionShapeCategory.TYPE, FItems.BREWING_STAND.get());
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.REACTOR.get());
         registration.addRecipeCatalysts(PressCategory.TYPE,
                 io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get());
-        // All eight: every vessel checks ThermalProcessTable before falling back to
-        // VanillaFallback (§4f), so a hand-authored process like steel is genuinely reachable in
-        // the Blast Furnace too, not only the crucible -- this was missing before the merge and
-        // is a real fix, not just a consequence of it. Which vessel can actually reach a given
-        // card's printed floor is a fact the card states in words or figures, not a fact this
-        // list gets to decide (§15, no whitelists).
-        Item[] vessels = {FModular.CRUCIBLE.get(), FItems.ARC_HEARTH.get(),
-                FItems.FURNACE.get(), FItems.SMOKER.get(), FItems.BLAST_FURNACE.get(),
-                FItems.IMPROVED_FURNACE.get(), FItems.KILN.get(), FItems.ANNEALING_FURNACE.get(), FItems.PUDDLING_FURNACE.get()};
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, vessels);
-        // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
+        // Thermal Process has no category-wide catalysts: each card carries its own (ThermalContainers).
+        // A mix is kept only by a crucible.
         registration.addRecipeCatalysts(MixtureCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(),
                 FModular.CRUCIBLE.get(), FItems.ARC_HEARTH.get());
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FModular.BOILER.get(), FItems.CONDENSER.get(), FItems.REBOILER.get());
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
         registration.addRecipeCatalysts(EngineeringCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
