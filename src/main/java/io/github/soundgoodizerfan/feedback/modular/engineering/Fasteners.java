@@ -23,15 +23,36 @@ import net.minecraft.world.item.ItemStack;
 public final class Fasteners {
 
     /** The forms that are fasteners. */
-    public static final Set<String> FORMS = Set.of("screw", "machine_bolt", "rivet", "solder_wire", "welding_rod", "glue");
+    public static final Set<String> FORMS = Set.of("screw", "machine_bolt", "rivet", "solder_wire", "welding_rod", "glue",
+            "rolled_screw", "cut_screw", "rolled_machine_bolt", "cut_machine_bolt");
+
+    /**
+     * The fastener a thread-form variant is: a screw or machine bolt turned from a rolled or cut thread rod counts as a screw or a machine bolt
+     * wherever a recipe, a driver or a tool asks for one; any other form is itself.
+     */
+    public static String baseForm(String form) {
+        if (form.startsWith("rolled_"))
+            return form.substring("rolled_".length());
+        if (form.startsWith("cut_"))
+            return form.substring("cut_".length());
+        return form;
+    }
+
+    /** The thread a fastener form carries, {@code rolled} or {@code cut}, or empty for a fastener turned from plain rod (or not threaded at all). */
+    public static String thread(String form) {
+        return form.startsWith("rolled_") ? "rolled" : form.startsWith("cut_") ? "cut" : "";
+    }
 
     /**
      * How a fixing's form moves the quality its material gives (the joint it makes): a weld is the strongest, a screw, bolt or rivet is what the
-     * material is, solder is weaker and glue weakest. Added to the material's {@code fastener} level and held to 1..5.
+     * material is, solder is weaker and glue weakest. A rolled thread is worked, not cut away, so its screw or bolt is a level stronger; a cut thread
+     * leaves the metal as it was and is exact (an assembly that cannot take play refuses the rolled form through {@code not_forms}).
+     * Added to the material's {@code fastener} level and held to 1..5.
      */
     private static int bias(String form) {
         return switch (form) {
             case "welding_rod" -> 1;
+            case "rolled_screw", "rolled_machine_bolt" -> 1;
             case "solder_wire" -> -1;
             case "glue" -> -2;
             default -> 0;
@@ -66,9 +87,14 @@ public final class Fasteners {
             this(count, floor, forms, java.util.List.of());
         }
 
-        /** Whether a fastener of {@code form} will do. */
+        /**
+         * Whether a fastener of {@code form} will do. A threaded screw or bolt answers to its plain name ({@code screw}) and to its own
+         * ({@code cut_screw}); {@code not_forms} may name the thread itself ({@code rolled}: no play) as well as one form.
+         */
         public boolean accepts(String form) {
-            return (forms.isEmpty() || forms.contains(form)) && !notForms.contains(form);
+            boolean named = forms.isEmpty() || forms.contains(form) || forms.contains(baseForm(form));
+            boolean refused = notForms.contains(form) || notForms.contains(baseForm(form)) || notForms.contains(thread(form));
+            return named && !refused;
         }
     }
 

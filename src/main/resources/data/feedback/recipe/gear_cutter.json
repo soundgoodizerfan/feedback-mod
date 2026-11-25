@@ -1,0 +1,38 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "I": {
+      "item": "feedback:steel_plate"
+    },
+    "B": {
+      "item": "feedback:bearing"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    },
+    "W": {
+      "item": "feedback:saw_head"
+    }
+  },
+  "pattern": [
+    " W ",
+    "ISI",
+    "IBI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:gear_cutter"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 1,
+    "forms": ["machine_bolt"]
+  },
+  "school": "mechanical:1+materials:1"
+}

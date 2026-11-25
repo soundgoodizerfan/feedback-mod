@@ -532,6 +532,7 @@ Every metal comes in a family of **forms**, each made by a particular machine:
 | Turned Rod | [Lathe](Lathe.md) |
 | Thread Rolled (a rod) | [Rolling Mill](Rolling_Mill.md) (a rod) |
 | Thread Cut (a rod) | [Lathe](Lathe.md) (a turned rod) |
+| Rolled Screw, Rolled Machine Bolt, Cut Screw, Cut Machine Bolt | [Lathe](Lathe.md) (a thread rod); see [Fasteners](Fasteners.md#thread-forms) |
 | Ground Ingot | [Grinding Wheel](Grinding_Wheel.md) |
 | Swarf | the leftovers of drilling, turning and grinding |
 | Dust | grinding a brittle ingot or gem in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust), or shattering a melt in an [Atomising Mold](Casting.md#atomising-mold) |

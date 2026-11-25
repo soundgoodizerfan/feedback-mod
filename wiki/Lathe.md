@@ -25,17 +25,22 @@ The lathe is a vertical lathe that sits **directly on a shaft line**; connect it
 It has two slots:
 
 - **Right-click with a Lathe Bit** to seat it; the bit it replaces comes back.
+- **Right-click with a thread rod**, rolled or cut, to seat it as the carriage screw; the screw it replaces comes back.
 - **Right-click with anything else** to chuck a workpiece (or swap it). It lies on the chuck table, under the tail bearing.
-- **Right-click with an empty hand** to take the workpiece out, then the bit.
+- **Right-click with an empty hand** to take the workpiece out, then the bit, then the screw.
 - **Sneak-right-click with an empty hand** switches between a **light** and a **heavy** cut.
 
 There's no cutting without a bit.
+
+### The carriage screw
+
+The carriage screw feeds the bit, and it sets how close to its measure each piece comes out. A bare carriage, slid by hand, cuts as it always has. A seated screw feeds the bit more steadily. A **cut** thread rod has almost no play, so the cut is strongest and diameters come out steadiest. A **rolled** thread rod feeds as well but has play, so the cut varies more. A softer metal flexes more than a harder one.
 
 ## What it makes
 
 **Rod → Turned Rod → Swarf**
 
-A turned rod is also cut to a **Thread Cut** rod, a metal's rod with a thread on it.
+A turned rod is also cut to a **Thread Cut** rod, a metal's rod with a thread on it. A cut thread rod is turned to a **Cut Screw** or **Cut Machine Bolt** ([Fasteners](Fasteners.md#thread-forms)).
 
 Like every machine, it doesn't stop when the rod is finished. Leave it and it cuts the rod away to swarf. Swarf also pops out of the top while it works.
 

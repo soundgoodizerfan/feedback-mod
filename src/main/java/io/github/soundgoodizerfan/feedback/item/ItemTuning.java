@@ -40,6 +40,15 @@ public final class ItemTuning {
     /** Invented. Ticks between strokes of hand work held by use: a stroke every 8 ticks is two and a half a second, the pace of a worked arm. */
     public static final int HAND_STROKE_TICKS = 8;
 
+    /** The share of every hand-work stroke lost to a piece held in the other hand: none, hand work is as balanced. */
+    public static final float HAND_WOBBLE = 0f;
+
+    /**
+     * Invented. The share a stroke gains when the piece is clamped in a vice instead of held in the hand: it cannot shift, so the blow all goes
+     * in. The play in the vice's screw ({@code ThreadScrew.Screw#looseness}) takes some of it back.
+     */
+    public static final float VICE_HOLD_GAIN = 0.12f;
+
     /** Invented. What one stroke of a hand saw bears on the wood, before the blade's thickness scales it: the arm's own figure, as the file's. */
     public static final St HAND_SAW_ST = new St(7f);
 

@@ -58,13 +58,44 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRotation {
 
     /**
-     * Relative tooth count. Only the ratio between two cogs is ever used, so these are sizes
-     * rather than counts -- there is no number of teeth modelled anywhere.
+     * The tooth count a cog of this block gets when it carries none (the plain wooden cog): 12 on the small
+     * footprint, 24 on the large one, so a large cog still turns a small one at half speed.
      */
-    private final int teeth;
+    private final int defaultTeeth;
 
-    /** The two sizes' teeth: a large cog is twice a small one, Create's proportion. */
-    public static final int SMALL = 1, LARGE = 2;
+    /**
+     * Tooth counts as a block state: the mesh rules read them off a {@link BlockState} with no level to ask.
+     * Every count is on one shared pitch, so any two meshing cogs gear at the ratio of their teeth; the
+     * footprint (which cogs reach which) follows the count ({@link CogSpec#isLarge}).
+     */
+    public enum Teeth implements net.minecraft.util.StringRepresentable {
+        T8(8), T12(12), T16(16), T24(24), T32(32);
+
+        private final int count;
+
+        Teeth(int count) {
+            this.count = count;
+        }
+
+        public int count() {
+            return count;
+        }
+
+        public static Teeth of(int count) {
+            for (Teeth t : values())
+                if (t.count == count)
+                    return t;
+            return T12;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return "t" + count;
+        }
+    }
+
+    public static final net.minecraft.world.level.block.state.properties.EnumProperty<Teeth> TEETH =
+            net.minecraft.world.level.block.state.properties.EnumProperty.create("teeth", Teeth.class);
 
     private final Drag dragSuPerRpm;
     private final Inertia inertia;
@@ -73,10 +104,11 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRo
     private final VoxelShape shapeY;
     private final VoxelShape shapeZ;
 
-    public CogBlock(Properties properties, int teeth, int radius, int thickness,
+    public CogBlock(Properties properties, int defaultTeeth, int radius, int thickness,
                     Drag dragSuPerRpm, Inertia inertia) {
         super(properties);
-        this.teeth = teeth;
+        this.defaultTeeth = defaultTeeth;
+        registerDefaultState(defaultBlockState().setValue(TEETH, Teeth.of(defaultTeeth)));
         this.dragSuPerRpm = dragSuPerRpm;
         this.inertia = inertia;
 
@@ -93,7 +125,13 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRo
     }
 
     public int getTeeth() {
-        return teeth;
+        return defaultTeeth;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(TEETH);
     }
 
     public Drag getDragSuPerRpm() {
@@ -130,10 +168,16 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRo
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context, @Nullable BlockState against) {
         Direction face = context.getClickedFace();
+        // A cut cog keeps the tooth count it was cut with, if it fits this block's footprint.
+        int teeth = defaultTeeth;
+        CogSpec spec = context.getItemInHand().get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.COG.get());
+        if (spec != null && CogSpec.valid(spec.teeth()) && CogSpec.isLarge(spec.teeth()) == CogSpec.isLarge(defaultTeeth))
+            teeth = spec.teeth();
+        BlockState base = defaultBlockState().setValue(TEETH, Teeth.of(teeth));
         if ((context.getPlayer() == null || !context.getPlayer().isShiftKeyDown())
                 && against != null && against.getBlock() instanceof Rotatable rotatable)
-            return defaultBlockState().setValue(AXIS, rotatable.getRotationAxis(against));
-        return defaultBlockState().setValue(AXIS, face.getAxis());
+            return base.setValue(AXIS, rotatable.getRotationAxis(against));
+        return base.setValue(AXIS, face.getAxis());
     }
 
     @Override
@@ -154,12 +198,12 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRo
      */
     @Override
     public float meshRatioTowards(BlockState state, Direction face, BlockState other) {
-        return faceMesh(teeth, state.getValue(AXIS), face, other);
+        return faceMesh(teeth(state), state.getValue(AXIS), face, other);
     }
 
     @Override
     public int teeth(BlockState state) {
-        return teeth;
+        return state.getValue(TEETH).count();
     }
 
     /** The teeth of {@code other}, 0 if it has none. */
@@ -169,14 +213,15 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRo
 
     /**
      * The face rule for any toothed block (a cog, a ring gear) with {@code teeth} on {@code axis}:
-     * only two small ones in one plane, 1:1 reversed.
+     * only two small-footprint ones in one plane, at the ratio of their teeth, reversed (-1 for equal counts).
      */
     public static float faceMesh(int teeth, Direction.Axis axis, Direction face, BlockState other) {
-        if (teeth != SMALL || teethOf(other) != SMALL)
+        int otherTeeth = teethOf(other);
+        if (otherTeeth == 0 || CogSpec.isLarge(teeth) || CogSpec.isLarge(otherTeeth))
             return 0;
         if (axis != ((Rotatable) other.getBlock()).getRotationAxis(other) || face.getAxis() == axis)
             return 0;
-        return -1;
+        return -(float) teeth / otherTeeth;
     }
 
     @Override
@@ -194,7 +239,7 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRo
      */
     @Override
     public float meshRatioAt(BlockState state, Vec3i offset, BlockState other) {
-        return diagonalMesh(teeth, state.getValue(AXIS), offset, other);
+        return diagonalMesh(teeth(state), state.getValue(AXIS), offset, other);
     }
 
     /** The diagonal rules for any toothed block with {@code teeth} on {@code axis}; see above. */
@@ -205,11 +250,24 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRo
         Direction.Axis otherAxis = ((Rotatable) other.getBlock()).getRotationAxis(other);
         int along = axis.choose(offset.getX(), offset.getY(), offset.getZ());
         if (axis == otherAxis)
-            return along == 0 && teeth != otherTeeth ? -(float) teeth / otherTeeth : 0;
+            return along == 0 && CogSpec.isLarge(teeth) != CogSpec.isLarge(otherTeeth) ? -(float) teeth / otherTeeth : 0;
         int alongOther = otherAxis.choose(offset.getX(), offset.getY(), offset.getZ());
-        if (teeth != LARGE || otherTeeth != LARGE || along == 0 || alongOther == 0)
+        if (!CogSpec.isLarge(teeth) || !CogSpec.isLarge(otherTeeth) || along == 0 || alongOther == 0)
             return 0;
-        return (float) alongOther / along;
+        return (float) alongOther / along * teeth / otherTeeth;
+    }
+
+    @Override
+    public void appendHoverText(net.minecraft.world.item.ItemStack stack, net.minecraft.world.item.Item.TooltipContext context,
+                                java.util.List<net.minecraft.network.chat.Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
+        CogSpec spec = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.COG.get());
+        if (spec == null) {
+            tooltip.add(net.minecraft.network.chat.Component.translatable("feedback.tooltip.cog.plain", defaultTeeth));
+            return;
+        }
+        tooltip.add(net.minecraft.network.chat.Component.translatable("feedback.tooltip.cog",
+                net.minecraft.network.chat.Component.translatable("material." + spec.metal().getNamespace() + "." + spec.metal().getPath()),
+                spec.teeth()));
     }
 
     /** Drawn by the visual rather than the chunk mesh, so it can turn. See {@code ShaftBlock}. */

@@ -18,18 +18,21 @@ public class LargeRingGearBlock extends RingGearBlock {
         super(properties);
     }
 
+    /** Twice a small ring's teeth. */
+    public static final int LARGE_RING_TEETH = 2 * RING_TEETH;
+
     @Override
     public int teeth(BlockState state) {
-        return CogBlock.LARGE;
+        return LARGE_RING_TEETH;
     }
 
     @Override
     public float meshRatioTowards(BlockState state, Direction face, BlockState other) {
-        return CogBlock.faceMesh(CogBlock.LARGE, getRotationAxis(state), face, other);
+        return CogBlock.faceMesh(teeth(state), getRotationAxis(state), face, other);
     }
 
     @Override
     public float meshRatioAt(BlockState state, Vec3i offset, BlockState other) {
-        return CogBlock.diagonalMesh(CogBlock.LARGE, getRotationAxis(state), offset, other);
+        return CogBlock.diagonalMesh(teeth(state), getRotationAxis(state), offset, other);
     }
 }

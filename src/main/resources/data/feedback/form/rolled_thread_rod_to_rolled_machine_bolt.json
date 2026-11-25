@@ -1,0 +1,7 @@
+{
+  "from": "rolled_thread_rod",
+  "to": "rolled_machine_bolt",
+  "operation": "turn",
+  "base": 1,
+  "slope": 0.5
+}

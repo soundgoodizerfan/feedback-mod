@@ -1,0 +1,38 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "D": {
+      "item": "feedback:wrought_iron_drilled_plate"
+    },
+    "R": {
+      "item": "feedback:wrought_iron_rod"
+    },
+    "B": {
+      "item": "feedback:wrought_iron_plate"
+    }
+  },
+  "pattern": [
+    "P D",
+    "RRR",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:vice"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 1,
+    "forms": ["machine_bolt"]
+  },
+  "school": "mechanical:1"
+}

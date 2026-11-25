@@ -61,11 +61,13 @@ public class FItems {
     public static final DeferredItem<BlockItem> MECHANICAL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.MECHANICAL_PRESS);
 
     public static final DeferredItem<BlockItem> DRILL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.DRILL_PRESS);
+    public static final DeferredItem<BlockItem> GEAR_CUTTER = ITEMS.registerSimpleBlockItem(FBlocks.GEAR_CUTTER);
 
 
 
 
     public static final DeferredItem<BlockItem> LATHE = ITEMS.registerSimpleBlockItem(FBlocks.LATHE);
+    public static final DeferredItem<BlockItem> VICE = ITEMS.registerSimpleBlockItem(FBlocks.VICE);
 
     public static final DeferredItem<BlockItem> GRINDING_WHEEL = ITEMS.registerSimpleBlockItem(FBlocks.GRINDING_WHEEL);
 

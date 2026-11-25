@@ -395,7 +395,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.ROLLING_MILL.get(), "rolling_mill");
         info(registration, FItems.WIRE_DRAWER.get(), "wire_drawer");
         info(registration, FItems.LATHE.get(), "lathe");
+        info(registration, FItems.VICE.get(), "vice");
         info(registration, FItems.DRILL_PRESS.get(), "drill_press");
+        info(registration, FItems.GEAR_CUTTER.get(), "gear_cutter");
         info(registration, FItems.GRINDING_WHEEL.get(), "grinding_wheel");
         info(registration, FItems.MORTAR.get(), "mortar");
         info(registration, FModular.BATTERY.get(), "battery");

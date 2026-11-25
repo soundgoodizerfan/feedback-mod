@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "cutout",
+  "textures": {
+    "particle": "feedback:block/steel_sheet",
+    "iron": "feedback:block/steel_sheet",
+    "shaft": "feedback:block/bronze_sheet"
+  },
+  "elements": [
+    { "name": "base", "from": [2, 0, 2], "to": [14, 4, 14],
+      "faces": { "north": { "texture": "#iron" }, "south": { "texture": "#iron" }, "east": { "texture": "#iron" }, "west": { "texture": "#iron" }, "up": { "texture": "#iron" }, "down": { "texture": "#iron" } } },
+    { "name": "upright", "from": [6, 4, 12], "to": [10, 15, 14],
+      "faces": { "north": { "texture": "#iron" }, "south": { "texture": "#iron" }, "east": { "texture": "#iron" }, "west": { "texture": "#iron" }, "up": { "texture": "#iron" }, "down": { "texture": "#iron" } } },
+    { "name": "arm", "from": [6, 10, 6], "to": [10, 13, 12],
+      "faces": { "north": { "texture": "#iron" }, "south": { "texture": "#iron" }, "east": { "texture": "#iron" }, "west": { "texture": "#iron" }, "up": { "texture": "#iron" }, "down": { "texture": "#iron" } } },
+    { "name": "arbor", "from": [7, 7, 7], "to": [9, 10, 9],
+      "faces": { "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" }, "east": { "texture": "#shaft" }, "west": { "texture": "#shaft" }, "up": { "texture": "#shaft" }, "down": { "texture": "#shaft" } } },
+    { "name": "cutter_wheel", "from": [4, 6, 4], "to": [12, 7, 12],
+      "faces": { "north": { "texture": "#iron" }, "south": { "texture": "#iron" }, "east": { "texture": "#iron" }, "west": { "texture": "#iron" }, "up": { "texture": "#iron" }, "down": { "texture": "#iron" } } },
+    { "name": "stub_n", "from": [6, 1, 0], "to": [10, 3, 2],
+      "faces": { "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" }, "east": { "texture": "#shaft" }, "west": { "texture": "#shaft" }, "up": { "texture": "#shaft" }, "down": { "texture": "#shaft" } } },
+    { "name": "stub_s", "from": [6, 1, 14], "to": [10, 3, 16],
+      "faces": { "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" }, "east": { "texture": "#shaft" }, "west": { "texture": "#shaft" }, "up": { "texture": "#shaft" }, "down": { "texture": "#shaft" } } },
+    { "name": "stub_w", "from": [0, 1, 6], "to": [2, 3, 10],
+      "faces": { "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" }, "east": { "texture": "#shaft" }, "west": { "texture": "#shaft" }, "up": { "texture": "#shaft" }, "down": { "texture": "#shaft" } } },
+    { "name": "stub_e", "from": [14, 1, 6], "to": [16, 3, 10],
+      "faces": { "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" }, "east": { "texture": "#shaft" }, "west": { "texture": "#shaft" }, "up": { "texture": "#shaft" }, "down": { "texture": "#shaft" } } }
+  ]
+}

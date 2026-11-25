@@ -115,6 +115,21 @@ public final class MachineTuning {
 
     public static final Inertia LARGE_COG_INERTIA = new Inertia(12f);
 
+    /** Invented. The density the base cog inertia figures are for (a wooden cog): a cog cut from a denser metal has inertia in proportion. */
+    public static final float COG_REFERENCE_DENSITY = 0.7f;
+
+    /** Invented. Su the Gear Cutter's wheel draws while turning. */
+    public static final io.github.soundgoodizerfan.feedback.core.unit.Su GEAR_CUTTER_LOAD_SU = new io.github.soundgoodizerfan.feedback.core.unit.Su(30f);
+
+    /** Invented. The hardest plate the Gear Cutter's wheel bites; a harder one wears the machine by the excess. */
+    public static final io.github.soundgoodizerfan.feedback.core.unit.St GEAR_CUTTER_ST = new io.github.soundgoodizerfan.feedback.core.unit.St(30f);
+
+    /** Invented. The share of the plate a 32-tooth cog keeps; fewer teeth keep proportionally less. */
+    public static final float GEAR_CUTTER_KEPT_AT_MOST = 0.8f;
+
+    /** Invented. Swarf a plate sheds if none of it were kept. */
+    public static final float GEAR_CUTTER_SWARF_PER_PLATE = 4f;
+
     /** Invented. A gearbox is a crowded little box of bevels: more friction than a bare shaft. */
     public static final Drag GEARBOX_DRAG_SU_PER_RPM = new Drag(0.2f);
 
@@ -380,6 +395,19 @@ public final class MachineTuning {
     public static final St LATHE_ST_HEAVY = new St(40f);
 
     public static final Su LATHE_LOAD_SU = new Su(40f);
+
+    /**
+     * Invented. The off-measure share of a Lathe's cut with no screw seated: none, a bare carriage cuts as it always did. A seated screw feeds
+     * more steadily ({@link #LATHE_SCREW_FEED_GAIN}) less its backlash, rolled once for each piece chucked: a cut screw has little, a rolled
+     * screw more. A harder screw metal flexes less
+     * ({@link #SCREW_REFERENCE_HARDNESS}, the scale clamped to {@link #SCREW_METAL_SCALE_MIN} to {@link #SCREW_METAL_SCALE_MAX}).
+     */
+    public static final float LATHE_BARE_FEED_ERROR = 0f;
+    /** Invented. What a seated screw adds to the drive of every cut, before its backlash is taken off: a lead screw feeds more steadily than a carriage slid by hand. */
+    public static final float LATHE_SCREW_FEED_GAIN = 0.04f;
+    public static final float SCREW_CUT_LOOSENESS = 0.01f, SCREW_ROLLED_LOOSENESS = 0.035f;
+    public static final St SCREW_REFERENCE_HARDNESS = new St(15f);
+    public static final float SCREW_METAL_SCALE_MIN = 0.5f, SCREW_METAL_SCALE_MAX = 2f;
 
     public static final Su GRINDING_WHEEL_LOAD_SU = new Su(45f);
 

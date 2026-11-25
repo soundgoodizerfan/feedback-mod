@@ -76,7 +76,8 @@ The hammer is one of several. Each does a different action, and each makes a dif
 | [Wire Drawer](Wire_Drawer.md) | drawing | rod → wire → fine wire; plate → case |
 | [Rolling Mill](Rolling_Mill.md) | rolling | ingot → rod; plate → pipe |
 | [Drill Press](Drill_Press.md) | drilling | plate → drilled plate → swarf; gun parts |
-| [Lathe](Lathe.md) | turning | rod → turned rod → swarf; plate → coin; grips; gun parts |
+| [Lathe](Lathe.md) | turning | rod → turned rod → swarf; thread rod → screw or machine bolt; plate → coin; grips; gun parts |
+| [Gear Cutter](Gear_Cutter.md) | cutting teeth | plate → cog; swarf |
 | [Grinding Wheel](Grinding_Wheel.md) | grinding | ingot → ground ingot → swarf; gun parts |
 
 The drill, lathe and grinder **cut** rather than hit: the tool has to be **harder than the metal** (drill 78, lathe 150, grinding wheel 196), and then each cut removes strength ÷ hardness in work. They also make and shape [gun parts](Gun_Parts.md).

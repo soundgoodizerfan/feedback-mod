@@ -4,12 +4,14 @@ package io.github.soundgoodizerfan.feedback.item;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.soundgoodizerfan.feedback.machine.vice.ViceBlockEntity;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool;
 import io.github.soundgoodizerfan.feedback.process.DeformationTable;
 import io.github.soundgoodizerfan.feedback.process.Deforming;
 import io.github.soundgoodizerfan.feedback.process.Removing;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -22,6 +24,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 /**
  * Hand work by holding use: a hand tool (hammer, file, drill) in one hand and one workpiece in the other.
@@ -44,30 +48,52 @@ public final class HandWork {
     private HandWork() {
     }
 
-    /** What one stroke of {@code tool} makes of {@code workpiece}, or null when no stroke could land (nothing is spent). */
+    /** What one stroke of {@code tool} makes of a piece held in the other hand, or null when no stroke could land (nothing is spent). */
     @Nullable
     public static ItemStack stroke(ItemStack tool, ItemStack workpiece, Level level) {
+        return stroke(tool, workpiece, level, ItemTuning.HAND_WOBBLE);
+    }
+
+    /**
+     * What one stroke of {@code tool} makes of {@code workpiece}, or null when no stroke could land (nothing is spent). {@code wobble} is the share
+     * of the stroke lost to a piece that shifts: {@link ItemTuning#HAND_WOBBLE} held in the hand, the play of the screw in a vice.
+     */
+    @Nullable
+    public static ItemStack stroke(ItemStack tool, ItemStack workpiece, Level level, float wobble) {
         if (!(tool.getItem() instanceof HandTool handTool) || workpiece.isEmpty() || level == null)
             return null;
+        float held = Math.max(0f, 1f - wobble);
         // A hand file or drill removes material: the same cut a machine makes, with the tool's own edge hardness as the gate.
         var op = handTool.getOperation(tool);
         if (op.removesMaterial()) {
-            Removing.Cut cut = Removing.apply(workpiece, ModularHandTool.cutDrive(tool, op), ModularHandTool.cutHardness(tool), op, 1f, 0f, level);
+            Removing.Cut cut = Removing.apply(workpiece, new io.github.soundgoodizerfan.feedback.core.unit.St(ModularHandTool.cutDrive(tool, op).value() * held),
+                    ModularHandTool.cutHardness(tool), op, 1f, 0f, level);
             return cut.landed() ? cut.result() : null;
         }
         // Nowhere to put what the work drives out (a bloom's slag): that is the anvil's shingling, not a swing in the hand.
         var entry = DeformationTable.get().find(workpiece, handTool.getOperation(tool));
         if (entry.isPresent() && !entry.get().byproduct().isEmpty())
             return null;
-        Deforming.Blow blow = Deforming.apply(workpiece, handTool.getStrength(tool), level, handTool.getOperation(tool));
+        Deforming.Blow blow = Deforming.apply(workpiece, new io.github.soundgoodizerfan.feedback.core.unit.St(handTool.getStrength(tool).value() * held),
+                level, handTool.getOperation(tool));
         return blow.landed() ? blow.result() : null;
     }
 
     /** Use: take one piece from the other hand into the tool, if a stroke could land on it. */
     public static InteractionResultHolder<ItemStack> begin(Level level, Player player, InteractionHand hand) {
         ItemStack tool = player.getItemInHand(hand);
-        if (!(tool.getItem() instanceof HandTool) || tool.has(FDataComponents.HAND_WORK))
+        if (!(tool.getItem() instanceof HandTool) || tool.has(FDataComponents.HAND_WORK) || tool.has(FDataComponents.HAND_VICE))
             return InteractionResultHolder.pass(tool);
+        // A piece clamped in the vice the player is looking at is worked where it sits: the tool is in one hand and the other stays free.
+        ViceBlockEntity vice = viceLookedAt(level, player);
+        if (vice != null && vice.clamps() && !vice.getWorkpiece().isEmpty()) {
+            if (stroke(tool, vice.getWorkpiece(), level, vice.wobble()) == null)
+                return InteractionResultHolder.pass(tool);
+            if (!level.isClientSide)
+                tool.set(FDataComponents.HAND_VICE, vice.getBlockPos());
+            player.startUsingItem(hand);
+            return InteractionResultHolder.consume(tool);
+        }
         ItemStack other = player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
         if (other.isEmpty() || other.getItem() instanceof HandTool)
             return InteractionResultHolder.pass(tool);
@@ -82,9 +108,19 @@ public final class HandWork {
         return InteractionResultHolder.consume(tool);
     }
 
-    /** Whether a piece is held in {@code tool} for work. */
+    /** Whether a piece is held in {@code tool} for work, or a vice's piece is being worked. */
     public static boolean working(ItemStack tool) {
-        return tool.has(FDataComponents.HAND_WORK);
+        return tool.has(FDataComponents.HAND_WORK) || tool.has(FDataComponents.HAND_VICE);
+    }
+
+    /** The vice the player's crosshair is on, if any. */
+    @Nullable
+    private static ViceBlockEntity viceLookedAt(Level level, Player player) {
+        HitResult hit = player.pick(player.blockInteractionRange(), 1f, false);
+        if (hit instanceof BlockHitResult block && block.getType() == HitResult.Type.BLOCK
+                && level.getBlockEntity(block.getBlockPos()) instanceof ViceBlockEntity vice)
+            return vice;
+        return null;
     }
 
     /** Use time: runs until it cannot land a stroke or is let go. */
@@ -98,19 +134,36 @@ public final class HandWork {
 
     /** Each use tick: every {@link ItemTuning#HAND_STROKE_TICKS}th lands a stroke, on the server only. */
     public static void tick(Level level, LivingEntity user, ItemStack tool, int remaining) {
-        if (level.isClientSide || !(user instanceof Player player) || !tool.has(FDataComponents.HAND_WORK))
+        if (level.isClientSide || !(user instanceof Player player) || !working(tool))
             return;
         int used = useDuration() - remaining;
         if (used <= 0 || used % ItemTuning.HAND_STROKE_TICKS != 0)
             return;
-        ItemStack piece = tool.get(FDataComponents.HAND_WORK);
-        ItemStack next = stroke(tool, piece, level);
+        BlockPos vicePos = tool.get(FDataComponents.HAND_VICE);
+        ViceBlockEntity vice = null;
+        ItemStack piece;
+        float wobble = ItemTuning.HAND_WOBBLE;
+        if (vicePos != null) {
+            // Worked in the vice: the piece stays clamped; the stroke stops when the jaws are open, emptied or out of reach.
+            vice = level.getBlockEntity(vicePos) instanceof ViceBlockEntity v ? v : null;
+            if (vice == null || !vice.clamps() || vice.getWorkpiece().isEmpty() || player.blockPosition().distSqr(vicePos) > 36) {
+                player.stopUsingItem();
+                return;
+            }
+            piece = vice.getWorkpiece();
+            wobble = vice.wobble();
+        } else
+            piece = tool.get(FDataComponents.HAND_WORK);
+        ItemStack next = stroke(tool, piece, level, wobble);
         if (next == null) {
             player.stopUsingItem();
             return;
         }
         HandTool handTool = (HandTool) tool.getItem();
-        tool.set(FDataComponents.HAND_WORK, next);
+        if (vice != null)
+            vice.setWorkpiece(next);
+        else
+            tool.set(FDataComponents.HAND_WORK, next);
         player.causeFoodExhaustion(ItemTuning.HAND_SWING_EXHAUSTION_PER_ST * Math.max(1f, handTool.getStrength(tool).value())
                 * io.github.soundgoodizerfan.feedback.combat.skill.Skills.handWorkShare(player));
         level.playSound(null, player.blockPosition(), handTool.getWorkSound(), SoundSource.PLAYERS, 0.3f, 1.5f + level.random.nextFloat() * 0.2f);
@@ -135,7 +188,7 @@ public final class HandWork {
 
     /** A tool carrying a piece that is not in use (logged out mid-stroke, dropped, swapped away): the piece goes back to its owner. */
     public static void sweep(ItemStack tool, Entity holder) {
-        if (holder.level().isClientSide || !(holder instanceof Player player) || !tool.has(FDataComponents.HAND_WORK))
+        if (holder.level().isClientSide || !(holder instanceof Player player) || !working(tool))
             return;
         if (player.isUsingItem() && player.getUseItem() == tool)
             return;
@@ -143,6 +196,8 @@ public final class HandWork {
     }
 
     private static void giveBack(Player player, ItemStack tool) {
+        // A vice's piece never left the vice: letting go only forgets which vice.
+        tool.remove(FDataComponents.HAND_VICE);
         ItemStack piece = tool.remove(FDataComponents.HAND_WORK);
         if (piece == null || piece.isEmpty())
             return;

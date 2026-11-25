@@ -130,6 +130,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.ROLLING_MILL.get(), WorkpieceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.WIRE_DRAWER.get(), WorkpieceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.LATHE.get(), WorkpieceRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.VICE.get(), io.github.soundgoodizerfan.feedback.client.render.ViceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DRILL_PRESS.get(), WorkpieceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.GRINDING_WHEEL.get(), WorkpieceRenderer::new);
 

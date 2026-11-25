@@ -26,6 +26,8 @@
       "feedback:drill_press",
       "feedback:grinding_wheel",
       "feedback:lathe",
+      "feedback:vice",
+      "feedback:gear_cutter",
       "feedback:mechanical_press",
       "feedback:rolling_mill",
       "feedback:wire_drawer"

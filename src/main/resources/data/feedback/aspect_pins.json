@@ -96,6 +96,8 @@
     "feedback:mechanical_press": [{"aspect":"thaumaturge:machina","amount":7},{"aspect":"thaumaturge:instrumentum","amount":4},{"aspect":"thaumaturge:fabrico","amount":3}],
     "feedback:drill_press": [{"aspect":"thaumaturge:machina","amount":7},{"aspect":"thaumaturge:instrumentum","amount":6},{"aspect":"thaumaturge:fabrico","amount":2}],
     "feedback:lathe": [{"aspect":"thaumaturge:machina","amount":8},{"aspect":"thaumaturge:instrumentum","amount":5},{"aspect":"thaumaturge:fabrico","amount":5}],
+    "feedback:vice": [{"aspect":"thaumaturge:instrumentum","amount":5},{"aspect":"thaumaturge:fabrico","amount":4},{"aspect":"thaumaturge:metallum","amount":4}],
+    "feedback:gear_cutter": [{"aspect":"thaumaturge:machina","amount":7},{"aspect":"thaumaturge:instrumentum","amount":6},{"aspect":"thaumaturge:fabrico","amount":3}],
     "feedback:grinding_wheel": [{"aspect":"thaumaturge:machina","amount":4},{"aspect":"thaumaturge:instrumentum","amount":4},{"aspect":"thaumaturge:perditio","amount":3}],
     "feedback:power_cutter": [{"aspect":"thaumaturge:machina","amount":5},{"aspect":"thaumaturge:instrumentum","amount":5},{"aspect":"thaumaturge:potentia","amount":3}],
     "feedback:auto_engineer": [{"aspect":"thaumaturge:machina","amount":9},{"aspect":"thaumaturge:fabrico","amount":7},{"aspect":"thaumaturge:cognitio","amount":4}],

@@ -438,6 +438,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.GearCutterPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GearCutterPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GearCutterPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SolderFinishPayload::handle)

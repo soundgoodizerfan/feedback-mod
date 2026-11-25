@@ -168,7 +168,7 @@ public class FCreativeTabs {
 
     /** Shaping metal: hammer, draw, roll, press, drill, turn; then the test rigs. */
     private static final List<DeferredItem<?>> METALWORKING = of(FItems.MECHANICAL_HAMMER, FItems.WIRE_DRAWER,
-            FItems.ROLLING_MILL, FItems.MECHANICAL_PRESS, FItems.DRILL_PRESS, FItems.LATHE,
+            FItems.ROLLING_MILL, FItems.MECHANICAL_PRESS, FItems.DRILL_PRESS, FItems.GEAR_CUTTER, FItems.LATHE, FItems.VICE,
             FItems.IMPACT_PENDULUM, FItems.STRIKE_POST);
 
     /** Making motion and charge: muscle and water, steam and gas, electric; then storing and converting it. */
@@ -403,6 +403,17 @@ public class FCreativeTabs {
         all(out, ROTATION);
         all(out, JOINTS);
         all(out, TOOLING);
+        // One cut cog per metal a Gear Cutter can bite (it has a plate) and per tooth count.
+        forMaterials((id, m) -> {
+            if (m.item(id, "plate").isPresent()
+                    && m.hardness().value() <= io.github.soundgoodizerfan.feedback.machine.MachineTuning.GEAR_CUTTER_ST.value())
+                for (int teeth : io.github.soundgoodizerfan.feedback.machine.cog.CogSpec.OPTIONS) {
+                    ItemStack cog = new ItemStack(io.github.soundgoodizerfan.feedback.machine.cog.CogSpec.isLarge(teeth)
+                            ? FItems.LARGE_COG.get() : FItems.SMALL_COG.get());
+                    cog.set(FDataComponents.COG.get(), new io.github.soundgoodizerfan.feedback.machine.cog.CogSpec(id, teeth));
+                    out.accept(cog);
+                }
+        });
         // One saw head per material hard enough to be one, then a plasma head for those that carry current.
         forMaterials((id, m) -> {
             if (isHard(m))

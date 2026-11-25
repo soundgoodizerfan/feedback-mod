@@ -145,6 +145,11 @@ public class FBlockEntities {
                     .of(MechanicalPressBlockEntity::new, FBlocks.MECHANICAL_PRESS.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.gearcutter.GearCutterBlockEntity>> GEAR_CUTTER =
+            BLOCK_ENTITIES.register("gear_cutter", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.gearcutter.GearCutterBlockEntity::new, FBlocks.GEAR_CUTTER.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DrillPressBlockEntity>> DRILL_PRESS =
             BLOCK_ENTITIES.register("drill_press", () -> BlockEntityType.Builder
                     .of(DrillPressBlockEntity::new, FBlocks.DRILL_PRESS.get())
@@ -153,6 +158,11 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatheBlockEntity>> LATHE =
             BLOCK_ENTITIES.register("lathe", () -> BlockEntityType.Builder
                     .of(LatheBlockEntity::new, FBlocks.LATHE.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.vice.ViceBlockEntity>> VICE =
+            BLOCK_ENTITIES.register("vice", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.vice.ViceBlockEntity::new, FBlocks.VICE.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GrindingWheelBlockEntity>> GRINDING_WHEEL =

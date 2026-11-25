@@ -95,7 +95,7 @@ public final class ToolAbilities {
         int n = 0;
         for (int i = 0; i < supply.take().length && i < fasteners.size(); i++)
             if (supply.take()[i] > 0) {
-                String form = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(fasteners.get(i).getItem()).map(l -> l.form()).orElse("");
+                String form = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(fasteners.get(i).getItem()).map(l -> Fasteners.baseForm(l.form())).orElse("");
                 sum += supply.take()[i] * bit.param(form, 0f);
                 n += supply.take()[i];
             }
