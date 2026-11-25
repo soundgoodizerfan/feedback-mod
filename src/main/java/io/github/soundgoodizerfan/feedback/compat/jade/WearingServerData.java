@@ -20,14 +20,17 @@ public class WearingServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final WearingServerData INSTANCE = new WearingServerData();
 
-    static final String CONDITION = "WornCondition", JAMMED = "Jammed", PLUG = "PlugCondition";
+    static final String CONDITION = "WornCondition", JAMMED = "Jammed", PLUG = "PlugCondition", DAMAGE = "EngineDamage", SEIZED = "Seized";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
         if (accessor.getBlockEntity() instanceof Wearing wearing && !(accessor.getBlockEntity() instanceof WorkpieceHolder))
             data.putFloat(CONDITION, wearing.getCondition());
-        if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlockEntity engine)
+        if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlockEntity engine) {
             data.putFloat(PLUG, engine.plugCondition());
+            data.putFloat(DAMAGE, engine.condition());
+            data.putBoolean(SEIZED, engine.isSeized());
+        }
         if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlockEntity cutter)
             data.putBoolean(JAMMED, cutter.isJammed());
     }

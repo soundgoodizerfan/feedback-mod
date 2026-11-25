@@ -30,6 +30,8 @@ A file also works parts at a bench: carried in your inventory, it takes a grain 
 
 Hold a hafted file in one hand and **one rod** in the other, then **hold right-click**. The file takes the rod and lands a stroke about every third of a second, wearing the file a point and making you a little hungrier each time. The file goes on until you let go, swap to another item, or no stroke can cut; letting go hands the rod back as it is. Stroke by stroke the rod is cut into a **Screw** or **Machine Bolt** ([Fasteners](Fasteners.md)) or a gun **Bolt** ([Gun Parts](Gun_Parts.md)), the same pieces the [Lathe](Lathe.md) and [Grinding Wheel](Grinding_Wheel.md) make, at about twice their work. A coarser cut takes more per stroke. Only metal softer than the file's edge can be filed.
 
+A piece clamped in a [Vice](Vice.md) is worked the same way with the tool in one hand and the off hand free.
+
 ## Hand Drill
 
 A **Hand Drill** is a bit on a long haft. Shape a **Drill Tip** from a rod or an ingot at a bench (the [Smithing Table](Smithing_Table.md) for metal), then put it with a long haft and a tool binding in a crafting grid; it is a [hafted tool](Hafted_Tool.md) whose face is a drill tip. A harder piece can be set in the tip's edge slot. The bit's material sets how long the drill lasts.

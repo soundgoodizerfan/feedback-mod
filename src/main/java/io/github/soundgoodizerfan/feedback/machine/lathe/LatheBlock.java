@@ -118,6 +118,8 @@ public class LatheBlock extends Block implements EntityBlock, Rotatable {
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), lathe.getWorkpiece());
             if (!lathe.getHead().isEmpty())
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), lathe.getHead().get());
+            if (!lathe.getScrew().isEmpty())
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), lathe.getScrew());
         }
         super.onRemove(state, level, pos, newState, moved);
     }

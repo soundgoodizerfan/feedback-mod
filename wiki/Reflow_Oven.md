@@ -22,4 +22,4 @@ It is a thermal body like a [Crucible](Crucible.md): a [Thermometer](Instruments
 
 A finished [circuit](Basic_Electronic_Circuit.md) can be baked again; past its traces' limit it lifts and goes dead.
 
-Leave the batch in a hot oven and it cooks. Past the solder's window the joints go cold. Past what the traces stand they lift and the board comes back as bare substrate. The solder is gone either way. It never refuses to run. Leaded solder gives off poison fumes while it is molten.
+Leave the batch in a hot oven and it cooks. Past the solder's window the joints go cold. A part that sat hotter than its kind can take is cooked: it stays on the board and switches nothing ([Soldering Iron](Soldering_Iron.md)). Past what the traces stand they lift and the board comes back as bare substrate. The solder is gone either way. It never refuses to run. Leaded solder gives off poison fumes while it is molten.

@@ -40,6 +40,21 @@ public final class ItemTuning {
     /** Invented. Ticks between strokes of hand work held by use: a stroke every 8 ticks is two and a half a second, the pace of a worked arm. */
     public static final int HAND_STROKE_TICKS = 8;
 
+    /**
+     * Invented. The heat a charged rod (a blaze rod) carries when it is made: a small warmth over {@code ThermalTuning.WARM_TU}. Its slow
+     * cooling (the rod's material {@code cooling_rate}) takes it to WARM_TU in about 24000 t (20 min), when it is a Spent Blaze Rod.
+     */
+    public static final Tu ROD_CHARGE_TU = new Tu(160f);
+
+    /** The share of every hand-work stroke lost to a piece held in the other hand: none, hand work is as balanced. */
+    public static final float HAND_WOBBLE = 0f;
+
+    /**
+     * Invented. The share a stroke gains when the piece is clamped in a vice instead of held in the hand: it cannot shift, so the blow all goes
+     * in. The play in the vice's screw ({@code ThreadScrew.Screw#looseness}) takes some of it back.
+     */
+    public static final float VICE_HOLD_GAIN = 0.12f;
+
     /** Invented. What one stroke of a hand saw bears on the wood, before the blade's thickness scales it: the arm's own figure, as the file's. */
     public static final St HAND_SAW_ST = new St(7f);
 
@@ -152,6 +167,9 @@ public final class ItemTuning {
     public static final int SOLDER_PAD_MAX_DWELL_TICKS = 200;
 
     public static final int SOLDER_LEAVE_LINGER_TICKS = 40;
+
+    /** Placeholder. Parts one wick lifts before it is spent (a count; a wick is a braid of copper wire that soaks solder as it is used). */
+    public static final int WICK_LIFTS = 8;
 
     /** Placeholder. Component tester: finest step it tells apart on a 0-1 figure (response, condition). */
     public static final float TESTER_RESOLUTION = 0.05f;

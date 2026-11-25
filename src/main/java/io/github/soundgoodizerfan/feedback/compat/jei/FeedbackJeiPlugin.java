@@ -365,6 +365,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.FUEL_ROD.get(), Component.translatable("feedback.jei.info.fuel_rod"));
         registration.addIngredientInfo(FItems.THORIUM_FUEL_ROD.get(), Component.translatable("feedback.jei.info.thorium_fuel_rod"));
         registration.addIngredientInfo(FItems.SPENT_FUEL_ROD.get(), Component.translatable("feedback.jei.info.spent_fuel_rod"));
+        registration.addIngredientInfo(FItems.SPENT_BLAZE_ROD.get(), Component.translatable("feedback.jei.info.spent_blaze_rod"));
+        registration.addIngredientInfo(FItems.INERT_BLAZE_DUST.get(), Component.translatable("feedback.jei.info.inert_blaze_dust"));
         registration.addIngredientInfo(FItems.AIR_VALVE.get(), Component.translatable("feedback.jei.info.air_valve"));
         registration.addIngredientInfo(FItems.RADIATOR_PANEL.get(), Component.translatable("feedback.jei.info.radiator_panel"));
         registration.addIngredientInfo(FItems.CORE_SLAG.get(), Component.translatable("feedback.jei.info.core_slag"));
@@ -395,7 +397,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.ROLLING_MILL.get(), "rolling_mill");
         info(registration, FItems.WIRE_DRAWER.get(), "wire_drawer");
         info(registration, FItems.LATHE.get(), "lathe");
+        info(registration, FItems.VICE.get(), "vice");
         info(registration, FItems.DRILL_PRESS.get(), "drill_press");
+        info(registration, FItems.GEAR_CUTTER.get(), "gear_cutter");
         info(registration, FItems.GRINDING_WHEEL.get(), "grinding_wheel");
         info(registration, FItems.MORTAR.get(), "mortar");
         info(registration, FModular.BATTERY.get(), "battery");
@@ -417,6 +421,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.PHOSPHOR_SCREEN.get(), "phosphor_screen");
         info(registration, FItems.REFLOW_OVEN.get(), "reflow_oven");
         info(registration, FItems.SOLDERING_IRON.get(), "soldering_iron");
+        info(registration, FItems.WICK.get(), "wick");
         info(registration, FItems.ARC_WELDER.get(), "arc_welder");
         info(registration, FItems.MASS_PROBE.get(), "mass_probe");
         info(registration, FItems.TRACE_BOARD.get(), "trace_board");
@@ -475,6 +480,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.GEIGER_COUNTER.get(), "geiger_counter");
         info(registration, FModular.DOSIMETER.get(), "dosimeter");
         info(registration, FItems.TEMPERATURE_SENSOR.get(), "temperature_sensor");
+        info(registration, FItems.STARTER.get(), "starter");
+        info(registration, FItems.RADIATOR.get(), "radiator");
         info(registration, FItems.ELECTROSCOPE.get(), "electroscope");
         info(registration, FItems.GALVANOMETER.get(), "galvanometer");
         info(registration, FItems.CURRENT_SENSOR.get(), "current_sensor");

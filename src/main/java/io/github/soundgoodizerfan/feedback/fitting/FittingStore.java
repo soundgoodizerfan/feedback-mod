@@ -34,6 +34,16 @@ public final class FittingStore {
         return upgrades;
     }
 
+    /** True when nothing is fitted on any face or as an upgrade. */
+    public boolean isEmpty() {
+        if (!upgrades.isEmpty())
+            return false;
+        for (SidedFitting fitting : sided)
+            if (fitting != null)
+                return false;
+        return true;
+    }
+
     public void save(CompoundTag tag) {
         for (UpgradeFitting u : upgrades)
             if (u instanceof io.github.soundgoodizerfan.feedback.fitting.upgrade.LevitationSleeveFitting sleeve)
@@ -43,6 +53,10 @@ public final class FittingStore {
         for (Direction d : Direction.values())
             if (sided[d.get3DDataValue()] instanceof RedstoneAnalogFitting)
                 tag.putBoolean("RedstoneAnalog" + d.get3DDataValue(), true);
+            else if (sided[d.get3DDataValue()] instanceof StarterFitting)
+                tag.putBoolean("Starter" + d.get3DDataValue(), true);
+            else if (sided[d.get3DDataValue()] instanceof RadiatorFitting)
+                tag.putBoolean("Radiator" + d.get3DDataValue(), true);
     }
 
     public void load(CompoundTag tag, BlockEntity holder) {
@@ -60,6 +74,16 @@ public final class FittingStore {
             if (has && !(sided[i] instanceof RedstoneAnalogFitting))
                 sided[i] = new RedstoneAnalogFitting(holder, d);
             else if (!has && sided[i] instanceof RedstoneAnalogFitting)
+                sided[i] = null;
+            boolean starter = tag.getBoolean("Starter" + i);
+            if (starter && !(sided[i] instanceof StarterFitting))
+                sided[i] = new StarterFitting(holder, d);
+            else if (!starter && sided[i] instanceof StarterFitting)
+                sided[i] = null;
+            boolean radiator = tag.getBoolean("Radiator" + i);
+            if (radiator && !(sided[i] instanceof RadiatorFitting))
+                sided[i] = new RadiatorFitting();
+            else if (!radiator && sided[i] instanceof RadiatorFitting)
                 sided[i] = null;
         }
     }

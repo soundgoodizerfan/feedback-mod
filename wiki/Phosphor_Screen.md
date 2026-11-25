@@ -14,6 +14,10 @@ Set it on a [Firebox](Firebox.md) and let it heat. Pinching off below **150 Tu**
 
 Put an [Oscilloscope](Instruments.md#oscilloscope) against it. The screen has four brightness levels and gives light to match.
 
+## The trace
+
+A screen that is sealed, evacuated and driven by an oscilloscope draws the scope's last 32 current samples as a glowing green line across the inside of the glass, oldest at the left and newest at the right. The line fades toward the old end and glows as bright as the screen itself, so a higher current rides higher. It faces you from whichever side you look. A screen that does not glow shows no trace.
+
 ## Overrun
 
 - **Reheating a sealed envelope** past the heat it was sealed at turns the vacuum into pressure (gas pressure rises with absolute temperature, the vacuum being what was left when it was sealed hot). Once the gauge reads above **0.1 Pu** each tick may shatter it, and above **0.3 Pu** it certainly does; and past the glass's service temperature it cracks outright. Nothing is returned.

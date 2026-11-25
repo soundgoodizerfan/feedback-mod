@@ -115,7 +115,7 @@ public class RotaryBearingBlockEntity extends RotationNode implements io.github.
     public boolean addUpgrade(io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting upgrade) {
         boolean added = fittings.upgrades().add(upgrade);
         if (added) {
-            setChanged();
+            syncFittings();
             if (level != null && !level.isClientSide)
                 RotationPropagator.rebuildFrom(level, worldPosition);
         }

@@ -56,6 +56,7 @@ public class CrucibleRenderer implements BlockEntityRenderer<CrucibleBlockEntity
 
     @Override
     public void render(CrucibleBlockEntity crucible, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        FittingRenderer.draw(crucible, pose, buffers, light, overlay);
         if (crucible.isArcHearth()) {
             glowOnly.render(crucible, partialTick, pose, buffers, light, overlay);
             return;

@@ -1,0 +1,13 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "B": { "item": "feedback:bronze_plate" },
+    "P": { "type": "feedback:material", "form": "pipe" },
+    "F": { "item": "feedback:copper_foil" }
+  },
+  "pattern": [ "BBB", "PFP", "BBB" ],
+  "result": { "count": 1, "id": "feedback:radiator" },
+  "tool": [ { "ability": "feedback:driver", "wear": 1 } ],
+  "fasteners": { "count": 4, "floor": 1, "forms": [ "rivet" ] },
+  "school": "mechanical:1"
+}

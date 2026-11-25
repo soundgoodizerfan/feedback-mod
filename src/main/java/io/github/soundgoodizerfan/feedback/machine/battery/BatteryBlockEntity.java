@@ -156,6 +156,18 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         setChanged();
     }
 
+    /**
+     * Takes {@code eu} of charge for a one-off draw (a starter motor turning an engine over), all or nothing: false, and nothing spent, when the
+     * cells are unfilled (no acid) or hold less than that.
+     */
+    public boolean spend(float eu) {
+        if (!ready() || charge < eu)
+            return false;
+        charge -= eu;
+        setChanged();
+        return true;
+    }
+
     /** State of charge, 0 to 1 of what it can hold now. */
     public float stateOfCharge() {
         float eff = effectiveCapacity();

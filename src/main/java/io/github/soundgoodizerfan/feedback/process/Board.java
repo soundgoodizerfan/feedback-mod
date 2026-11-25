@@ -14,6 +14,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * A substrate with traces laid on it: the data component on a trace board. It
@@ -66,20 +67,49 @@ public record Board(Trace trace, ResourceLocation traceMaterial, ResourceLocatio
      * One mounted part: its class and the material figure that sets how good it is (a crystal's
      * {@code rectifying}, a plate's {@code piezo_coupling}; 1 for the classes that have none). A tube carries its own figures.
      */
-    public record Part(Kind kind, float figure, Optional<Tube> tube, Optional<Circuit.Line> line) {
+    public record Part(Kind kind, float figure, Optional<Tube> tube, Optional<Circuit.Line> line, Optional<ItemStack> source, boolean dead) {
         public Part(Kind kind, float figure) {
-            this(kind, figure, Optional.empty(), Optional.empty());
+            this(kind, figure, Optional.empty(), Optional.empty(), Optional.empty(), false);
         }
 
         public Part(Kind kind, float figure, Optional<Tube> tube) {
-            this(kind, figure, tube, Optional.empty());
+            this(kind, figure, tube, Optional.empty(), Optional.empty(), false);
+        }
+
+        public Part(Kind kind, float figure, Optional<Tube> tube, Optional<Circuit.Line> line) {
+            this(kind, figure, tube, line, Optional.empty(), false);
+        }
+
+        /** The same part remembering the item that was mounted, so a lift hands that exact item back. */
+        public Part withSource(ItemStack stack) {
+            return new Part(kind, figure, tube, line, stack.isEmpty() ? Optional.empty() : Optional.of(stack.copyWithCount(1)), dead);
+        }
+
+        /** The same part cooked: still on the board, no longer an element, and nothing comes back when it is lifted. */
+        public Part ruined() {
+            return new Part(kind, figure, tube, line, Optional.empty(), true);
+        }
+
+        // An ItemStack compares by identity; a board must still stack with an equal one.
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof Part p && kind == p.kind && Float.compare(figure, p.figure) == 0 && dead == p.dead && tube.equals(p.tube)
+                    && line.equals(p.line) && source.isPresent() == p.source.isPresent()
+                    && (source.isEmpty() || ItemStack.matches(source.get(), p.source.get()));
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(kind, figure, dead, tube, line, source.map(ItemStack::getItem).orElse(null));
         }
 
         public static final Codec<Part> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Kind.CODEC.fieldOf("kind").forGetter(Part::kind),
                 Codec.FLOAT.fieldOf("figure").forGetter(Part::figure),
                 Tube.CODEC.optionalFieldOf("tube").forGetter(Part::tube),
-                Circuit.Line.CODEC.optionalFieldOf("line").forGetter(Part::line)).apply(i, Part::new));
+                Circuit.Line.CODEC.optionalFieldOf("line").forGetter(Part::line),
+                ItemStack.CODEC.optionalFieldOf("source").forGetter(Part::source),
+                Codec.BOOL.optionalFieldOf("dead", false).forGetter(Part::dead)).apply(i, Part::new));
     }
 
     /** How the traces were laid. */
@@ -144,6 +174,16 @@ public record Board(Trace trace, ResourceLocation traceMaterial, ResourceLocatio
 
     public Board withJoint(Joint grade) {
         return new Board(trace, traceMaterial, substrate, solder, grade, parts);
+    }
+
+    /** This board with its solder and joint cleared (taken up by a wick) and these parts left on it. */
+    public Board unsoldered(List<Part> remaining) {
+        return new Board(trace, traceMaterial, substrate, Optional.empty(), Joint.NONE, List.copyOf(remaining));
+    }
+
+    /** This board with its parts replaced (cooked ones marked). */
+    public Board withParts(List<Part> replaced) {
+        return new Board(trace, traceMaterial, substrate, solder, joint, List.copyOf(replaced));
     }
 
     /** This board with one more part soldered-to-be. */

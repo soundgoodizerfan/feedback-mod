@@ -83,7 +83,7 @@ public class FCreativeTabs {
     /** Hand tools: grip and prise, shape, then powered hand tools. */
     private static final List<DeferredItem<?>> HAND_TOOLS = of(FItems.TONGS, FItems.WRENCH, FItems.MORTAR,
             FModular.HAFTED_TOOL, FModular.SAWBLADE, FModular.SHEARS, FModular.GLOVE, FModular.SCRATCH_FILES,
-            FItems.JAR_BATON, FItems.SOLDERING_IRON, FItems.ARC_WELDER, FItems.POWER_CUTTER);
+            FItems.JAR_BATON, FItems.SOLDERING_IRON, FItems.WICK, FItems.ARC_WELDER, FItems.POWER_CUTTER);
 
     /** Instruments by what they read: size and mass, heat and pressure, light and field, electricity, matter. */
     private static final List<DeferredItem<?>> INSTRUMENTS = of(FItems.INSTRUMENT_BAG,
@@ -164,11 +164,12 @@ public class FCreativeTabs {
             FItems.INGOT_MOLD, FItems.TUBE_MOLD, FItems.GLASS_BLOCK_MOLD, FItems.GLASS_PANE_MOLD,
             FItems.GLASS_BOTTLE_MOLD, FItems.PICKAXE_HEAD_MOLD, FItems.AXE_HEAD_MOLD, FItems.SHOVEL_HEAD_MOLD,
             FItems.HOE_HEAD_MOLD, FItems.SICKLE_HEAD_MOLD, FItems.HAMMER_HEAD_MOLD, FItems.SAW_BLADE_MOLD, FItems.ATOMISING_MOLD,
-            FItems.ICE_BOX, FItems.REFRIGERATION_UNIT, FItems.CRYOCOOLER, FItems.VACUUM_DRYER, FItems.THRESHER);
+            FItems.ICE_BOX, FItems.REFRIGERATION_UNIT, FItems.CRYOCOOLER, FItems.VACUUM_DRYER, FItems.THRESHER,
+            FItems.SPENT_BLAZE_ROD, FItems.INERT_BLAZE_DUST);
 
     /** Shaping metal: hammer, draw, roll, press, drill, turn; then the test rigs. */
     private static final List<DeferredItem<?>> METALWORKING = of(FItems.MECHANICAL_HAMMER, FItems.WIRE_DRAWER,
-            FItems.ROLLING_MILL, FItems.MECHANICAL_PRESS, FItems.DRILL_PRESS, FItems.LATHE,
+            FItems.ROLLING_MILL, FItems.MECHANICAL_PRESS, FItems.DRILL_PRESS, FItems.GEAR_CUTTER, FItems.LATHE, FItems.VICE,
             FItems.IMPACT_PENDULUM, FItems.STRIKE_POST);
 
     /** Making motion and charge: muscle and water, steam and gas, electric; then storing and converting it. */
@@ -223,7 +224,7 @@ public class FCreativeTabs {
 
     /** Machine tooling and linings: what wears or shields inside a machine. */
     private static final List<DeferredItem<?>> TOOLING = of(FItems.GRINDING_WHEEL,
-            FItems.MAGMA_HEAD, FItems.REFRACTORY_LINING, FItems.INSULATION,
+            FItems.MAGMA_HEAD, FItems.REFRACTORY_LINING, FItems.INSULATION, FItems.STARTER, FItems.RADIATOR,
             FItems.CRYSTAL_HOLDER, FItems.HEATSINK, FItems.BIMETALLIC_STRIP);
 
     /** Coils, then electrical components, passive to active. */
@@ -403,6 +404,17 @@ public class FCreativeTabs {
         all(out, ROTATION);
         all(out, JOINTS);
         all(out, TOOLING);
+        // One cut cog per metal a Gear Cutter can bite (it has a plate) and per tooth count.
+        forMaterials((id, m) -> {
+            if (m.item(id, "plate").isPresent()
+                    && m.hardness().value() <= io.github.soundgoodizerfan.feedback.machine.MachineTuning.GEAR_CUTTER_ST.value())
+                for (int teeth : io.github.soundgoodizerfan.feedback.machine.cog.CogSpec.OPTIONS) {
+                    ItemStack cog = new ItemStack(io.github.soundgoodizerfan.feedback.machine.cog.CogSpec.isLarge(teeth)
+                            ? FItems.LARGE_COG.get() : FItems.SMALL_COG.get());
+                    cog.set(FDataComponents.COG.get(), new io.github.soundgoodizerfan.feedback.machine.cog.CogSpec(id, teeth));
+                    out.accept(cog);
+                }
+        });
         // One saw head per material hard enough to be one, then a plasma head for those that carry current.
         forMaterials((id, m) -> {
             if (isHard(m))

@@ -13,7 +13,7 @@
   "density": 0.8,
   "thermal": {
     "expansion": 1.2e-5,
-    "cooling_rate": 2.42,
+    "cooling_rate": 0.004167,
     "conductivity": 7.48e-05,
     "melting_point": 1200,
     "specific_heat": 1.5,
@@ -31,12 +31,6 @@
   },
   "separation": {
     "reflectivity": 0.5
-  },
-  "combustion": {
-    "flame_temperature": 1400,
-    "burn_ticks": 2400,
-    "spread": 0.03,
-    "oxygen_balance": -0.5
   },
   "forms": {
     "rod": "minecraft:blaze_rod"

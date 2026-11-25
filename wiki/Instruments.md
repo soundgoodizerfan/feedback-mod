@@ -194,7 +194,7 @@ W C W
 
 P is a Steel Plate, T is a [Thermometer](#thermometer), W is [Copper Wire](Wire_Drawer.md) and C is a [circuit](Basic_Electronic_Circuit.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row, 2 screws ([Fasteners](Fasteners.md)) and Electrical Treatise III: Circuits ([Treatise](Treatise.md)).
 
-Right-click a face of a [Crucible](Crucible.md) or an **Improved Furnace** with it. It attaches to that side; one sensor per face. It does not attach to the sealed [furnaces](Furnaces.md) (Furnace, Smoker, Crude Blast Furnace, Kiln, Annealing Furnace): they have no opening for it. Being unwatchable is the price of a sealed furnace.
+Right-click a face of a [Crucible](Crucible.md) or an **Improved Furnace** with it. It attaches to that side; one sensor per face, and it shows on that face as a short probe on a collar. It does not attach to the sealed [furnaces](Furnaces.md) (Furnace, Smoker, Crude Blast Furnace, Kiln, Annealing Furnace): they have no opening for it. Being unwatchable is the price of a sealed furnace.
 
 Link it to the Controller with a [Data Connector](Data_Connector.md) and read it with an *Input* card of signal *Temperature* on the [Programmer](Programming.md), then compare the reading with *Greater Than* / *Less Than*. It reads in steps of **10 Tu**, fine enough to hold steel's 60 Tu window.
 
@@ -302,7 +302,7 @@ W C W
 
 P is a Steel Plate, S is a [Phosphor Screen](Phosphor_Screen.md), W is [Copper Wire](Wire_Drawer.md) and C is a [circuit](Basic_Electronic_Circuit.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row, 2 screws ([Fasteners](Fasteners.md)) and Electrical Treatise III: Circuits ([Treatise](Treatise.md)).
 
-Put it **against a cable** and **against a screen**. It joins no line; it only reads. Every tenth of a second it samples the cable and drives the screen to match (four levels). **Right-click** it to see the last 16 samples as a row of bars, to the nearest 0.25 A.
+Put it **against a cable** and **against a screen**. It joins no line; it only reads. Every tenth of a second it samples the cable and drives the screen to match (four levels). **Right-click** it to see the last 32 samples as a row of bars, to the nearest 0.25 A. The same 32 samples are drawn on the glass of a lit screen (see [Phosphor Screen](Phosphor_Screen.md#the-trace)).
 
 Above 4 A the trace sits pegged at the top, exact and wrong. A pegged screen is also at full brightness, which is what [burns it in](Phosphor_Screen.md#overrun). It changes nothing in the line.
 

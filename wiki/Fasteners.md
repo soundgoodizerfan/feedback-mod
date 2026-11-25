@@ -12,11 +12,13 @@ Each form exists in every metal, named for it ("Steel Screw", "Iron Rivet"). Onl
 - **Solder Wire**: an **ingot** of any [solder](Materials.md#solders) drawn in the [Wire Drawer](Wire_Drawer.md#what-it-makes).
 - **Glue**: a form of an **adhesive**, a material that holds two others together by sticking to both. **Collagen Glue** is boiled from leather and bone with 250 mB of water at about 100 Tu in a vessel over heat; the batch gives 4 glue ([Materials](Materials.md#collagen)). Anything sticky that has a quality, such as a slime ball, counts as glue without being made into one.
 
+A screw or machine bolt can also be turned from a **thread rod**, rolled or cut. See [Thread forms](#thread-forms).
+
 Gun bolts are a different part; see [Gun Parts](Gun_Parts.md).
 
 ## Quality
 
-Quality is a figure from 1 to 5 read from the material; a screw, a bolt and a rivet of one metal share it. A welding rod, solder wire and glue move it by their form: a welding rod gives 1 more than the metal, solder wire 1 less and glue 2 less, never below 1 or above 5. A weld holds best, solder less, glue least.
+Quality is a figure from 1 to 5 read from the material; a screw, a bolt and a rivet of one metal share it (a rolled screw or bolt is one level above). A welding rod, solder wire and glue move it by their form: a welding rod gives 1 more than the metal, solder wire 1 less and glue 2 less, never below 1 or above 5. A weld holds best, solder less, glue least.
 
 | Quality | Metals |
 | --- | --- |
@@ -27,6 +29,15 @@ Quality is a figure from 1 to 5 read from the material; a screw, a bolt and a ri
 | 5 | Netherite, stainless steel, titanium |
 
 The table lists metals. Among the sticky materials, collagen is 2 and slime is 1.
+
+## Thread forms
+
+A thread rod from the [Rolling Mill](Rolling_Mill.md) (**Thread Rolled**) or the [Lathe](Lathe.md) (**Thread Cut**) is turned on the lathe to a **Rolled** or **Cut** Screw or Machine Bolt, named for its metal and thread ("Steel Screw, Thread Cut").
+
+- **Rolled**: the thread is worked, not cut away, so the fastener is one quality level stronger than a plain one of the metal. It has play.
+- **Cut**: the metal is as it was and the fit is tight; its quality is the plain one.
+
+Either counts as a screw or a machine bolt wherever a recipe, a driver or a hafted tool asks for one. A recipe that cannot take play refuses the rolled form: the [Lathe](Lathe.md) and the [Drill Press](Drill_Press.md) take cut machine bolts and plain ones, not rolled.
 
 ## Using them
 

@@ -302,6 +302,18 @@ public class ValveBlockEntity extends BlockEntity implements Blown, Switchable, 
         fittings.load(tag, this);
     }
 
+    /** The clients tracking a valve get what it keeps, so the fitting renderer draws the fittings it carries. */
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
+
     // --- Analog: the opening ------------------------------------------------------------------
 
     @Override

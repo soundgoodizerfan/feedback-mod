@@ -1371,6 +1371,7 @@ Shield look (2026-11-09): `textures/entity/modular_shield.png` is Mojang's `shie
 Worn armour look (2026-11-09): `textures/models/armor/modular_layer_1.png` and `modular_layer_2.png` are Mojang's `iron_layer_1.png` and `iron_layer_2.png` desaturated to greyscale and brightened so the plate's dye colour tints them (Mojang assets, used as the ore overlays are).
 
 - `item/form/machine_bolt.png`, `item/form/rivet.png`, `item/form/screw.png` (fastener form sprites): `items/part_metal_bolts.png`, `items/part_plate_rivets.png` and `items/part_plate_rivets_2.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley), reduced to luminance (greyscale form sprites tinted at runtime). Placeholder art.
+- `item/form/rolled_screw.png`, `item/form/cut_screw.png`, `item/form/rolled_machine_bolt.png`, `item/form/cut_machine_bolt.png` (thread-form fastener sprites): unmodified copies of `item/form/screw.png` and `item/form/machine_bolt.png` above (same source and licence). Placeholder art until the art batch.
 
 - `textures/block/engineering_table_top.png` (Engineering Table top): unmodified copy of `blocks/device_workbench_top.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley). Placeholder art; the sides reuse `metal_steel_block.png`.
 - `textures/block/auto_engineer_side.png`, `textures/block/auto_engineer_top.png` (Auto Engineer): unmodified copies of `blocks/device_gearbox_sides.png` and `blocks/device_gearbox_ends.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley). Placeholder art; the bottom reuses `metal_steel_block.png`.

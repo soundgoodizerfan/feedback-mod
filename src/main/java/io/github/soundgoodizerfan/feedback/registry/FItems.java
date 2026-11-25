@@ -61,11 +61,13 @@ public class FItems {
     public static final DeferredItem<BlockItem> MECHANICAL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.MECHANICAL_PRESS);
 
     public static final DeferredItem<BlockItem> DRILL_PRESS = ITEMS.registerSimpleBlockItem(FBlocks.DRILL_PRESS);
+    public static final DeferredItem<BlockItem> GEAR_CUTTER = ITEMS.registerSimpleBlockItem(FBlocks.GEAR_CUTTER);
 
 
 
 
     public static final DeferredItem<BlockItem> LATHE = ITEMS.registerSimpleBlockItem(FBlocks.LATHE);
+    public static final DeferredItem<BlockItem> VICE = ITEMS.registerSimpleBlockItem(FBlocks.VICE);
 
     public static final DeferredItem<BlockItem> GRINDING_WHEEL = ITEMS.registerSimpleBlockItem(FBlocks.GRINDING_WHEEL);
 
@@ -379,6 +381,9 @@ public class FItems {
     /** Held on a pasted board for a joint; heated at any fire. */
     public static final DeferredItem<Item> SOLDERING_IRON = ITEMS.registerItem("soldering_iron",
             io.github.soundgoodizerfan.feedback.item.SolderingIronItem::new, new Item.Properties());
+    /** A braid of copper wire that soaks molten solder off a joint, so the soldering iron can lift a part off a finished circuit. It is used up as it soaks. */
+    public static final DeferredItem<Item> WICK = ITEMS.registerItem("wick", Item::new,
+            new Item.Properties().durability(io.github.soundgoodizerfan.feedback.item.ItemTuning.WICK_LIFTS));
     /** Says how a placed part responds, at its own resolution. */
     public static final DeferredItem<Item> COMPONENT_TESTER = ITEMS.registerItem("component_tester",
             io.github.soundgoodizerfan.feedback.item.ComponentTesterItem::new, new Item.Properties().stacksTo(1));
@@ -496,6 +501,10 @@ public class FItems {
     public static final DeferredItem<Item> ENRICHED_FUEL_ROD = ITEMS.registerSimpleItem("enriched_fuel_rod");
     public static final DeferredItem<Item> BREEDER_ROD = ITEMS.registerSimpleItem("breeder_rod");
     public static final DeferredItem<Item> SPENT_FUEL_ROD = ITEMS.registerSimpleItem("spent_fuel_rod");
+    /** A blaze rod that has given up its charge; a hot rod is the vanilla one. Never a percentage, two states. */
+    public static final DeferredItem<Item> SPENT_BLAZE_ROD = ITEMS.registerSimpleItem("spent_blaze_rod");
+    /** What a spent rod grinds to: powder with nothing left to burn. */
+    public static final DeferredItem<Item> INERT_BLAZE_DUST = ITEMS.registerSimpleItem("inert_blaze_dust");
     public static final DeferredItem<BlockItem> MAGMA_HEAD = ITEMS.registerSimpleBlockItem(FBlocks.MAGMA_HEAD);
     public static final DeferredItem<BlockItem> SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SEEP);
     public static final DeferredItem<BlockItem> SOUL_SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_SEEP);
@@ -786,6 +795,14 @@ public class FItems {
     /** The boiler's relief valve. See {@code fitting.upgrade.ReliefValveFitting}. */
     public static final DeferredItem<Item> RELIEF_VALVE =
             ITEMS.register("relief_valve", () -> new ReliefValveItem(new Item.Properties().stacksTo(16)));
+
+    /** An engine's electric starter. See {@code fitting.StarterFitting}. */
+    public static final DeferredItem<Item> STARTER =
+            ITEMS.register("starter", () -> new io.github.soundgoodizerfan.feedback.item.StarterItem(new Item.Properties().stacksTo(16)));
+
+    /** An engine's radiator. See {@code fitting.RadiatorFitting}. */
+    public static final DeferredItem<Item> RADIATOR =
+            ITEMS.register("radiator", () -> new io.github.soundgoodizerfan.feedback.item.RadiatorItem(new Item.Properties().stacksTo(16)));
 
     /** The gas compressor's air intake. See {@code fitting.upgrade.AirIntakeFitting}. */
     public static final DeferredItem<BlockItem> AIR_VALVE = ITEMS.registerSimpleBlockItem(FBlocks.AIR_VALVE);

@@ -544,6 +544,12 @@ public final class ElectricMachineTuning {
 
     public static final float COHERER_CONDITION_FLOOR = 0.2f;
 
+    /** Placeholder. Condition each weld wears off the grains (the floor still applies, so weld wear alone never kills it). */
+    public static final float COHERER_WELD_WEAR = 0.01f;
+
+    /** Placeholder. Amps of a heard spark past which the grains fuse solid and stay welded until refilled. */
+    public static final float COHERER_FUSE_SPARK_AMPS = 6f;
+
     /** Placeholder. Cat's whisker: spots on a crystal; hold ticks after a heard spark; spots below this sensitivity hear nothing; amps that fuse the spot under the whisker. */
     public static final int WHISKER_SPOTS = 8;
 
@@ -594,11 +600,16 @@ public final class ElectricMachineTuning {
     /** Placeholder. Oscilloscope: ticks between samples, samples kept, amps at the top of the screen (above it the reading pegs), finest step. */
     public static final int SCOPE_SAMPLE_TICKS = 2;
 
-    public static final int SCOPE_HISTORY = 16;
+    public static final int SCOPE_HISTORY = 32;
 
     public static final float SCOPE_FULL_SCALE_AMPS = 4f;
 
     public static final float SCOPE_RESOLUTION_AMPS = 0.25f;
+
+    /** Placeholder. Phosphor trace: ticks between resends of an unchanged trace (so a viewer who arrives late still gets it), and the share of full brightness the oldest sample keeps (persistence: older samples fade toward it). */
+    public static final int SCOPE_TRACE_KEEPALIVE_TICKS = 100;
+
+    public static final float SCOPE_TRACE_PERSISTENCE = 0.15f;
 
     /** Placeholder. Over its trace rating an element fuses with this chance per tick. */
     public static final float CIRCUIT_FUSE_CHANCE = 0.1f;

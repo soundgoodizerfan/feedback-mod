@@ -216,14 +216,14 @@ public class CompressorBlockEntity extends RotationNode implements Fittable, io.
     public boolean addUpgrade(UpgradeFitting upgrade) {
         boolean added = upgrades.add(upgrade);
         if (added)
-            setChanged();
+            sync();
         return added;
     }
 
     @Override
     public void removeUpgrade(UpgradeFitting upgrade) {
         if (upgrades.remove(upgrade))
-            setChanged();
+            sync();
     }
 
     @Override

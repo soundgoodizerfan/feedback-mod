@@ -89,7 +89,20 @@ public class FClientSetup {
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        // Fittable holders with no renderer of their own draw their fittings through the shared one; a shaft, a vessel and a crucible
+        // call FittingRenderer.draw from theirs.
+        event.registerBlockEntityRenderer(FBlockEntities.CABLE.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.VALVE.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.BOILER.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.COMPRESSOR.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.ROTARY_BEARING.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.CONTROLLER.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.ELECTRIC_CONTROLLER.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.COMPUTER.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_ENTITY.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
+        event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_ENTITY.get(), io.github.soundgoodizerfan.feedback.client.render.FittingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.MECHANICAL_HAMMER.get(), MechanicalHammerRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.PHOSPHOR_SCREEN.get(), io.github.soundgoodizerfan.feedback.client.render.PhosphorTraceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.PITON.get(), io.github.soundgoodizerfan.feedback.client.combat.LineRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.WINCH.get(), io.github.soundgoodizerfan.feedback.client.combat.LineRenderer::new);
         event.registerEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FEntities.THROWN_WEAPON.get(),
@@ -129,6 +142,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.ROLLING_MILL.get(), WorkpieceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.WIRE_DRAWER.get(), WorkpieceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.LATHE.get(), WorkpieceRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.VICE.get(), io.github.soundgoodizerfan.feedback.client.render.ViceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DRILL_PRESS.get(), WorkpieceRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.GRINDING_WHEEL.get(), WorkpieceRenderer::new);
 

@@ -292,4 +292,16 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         fittings.load(tag, this);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
+
+    /** The clients tracking a transmission get what it keeps, so the fitting renderer draws the fittings it carries. */
+    @Override
+    public net.minecraft.nbt.CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
+    }
 }

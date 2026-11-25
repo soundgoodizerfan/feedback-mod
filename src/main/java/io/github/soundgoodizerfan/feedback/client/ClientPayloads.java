@@ -22,6 +22,13 @@ public final class ClientPayloads {
             MinigameScreens.open(screen, payload);
     }
 
+    /** An oscilloscope's row for the phosphor screen at the given position: the screen keeps it for its renderer. */
+    public static void scopeTrace(io.github.soundgoodizerfan.feedback.net.ScopeTracePayload payload) {
+        net.minecraft.client.multiplayer.ClientLevel level = Minecraft.getInstance().level;
+        if (level != null && level.getBlockEntity(payload.screen()) instanceof io.github.soundgoodizerfan.feedback.machine.phosphor.PhosphorScreenBlockEntity screen)
+            screen.setTrace(payload.samples());
+    }
+
     /** A Flight Sensor was used: open the Contraption Diagram for the body it sits on. */
     public static void openDiagram(io.github.soundgoodizerfan.feedback.vehicle.diagram.DiagramOpenPayload payload) {
         Minecraft.getInstance().setScreen(new io.github.soundgoodizerfan.feedback.client.diagram.DiagramScreen(payload.sensor()));

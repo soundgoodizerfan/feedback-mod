@@ -119,7 +119,7 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.WOOD)
                     .noOcclusion(),
-                    CogBlock.SMALL, 8, 4,
+                    12, 8, 4,
                     MachineTuning.SMALL_COG_DRAG_SU_PER_RPM, MachineTuning.SMALL_COG_INERTIA));
 
     public static final DeferredBlock<CogBlock> LARGE_COG = BLOCKS.register("large_cog",
@@ -129,7 +129,7 @@ public class FBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion(),
                     // Outline clamped to the block; the model draws the disc wider.
-                    CogBlock.LARGE, 8, 4,
+                    24, 8, 4,
                     MachineTuning.LARGE_COG_DRAG_SU_PER_RPM, MachineTuning.LARGE_COG_INERTIA));
 
     public static final DeferredBlock<GearboxBlock> GEARBOX = BLOCKS.register("gearbox",
@@ -265,10 +265,26 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
+    /** Cuts teeth into a plate: a cog of its metal and the chosen tooth count. See {@code GearCutterBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.gearcutter.GearCutterBlock> GEAR_CUTTER = BLOCKS.register("gear_cutter",
+            () -> new io.github.soundgoodizerfan.feedback.machine.gearcutter.GearCutterBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
     /** Same removal primitive as the Drill Press, adding the live-diameter sensor loop and a
      * seated, wearable lathe bit. See {@code LatheBlockEntity}. */
     public static final DeferredBlock<LatheBlock> LATHE = BLOCKS.register("lathe",
             () -> new LatheBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** A bench vice: a thread rod seated as its screw clamps a piece for hand work. See {@code ViceBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.vice.ViceBlock> VICE = BLOCKS.register("vice",
+            () -> new io.github.soundgoodizerfan.feedback.machine.vice.ViceBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.5f)
                     .sound(SoundType.METAL)

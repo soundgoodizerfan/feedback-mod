@@ -27,6 +27,11 @@ public class LevitationSleeveFitting implements UpgradeFitting {
         return material;
     }
 
+    @Override
+    public ResourceLocation tintMaterial() {
+        return material;
+    }
+
     /** 0 to 1: the sleeve material's diamagnetism. */
     public float diamagnetism() {
         return Diamagnetism.of(MaterialTable.get().materials().get(material));

@@ -44,15 +44,17 @@ public class RingGearBlock extends RotaryBearingBlock {
         return false;
     }
 
-    /** A small cog's teeth, at its block's edge; {@link LargeRingGearBlock} has a large cog's. */
+    /** The teeth of a small ring: a small cog's, at its block's edge; {@link LargeRingGearBlock} has a large cog's. */
+    public static final int RING_TEETH = 12;
+
     @Override
     public int teeth(BlockState state) {
-        return CogBlock.SMALL;
+        return RING_TEETH;
     }
 
     @Override
     public float meshRatioTowards(BlockState state, Direction face, BlockState other) {
-        return CogBlock.faceMesh(CogBlock.SMALL, getRotationAxis(state), face, other);
+        return CogBlock.faceMesh(teeth(state), getRotationAxis(state), face, other);
     }
 
     @Override
@@ -62,6 +64,6 @@ public class RingGearBlock extends RotaryBearingBlock {
 
     @Override
     public float meshRatioAt(BlockState state, Vec3i offset, BlockState other) {
-        return CogBlock.diagonalMesh(CogBlock.SMALL, getRotationAxis(state), offset, other);
+        return CogBlock.diagonalMesh(teeth(state), getRotationAxis(state), offset, other);
     }
 }

@@ -9,9 +9,14 @@ import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
+import io.github.soundgoodizerfan.feedback.net.ScopeTracePayload;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -33,6 +38,10 @@ public class OscilloscopeBlockEntity extends BlockEntity implements Instrument {
 
     private final float[] history = new float[ElectricMachineTuning.SCOPE_HISTORY];
     private int head;
+    /** The row as last sent, and where and when (never saved): what makes a send happen only on change. */
+    private final float[] row = new float[ElectricMachineTuning.SCOPE_HISTORY];
+    private BlockPos sentTo;
+    private long sentAt;
 
     public OscilloscopeBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.OSCILLOSCOPE.get(), pos, state);
@@ -68,8 +77,38 @@ public class OscilloscopeBlockEntity extends BlockEntity implements Instrument {
         float amps = line == null ? 0f : Math.min(ElectricMachineTuning.SCOPE_FULL_SCALE_AMPS, Math.max(0f, line.getAmps()));
         history[head] = amps;
         head = (head + 1) % history.length;
-        if (screen != null)
+        if (screen != null) {
             screen.land(Math.round(amps / ElectricMachineTuning.SCOPE_FULL_SCALE_AMPS * 3f));
+            sendTrace(screen.getBlockPos());
+        } else if (sentTo != null) {
+            // The screen this scope drove is no longer beside it (or gone): blank its trace once so it does not keep a stale line.
+            if (level instanceof ServerLevel server)
+                PacketDistributor.sendToPlayersTrackingChunk(server, new ChunkPos(sentTo), new ScopeTracePayload(sentTo, new float[history.length]));
+            sentTo = null;
+        }
+    }
+
+    /**
+     * Send the row to the screen it drives, to players tracking its chunk: only when the row changed (or the screen is a new one), and
+     * otherwise as a slow keepalive so a viewer who arrives late gets it. No allocation unless something is sent.
+     */
+    private void sendTrace(BlockPos screen) {
+        if (!(level instanceof ServerLevel server))
+            return;
+        boolean changed = !screen.equals(sentTo);
+        for (int i = 0; i < history.length; i++) {
+            float share = Instruments.quantise(history[(head + i) % history.length], ElectricMachineTuning.SCOPE_RESOLUTION_AMPS)
+                    / ElectricMachineTuning.SCOPE_FULL_SCALE_AMPS;
+            if (row[i] != share) {
+                row[i] = share;
+                changed = true;
+            }
+        }
+        if (!changed && server.getGameTime() - sentAt < ElectricMachineTuning.SCOPE_TRACE_KEEPALIVE_TICKS)
+            return;
+        sentTo = screen.immutable();
+        sentAt = server.getGameTime();
+        PacketDistributor.sendToPlayersTrackingChunk(server, new ChunkPos(screen), new ScopeTracePayload(sentTo, row.clone()));
     }
 
     /** The history as a row of bars, oldest first, each quantised to this scope's step. */

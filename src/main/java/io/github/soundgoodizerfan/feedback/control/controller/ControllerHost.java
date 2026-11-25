@@ -159,12 +159,24 @@ public interface ControllerHost extends Container, Fittable, io.github.soundgood
 
     @Override
     default boolean addUpgrade(UpgradeFitting upgrade) {
-        return core().addUpgrade(upgrade);
+        boolean added = core().addUpgrade(upgrade);
+        if (added)
+            syncUpgrades();
+        return added;
+    }
+
+    /** Tells the clients tracking this host its upgrades changed, so the fitting renderer draws what is on it now. */
+    default void syncUpgrades() {
+        if (this instanceof net.minecraft.world.level.block.entity.BlockEntity host && host.getLevel() != null && !host.getLevel().isClientSide) {
+            host.setChanged();
+            host.getLevel().sendBlockUpdated(host.getBlockPos(), host.getBlockState(), host.getBlockState(), 3);
+        }
     }
 
     @Override
     default void removeUpgrade(UpgradeFitting upgrade) {
         core().removeUpgrade(upgrade);
+        syncUpgrades();
     }
 
     default void tickServer() {

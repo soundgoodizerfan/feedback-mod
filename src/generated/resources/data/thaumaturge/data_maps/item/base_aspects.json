@@ -158,6 +158,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:alnico_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:alnico_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:alnico_cut_thread_rod": [
       {
         "amount": 5,
@@ -415,6 +443,34 @@
       }
     ],
     "feedback:alnico_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:alnico_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:alnico_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -768,6 +824,34 @@
         "aspect": "thaumaturge:lux"
       }
     ],
+    "feedback:aluminium_cut_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:aluminium_cut_screw": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
     "feedback:aluminium_cut_thread_rod": [
       {
         "amount": 3,
@@ -892,6 +976,18 @@
         "aspect": "thaumaturge:metallum"
       }
     ],
+    "feedback:aluminium_foam_cut_machine_bolt": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:aluminium_foam_cut_screw": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
     "feedback:aluminium_foam_cut_thread_rod": [
       {
         "amount": 2,
@@ -1005,6 +1101,18 @@
       }
     ],
     "feedback:aluminium_foam_rod": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:aluminium_foam_rolled_machine_bolt": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:aluminium_foam_rolled_screw": [
       {
         "amount": 2,
         "aspect": "thaumaturge:metallum"
@@ -1227,6 +1335,34 @@
       }
     ],
     "feedback:aluminium_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:aluminium_rolled_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:aluminium_rolled_screw": [
       {
         "amount": 3,
         "aspect": "thaumaturge:metallum"
@@ -1632,6 +1768,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:amethyst_bronze_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:amethyst_bronze_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:amethyst_bronze_cut_thread_rod": [
       {
         "amount": 5,
@@ -1902,6 +2066,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:amethyst_bronze_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:amethyst_bronze_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:amethyst_bronze_rolled_thread_rod": [
       {
         "amount": 5,
@@ -2140,6 +2332,26 @@
         "aspect": "thaumaturge:mortuus"
       }
     ],
+    "feedback:antimony_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:antimony_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:antimony_cut_thread_rod": [
       {
         "amount": 5,
@@ -2325,6 +2537,26 @@
       }
     ],
     "feedback:antimony_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:antimony_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:antimony_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -2894,6 +3126,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:babbitt_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:babbitt_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:babbitt_cut_thread_rod": [
       {
         "amount": 5,
@@ -3079,6 +3331,26 @@
       }
     ],
     "feedback:babbitt_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:babbitt_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:babbitt_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -3804,6 +4076,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:bell_metal_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:bell_metal_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:bell_metal_cut_thread_rod": [
       {
         "amount": 6,
@@ -3989,6 +4281,26 @@
       }
     ],
     "feedback:bell_metal_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:bell_metal_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:bell_metal_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -4612,6 +4924,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:beryllium_copper_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:beryllium_copper_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:beryllium_copper_cut_thread_rod": [
       {
         "amount": 5,
@@ -4882,6 +5222,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:beryllium_copper_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:beryllium_copper_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:beryllium_copper_rolled_thread_rod": [
       {
         "amount": 5,
@@ -4991,6 +5359,42 @@
       },
       {
         "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:beryllium_cut_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:beryllium_cut_screw": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 6,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -5340,6 +5744,42 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:beryllium_rolled_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:beryllium_rolled_screw": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:beryllium_rolled_thread_rod": [
       {
         "amount": 3,
@@ -5568,6 +6008,18 @@
         "aspect": "thaumaturge:metallum"
       }
     ],
+    "feedback:bismuth_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:bismuth_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
     "feedback:bismuth_cut_thread_rod": [
       {
         "amount": 6,
@@ -5681,6 +6133,18 @@
       }
     ],
     "feedback:bismuth_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:bismuth_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:bismuth_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -6646,6 +7110,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:brass_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:brass_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:brass_cut_thread_rod": [
       {
         "amount": 5,
@@ -6916,6 +7408,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:brass_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:brass_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:brass_rolled_thread_rod": [
       {
         "amount": 5,
@@ -7136,6 +7656,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:breeder_rod_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:breeder_rod_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:breeder_rod_cut_thread_rod": [
       {
         "amount": 6,
@@ -7277,6 +7825,34 @@
       }
     ],
     "feedback:breeder_rod_rivet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:breeder_rod_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:breeder_rod_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -7483,6 +8059,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:bronze_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:bronze_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -7743,6 +8347,34 @@
       }
     ],
     "feedback:bronze_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:bronze_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:bronze_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -8042,6 +8674,34 @@
         "aspect": "thaumaturge:mortuus"
       }
     ],
+    "feedback:cadmium_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:cadmium_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:cadmium_cut_thread_rod": [
       {
         "amount": 5,
@@ -8299,6 +8959,34 @@
       }
     ],
     "feedback:cadmium_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:cadmium_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:cadmium_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -8754,6 +9442,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:cast_iron_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cast_iron_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:cast_iron_cut_thread_rod": [
       {
         "amount": 5,
@@ -8940,6 +9656,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:cast_iron_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cast_iron_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:cast_iron_rolled_thread_rod": [
       {
         "amount": 5,
@@ -9077,6 +9821,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cast_netherite_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cast_netherite_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -9253,6 +10025,34 @@
       }
     ],
     "feedback:cast_netherite_rivet": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cast_netherite_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cast_netherite_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -9648,6 +10448,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:cermet_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cermet_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:cermet_cut_thread_rod": [
       {
         "amount": 4,
@@ -9891,6 +10719,34 @@
       }
     ],
     "feedback:cermet_rod": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cermet_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cermet_rolled_screw": [
       {
         "amount": 4,
         "aspect": "thaumaturge:metallum"
@@ -10468,6 +11324,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:chromium_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:chromium_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:chromium_cut_thread_rod": [
       {
         "amount": 5,
@@ -10653,6 +11529,26 @@
       }
     ],
     "feedback:chromium_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:chromium_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:chromium_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -11072,6 +11968,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:cobalt_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cobalt_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:cobalt_cut_thread_rod": [
       {
         "amount": 6,
@@ -11329,6 +12253,34 @@
       }
     ],
     "feedback:cobalt_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cobalt_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:cobalt_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -11856,6 +12808,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:constantan_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:constantan_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:constantan_cut_thread_rod": [
       {
         "amount": 6,
@@ -12041,6 +13013,26 @@
       }
     ],
     "feedback:constantan_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:constantan_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:constantan_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -12314,6 +13306,26 @@
         "aspect": "thaumaturge:perditio"
       }
     ],
+    "feedback:copper_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
+    "feedback:copper_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
     "feedback:copper_cut_thread_rod": [
       {
         "amount": 6,
@@ -12523,6 +13535,26 @@
       }
     ],
     "feedback:copper_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
+    "feedback:copper_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
+    "feedback:copper_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -13248,6 +14280,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:cupronickel_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:cupronickel_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:cupronickel_cut_thread_rod": [
       {
         "amount": 6,
@@ -13433,6 +14485,26 @@
       }
     ],
     "feedback:cupronickel_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:cupronickel_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:cupronickel_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -14390,6 +15462,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:duralumin_cut_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:duralumin_cut_screw": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:duralumin_cut_thread_rod": [
       {
         "amount": 3,
@@ -14647,6 +15747,34 @@
       }
     ],
     "feedback:duralumin_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:duralumin_rolled_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:duralumin_rolled_screw": [
       {
         "amount": 3,
         "aspect": "thaumaturge:metallum"
@@ -15024,6 +16152,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:electrum_cut_machine_bolt": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:electrum_cut_screw": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:electrum_cut_thread_rod": [
       {
         "amount": 8,
@@ -15281,6 +16437,34 @@
       }
     ],
     "feedback:electrum_rod": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:electrum_rolled_machine_bolt": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:electrum_rolled_screw": [
       {
         "amount": 8,
         "aspect": "thaumaturge:metallum"
@@ -15740,6 +16924,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:enriched_fuel_rod_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:enriched_fuel_rod_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:enriched_fuel_rod_cut_thread_rod": [
       {
         "amount": 6,
@@ -15881,6 +17093,34 @@
       }
     ],
     "feedback:enriched_fuel_rod_rivet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:enriched_fuel_rod_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:enriched_fuel_rod_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -16520,6 +17760,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:fuel_rod_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:fuel_rod_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:fuel_rod_cut_thread_rod": [
       {
         "amount": 6,
@@ -16661,6 +17929,34 @@
       }
     ],
     "feedback:fuel_rod_rivet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:fuel_rod_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:fuel_rod_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -17032,6 +18328,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:galinstan_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:galinstan_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:galinstan_cut_thread_rod": [
       {
         "amount": 5,
@@ -17302,6 +18626,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:galinstan_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:galinstan_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:galinstan_rolled_thread_rod": [
       {
         "amount": 5,
@@ -17471,6 +18823,26 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:gallium_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:gallium_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
         "aspect": "thaumaturge:lux"
       }
     ],
@@ -17659,6 +19031,26 @@
       }
     ],
     "feedback:gallium_rod": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:gallium_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:gallium_rolled_screw": [
       {
         "amount": 4,
         "aspect": "thaumaturge:metallum"
@@ -18026,6 +19418,20 @@
         "aspect": "thaumaturge:aer"
       }
     ],
+    "feedback:gear_cutter": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:machina"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:instrumentum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:fabrico"
+      }
+    ],
     "feedback:gear_set": [
       {
         "amount": 4,
@@ -18254,7 +19660,47 @@
         "aspect": "thaumaturge:perditio"
       }
     ],
+    "feedback:gold_amalgam_cut_machine_bolt": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:gold_amalgam_cut_screw": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:gold_amalgam_cut_thread_rod": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:gold_amalgam_rolled_machine_bolt": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:gold_amalgam_rolled_screw": [
       {
         "amount": 8,
         "aspect": "thaumaturge:metallum"
@@ -18346,6 +19792,26 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:gold_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
+    "feedback:gold_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:potentia"
       }
     ],
     "feedback:gold_cut_thread_rod": [
@@ -18533,6 +19999,26 @@
       }
     ],
     "feedback:gold_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
+    "feedback:gold_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
+    "feedback:gold_rolled_screw": [
       {
         "amount": 10,
         "aspect": "thaumaturge:metallum"
@@ -19006,6 +20492,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:hardened_high_speed_steel_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:hardened_high_speed_steel_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:hardened_high_speed_steel_cut_thread_rod": [
       {
         "amount": 5,
@@ -19164,6 +20678,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:hardened_high_speed_steel_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:hardened_high_speed_steel_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:hardened_high_speed_steel_rolled_thread_rod": [
       {
         "amount": 5,
@@ -19301,6 +20843,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:hardened_steel_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:hardened_steel_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -19449,6 +21019,34 @@
       }
     ],
     "feedback:hardened_steel_rivet": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:hardened_steel_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:hardened_steel_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -19834,6 +21432,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:high_speed_steel_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:high_speed_steel_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:high_speed_steel_cut_thread_rod": [
       {
         "amount": 5,
@@ -20091,6 +21717,34 @@
       }
     ],
     "feedback:high_speed_steel_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:high_speed_steel_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:high_speed_steel_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -20534,6 +22188,18 @@
         "aspect": "thaumaturge:metallum"
       }
     ],
+    "feedback:indium_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:indium_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
     "feedback:indium_cut_thread_rod": [
       {
         "amount": 5,
@@ -20652,6 +22318,18 @@
         "aspect": "thaumaturge:metallum"
       }
     ],
+    "feedback:indium_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:indium_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
     "feedback:indium_rolled_thread_rod": [
       {
         "amount": 5,
@@ -20726,6 +22404,20 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:machina"
+      }
+    ],
+    "feedback:inert_blaze_dust": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:victus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
       }
     ],
     "feedback:ingot_mold": [
@@ -20871,6 +22563,42 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:invar_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:invar_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -21220,6 +22948,42 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:invar_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:invar_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:invar_rolled_thread_rod": [
       {
         "amount": 5,
@@ -21383,6 +23147,42 @@
       }
     ],
     "feedback:iridium_coil_spring": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:iridium_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:iridium_cut_screw": [
       {
         "amount": 10,
         "aspect": "thaumaturge:metallum"
@@ -21566,6 +23366,42 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:iridium_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:iridium_rolled_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:iridium_rolled_thread_rod": [
       {
         "amount": 10,
@@ -21714,6 +23550,26 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:iron_bloom_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:iron_bloom_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:iron_bloom_cut_thread_rod": [
       {
         "amount": 4,
@@ -21785,6 +23641,26 @@
       }
     ],
     "feedback:iron_bloom_rivet": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:iron_bloom_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:iron_bloom_rolled_screw": [
       {
         "amount": 4,
         "aspect": "thaumaturge:metallum"
@@ -21920,6 +23796,34 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:iron_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:iron_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
       }
     ],
     "feedback:iron_cut_thread_rod": [
@@ -22207,6 +24111,34 @@
       }
     ],
     "feedback:iron_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:iron_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:iron_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -22958,6 +24890,26 @@
         "aspect": "thaumaturge:perditio"
       }
     ],
+    "feedback:lead_cut_machine_bolt": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:lead_cut_screw": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:lead_cut_thread_rod": [
       {
         "amount": 7,
@@ -23163,6 +25115,26 @@
       }
     ],
     "feedback:lead_rod": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:lead_rolled_machine_bolt": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:lead_rolled_screw": [
       {
         "amount": 7,
         "aspect": "thaumaturge:metallum"
@@ -23578,6 +25550,34 @@
         "aspect": "thaumaturge:mortuus"
       }
     ],
+    "feedback:lithium_cut_machine_bolt": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:lithium_cut_screw": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:lithium_cut_thread_rod": [
       {
         "amount": 2,
@@ -23835,6 +25835,34 @@
       }
     ],
     "feedback:lithium_rod": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:lithium_rolled_machine_bolt": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:lithium_rolled_screw": [
       {
         "amount": 2,
         "aspect": "thaumaturge:metallum"
@@ -24208,6 +26236,42 @@
         "aspect": "thaumaturge:ignis"
       }
     ],
+    "feedback:magnesium_cut_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ignis"
+      }
+    ],
+    "feedback:magnesium_cut_screw": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ignis"
+      }
+    ],
     "feedback:magnesium_cut_thread_rod": [
       {
         "amount": 3,
@@ -24537,6 +26601,42 @@
       }
     ],
     "feedback:magnesium_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ignis"
+      }
+    ],
+    "feedback:magnesium_rolled_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ignis"
+      }
+    ],
+    "feedback:magnesium_rolled_screw": [
       {
         "amount": 3,
         "aspect": "thaumaturge:metallum"
@@ -25042,6 +27142,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:manganese_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:manganese_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:manganese_cut_thread_rod": [
       {
         "amount": 5,
@@ -25236,6 +27356,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:manganese_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:manganese_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:manganese_rolled_thread_rod": [
       {
         "amount": 5,
@@ -25333,6 +27473,26 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:manganese_steel_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:manganese_steel_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -25521,6 +27681,26 @@
       }
     ],
     "feedback:manganese_steel_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:manganese_steel_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:manganese_steel_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -25868,6 +28048,34 @@
         "aspect": "thaumaturge:mortuus"
       }
     ],
+    "feedback:mercury_cut_machine_bolt": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:mercury_cut_screw": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:mercury_cut_thread_rod": [
       {
         "amount": 7,
@@ -26125,6 +28333,34 @@
       }
     ],
     "feedback:mercury_rod": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:mercury_rolled_machine_bolt": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:mercury_rolled_screw": [
       {
         "amount": 7,
         "aspect": "thaumaturge:metallum"
@@ -26720,6 +28956,42 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:molybdenum_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:molybdenum_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:molybdenum_cut_thread_rod": [
       {
         "amount": 6,
@@ -27049,6 +29321,42 @@
       }
     ],
     "feedback:molybdenum_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:molybdenum_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:molybdenum_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -27936,6 +30244,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:netherite_blend_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:netherite_blend_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:netherite_blend_cut_thread_rod": [
       {
         "amount": 4,
@@ -28160,6 +30496,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:netherite_blend_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:netherite_blend_rolled_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:netherite_blend_rolled_thread_rod": [
       {
         "amount": 4,
@@ -28311,6 +30675,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:netherite_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:netherite_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -28602,6 +30994,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:netherite_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:netherite_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:netherite_rolled_thread_rod": [
       {
         "amount": 5,
@@ -28789,6 +31209,26 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:nichrome_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:nichrome_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -28986,6 +31426,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:nichrome_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:nichrome_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:nichrome_rolled_thread_rod": [
       {
         "amount": 5,
@@ -29171,6 +31631,42 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:nickel_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:nickel_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -29503,6 +31999,42 @@
       }
     ],
     "feedback:nickel_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:nickel_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:nickel_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -30070,6 +32602,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:osmium_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:osmium_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:osmium_cut_thread_rod": [
       {
         "amount": 10,
@@ -30201,6 +32761,34 @@
       }
     ],
     "feedback:osmium_rivet": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:osmium_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:osmium_rolled_screw": [
       {
         "amount": 10,
         "aspect": "thaumaturge:metallum"
@@ -30375,6 +32963,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:palladium_cut_machine_bolt": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:palladium_cut_screw": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
         "aspect": "thaumaturge:mortuus"
       }
     ],
@@ -30635,6 +33251,34 @@
       }
     ],
     "feedback:palladium_rod": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:palladium_rolled_machine_bolt": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:palladium_rolled_screw": [
       {
         "amount": 7,
         "aspect": "thaumaturge:metallum"
@@ -31056,6 +33700,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:pewter_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:pewter_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:pewter_cut_thread_rod": [
       {
         "amount": 5,
@@ -31241,6 +33905,26 @@
       }
     ],
     "feedback:pewter_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:pewter_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:pewter_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -31680,6 +34364,18 @@
         "aspect": "thaumaturge:metallum"
       }
     ],
+    "feedback:platinum_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:platinum_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
     "feedback:platinum_cut_thread_rod": [
       {
         "amount": 10,
@@ -31793,6 +34489,18 @@
       }
     ],
     "feedback:platinum_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:platinum_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:platinum_rolled_screw": [
       {
         "amount": 10,
         "aspect": "thaumaturge:metallum"
@@ -33586,6 +36294,28 @@
         "aspect": "thaumaturge:mortuus"
       }
     ],
+    "feedback:radiator": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 42,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 18,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 30,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
     "feedback:radiator_panel": [
       {
         "amount": 2,
@@ -33651,6 +36381,34 @@
       }
     ],
     "feedback:rare_earth_magnet_coil_spring": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:rare_earth_magnet_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:rare_earth_magnet_cut_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -33809,6 +36567,34 @@
       }
     ],
     "feedback:rare_earth_magnet_rivet": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:rare_earth_magnet_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:rare_earth_magnet_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -34166,6 +36952,42 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:redstone_chromium_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_chromium_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:redstone_chromium_cut_thread_rod": [
       {
         "amount": 4,
@@ -34512,6 +37334,42 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:redstone_chromium_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_chromium_rolled_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:redstone_chromium_rolled_thread_rod": [
       {
         "amount": 4,
@@ -34688,6 +37546,42 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:redstone_filament_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_filament_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:redstone_filament_cut_thread_rod": [
       {
         "amount": 5,
@@ -34761,6 +37655,42 @@
       }
     ],
     "feedback:redstone_filament_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_filament_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_filament_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -34926,6 +37856,42 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:redstone_superconductor_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:redstone_superconductor_cut_thread_rod": [
       {
         "amount": 5,
@@ -34945,6 +37911,42 @@
       }
     ],
     "feedback:redstone_superconductor_fair_coil_spring": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_fair_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_fair_cut_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -34999,6 +38001,42 @@
       }
     ],
     "feedback:redstone_superconductor_fair_rivet": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_fair_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_fair_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -35124,6 +38162,42 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:redstone_superconductor_poor_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_poor_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:redstone_superconductor_poor_cut_thread_rod": [
       {
         "amount": 5,
@@ -35161,6 +38235,42 @@
       }
     ],
     "feedback:redstone_superconductor_poor_rivet": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_poor_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_poor_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -35251,6 +38361,42 @@
       }
     ],
     "feedback:redstone_superconductor_rivet": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:redstone_superconductor_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -35554,6 +38700,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:rhenium_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rhenium_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:rhenium_cut_thread_rod": [
       {
         "amount": 10,
@@ -35639,6 +38805,26 @@
       }
     ],
     "feedback:rhenium_rivet": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rhenium_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rhenium_rolled_screw": [
       {
         "amount": 10,
         "aspect": "thaumaturge:metallum"
@@ -36658,6 +39844,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:shakudo_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:shakudo_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:shakudo_cut_thread_rod": [
       {
         "amount": 6,
@@ -36915,6 +40129,34 @@
       }
     ],
     "feedback:shakudo_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:shakudo_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:shakudo_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -37592,6 +40834,34 @@
         "aspect": "thaumaturge:lux"
       }
     ],
+    "feedback:silver_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:silver_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
     "feedback:silver_cut_thread_rod": [
       {
         "amount": 6,
@@ -37849,6 +41119,34 @@
       }
     ],
     "feedback:silver_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:silver_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:silver_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -38168,6 +41466,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:solder_free_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:solder_free_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:solder_free_cut_thread_rod": [
       {
         "amount": 5,
@@ -38326,6 +41652,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:solder_free_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:solder_free_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:solder_free_rolled_thread_rod": [
       {
         "amount": 5,
@@ -38435,6 +41789,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:solder_leaded_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:solder_leaded_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -38583,6 +41965,34 @@
       }
     ],
     "feedback:solder_leaded_rivet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:solder_leaded_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:solder_leaded_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -39004,6 +42414,16 @@
         "aspect": "thaumaturge:vitreus"
       }
     ],
+    "feedback:spent_blaze_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:victus"
+      }
+    ],
     "feedback:spent_fuel_pool": [
       {
         "amount": 5,
@@ -39099,6 +42519,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:spent_fuel_rod_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:spent_fuel_rod_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -39243,6 +42691,34 @@
       }
     ],
     "feedback:spent_fuel_rod_rivet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:spent_fuel_rod_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:spent_fuel_rod_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -39788,6 +43264,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:stainless_steel_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:stainless_steel_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:stainless_steel_cut_thread_rod": [
       {
         "amount": 5,
@@ -39982,6 +43478,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:stainless_steel_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:stainless_steel_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:stainless_steel_rolled_thread_rod": [
       {
         "amount": 5,
@@ -40078,6 +43594,28 @@
       {
         "amount": 4,
         "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:starter": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 21,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 12,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 15,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
       }
     ],
     "feedback:steam_chest": [
@@ -40237,6 +43775,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:steel_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:steel_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -40510,6 +44076,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:steel_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:steel_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:steel_rolled_thread_rod": [
       {
         "amount": 5,
@@ -40679,6 +44273,26 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:stellite_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:stellite_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -40867,6 +44481,26 @@
       }
     ],
     "feedback:stellite_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:stellite_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:stellite_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -41696,6 +45330,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:tempered_steel_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:tempered_steel_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:tempered_steel_cut_thread_rod": [
       {
         "amount": 5,
@@ -41883,6 +45545,34 @@
       }
     ],
     "feedback:tempered_steel_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:tempered_steel_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:tempered_steel_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -42168,6 +45858,26 @@
         "aspect": "thaumaturge:mortuus"
       }
     ],
+    "feedback:thorium_cut_machine_bolt": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:thorium_cut_screw": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:thorium_cut_thread_rod": [
       {
         "amount": 7,
@@ -42326,6 +46036,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:thorium_fuel_rod_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorium_fuel_rod_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:thorium_fuel_rod_cut_thread_rod": [
       {
         "amount": 6,
@@ -42467,6 +46205,34 @@
       }
     ],
     "feedback:thorium_fuel_rod_rivet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorium_fuel_rod_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorium_fuel_rod_rolled_screw": [
       {
         "amount": 6,
         "aspect": "thaumaturge:metallum"
@@ -42670,6 +46436,26 @@
         "aspect": "thaumaturge:mortuus"
       }
     ],
+    "feedback:thorium_rolled_machine_bolt": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:thorium_rolled_screw": [
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:thorium_rolled_thread_rod": [
       {
         "amount": 7,
@@ -42777,6 +46563,26 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorium_tungsten_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorium_tungsten_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -42965,6 +46771,26 @@
       }
     ],
     "feedback:thorium_tungsten_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorium_tungsten_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorium_tungsten_rolled_screw": [
       {
         "amount": 10,
         "aspect": "thaumaturge:metallum"
@@ -43232,6 +47058,26 @@
         "aspect": "thaumaturge:perditio"
       }
     ],
+    "feedback:tin_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:tin_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
     "feedback:tin_cut_thread_rod": [
       {
         "amount": 5,
@@ -43437,6 +47283,26 @@
       }
     ],
     "feedback:tin_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:tin_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:tin_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -43662,6 +47528,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:titanium_6al_4v_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_6al_4v_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:titanium_6al_4v_cut_thread_rod": [
       {
         "amount": 4,
@@ -43856,6 +47742,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:titanium_6al_4v_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_6al_4v_rolled_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:titanium_6al_4v_rolled_thread_rod": [
       {
         "amount": 4,
@@ -44007,6 +47913,26 @@
       }
     ],
     "feedback:titanium_carbide_coil_spring": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_carbide_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_carbide_cut_screw": [
       {
         "amount": 4,
         "aspect": "thaumaturge:metallum"
@@ -44190,6 +48116,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:titanium_carbide_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_carbide_rolled_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:titanium_carbide_rolled_thread_rod": [
       {
         "amount": 4,
@@ -44287,6 +48233,26 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -44475,6 +48441,26 @@
       }
     ],
     "feedback:titanium_rod": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:titanium_rolled_screw": [
       {
         "amount": 4,
         "aspect": "thaumaturge:metallum"
@@ -45332,6 +49318,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:tungsten_carbide_cut_machine_bolt": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:tungsten_carbide_cut_screw": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:tungsten_carbide_cut_thread_rod": [
       {
         "amount": 8,
@@ -45520,6 +49526,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:tungsten_carbide_rolled_machine_bolt": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:tungsten_carbide_rolled_screw": [
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:tungsten_carbide_rolled_thread_rod": [
       {
         "amount": 8,
@@ -45629,6 +49655,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:tungsten_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:tungsten_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 10,
         "aspect": "thaumaturge:ordo"
       }
     ],
@@ -45889,6 +49943,34 @@
       }
     ],
     "feedback:tungsten_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:tungsten_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:tungsten_rolled_screw": [
       {
         "amount": 10,
         "aspect": "thaumaturge:metallum"
@@ -46294,6 +50376,42 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:uranium_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:uranium_cut_thread_rod": [
       {
         "amount": 10,
@@ -46417,6 +50535,42 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_depleted_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_depleted_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -46766,6 +50920,42 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:uranium_depleted_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_depleted_rolled_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:uranium_depleted_rolled_thread_rod": [
       {
         "amount": 10,
@@ -47055,6 +51245,42 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_enriched_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_enriched_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -47387,6 +51613,42 @@
       }
     ],
     "feedback:uranium_enriched_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_enriched_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_enriched_rolled_screw": [
       {
         "amount": 10,
         "aspect": "thaumaturge:metallum"
@@ -47870,6 +52132,42 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:uranium_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:uranium_rolled_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:uranium_rolled_thread_rod": [
       {
         "amount": 10,
@@ -48310,6 +52608,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:vanadium_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:vanadium_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:vanadium_cut_thread_rod": [
       {
         "amount": 4,
@@ -48504,6 +52822,26 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:vanadium_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:vanadium_rolled_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:vanadium_rolled_thread_rod": [
       {
         "amount": 4,
@@ -48630,6 +52968,20 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:instrumentum"
+      }
+    ],
+    "feedback:vice": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:instrumentum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
       }
     ],
     "feedback:vis_tap": [
@@ -48764,6 +53116,20 @@
       {
         "amount": 1,
         "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:wick": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:instrumentum"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
       }
     ],
     "feedback:wide_tube": [
@@ -49060,6 +53426,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:woods_metal_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:woods_metal_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:woods_metal_cut_thread_rod": [
       {
         "amount": 6,
@@ -49330,6 +53724,34 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:woods_metal_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:woods_metal_rolled_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:woods_metal_rolled_thread_rod": [
       {
         "amount": 6,
@@ -49565,6 +53987,34 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:wrought_iron_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:wrought_iron_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -49810,6 +54260,34 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:wrought_iron_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:wrought_iron_rolled_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:wrought_iron_rolled_thread_rod": [
       {
         "amount": 5,
@@ -50008,6 +54486,18 @@
         "aspect": "thaumaturge:perditio"
       }
     ],
+    "feedback:zinc_cut_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:zinc_cut_screw": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
     "feedback:zinc_cut_thread_rod": [
       {
         "amount": 5,
@@ -50133,6 +54623,18 @@
       }
     ],
     "feedback:zinc_rod": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:zinc_rolled_machine_bolt": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:zinc_rolled_screw": [
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
@@ -50390,10 +54892,6 @@
       {
         "amount": 3,
         "aspect": "thaumaturge:terra"
-      },
-      {
-        "amount": 6,
-        "aspect": "thaumaturge:ignis"
       },
       {
         "amount": 3,

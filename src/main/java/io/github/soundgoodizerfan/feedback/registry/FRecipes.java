@@ -68,6 +68,13 @@ public class FRecipes {
             TONGS = SERIALIZERS.register("tongs",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.TongsRecipe::new));
 
+    /** A mortar and a rod that is still hot -> blaze powder; a rod gone cold (or the spent rod) -> dust with nothing to burn. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.RodGrindRecipe>>
+            ROD_GRIND_CHARGED = SERIALIZERS.register("rod_grind_charged",
+                    () -> new SimpleCraftingRecipeSerializer<>(c -> new io.github.soundgoodizerfan.feedback.item.RodGrindRecipe(c, true))),
+            ROD_GRIND_SPENT = SERIALIZERS.register("rod_grind_spent",
+                    () -> new SimpleCraftingRecipeSerializer<>(c -> new io.github.soundgoodizerfan.feedback.item.RodGrindRecipe(c, false)));
+
     /** Wooden and stone pickaxe, axe, shovel -> the canonical modular tool (the bootstrap exception). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.item.BootstrapToolRecipe>>
             BOOTSTRAP_TOOL = SERIALIZERS.register("bootstrap_tool",

@@ -18,8 +18,22 @@ public final class Sparks {
     private Sparks() {
     }
 
+    /** Amps of the arc being delivered right now: set only while {@link #emit} dispatches, which is synchronous on the server thread. */
+    private static float heard;
+
     public static void emit(Level level, BlockPos pos, float ampsBroken) {
-        if (!level.isClientSide && ampsBroken >= ElectricTuning.SPARK_MIN_AMPS)
+        if (level.isClientSide || ampsBroken < ElectricTuning.SPARK_MIN_AMPS)
+            return;
+        heard = ampsBroken;
+        try {
             level.gameEvent(null, FWeapons.SPARK, pos);
+        } finally {
+            heard = 0f;
+        }
+    }
+
+    /** The amps of the arc a listener is hearing: how hard the spark was. Zero outside a delivery. */
+    public static float heardAmps() {
+        return heard;
     }
 }

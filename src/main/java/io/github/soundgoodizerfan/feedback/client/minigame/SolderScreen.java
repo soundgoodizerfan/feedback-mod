@@ -39,6 +39,7 @@ public class SolderScreen extends Screen {
 
     private static final GuiSkin SKIN = GuiSkin.ENAMEL;
     private static final Component HINT = Component.translatable("gui.feedback.solder.hint");
+    private static final Component LIFT_HINT = Component.translatable("gui.feedback.solder.lift_hint");
     /** Pad looks: untouched copper, dull (cold), shiny (wet), scorched. */
     private static final int[] LOOK = {0xFFB87333, 0xFF6E6A66, 0xFFE8EEF2, 0xFF3A2418};
     private static final Component[] LEGEND = {
@@ -54,6 +55,8 @@ public class SolderScreen extends Screen {
     private final int pads;
     private final int[] dwell, offset;
     private final float ironStart;
+    /** Reworking a finished circuit: the same drag, and a part comes free when both its pads go wet. */
+    private final boolean lift;
     private boolean down, sent;
     /** Crouched as the iron was lifted: opening a screen releases the key, so the stance is read here, as the server reads it. */
     private final boolean braced = Minecraft.getInstance().player != null && Minecraft.getInstance().player.isShiftKeyDown();
@@ -71,8 +74,9 @@ public class SolderScreen extends Screen {
     private final int[] legendX = new int[LEGEND.length], legendY = new int[LEGEND.length], legendW = new int[LEGEND.length];
     private int legendRows;
 
-    private SolderScreen(Soldering.Alloy alloy, Component alloyName, int pads, float limit, float ironTu) {
-        super(Component.translatable("gui.feedback.solder.title"));
+    private SolderScreen(Soldering.Alloy alloy, Component alloyName, int pads, float limit, float ironTu, boolean lift) {
+        super(Component.translatable(lift ? "gui.feedback.solder.lift_title" : "gui.feedback.solder.title"));
+        this.lift = lift;
         this.alloy = alloy;
         this.alloyName = alloyName;
         this.pads = pads;
@@ -83,7 +87,7 @@ public class SolderScreen extends Screen {
     }
 
     /** Open on the client from the iron's use; does nothing if the board's solder is not a known alloy. */
-    public static void open(Board board, float ironTu) {
+    public static void open(Board board, float ironTu, boolean lift) {
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
         ResourceLocation id = board.solder().orElse(null);
         Material solder = id == null ? null : materials.get(id);
@@ -91,7 +95,7 @@ public class SolderScreen extends Screen {
         if (alloy.isPresent())
             Minecraft.getInstance().setScreen(new SolderScreen(alloy.get(),
                     Component.translatable("material." + id.getNamespace() + "." + id.getPath()),
-                    Soldering.pads(board), Soldering.limit(board, materials), ironTu));
+                    Soldering.pads(board), Soldering.limit(board, materials), ironTu, lift));
     }
 
     @Override
@@ -101,7 +105,7 @@ public class SolderScreen extends Screen {
         pw = Math.max(Math.min(MIN_W, maxW), Math.min(maxW, pads * PITCH_MAX + 2 * MARGIN + 8));
         pitch = Math.max(4, Math.min(PITCH_MAX, (pw - 2 * MARGIN - 8) / pads));
         pw = Math.max(Math.min(MIN_W, maxW), Math.min(maxW, pads * pitch + 2 * MARGIN + 8));
-        hintLines = font.split(HINT, pw - 2 * MARGIN);
+        hintLines = font.split(lift ? LIFT_HINT : HINT, pw - 2 * MARGIN);
         // Legend: one row, wrapping to more when the panel is narrow. Widths do not depend on pitch.
         int avail = pw - 2 * MARGIN, x = 0, row = 0;
         for (int i = 0; i < LEGEND.length; i++) {

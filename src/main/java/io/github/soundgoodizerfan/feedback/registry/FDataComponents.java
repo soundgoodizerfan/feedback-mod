@@ -278,6 +278,13 @@ public class FDataComponents {
                     .networkSynchronized(net.minecraft.world.item.ItemStack.STREAM_CODEC)
                     .build());
 
+    /** The vice whose clamped piece a hand tool is working while its use is held ({@code item/HandWork}); absent when the tool is idle or works a piece in the other hand. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.core.BlockPos>> HAND_VICE =
+            COMPONENTS.register("hand_vice", () -> DataComponentType.<net.minecraft.core.BlockPos>builder()
+                    .persistent(net.minecraft.core.BlockPos.CODEC)
+                    .networkSynchronized(net.minecraft.core.BlockPos.STREAM_CODEC)
+                    .build());
+
     /** Which job a Data Connector's use does; chosen by sneak-scroll. Absent is link. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.DataConnectorMode>> DATA_CONNECTOR_MODE =
             COMPONENTS.register("data_connector_mode", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.DataConnectorMode>builder()
@@ -404,6 +411,13 @@ public class FDataComponents {
             COMPONENTS.register("element", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.process.Element>builder()
                     .persistent(io.github.soundgoodizerfan.feedback.process.Element.CODEC)
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.process.Element.STREAM_CODEC)
+                    .build());
+
+    /** The metal and tooth count of a cut cog. See {@code machine/cog/CogSpec}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.machine.cog.CogSpec>> COG =
+            COMPONENTS.register("cog", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.machine.cog.CogSpec>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.machine.cog.CogSpec.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.machine.cog.CogSpec.STREAM_CODEC)
                     .build());
 
     /** How far a crystal plate is ground; absent is the first cut. See {@code process/Cut}. */
