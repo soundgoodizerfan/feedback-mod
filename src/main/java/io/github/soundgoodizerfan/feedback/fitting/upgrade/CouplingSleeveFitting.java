@@ -29,6 +29,11 @@ public class CouplingSleeveFitting implements UpgradeFitting {
         return material;
     }
 
+    @Override
+    public ResourceLocation tintMaterial() {
+        return material;
+    }
+
     /** 0 to 1: the share of the bearing's torque cap the sleeve's metal carries, its yield strength over {@link MachineTuning#COUPLING_REFERENCE_YIELD}. */
     public float grip() {
         var metal = MaterialTable.get().materials().get(material);

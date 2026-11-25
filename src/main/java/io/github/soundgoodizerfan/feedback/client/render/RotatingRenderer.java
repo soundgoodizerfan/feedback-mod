@@ -49,6 +49,9 @@ public class RotatingRenderer<T extends RotationNode> implements BlockEntityRend
     public void render(T node, float partialTick, PoseStack pose, MultiBufferSource buffers,
                        int light, int overlay) {
 
+        // A shaft's fittings are the one thing the Flywheel visual does not draw.
+        FittingRenderer.draw(node, pose, buffers, light, overlay);
+
         // The visual has it in hand whenever the backend is running. Drawing here too would
         // double every shaft, which is the same bug as forgetting RenderShape.INVISIBLE.
         if (VisualizationManager.supportsVisualization(node.getLevel()))

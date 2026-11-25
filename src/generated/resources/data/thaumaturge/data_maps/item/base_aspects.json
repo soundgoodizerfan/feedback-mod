@@ -36308,6 +36308,28 @@
         "aspect": "thaumaturge:mortuus"
       }
     ],
+    "feedback:radiator": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 42,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 18,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 30,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
     "feedback:radiator_panel": [
       {
         "amount": 2,
@@ -43586,6 +43608,28 @@
       {
         "amount": 4,
         "aspect": "thaumaturge:lux"
+      }
+    ],
+    "feedback:starter": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 21,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 12,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 15,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
       }
     ],
     "feedback:steam_chest": [

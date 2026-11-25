@@ -33,4 +33,21 @@ public interface Fitting {
     /** Called once, before the holder forgets this fitting. */
     default void onRemoved() {
     }
+
+    /**
+     * The material this fitting is made of, if it keeps one (a sleeve): the {@code FittingRenderer} tints its model by that material's
+     * colour, as a form item is. Null for a fitting with no material of its own (read every frame, so it allocates nothing).
+     */
+    @org.jetbrains.annotations.Nullable
+    default net.minecraft.resources.ResourceLocation tintMaterial() {
+        return null;
+    }
+
+    /**
+     * Whether this fitting is doing its work right now, so the renderer draws its state overlay (a lit lamp, an open flap) over its model.
+     * False by default; a fitting with a state worth showing says so here.
+     */
+    default boolean active() {
+        return false;
+    }
 }

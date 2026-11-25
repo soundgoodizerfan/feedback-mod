@@ -480,6 +480,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.GEIGER_COUNTER.get(), "geiger_counter");
         info(registration, FModular.DOSIMETER.get(), "dosimeter");
         info(registration, FItems.TEMPERATURE_SENSOR.get(), "temperature_sensor");
+        info(registration, FItems.STARTER.get(), "starter");
+        info(registration, FItems.RADIATOR.get(), "radiator");
         info(registration, FItems.ELECTROSCOPE.get(), "electroscope");
         info(registration, FItems.GALVANOMETER.get(), "galvanometer");
         info(registration, FItems.CURRENT_SENSOR.get(), "current_sensor");

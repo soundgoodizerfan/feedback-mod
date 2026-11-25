@@ -224,7 +224,7 @@ public class FCreativeTabs {
 
     /** Machine tooling and linings: what wears or shields inside a machine. */
     private static final List<DeferredItem<?>> TOOLING = of(FItems.GRINDING_WHEEL,
-            FItems.MAGMA_HEAD, FItems.REFRACTORY_LINING, FItems.INSULATION,
+            FItems.MAGMA_HEAD, FItems.REFRACTORY_LINING, FItems.INSULATION, FItems.STARTER, FItems.RADIATOR,
             FItems.CRYSTAL_HOLDER, FItems.HEATSINK, FItems.BIMETALLIC_STRIP);
 
     /** Coils, then electrical components, passive to active. */

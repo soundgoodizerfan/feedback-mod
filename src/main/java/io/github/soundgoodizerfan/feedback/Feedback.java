@@ -151,6 +151,8 @@ public class Feedback {
      */
     private static void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(AmbientTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.fitting.FittingLooks.Models.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.fitting.FittingLooks.Anchors.get());
         event.addListener(io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.core.hazard.AmbientRadiation.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.combat.ShieldSources.get());
@@ -198,6 +200,9 @@ public class Feedback {
                         io.github.soundgoodizerfan.feedback.net.SkillWispPayload::handle)
                 .playToClient(AmbientSyncPayload.TYPE, AmbientSyncPayload.STREAM_CODEC,
                         AmbientSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.FittingLookSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.FittingLookSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.FittingLookSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.SurveyPinPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SurveyPinPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SurveyPinPayload::handle)
@@ -512,6 +517,8 @@ public class Feedback {
      */
     private static void onDatapackSync(OnDatapackSyncEvent event) {
         send(event, new AmbientSyncPayload(AmbientTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.FittingLookSyncPayload(
+                io.github.soundgoodizerfan.feedback.fitting.FittingLooks.models(), io.github.soundgoodizerfan.feedback.fitting.FittingLooks.anchors()));
         send(event, new MaterialSyncPayload(MaterialTable.get().materials()));
         send(event, new DeformationSyncPayload(DeformationTable.get().entries()));
         send(event, new RemovalSyncPayload(RemovalTable.get().entries()));

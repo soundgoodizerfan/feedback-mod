@@ -38,7 +38,7 @@ Every engine needs a spark plug: a metal electrode with a ceramic insulator, mad
 - **Life.** A metal that melts hotter erodes slower, so the plug lasts longer.
 - **Fouling.** A metal that carries heat away runs cold and fouls sooner as it wears.
 
-The plug wears **only while the engine runs in a vehicle**. On a stand it does not wear. As it wears, the engine **stumbles**: at times its torque drops out for a moment, more often the more worn and fouled the plug is. A stumble never stops the engine. Jade shows *Spark plug:* with the plug's condition.
+The plug wears **only while the engine runs in a vehicle**. On a stand it does not wear. As it wears, the engine **stumbles**: at times its torque drops out for a moment, more often the more worn and fouled the plug is. A stumble never stops the engine. Jade shows *Spark plug:* with the plug's condition, and a *Damaged by knock and heat* line with how much of its power the engine has lost to knock and overheating.
 
 A picked-up engine keeps its plug's wear. Swap the plug at the [Engineering Table](Engineering_Table.md#repair-tab) for a fresh one.
 
@@ -70,13 +70,46 @@ A blend of two fuels has an ignition point between them, so a blend can sit insi
 
 Place the Engine on a shaft line. Its crankshaft runs straight through, so **both ends** connect.
 
-- Engines are placed **switched off**. **Right-click** to start or stop one.
-- A [Controller](Controller.md) can start and stop it too, with a *Switch* card.
+- Engines are placed **switched off**. **Right-click** to start or stop one. With an [Engine Starter](#engine-starter) fitted, right-click starts it on battery charge.
+- A [Controller](Controller.md) can start and stop it too (through the starter, if one is fitted), with a *Switch* card.
 - A Controller can also set its **throttle**, by sending a number (0 to 1) instead of yes/no, from a [Driver's Seat](Vehicles.md#the-drivers-seat) key or a *Math* card. With the throttle shut a running engine **idles** at 15% of its torque and speed, so it doesn't stall at a standstill. Engines start with the throttle wide open.
 
 An engine is **weak at low speed** and strongest around its peak. When you start it under load it has to work its way up. If the load is too heavy for it, it bogs down and stalls instead of reaching speed. Gear it so the load is light at first, or give it a bigger engine.
 
 When switched off, the line coasts down on its own momentum.
+
+## Heat
+
+A running engine warms its own body and sheds heat to the air. Above a comfortable temperature it **loses power**, the hotter the weaker. Above the **service temperature** of the engine's metal it takes damage (the same *Damaged by knock and heat* wear as knock, with smoke as a warning). Near the metal's melting point it **seizes**: it stops, takes a hard hit, and will not start until it has cooled below its service temperature. Jade shows *Seized* while it is locked.
+
+A [radiator](#engine-radiator) sheds more heat than bare metal.
+
+## Fittings
+
+An engine takes one fitting on each face: an Engine Starter or an Engine Radiator. Right-click a face with the item to bolt it on.
+
+### Engine starter
+
+Turns the engine over on battery charge. With a starter fitted, starting the engine spends charge from a [Battery](Battery.md) in the block the starter touches, or in the electrical run of wire it touches. A flat battery gives no start (a click sounds and the engine stays off). Without a starter, right-click toggles the engine for free.
+
+```
+S S S
+M W G
+```
+
+S is a Wrought Iron Plate, M is an Electromagnet, W is Copper Wire and G is a Small Cog. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 3 machine bolts ([Fasteners](Fasteners.md)).
+
+### Engine radiator
+
+A radiator bolted to a face. It sheds more heat to the air than the bare engine, and it adds **coolant ports** on its own face: connect a [Pipe](Pipe.md) there to fill the engine's coolant tank with any liquid. Coolant adds thermal mass and carries the heat to the radiator, so it cools best with coolant in the tank. With the tank empty it still sheds a small share, so a dry radiator is a small air leak and never stops the engine.
+
+```
+B B B
+P F P
+B B B
+```
+
+B is a Bronze Plate, P is a Pipe (the material stock) and F is Copper Foil. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 4 rivets ([Fasteners](Fasteners.md)).
 
 Breaking an engine keeps its design (compression included) and the wear of its spark plug. Place it again and it's the same engine.
 

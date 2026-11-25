@@ -796,6 +796,14 @@ public class FItems {
     public static final DeferredItem<Item> RELIEF_VALVE =
             ITEMS.register("relief_valve", () -> new ReliefValveItem(new Item.Properties().stacksTo(16)));
 
+    /** An engine's electric starter. See {@code fitting.StarterFitting}. */
+    public static final DeferredItem<Item> STARTER =
+            ITEMS.register("starter", () -> new io.github.soundgoodizerfan.feedback.item.StarterItem(new Item.Properties().stacksTo(16)));
+
+    /** An engine's radiator. See {@code fitting.RadiatorFitting}. */
+    public static final DeferredItem<Item> RADIATOR =
+            ITEMS.register("radiator", () -> new io.github.soundgoodizerfan.feedback.item.RadiatorItem(new Item.Properties().stacksTo(16)));
+
     /** The gas compressor's air intake. See {@code fitting.upgrade.AirIntakeFitting}. */
     public static final DeferredItem<BlockItem> AIR_VALVE = ITEMS.registerSimpleBlockItem(FBlocks.AIR_VALVE);
     public static final DeferredItem<BlockItem> RADIATOR_PANEL = ITEMS.registerSimpleBlockItem(FBlocks.RADIATOR_PANEL);

@@ -11,5 +11,5 @@ package io.github.soundgoodizerfan.feedback.fitting;
  * {@code Direction}, and a third implementor showing up later would be a fourth fitting kind,
  * not a variation on this one -- see {@link Fitting} for why that gets its own type instead.
  */
-public sealed interface SidedFitting extends Fitting permits SensorFitting, AdapterFitting, RedstoneAnalogFitting {
+public sealed interface SidedFitting extends Fitting permits SensorFitting, AdapterFitting, RedstoneAnalogFitting, StarterFitting, RadiatorFitting {
 }

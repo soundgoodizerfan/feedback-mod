@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle;
 
+import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
@@ -233,6 +234,52 @@ public final class VehicleTuning {
 
     /** Invented. Knock wears condition by this much a tick at full opening, down to a floor it never passes: degrades, never refuses. */
     public static final float ENGINE_KNOCK_WEAR_PER_TICK = 0.0002f, ENGINE_CONDITION_FLOOR = 0.2f;
+
+    /**
+     * Invented. The engine's heat. A running engine puts {@code ENGINE_HEAT_WORK_PER_MB} Work a tick per mB of displacement into its
+     * own body at full opening and a reference fuel (scaled by the fuel's flame against {@code FTuning.ENGINE_REFERENCE_FLAME_TU});
+     * its body is the design's metal ({@code specific_heat} times the design's mass) and sheds heat to the air through
+     * {@code ENGINE_AIR_LEAK}, as every thermal body does. A fitted radiator adds {@code RADIATOR_CONDUCTANCE}, and a coolant in the
+     * radiator's tank carries heat to it ({@code RADIATOR_COOLANT_SHARE}: a dry radiator gives only that share of its conductance)
+     * and adds its own thermal mass ({@code COOLANT_WORK_PER_MB_PER_TU}).
+     */
+    /**
+     * {@code ENGINE_HEAT_WORK_PER_MB} is Work a tick per mB (one litre) of displacement, a rate with no unit type of its own. Worked
+     * through: a 1.8 L engine (4 cylinders, 80 mm bore, 90 mm stroke) at full opening on the reference fuel puts in 3.1 x 1.8 = 5.6 Work
+     * a tick and sheds it through a 0.02 leak, so it settles 280 Tu above ambient (300 Tu), where a 1 L engine settles at 175 Tu and a
+     * 2 L engine at 331 Tu, all above {@code ENGINE_COMFORT_TU} (power derated to 95%, 70%, 64%) and below the service temperature of iron,
+     * cast iron, wrought iron, steel (450 to 550 Tu), at sea-level air. Only an engine over about 2.8 L on cast iron or iron, a hotter
+     * fuel, thin air (it carries less heat away) or a weaker metal (an aluminium engine over about 1.5 L, 250 Tu) is pushed over the
+     * service temperature and wears. A radiator buys the power back: with coolant the leak is 0.22 and the same engine
+     * settles near 45 Tu at full power; dry, 0.07 and near 100 Tu.
+     */
+    public static final float ENGINE_HEAT_WORK_PER_MB = 3.1f;
+    public static final Conductance ENGINE_AIR_LEAK = new Conductance(0.02f);
+    public static final Conductance RADIATOR_CONDUCTANCE = new Conductance(0.2f);
+    public static final float RADIATOR_COOLANT_SHARE = 0.25f, COOLANT_WORK_PER_MB_PER_TU = 0.004f;
+    public static final int ENGINE_COOLANT_MB = 2000;
+
+    /**
+     * Invented. Power falls by {@code ENGINE_DERATE_PER_TU} of its full figure for each Tu above {@code ENGINE_COMFORT_TU}, to a floor
+     * {@code ENGINE_DERATE_FLOOR}: a hot engine is weaker, never stopped by heat alone. Above the design metal's service temperature
+     * the body takes misuse wear of {@code ENGINE_HEAT_WEAR_PER_TICK} a tick for each full {@code ENGINE_HEAT_WEAR_SCALE_TU} above it
+     * (into the same condition as knock, to the same floor), with a warning smoke from {@code ENGINE_WARN_SHARE} of the service
+     * temperature. At {@code ENGINE_SEIZE_SHARE} of the metal's melting point the engine seizes: it stops and will not run until it has
+     * cooled below the service temperature. Seizing costs nothing by itself: for as long as the body stays past the seize point it takes
+     * {@code ENGINE_SEIZE_WEAR_PER_TICK} of its condition a tick for each full {@code ENGINE_HEAT_WEAR_SCALE_TU} past it, so what it
+     * loses is how far past and how long (an author-ruled rule that may be revisited).
+     */
+    public static final Tu ENGINE_COMFORT_TU = new Tu(150f);
+    public static final float ENGINE_DERATE_PER_TU = 0.002f, ENGINE_DERATE_FLOOR = 0.4f;
+    public static final float ENGINE_HEAT_WEAR_PER_TICK = 0.0004f, ENGINE_WARN_SHARE = 0.9f;
+    public static final Tu ENGINE_HEAT_WEAR_SCALE_TU = new Tu(100f);
+    public static final float ENGINE_SEIZE_SHARE = 0.9f, ENGINE_SEIZE_WEAR_PER_TICK = 0.002f;
+
+    /**
+     * Invented. A start through a fitted starter spends this much charge from the battery it touches; a flat battery gives none and no
+     * start. Charge is a bare Eu count here: {@code core/unit/Eu} is a packet (band and current), not an amount of charge.
+     */
+    public static final float STARTER_CRANK_EU = 40f;
 
     /**
      * Placeholder. Spark plug, wearing by running time in a vehicle (use wear, the vehicle exception). A plug of the reference

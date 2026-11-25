@@ -22,6 +22,20 @@ public interface StoredFittable extends Fittable {
     @Override
     default void setSidedFitting(Direction side, @Nullable SidedFitting fitting) {
         fittings().set(side, fitting);
+        syncFittings();
+    }
+
+    /** Tells the clients tracking this holder its fittings changed, so the fitting renderer draws what is on it now. */
+    @Override
+    default boolean hasFittings() {
+        return !fittings().isEmpty();
+    }
+
+    default void syncFittings() {
+        if (this instanceof net.minecraft.world.level.block.entity.BlockEntity holder && holder.getLevel() != null && !holder.getLevel().isClientSide) {
+            holder.setChanged();
+            holder.getLevel().sendBlockUpdated(holder.getBlockPos(), holder.getBlockState(), holder.getBlockState(), 3);
+        }
     }
 
     @Override
@@ -37,5 +51,6 @@ public interface StoredFittable extends Fittable {
     @Override
     default void removeUpgrade(UpgradeFitting upgrade) {
         fittings().upgrades().remove(upgrade);
+        syncFittings();
     }
 }

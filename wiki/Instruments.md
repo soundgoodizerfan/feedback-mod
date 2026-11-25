@@ -194,7 +194,7 @@ W C W
 
 P is a Steel Plate, T is a [Thermometer](#thermometer), W is [Copper Wire](Wire_Drawer.md) and C is a [circuit](Basic_Electronic_Circuit.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row, 2 screws ([Fasteners](Fasteners.md)) and Electrical Treatise III: Circuits ([Treatise](Treatise.md)).
 
-Right-click a face of a [Crucible](Crucible.md) or an **Improved Furnace** with it. It attaches to that side; one sensor per face. It does not attach to the sealed [furnaces](Furnaces.md) (Furnace, Smoker, Crude Blast Furnace, Kiln, Annealing Furnace): they have no opening for it. Being unwatchable is the price of a sealed furnace.
+Right-click a face of a [Crucible](Crucible.md) or an **Improved Furnace** with it. It attaches to that side; one sensor per face, and it shows on that face as a short probe on a collar. It does not attach to the sealed [furnaces](Furnaces.md) (Furnace, Smoker, Crude Blast Furnace, Kiln, Annealing Furnace): they have no opening for it. Being unwatchable is the price of a sealed furnace.
 
 Link it to the Controller with a [Data Connector](Data_Connector.md) and read it with an *Input* card of signal *Temperature* on the [Programmer](Programming.md), then compare the reading with *Greater Than* / *Less Than*. It reads in steps of **10 Tu**, fine enough to hold steel's 60 Tu window.
 

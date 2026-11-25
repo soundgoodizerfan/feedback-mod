@@ -39,6 +39,16 @@ public interface Fittable {
         return getSidedFitting(side) != null;
     }
 
+    /** Whether anything at all is fitted; a holder that keeps a {@link FittingStore} answers from it without walking the faces. */
+    default boolean hasFittings() {
+        if (!getUpgrades().isEmpty())
+            return true;
+        for (Direction side : Direction.values())
+            if (getSidedFitting(side) != null)
+                return true;
+        return false;
+    }
+
     /** Whether this holder will accept the given fitting on the given face. */
     default boolean canMount(SidedFitting fitting, Direction side) {
         return true;

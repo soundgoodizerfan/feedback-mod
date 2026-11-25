@@ -9,8 +9,21 @@ import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
+import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
+import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
+import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.fitting.RadiatorFitting;
+import io.github.soundgoodizerfan.feedback.fitting.StarterFitting;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -42,7 +55,13 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * Target speed is the design's peak-torque RPM scaled by the throttle. It burns fuel from its tank
  * (spec 9.1): power scales with the fuel's flame temperature, and the compression ratio decides
- * whether the fuel's ignition point suits it (see {@link Compression}). No heat model yet.
+ * whether the fuel's ignition point suits it (see {@link Compression}).
+ * <p>
+ * <b>Heat.</b> The engine is a {@link ThermalBody}: a running engine warms its own body ({@link VehicleTuning#ENGINE_HEAT_WORK_PER_MB}
+ * of Work a tick per mB of displacement, scaled by opening and the fuel) and sheds heat through the air like any body, plus through a
+ * fitted {@link RadiatorFitting} (more with coolant in its tank). Above {@link VehicleTuning#ENGINE_COMFORT_TU} power falls, to a floor;
+ * above its metal's service temperature the body takes misuse wear into {@link #condition}, with a warning smoke; near the metal's melting
+ * point it seizes and will not run until it has cooled. It steps only while it is warm or running; a cold idle engine is skipped.
  * <p>
  * <b>Off when placed.</b> With no fuel there is nothing else to make starting it an act, and a
  * source that ran from placement would spin whatever it was set against before the build was
@@ -57,7 +76,7 @@ import org.jetbrains.annotations.Nullable;
  * box ({@link io.github.soundgoodizerfan.feedback.vehicle.CarriedMass}).
  */
 public class EngineBlockEntity extends RotationNode implements Switchable, Analog, DataNode, io.github.soundgoodizerfan.feedback.vehicle.VehiclePart,
-        io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
+        io.github.soundgoodizerfan.feedback.fitting.StoredFittable, io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody {
 
     private final io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings = new io.github.soundgoodizerfan.feedback.fitting.FittingStore();
 
@@ -65,6 +84,33 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     public io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings() {
         return fittings;
     }
+
+    /** Only a starter and a radiator fit an engine, one to a face. */
+    @Override
+    public boolean canMount(io.github.soundgoodizerfan.feedback.fitting.SidedFitting fitting, Direction side) {
+        return fitting instanceof StarterFitting || fitting instanceof RadiatorFitting;
+    }
+
+    /** Heat of the body in Tu; stepped by {@link #heat}. */
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
+    /** Set when the body got too hot; the engine will not run until it has cooled below its metal's service temperature. */
+    private boolean seized;
+    private final Catchup catchup = new Catchup();
+    /** The room's temperature seen on the last heat step, and whether the first step after a load has run (it settles what a closed chunk cooled). */
+    private float ambientTu = ThermalTuning.AMBIENT_TU.value();
+    private boolean heatLoaded;
+    /** The design metal's service temperature and melting point, read once and dropped whenever the design is (re)loaded; NaN until read. */
+    private float serviceTu = Float.NaN, meltTu = Float.NaN;
+    /** Game time of the last flat-battery click, so a held key or a controller does not click every tick. */
+    private long lastClickAt = -1000L;
+    private static final long CLICK_GAP_TICKS = 20L;
+    /** The radiator's coolant: any liquid; it adds thermal mass and carries heat to the fins while a radiator is fitted. */
+    private final FluidTank coolant = new FluidTank(VehicleTuning.ENGINE_COOLANT_MB, fluid -> !fluid.getFluidType().isLighterThanAir()) {
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+        }
+    };
 
     /** How far the curve may move, in Su, before the network is told. */
     private static final float RECALC_SU = 1f;
@@ -143,7 +189,132 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     @Override
     public Su getCapacitySu() {
         Material m = material();
-        return running && power > 0f && missTicks == 0 && m != null ? new Su(design.torqueAt(new Rpm(Math.abs(getRpm().value())), m).value() * opening() * power * condition) : NO_SU;
+        return running && power > 0f && missTicks == 0 && m != null ? new Su(design.torqueAt(new Rpm(Math.abs(getRpm().value())), m).value() * opening() * power * condition * heatFactor()) : NO_SU;
+    }
+
+    // --- heat ---------------------------------------------------------------------------------
+
+    /** The share of full power left to a body this hot: 1 up to the comfortable band, falling to a floor, never to nothing. */
+    private float heatFactor() {
+        return Math.max(VehicleTuning.ENGINE_DERATE_FLOOR,
+                1f - VehicleTuning.ENGINE_DERATE_PER_TU * Math.max(0f, temperature - VehicleTuning.ENGINE_COMFORT_TU.value()));
+    }
+
+    @Override
+    public Tu getTemperature() {
+        return new Tu(temperature);
+    }
+
+    @Override
+    public void setTemperature(Tu tu) {
+        temperature = tu.value();
+    }
+
+    /** The design's metal: its specific heat times the design's mass, plus the coolant held while a radiator is fitted. */
+    @Override
+    public ThermalMass getThermalMass() {
+        Material m = material();
+        float metal = design == null || m == null ? 50f
+                : design.mass().value() * m.thermal().specificHeat().map(s -> s.workPerMuPerTu()).orElse(0.5f);
+        return new ThermalMass(metal + (hasRadiator() ? coolant.getFluidAmount() * VehicleTuning.COOLANT_WORK_PER_MB_PER_TU : 0f));
+    }
+
+    /** The air leak every body has, plus a radiator's fins: the full figure with coolant in the tank, a share of it dry. */
+    @Override
+    public Conductance getLeak() {
+        float radiator = !hasRadiator() ? 0f
+                : VehicleTuning.RADIATOR_CONDUCTANCE.workPerTickPerTu() * (coolant.isEmpty() ? VehicleTuning.RADIATOR_COOLANT_SHARE : 1f);
+        return new Conductance(VehicleTuning.ENGINE_AIR_LEAK.workPerTickPerTu() + radiator);
+    }
+
+    private boolean hasRadiator() {
+        for (Direction d : Direction.values())
+            if (fittings.get(d) instanceof RadiatorFitting)
+                return true;
+        return false;
+    }
+
+    @Nullable
+    private StarterFitting starter() {
+        for (Direction d : Direction.values())
+            if (fittings.get(d) instanceof StarterFitting s)
+                return s;
+        return null;
+    }
+
+    /** The coolant tank as a fluid handler on a face that carries a radiator, which is what the pipe system reaches; nothing on any other face. */
+    @Nullable
+    public IFluidHandler coolantHandler(@Nullable Direction side) {
+        return side != null && fittings.get(side) instanceof RadiatorFitting ? coolant : null;
+    }
+
+    /** Whether the body got too hot and will not run until it has cooled. */
+    public boolean isSeized() {
+        return seized;
+    }
+
+    /**
+     * One tick of the engine's heat: catch up what a closed chunk cooled, warm the body from the burn, shed heat to the air and the
+     * radiator, then the consequences of how hot it is. A cold, idle engine is skipped.
+     */
+    private void heat(Level level, BlockPos pos) {
+        // An engine that is off, not seized and settled at the room's temperature has nothing to step: no lookups. The ambient seen on the
+        // last step is reused, and a step is forced now and then (and on the first tick after a load, which also settles what a closed chunk cooled).
+        if (heatLoaded && !running && !seized && Math.abs(temperature - ambientTu) < 0.5f && level.getGameTime() % 200 != 0)
+            return;
+        Tu ambient = AmbientTable.at(level);
+        ambientTu = ambient.value();
+        long gap = catchup.take(level);
+        heatLoaded = true;
+        if (gap > 0)
+            Catchup.settle(this, FireSpan.NONE, ambient, gap);
+        boolean active = running && power > 0f && design != null;
+        if (active)
+            Heat.warm(this, VehicleTuning.ENGINE_HEAT_WORK_PER_MB * design.displacementMb() * opening() * power);
+        if (active || Math.abs(temperature - ambientTu) > 0.5f)
+            Heat.tick(this, ambient, ambient, false);
+        if (Float.isNaN(serviceTu)) {
+            Material m = material();
+            if (m == null)
+                return;
+            serviceTu = m.thermal().serviceTemperature().map(t -> t.value()).orElse(Float.MAX_VALUE);
+            meltTu = m.thermal().meltingPoint().map(t -> t.value()).orElse(Float.MAX_VALUE);
+        }
+        float service = serviceTu;
+        if (seized && temperature < service) {
+            seized = false;
+            setChanged();
+        }
+        float seizeAt = meltTu * VehicleTuning.ENGINE_SEIZE_SHARE;
+        if (temperature >= seizeAt) {
+            // Seizing locks the engine; what it costs is how far past the seize point the body stays and for how long, a tick at a time.
+            if (!seized && running)
+                seize(level, pos);
+            condition = Math.max(VehicleTuning.ENGINE_CONDITION_FLOOR, condition - VehicleTuning.ENGINE_SEIZE_WEAR_PER_TICK
+                    * (temperature - seizeAt) / VehicleTuning.ENGINE_HEAT_WEAR_SCALE_TU.value()
+                    * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(build));
+            setChanged();
+        }
+        if (temperature > service) {
+            condition = Math.max(VehicleTuning.ENGINE_CONDITION_FLOOR, condition - VehicleTuning.ENGINE_HEAT_WEAR_PER_TICK
+                    * (temperature - service) / VehicleTuning.ENGINE_HEAT_WEAR_SCALE_TU.value()
+                    * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(build));
+            setChanged();
+        }
+        if (temperature > service * VehicleTuning.ENGINE_WARN_SHARE && level.getGameTime() % 10 == 0 && level instanceof net.minecraft.server.level.ServerLevel server) {
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 2, 0.2, 0.1, 0.2, 0.01);
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LAVA_EXTINGUISH, net.minecraft.sounds.SoundSource.BLOCKS, 0.3f, 1.4f);
+        }
+    }
+
+    /** Too hot to run: it stops and stays stopped until it has cooled below its metal's service temperature. */
+    private void seize(Level level, BlockPos pos) {
+        seized = true;
+        running = false;
+        power = 0f;
+        setChanged();
+        level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ANVIL_LAND, net.minecraft.sounds.SoundSource.BLOCKS, 0.8f, 0.6f);
+        RotationPropagator.rebuildFrom(level, pos);
     }
 
     private float opening() {
@@ -186,6 +357,23 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     public void setEngaged(boolean engaged) {
         if (level == null || level.isClientSide || running == engaged)
             return;
+        if (engaged) {
+            // A seized engine will not turn; a fitted starter turns it over on the battery it touches, and a flat battery gives no start.
+            if (seized)
+                return;
+            StarterFitting starter = starter();
+            if (starter != null) {
+                if (!starter.crank()) {
+                    // A flat battery clicks, but not on every call: a held switch or a controller asks every tick.
+                    if (level.getGameTime() - lastClickAt >= CLICK_GAP_TICKS) {
+                        lastClickAt = level.getGameTime();
+                        level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.COMPARATOR_CLICK, net.minecraft.sounds.SoundSource.BLOCKS, 0.5f, 0.6f);
+                    }
+                    return;
+                }
+                level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.PISTON_EXTEND, net.minecraft.sounds.SoundSource.BLOCKS, 0.4f, 1.8f);
+            }
+        }
         running = engaged;
         setChanged();
         // Becoming a source or ceasing to be one changes who drives the run: rebuild it, as the
@@ -197,6 +385,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
 
     static void serverTick(Level level, BlockPos pos, BlockState state, EngineBlockEntity be) {
         be.burn(level, pos);
+        be.heat(level, pos);
         be.wearPlug(level);
         be.followTorqueCurve();
         be.carryMass(level, pos);
@@ -309,6 +498,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
         design = input.get(FVehicles.ENGINE_DESIGN.get());
+        serviceTu = Float.NaN;
         build = input.get(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get());
         plugWear = input.getOrDefault(FVehicles.PLUG_WEAR.get(), 0f);
     }
@@ -336,6 +526,10 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         fittings.save(tag);
         tag.putFloat("Throttle", throttle);
         tag.putFloat("Condition", condition);
+        tag.putFloat("Temperature", temperature);
+        tag.putBoolean("Seized", seized);
+        tag.put("Coolant", coolant.writeToNBT(registries, new CompoundTag()));
+        catchup.save(tag, level);
         CompoundTag fuelTag = new CompoundTag();
         fuel.save(fuelTag);
         tag.put("Fuel", fuelTag);
@@ -345,12 +539,18 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
+        serviceTu = Float.NaN;
         build = tag.contains("Build") ? io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Build")).result().orElse(null) : null;
         plugWear = tag.getFloat("PlugWear");
         running = tag.getBoolean("Running");
         fittings.load(tag, this);
         throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 0;
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
+        seized = tag.getBoolean("Seized");
+        if (tag.contains("Coolant"))
+            coolant.readFromNBT(registries, tag.getCompound("Coolant"));
+        catchup.load(tag);
         if (tag.contains("Fuel"))
             fuel.load(tag.getCompound("Fuel"));
     }

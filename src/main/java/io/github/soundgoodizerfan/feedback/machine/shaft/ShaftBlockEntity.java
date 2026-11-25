@@ -72,7 +72,7 @@ public class ShaftBlockEntity extends RotationNode implements Wearing, io.github
     public boolean addUpgrade(io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting upgrade) {
         boolean added = fittings.upgrades().add(upgrade);
         if (added) {
-            setChanged();
+            syncFittings();
             if (level != null && !level.isClientSide)
                 io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator.rebuildFrom(level, worldPosition);
         }

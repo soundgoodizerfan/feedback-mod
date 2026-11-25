@@ -27,6 +27,14 @@ public class WearingComponent implements IBlockComponentProvider {
             if (plug != null)
                 tooltip.add(Component.translatable("feedback.readout.plug", plug));
         }
+        if (accessor.getServerData().contains(WearingServerData.DAMAGE)) {
+            // The engine's other wear: what knock and heat took, against the plug's wear from running time above.
+            Component damage = Readout.conditionReading(accessor.getServerData().getFloat(WearingServerData.DAMAGE));
+            if (damage != null)
+                tooltip.add(Component.translatable("feedback.readout.engine_damage", damage));
+        }
+        if (accessor.getServerData().getBoolean(WearingServerData.SEIZED))
+            tooltip.add(Readout.gloss(Component.translatable("feedback.readout.seized").withStyle(net.minecraft.ChatFormatting.GOLD), "feedback.gloss.seized"));
         if (!accessor.getServerData().contains(WearingServerData.CONDITION))
             return;
         Component condition = Readout.conditionReading(accessor.getServerData().getFloat(WearingServerData.CONDITION));

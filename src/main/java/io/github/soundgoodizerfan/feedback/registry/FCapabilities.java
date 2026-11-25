@@ -91,6 +91,7 @@ public class FCapabilities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.GAS_CENTRIFUGE.get(), (c, side) -> c.handler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.AIR_VALVE.get(), (valve, side) -> valve.handler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.COOLANT_PORT.get(), (port, side) -> port.handler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FVehicles.ENGINE_ENTITY.get(), (engine, side) -> engine.coolantHandler(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.SPENT_FUEL_POOL.get(), (pool, side) -> pool.handler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.BOILER.get(),
                 (boiler, side) -> new BoilerFluidHandler(boiler));

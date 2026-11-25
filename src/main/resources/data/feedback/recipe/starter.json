@@ -1,0 +1,14 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "S": { "item": "feedback:wrought_iron_plate" },
+    "M": { "item": "feedback:electromagnet" },
+    "W": { "item": "feedback:copper_wire" },
+    "G": { "item": "feedback:small_cog" }
+  },
+  "pattern": [ "SSS", "MWG" ],
+  "result": { "count": 1, "id": "feedback:starter" },
+  "tool": [ { "ability": "feedback:driver", "wear": 1 } ],
+  "fasteners": { "count": 3, "floor": 1, "forms": [ "machine_bolt" ] },
+  "school": "electrical:2"
+}
