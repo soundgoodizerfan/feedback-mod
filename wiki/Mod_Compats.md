@@ -134,40 +134,90 @@ The six primal essentias:
 | Ordo | 1500 | 3.1 | 130 | 2 | 30 | 0.05 | Highest enchantability of the six |
 | Perditio | 1100 | 2.0 | 35 | 0.4 | 8 | 0.95 | Brittle, toxic, strong rectifier |
 
-#### Mixing thaumium
+#### Thaumium and aspect alloys
 
 Molten essentia mixed into molten iron in a Crucible makes an iron alloy. The mix has to land inside the window, and JEI's *Mixing* card lists each one.
 
 | Alloy | Iron | Essentia |
 |---|---|---|
 | **Thaumium** | 90 to 95% | Praecantatio and Terra, 2.5 to 5% each |
-| **Aer Thaumium**, **Ignis Thaumium** and so on, one for each aspect | 90 to 95% | that aspect, 5 to 10% |
+| Each [aspect alloy](#aspect-alloy-names) | 90 to 95% | its aspect, 5 to 10% |
 
-Each alloy has its own figures. Thaumium uses Thaumaturge's own items; the aspect alloys make the usual tinted form items. All are magnetic except Alienis, Perditio, Permutatio and Sensus Thaumium.
+Each alloy has its own figures. Thaumium uses Thaumaturge's own items; the aspect alloys make the usual tinted form items. All are magnetic except Xenium, Lysium, Allagium and Aesthium.
+
+#### Thaumaturge's crucible
+
+Each aspect alloy ingot can also be made in Thaumaturge's own crucible: drop an iron ingot into a crucible holding **10** of the alloy's aspect, and one ingot of the alloy comes out. It unlocks at the same Metallurgy research stage as thaumium and has no Thaumonomicon page of its own. A crucible holding enough for more than one recipe yields only one of them, so dissolve only the aspect you want. In that crucible, thaumium is made by Thaumaturge's own recipe.
+
+#### Aspect alloy names
+
+Each aspect has its own alloy. The six primals come first, then the compounds in alphabetical order:
+
+| Aspect | Alloy |
+|---|---|
+| Aer | Aellium |
+| Terra | Chthonium |
+| Ignis | Cindersteel |
+| Aqua | Thalassium |
+| Ordo | Eunomium |
+| Perditio | Lysium |
+| Alienis | Xenium |
+| Alkimia | Azoth |
+| Auram | Halcyon |
+| Aversio | Fangsteel |
+| Bestia | Ferinium |
+| Cognitio | Noetium |
+| Desiderium | Tantalus' Metal |
+| Exanimis | Wiedergang |
+| Fabrico | Daedalium |
+| Gelum | Rimeiron |
+| Herba | Briarsteel |
+| Humanus | Anthropium |
+| Instrumentum | Organon |
+| Lux | Dawnsteel |
+| Machina | Rotium |
+| Metallum | Adamantium |
+| Mortuus | Necrium |
+| Motus | Kinesis |
+| Permutatio | Allagium |
+| Potentia | Stormsteel |
+| Praecantatio | Goetium |
+| Praemunio | Aegis |
+| Sensus | Aesthium |
+| Spiritus | Eidolon |
+| Tenebrae | Skotium |
+| Vacuos | Kenium |
+| Victus | Quickblood |
+| Vinculum | Desmos |
+| Vitium | Miasma |
+| Vitreus | Hyalium |
+| Volatus | Pteron |
+
+#### Alloy figures
 
 Thaumium and some of the aspect alloys, the primals first:
 
 | Alloy | Hardness | Toughness | Enchantability | Stands out for |
 |---|---|---|---|---|
 | Thaumium | 14 | 60 | 22 | The alloy of Thaumaturge's own items |
-| Aer Thaumium | 7 | 22 | 24 | Lighter than most |
-| Terra Thaumium | 18 | 83 | 14 | Highest melting point and service temperature |
-| Ignis Thaumium | 10 | 27 | 20 | Glows |
-| Aqua Thaumium | 5 | 36 | 18 | Soft, low friction |
-| Ordo Thaumium | 16 | 51 | 30 | High enchantability |
-| Perditio Thaumium | 5 | 17 | 8 | Soft, brittle, corrodes easily |
-| Instrumentum Thaumium | 21 | 93 | 24 | Hardest |
-| Metallum Thaumium | 17 | 135 | 22 | Best electrical conductor, very tough |
-| Bestia Thaumium | 12 | 140 | 26 | Joint toughest |
-| Praemunio Thaumium | 14 | 140 | 14 | Joint toughest, high yield strength |
-| Machina Thaumium | 16 | 68 | 25 | Highest yield strength, low friction |
-| Praecantatio Thaumium | 10 | 32 | 36 | Highest enchantability |
-| Motus Thaumium | 11 | 38 | 27 | Lowest friction |
-| Vinculum Thaumium | 8 | 97 | 18 | Highest friction |
-| Lux Thaumium | 8 | 25 | 22 | Brightest glow |
-| Gelum Thaumium | 8 | 22 | 14 | Lowest melting point and service temperature |
-| Mortuus Thaumium | 8 | 79 | 6 | Lowest enchantability |
-| Vitium Thaumium | 7 | 25 | 22 | Most toxic, corrodes fastest |
+| Aellium | 7 | 22 | 24 | Lighter than most |
+| Chthonium | 18 | 83 | 14 | Highest melting point and service temperature |
+| Cindersteel | 10 | 27 | 20 | Glows |
+| Thalassium | 5 | 36 | 18 | Soft, low friction |
+| Eunomium | 16 | 51 | 30 | High enchantability |
+| Lysium | 5 | 17 | 8 | Soft, brittle, corrodes easily |
+| Organon | 21 | 93 | 24 | Hardest |
+| Adamantium | 17 | 135 | 22 | Best electrical conductor, very tough |
+| Ferinium | 12 | 140 | 26 | Joint toughest |
+| Aegis | 14 | 140 | 14 | Joint toughest, high yield strength |
+| Rotium | 16 | 68 | 25 | Highest yield strength, low friction |
+| Goetium | 10 | 32 | 36 | Highest enchantability |
+| Kinesis | 11 | 38 | 27 | Lowest friction |
+| Desmos | 8 | 97 | 18 | Highest friction |
+| Dawnsteel | 8 | 25 | 22 | Brightest glow |
+| Rimeiron | 8 | 22 | 14 | Lowest melting point and service temperature |
+| Necrium | 8 | 79 | 6 | Lowest enchantability |
+| Miasma | 7 | 25 | 22 | Most toxic, corrodes fastest |
 
 ### Foods
 
