@@ -29,9 +29,6 @@ public final class SpaceTuning {
     public static final double GAP_SCALE = 0.0625;
     /** The End's bearing in the Gap, degrees round the vertical (0 is the way the Gap's sky shows north-facing, see {@code GapSky}) and above the horizon. The gas giant is drawn on it. */
     public static final float END_YAW_DEG = 265f, END_PITCH_DEG = 4f;
-    /** The acid-cloud world, like the End: a point in the Gap on a fixed bearing (the one the sky draws it on), a capture sphere, and the way in and out. */
-    public static final float ACID_YAW_DEG = 205f, ACID_PITCH_DEG = 18f;
-    public static final double ACID_DISTANCE = 650, ACID_CAPTURE_RADIUS = 80, ACID_ARRIVE_Y = 300, ACID_OFFSET_SHARE = 0.1, ACID_DESCENT_DEG = 14, ACID_RETURN_CLEARANCE = 12;
     /** Blocks, in the Gap's own (scaled) size, from the Gap's origin point ({@code 0, ENTRY_Y, 0}) to the End along its bearing: about four minutes at three blocks a second (a full-size 50 a second). A guess: only play sets it. */
     public static final double END_DISTANCE = 750;
     /** A body within this many Gap blocks of the End, heading toward it, is taken in. The wider it is, the more forgiving the heading. */
