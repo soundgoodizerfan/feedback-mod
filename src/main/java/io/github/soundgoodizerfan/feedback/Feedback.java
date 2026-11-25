@@ -260,6 +260,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.BeltRunPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.BeltRunPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.BeltRunPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.PhotoPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PhotoPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PhotoPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.RadioKeyPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.RadioKeyPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.RadioKeyPayload::handle)

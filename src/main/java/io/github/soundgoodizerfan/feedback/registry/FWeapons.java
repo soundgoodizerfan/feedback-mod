@@ -97,6 +97,13 @@ public class FWeapons {
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
                     .build());
 
+    /** The picture a photograph carries. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.Photo>> PHOTO =
+            COMPONENTS.register("photo", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.Photo>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.Photo.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.Photo.STREAM_CODEC)
+                    .build());
+
     /** A radio set's band, 1 to {@code RadioTuning.BANDS}; absent reads 1. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RADIO_BAND =
             COMPONENTS.register("radio_band", () -> DataComponentType.<Integer>builder()
