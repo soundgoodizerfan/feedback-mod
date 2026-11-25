@@ -62,7 +62,7 @@ A scarce residue of electrolysing enriched water. See [Heavy Water](Heavy_Water.
 
 ## Hypochlorite Bleach
 
-Made in a Reactor from chlorine and lye. Dip a block of dyed wool, a dyed carpet, a colored bed or a banner in a vessel holding it, the way a ceramic is [glazed](Casting.md#glazing), and it comes out white; each wool block takes 250 mB and each carpet 125 mB. A banner loses its patterns. Concrete powder is not bleached.
+Made in a Reactor from chlorine and lye. Dip a block of dyed wool, a dyed carpet, a colored bed or a banner in a vessel holding it, the way a ceramic is [glazed](Casting.md#glazing), and it comes out white; each wool block takes 250 mB and each carpet 125 mB. A banner loses its patterns. Colored concrete powder dipped in it turns white, 250 mB for each block.
 
 ## Air separation
 

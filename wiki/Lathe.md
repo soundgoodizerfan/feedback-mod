@@ -35,6 +35,8 @@ There's no cutting without a bit.
 
 **Rod → Turned Rod → Swarf**
 
+A turned rod is also cut to a **Thread Cut** rod, a metal's rod with a thread on it.
+
 Like every machine, it doesn't stop when the rod is finished. Leave it and it cuts the rod away to swarf. Swarf also pops out of the top while it works.
 
 It also turns [gun parts](Gun_Parts.md):

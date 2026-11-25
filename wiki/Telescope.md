@@ -56,4 +56,4 @@ A planet you have not seen shows a dark gray line, "An empty line, waiting for a
 
 Because the tube length is its own axis, match it to the lenses: for a 300 mm objective and a 30 mm eyepiece, a 330 mm tube.
 
-See also [Optics](Optics.md) for lenses and the pyrometer.
+See also [Optics](Optics.md) for lenses and the pyrometer, and [Camera](Camera.md), which takes a photograph through a telescope.

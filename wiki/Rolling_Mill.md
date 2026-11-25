@@ -27,7 +27,7 @@ The mill has three places: the **roll**, the **workpiece**, and a **skin** for [
 
 ## What it makes
 
-**Ingot → Rod** and **Plate → Pipe**, for every metal.
+**Ingot → Rod** and **Plate → Pipe**, for every metal. A rod is rolled further to a **Thread Rolled** rod, a metal's rod with a thread on it.
 
 There's nothing further to roll a rod or a pipe into. That makes the mill more forgiving than the [hammer](Mechanical_Hammer.md): a finished piece doesn't get ruined if you leave it. But the mill keeps rolling, and **rolling a finished rod or pipe wears the roll**. So does rolling a piece that is cold-worked to its limit; anneal it first ([Work hardening](Metalworking.md#work-hardening)). Take it out promptly, or use a hopper.
 

@@ -16,6 +16,7 @@ G is Glass, W is [Copper Wire](Wire_Drawer.md) and M is Magnetite Dust. Craft it
 Place it in a line like a [cable](Copper_Cable.md). Open, it splits the line in two; welded, it joins them. Whatever is on the far side (a [Relay](Relay.md)'s electromagnet, a load, a [Current Sensor](Instruments.md#current-sensor) linked to a [Controller](Controller.md)) is what the detection turns on.
 
 - **Right-click with an empty hand** to tap it: *"Coherer tapped: grains loose, open"*.
+- A [Coherer Clapper](#coherer-clapper) seated on it taps it for you.
 - A [Controller](Controller.md) can tap it with a *Switch* card by switching it off. It can't switch it on: only a spark does.
 
 ## What a spark is
@@ -37,9 +38,22 @@ A spark is not carried along the wire. It is a flash in the air, and anything th
 
 The same trick listens to a real machine: put the coherer within 16 blocks of a breaker on a working line, and the day that breaker is opened under load, your separate alarm line switches on.
 
+## Coherer Clapper
+
+A small electromagnet and iron rod that taps the grains loose by itself. Without one, only a hand or a [Controller](Controller.md) taps the coherer.
+
+```
+W R
+P  
+```
+
+W is [Copper Wire](Wire_Drawer.md), R is a Wrought Iron Rod and P is a Wrought Iron Plate. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row, 1 screw ([Fasteners](Fasteners.md)) and Electrical Treatise I: Cells and Static Charge ([Treatise](Treatise.md)).
+
+Right-click a coherer with the clapper to seat it. After a spark welds the coherer, the clapper taps it loose about half a second later, and taps again while the grains hold. A coherer with a clapper therefore closes for a moment on each spark and then opens again.
+
 ## Left welded
 
-A welded coherer passes everything, like any wire. Forgetting to tap it is the usual failure.
+A welded coherer passes everything, like any wire. Without a clapper, forgetting to tap it is the usual failure.
 
 ## Overrun
 
