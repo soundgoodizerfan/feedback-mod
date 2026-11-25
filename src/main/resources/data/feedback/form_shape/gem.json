@@ -1,6 +1,7 @@
 {
   "forms": [
     "gem",
-    "shard"
+    "shard",
+    "crystal"
   ]
 }

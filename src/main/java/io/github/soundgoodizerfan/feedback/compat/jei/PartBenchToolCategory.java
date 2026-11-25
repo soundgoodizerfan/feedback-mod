@@ -130,7 +130,7 @@ public class PartBenchToolCategory implements IRecipeCategory<PartBenchToolCateg
             return out;
         }
         for (Material.Located l : ToolDesigns.materials(role, null, materials))
-            l.material().item(l.id(), l.form()).ifPresent(item -> out.add(new ItemStack(item, Math.min(count, item.getDefaultMaxStackSize()))));
+            l.material().stockStack(l.id(), l.form(), count).ifPresent(out::add);
         return out;
     }
 

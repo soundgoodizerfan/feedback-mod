@@ -123,6 +123,16 @@ An essentia crystal melts in a [Crucible](Crucible.md) at its aspect's melting p
 
 Every essentia crystal solders onto a [circuit board](Basic_Electronic_Circuit.md) as a switching part, and seats in a [Cat's Whisker Detector](Cats_Whisker_Detector.md) or an [Optical Terminal](Optical_Terminal.md). A higher rectifying figure makes a better crystal.
 
+An essentia crystal is also **gem stock**. A [part slot](What_a_Part_Slot_Takes.md) that takes the gem shape takes it, if the essentia has the properties the slot asks for. Shape it at a part bench such as the [Stonecutter](Stonecutter.md).
+
+One crystal makes a **tool tip**: shape it into a Tip, then put it on the tool on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). The tool takes the tip's hardness, so a tip harder than the tool's body raises what it digs (see [Tips](Tools_and_Weapons.md#tips)). The hardest tips are **Instrumentum** (180), **Vitreus** (170), **Aversio** (160) and **Terra** (150). Vitreus and Aversio are very brittle.
+
+Each essentia crystal also grinds on a [Grinding Wheel](Grinding_Wheel.md) into that essentia's **crystal plate**, as a gem does. The plate:
+
+- makes a [Resonator](Resonator.md) crystal;
+- mounts on a circuit board as a clock for Aer, Alienis, Alkimia, Aqua, Auram, Bestia, Exanimis, Fabrico, Instrumentum, Machina, Metallum, Motus, Ordo, Permutatio, Potentia, Praecantatio, Sensus, Vinculum and Volatus, and as a switching part for the other essentias;
+- makes a [Mass Probe](Instruments.md#mass-probe) from any of the essentias that mount as a clock.
+
 The six primal essentias:
 
 | Essentia | Melts at (Tu) | Density | Hardness | Toughness | Enchantability | Rectifying | Stands out for |

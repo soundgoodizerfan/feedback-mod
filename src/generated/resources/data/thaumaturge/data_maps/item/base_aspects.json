@@ -17256,6 +17256,370 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:essentia_aer_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_alienis_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_alkimia_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_aqua_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_auram_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_aversio_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_bestia_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_cognitio_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_desiderium_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_exanimis_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_fabrico_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_gelum_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_herba_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_humanus_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_ignis_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_instrumentum_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_lux_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_machina_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_metallum_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_mortuus_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_motus_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_ordo_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_perditio_crystal_plate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_permutatio_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_potentia_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_praecantatio_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_praemunio_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_sensus_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_spiritus_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_tenebrae_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_terra_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_vacuos_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:essentia_vent": [
       {
         "amount": 2,
@@ -17271,6 +17635,60 @@
       },
       {
         "amount": 20,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_victus_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_vinculum_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_vitium_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_vitreus_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:essentia_volatus_crystal_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
         "aspect": "thaumaturge:ordo"
       }
     ],

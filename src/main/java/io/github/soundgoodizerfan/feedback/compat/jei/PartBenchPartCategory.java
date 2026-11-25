@@ -84,15 +84,15 @@ public class PartBenchPartCategory implements IRecipeCategory<PartBenchShaping.O
         ClientMaterials.get().forEach((id, m) -> {
             // Same trait gate as PartBenchShaping.check: a food shape takes only dough (kneadable).
             if (MaterialNeeds.hasAll(m, option.shaping().traits()))
-                m.items(id).entrySet().stream()
-                        .filter(e -> ModularType.fits(option.shaping().stock(), e.getKey()))
-                        .filter(e -> option.stockMb(1f) % FormItems.volume(e.getKey()) == 0)
-                        .findFirst().ifPresent(e -> {
-                            stock.add(new ItemStack(e.getValue(), option.stockMb(1f) / FormItems.volume(e.getKey())));
+                m.stockForms(id).stream()
+                        .filter(f -> ModularType.fits(option.shaping().stock(), f))
+                        .filter(f -> option.stockMb(1f) % FormItems.volume(f) == 0)
+                        .findFirst().ifPresent(f -> m.stockStack(id, f, option.stockMb(1f) / FormItems.volume(f)).ifPresent(s -> {
+                            stock.add(s);
                             ItemStack part = new ItemStack(BuiltInRegistries.ITEM.get(option.shaping().item()));
-                            part.set(FDataComponents.MADE_OF.get(), new MadeOf(id, e.getKey(), option.cells(), option.variant().name()));
+                            part.set(FDataComponents.MADE_OF.get(), new MadeOf(id, f, option.cells(), option.variant().name()));
                             parts.add(part);
-                        });
+                        }));
         });
         builder.addInputSlot(1, 14).setStandardSlotBackground().addItemStacks(stock);
         builder.addInputSlot(1, 34).setStandardSlotBackground().addItemStack(new ItemStack(FModular.HAFTED_TOOL.get()));

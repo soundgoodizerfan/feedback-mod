@@ -37,7 +37,6 @@
   },
   "luminance": 6,
   "exclude": [
-    "crystal_plate",
     "dust"
   ],
   "enchantability": 14,

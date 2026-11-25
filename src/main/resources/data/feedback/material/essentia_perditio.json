@@ -36,7 +36,6 @@
     "reflectivity": 0.02
   },
   "exclude": [
-    "crystal_plate",
     "dust"
   ],
   "enchantability": 8,

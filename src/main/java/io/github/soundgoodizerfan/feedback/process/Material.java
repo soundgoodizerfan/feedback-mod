@@ -1162,10 +1162,32 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
 
     /** What a form step takes: the item, and for a shaped part also its material, so copper's cylinder is not steel's. */
     public java.util.Optional<net.minecraft.world.item.crafting.Ingredient> ingredient(ResourceLocation id, String form) {
-        return item(id, form).map(i -> i instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem
+        var own = item(id, form).map(i -> i instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem
                 ? net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
                 io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new MadeOf(id, PART_STOCK, 1), i)
                 : net.minecraft.world.item.crafting.Ingredient.of(i));
+        // A form that is only another mod's component-told item (an essentia crystal) is asked for by material and form.
+        if (own.isPresent() || !componentForm(form))
+            return own;
+        return java.util.Optional.of(new MaterialIngredient(java.util.Optional.of(form), java.util.Optional.empty(), java.util.Optional.empty(),
+                Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, java.util.Optional.of(id), List.of()).toVanilla());
+    }
+
+    private boolean componentForm(String form) {
+        return accepts().getOrDefault(form, List.of()).stream().anyMatch(e -> ComponentItem.parse(e).isPresent());
+    }
+
+    /** The forms this material can be stock in: those it has items of, and those that are only a component-told item. */
+    public java.util.Set<String> stockForms(ResourceLocation id) {
+        java.util.Set<String> out = new java.util.LinkedHashSet<>(items(id).keySet());
+        accepts().keySet().stream().filter(this::componentForm).forEach(out::add);
+        return out;
+    }
+
+    /** {@code count} of this material in {@code form} as a stack: its own item, else the accepted one that stands for it. */
+    public java.util.Optional<net.minecraft.world.item.ItemStack> stockStack(ResourceLocation id, String form, int count) {
+        return stack(id, form).or(() -> componentForm(form) ? acceptedStacks(form).stream().findFirst() : java.util.Optional.empty())
+                .map(s -> s.copyWithCount(Math.min(count, s.getMaxStackSize())));
     }
 
     /** The stock a machined part is recorded as made of: what mends it, and what a form step makes. */
