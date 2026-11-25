@@ -1,0 +1,7 @@
+{
+  "from": "rod",
+  "to": "rolled_thread_rod",
+  "operation": "roll",
+  "base": 10,
+  "slope": 1.6
+}

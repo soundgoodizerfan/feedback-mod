@@ -1,0 +1,7 @@
+{
+  "from": "turned_rod",
+  "to": "cut_thread_rod",
+  "operation": "turn",
+  "base": 0,
+  "slope": 0.9
+}

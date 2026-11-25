@@ -1603,6 +1603,8 @@
   "form.feedback.scrap": "%s Scrap",
   "form.feedback.drilled_plate": "Drilled %s Plate",
   "form.feedback.turned_rod": "Turned %s Rod",
+  "form.feedback.rolled_thread_rod": "%s Rod, Thread Rolled",
+  "form.feedback.cut_thread_rod": "%s Rod, Thread Cut",
   "form.feedback.ground_ingot": "Ground %s Ingot",
   "form.feedback.swarf": "%s Swarf",
   "form.feedback.dust": "%s Dust",
