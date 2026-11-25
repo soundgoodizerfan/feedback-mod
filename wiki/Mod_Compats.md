@@ -12,7 +12,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [Flywheel](#flywheel) | Required | Rendering on the client |
 | [JEI](#jei) | Optional | Recipe, process and info pages |
 | [Jade](#jade) | Optional | Readouts on blocks and villagers |
-| [Thaumaturge](#thaumaturge) | Optional | Aspects on Feedback items, flux and essentia machines, essentia turned to gas, a vis-fed current source, thaumium alloys |
+| [Thaumaturge](#thaumaturge) | Optional | Aspects on Feedback items, flux and essentia machines, essentia turned to gas, a vis-fed current source, thaumium alloys, wand caps and rods |
 | [Iris](#iris) | Optional | Shader packs: the fluid caster's flame follows the pack |
 | [Serene Seasons](#serene-seasons) | Optional | The season shifts the Overworld's room temperature |
 | [Legendary Survival Overhaul](#legendary-survival-overhaul) | Optional | Body temperature and thirst follow Feedback's rooms, machines, armor, food and fluids |
@@ -104,6 +104,15 @@ Thaumaturge items that match a Feedback material are read as that material in ev
 - Cinderpearl is a pyrophoric herb: it burns at a low temperature, short and hot, as fuel.
 - Fabric is cloth, mirrored glass is mirrored glass and tallow is tallow. These three have no items of their own, and anything tagged tallow or animal fat from any mod counts as tallow.
 - Flux Goo, Thaumaturge's fluid, is a corrosive acidic sludge with pH 3.
+
+### Wand caps and rods
+
+Feedback adds wand parts made of its own materials. They work in Thaumaturge's wand assembly, which offers recipes that combine them with Thaumaturge's own caps and rods.
+
+- **Wand caps**: Steel Wand Cap, Bronze Wand Cap, Tin Wand Cap, Aluminum Wand Cap, Titanium Wand Cap and Platinum Wand Cap.
+- **Wand rods**: Bone Wand Rod, Bamboo Wand Rod, Amber Wand Rod and Quartz Glass Wand Rod.
+
+A cap's vis cost is lower the better its metal conducts electricity, with silver as the reference. Its craft cost rises with how high the metal melts. A rod holds more vis the better its material insulates and the denser it is. See [Materials](Materials.md) for these properties.
 
 ### Doped thaumium
 
