@@ -87,7 +87,7 @@ public class FCreativeTabs {
 
     /** Instruments by what they read: size and mass, heat and pressure, light and field, electricity, matter. */
     private static final List<DeferredItem<?>> INSTRUMENTS = of(FItems.INSTRUMENT_BAG,
-            FItems.CALIPERS, FModular.DRAW_GAUGE, FModular.BALANCE_SCALE, FModular.SPECTROMETER, FModular.RADIO_SET, FModular.HAMMER_CAM, FItems.SORT_GAUGE,
+            FItems.CALIPERS, FModular.DRAW_GAUGE, FModular.BALANCE_SCALE, FModular.SPECTROMETER, FModular.RADIO_SET, FModular.HAMMER_CAM, FItems.COHERER_CLAPPER, FItems.SORT_GAUGE,
             FItems.THERMOMETER, FItems.PYROMETER, FItems.PRESSURE_GAUGE, FItems.HYDROMETER,
             FItems.LIGHT_METER, FItems.REACH_PROBE, FItems.XP_METER, FItems.FLUX_METER,
             FItems.ELECTROSCOPE, FItems.GALVANOMETER, FItems.COMPONENT_TESTER, FItems.OSCILLOSCOPE,

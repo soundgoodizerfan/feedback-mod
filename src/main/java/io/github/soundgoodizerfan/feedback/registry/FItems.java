@@ -305,6 +305,8 @@ public class FItems {
     /** A rod of a conducting material that carries the arc; consumed by nature. See {@code ElectrodeItem}. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem> ARC_ELECTRODE = ITEMS.register("arc_electrode",
             () -> new io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));
+    /** A coherer's clapper: a small electromagnet and rod that taps the grains loose after a spark (seat it on the coherer). */
+    public static final DeferredItem<net.minecraft.world.item.Item> COHERER_CLAPPER = ITEMS.registerSimpleItem("coherer_clapper");
     public static final DeferredItem<BlockItem> POWER_CUTTER = ITEMS.registerSimpleBlockItem(FBlocks.POWER_CUTTER);
     public static final DeferredItem<BlockItem> AUTO_ENGINEER = ITEMS.registerSimpleBlockItem(FBlocks.AUTO_ENGINEER);
     /** The cutting element of a Power Cutter, of a material stamped on it. See {@code CutterHeadItem}. */

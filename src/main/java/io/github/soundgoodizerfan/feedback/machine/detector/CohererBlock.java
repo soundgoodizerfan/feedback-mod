@@ -55,6 +55,28 @@ public class CohererBlock extends Block implements EntityBlock {
         builder.add(WELDED);
     }
 
+    /** The clapper's tick ({@link CohererBlockEntity#clap}). */
+    @Override
+    protected void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
+        if (level.getBlockEntity(pos) instanceof CohererBlockEntity coherer)
+            coherer.clap();
+    }
+
+    /** A clapper in hand is seated; with the coherer already carrying one, nothing happens. */
+    @Override
+    protected net.minecraft.world.ItemInteractionResult useItemOn(net.minecraft.world.item.ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                                                  Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
+        if (stack.is(io.github.soundgoodizerfan.feedback.registry.FItems.COHERER_CLAPPER.get()) && level.getBlockEntity(pos) instanceof CohererBlockEntity coherer) {
+            if (!level.isClientSide && !coherer.hasClapper()) {
+                coherer.seatClapper(true);
+                if (!player.hasInfiniteMaterials())
+                    stack.shrink(1);
+            }
+            return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof CohererBlockEntity coherer) {

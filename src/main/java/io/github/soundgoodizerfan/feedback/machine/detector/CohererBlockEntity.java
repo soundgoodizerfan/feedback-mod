@@ -37,6 +37,30 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
 
     private boolean welded;
     private float condition = 1f;
+    /** Whether a clapper is seated: a small electromagnet and rod that taps the grains loose by itself after a spark. */
+    private boolean clapper;
+
+    public boolean hasClapper() {
+        return clapper;
+    }
+
+    public void seatClapper(boolean seated) {
+        clapper = seated;
+        setChanged();
+        if (seated && welded)
+            scheduleClap();
+    }
+
+    private void scheduleClap() {
+        if (level != null && !level.isClientSide)
+            level.scheduleTick(worldPosition, getBlockState().getBlock(), ElectricMachineTuning.COHERER_CLAPPER_DELAY_TICKS);
+    }
+
+    /** The clapper's tick: a tap, and another a little later if the grains held (a sintered coherer needs more of them). */
+    public void clap() {
+        if (clapper && welded && !tap() && welded)
+            scheduleClap();
+    }
 
     public CohererBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.COHERER.get(), pos, state);
@@ -65,6 +89,8 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
 
     private void set(boolean value) {
         welded = value;
+        if (value && clapper)
+            scheduleClap();
         setChanged();
         if (level != null) {
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CohererBlock.WELDED, value));
@@ -112,6 +138,7 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putBoolean("Welded", welded);
+        tag.putBoolean("Clapper", clapper);
         tag.putFloat("Condition", condition);
     }
 
@@ -119,6 +146,7 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         welded = tag.getBoolean("Welded");
+        clapper = tag.getBoolean("Clapper");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 }

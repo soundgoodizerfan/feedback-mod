@@ -1050,6 +1050,8 @@
   "item.feedback.spectrometer": "Spectrometer",
   "item.feedback.radio_set": "Radio Set",
   "item.feedback.hammer_cam": "Hammer Cam",
+  "item.feedback.coherer_clapper": "Coherer Clapper",
+  "feedback.jei.info.coherer_clapper": "A small electromagnet and iron rod that taps a coherer's grains loose after a spark welds them, and again a moment later while they stay welded. Use it on a coherer to seat it. Without one the coherer stays welded until someone taps it by hand or a controller switches it off.",
   "tooltip.feedback.hammer_cam.blank": "Blank: plays nothing.",
   "tooltip.feedback.hammer_cam.pattern": "Cut for: %s",
   "message.feedback.hammer.no_cam": "The hammer has no cam seated.",

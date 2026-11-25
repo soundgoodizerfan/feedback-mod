@@ -536,6 +536,8 @@ public final class ElectricMachineTuning {
     public static final float FENCE_HIT_AMPS = 1f;
 
     /** Placeholder. Coherer: amps its welded tube carries before sintering; condition lost per tick per amp over; floor (a tap then frees it with probability condition). */
+    /** Ticks after a spark welds the grains before a seated clapper taps them loose, and again while they stay welded. */
+    public static final int COHERER_CLAPPER_DELAY_TICKS = 10;
     public static final float COHERER_RATING_AMPS = 2f;
 
     public static final float COHERER_SINTER_PER_AMP = 0.002f;
