@@ -74,7 +74,24 @@ public class CohererBlock extends Block implements EntityBlock {
             }
             return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
+        // Fresh grains: any dust that conducts (a property of the material, not an item) is shaken in, one dust a refill.
+        if (level.getBlockEntity(pos) instanceof CohererBlockEntity coherer && conductingDust(level, stack)) {
+            if (!level.isClientSide) {
+                coherer.refill();
+                if (!player.hasInfiniteMaterials())
+                    stack.shrink(1);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.coherer.refilled"));
+            }
+            return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    /** A dust whose material conducts: the grains a coherer is filled with. */
+    private static boolean conductingDust(Level level, net.minecraft.world.item.ItemStack stack) {
+        return io.github.soundgoodizerfan.feedback.process.Material.find(io.github.soundgoodizerfan.feedback.process.ClientMaterials.on(level), stack)
+                .filter(found -> found.form().equals("dust") && found.material().electrical().conductivity().isPresent())
+                .isPresent();
     }
 
     @Override
@@ -82,6 +99,7 @@ public class CohererBlock extends Block implements EntityBlock {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof CohererBlockEntity coherer) {
             boolean welded = coherer.isEngaged();
             io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable(!welded ? "feedback.coherer.loose"
+                    : coherer.isFused() ? "feedback.coherer.fused"
                     : coherer.tap() ? "feedback.coherer.tapped" : "feedback.coherer.stuck"));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

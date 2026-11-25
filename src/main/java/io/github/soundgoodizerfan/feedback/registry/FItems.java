@@ -379,6 +379,9 @@ public class FItems {
     /** Held on a pasted board for a joint; heated at any fire. */
     public static final DeferredItem<Item> SOLDERING_IRON = ITEMS.registerItem("soldering_iron",
             io.github.soundgoodizerfan.feedback.item.SolderingIronItem::new, new Item.Properties());
+    /** A braid of copper wire that soaks molten solder off a joint, so the soldering iron can lift a part off a finished circuit. It is used up as it soaks. */
+    public static final DeferredItem<Item> WICK = ITEMS.registerItem("wick", Item::new,
+            new Item.Properties().durability(io.github.soundgoodizerfan.feedback.item.ItemTuning.WICK_LIFTS));
     /** Says how a placed part responds, at its own resolution. */
     public static final DeferredItem<Item> COMPONENT_TESTER = ITEMS.registerItem("component_tester",
             io.github.soundgoodizerfan.feedback.item.ComponentTesterItem::new, new Item.Properties().stacksTo(1));

@@ -417,6 +417,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.PHOSPHOR_SCREEN.get(), "phosphor_screen");
         info(registration, FItems.REFLOW_OVEN.get(), "reflow_oven");
         info(registration, FItems.SOLDERING_IRON.get(), "soldering_iron");
+        info(registration, FItems.WICK.get(), "wick");
         info(registration, FItems.ARC_WELDER.get(), "arc_welder");
         info(registration, FItems.MASS_PROBE.get(), "mass_probe");
         info(registration, FItems.TRACE_BOARD.get(), "trace_board");

@@ -36,6 +36,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CohererBlockEntity extends SparkDetectorBlockEntity implements Switchable, Wearing, io.github.soundgoodizerfan.feedback.instrument.Testable {
 
     private boolean welded;
+    /** Grains sintered into one lump by a spark past {@link ElectricMachineTuning#COHERER_FUSE_SPARK_AMPS}: welded for good until refilled. */
+    private boolean fused;
     private float condition = 1f;
     /** Whether a clapper is seated: a small electromagnet and rod that taps the grains loose by itself after a spark. */
     private boolean clapper;
@@ -47,7 +49,7 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
     public void seatClapper(boolean seated) {
         clapper = seated;
         setChanged();
-        if (seated && welded)
+        if (seated && welded && !fused)
             scheduleClap();
     }
 
@@ -58,8 +60,19 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
 
     /** The clapper's tick: a tap, and another a little later if the grains held (a sintered coherer needs more of them). */
     public void clap() {
-        if (clapper && welded && !tap() && welded)
+        if (clapper && welded && !fused && !tap() && welded)
             scheduleClap();
+    }
+
+    public boolean isFused() {
+        return fused;
+    }
+
+    /** Fresh grains: a conducting dust shaken in. Full condition, no fuse, loose and open. */
+    public void refill() {
+        fused = false;
+        condition = 1f;
+        set(false);
     }
 
     public CohererBlockEntity(BlockPos pos, BlockState state) {
@@ -73,13 +86,27 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
 
     @Override
     protected void hear(double distance) {
-        if (!welded)
+        if (fused)
+            return;
+        if (io.github.soundgoodizerfan.feedback.core.electric.Sparks.heardAmps() > ElectricMachineTuning.COHERER_FUSE_SPARK_AMPS) {
+            fused = true;
+            condition = ElectricMachineTuning.COHERER_CONDITION_FLOOR;
+            if (welded)
+                setChanged();
+            else
+                set(true);
+            return;
+        }
+        if (!welded) {
+            // Every weld wears the grains a little; the floor keeps weld wear from ever making a refusal.
+            condition = Math.max(ElectricMachineTuning.COHERER_CONDITION_FLOOR, condition - ElectricMachineTuning.COHERER_WELD_WEAR);
             set(true);
+        }
     }
 
-    /** One tap. Frees the grains with probability {@code condition}. */
+    /** One tap. Frees the grains with probability {@code condition}; fused grains never come loose. */
     public boolean tap() {
-        if (!welded || level == null || level.isClientSide)
+        if (!welded || fused || level == null || level.isClientSide)
             return false;
         if (level.random.nextFloat() >= condition)
             return false;
@@ -89,7 +116,7 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
 
     private void set(boolean value) {
         welded = value;
-        if (value && clapper)
+        if (value && clapper && !fused)
             scheduleClap();
         setChanged();
         if (level != null) {
@@ -120,7 +147,7 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
 
     @Override
     public void test(io.github.soundgoodizerfan.feedback.instrument.Instrument tester, java.util.function.Consumer<net.minecraft.network.chat.Component> out) {
-        out.accept(net.minecraft.network.chat.Component.translatable(welded ? "feedback.test.welded" : "feedback.test.open"));
+        out.accept(net.minecraft.network.chat.Component.translatable(fused ? "feedback.test.fused" : welded ? "feedback.test.welded" : "feedback.test.open"));
         out.accept(io.github.soundgoodizerfan.feedback.instrument.Testable.condition(tester, condition));
     }
 
@@ -139,6 +166,7 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
         super.saveAdditional(tag, registries);
         tag.putBoolean("Welded", welded);
         tag.putBoolean("Clapper", clapper);
+        tag.putBoolean("Fused", fused);
         tag.putFloat("Condition", condition);
     }
 
@@ -147,6 +175,7 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
         super.loadAdditional(tag, registries);
         welded = tag.getBoolean("Welded");
         clapper = tag.getBoolean("Clapper");
+        fused = tag.getBoolean("Fused");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 }

@@ -53,7 +53,7 @@ import net.minecraft.world.level.Level;
 public class SolderingIronItem extends Item implements ItemHeat.Cooling {
 
     /** When and how hot a drag began, and which hand holds the iron. */
-    private record Session(long time, float startTu, InteractionHand hand, boolean braced) {}
+    private record Session(long time, float startTu, InteractionHand hand, boolean braced, boolean lift) {}
 
     // shortcut: sessions live server side in memory, not on the stack; a restart mid-drag just discards that drag. Upgrade if a drag must survive a relog.
     private static final Map<UUID, Session> SESSIONS = new ConcurrentHashMap<>();
@@ -85,16 +85,45 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         return player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
     }
 
+    /** The board a circuit was soldered from, when it still has solder to melt (a finished circuit that remembers its parts). */
+    private static Board reworkable(ItemStack held) {
+        Circuit circuit = Circuit.of(held);
+        Board board = circuit.board().orElse(null);
+        return circuit.live() && board != null && board.solder().isPresent() && !board.parts().isEmpty() ? board : null;
+    }
+
+    /** The first wick in the pack: lifting a part spends it. */
+    private static ItemStack wickIn(Player player) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
+            if (stack.is(io.github.soundgoodizerfan.feedback.registry.FItems.WICK.get()))
+                return stack;
+        }
+        return ItemStack.EMPTY;
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack iron = player.getItemInHand(hand);
-        Board board = boardIn(player, hand).get(FDataComponents.BOARD.get());
-        if (board == null || board.solder().isEmpty())
-            return InteractionResultHolder.pass(iron);
+        ItemStack held = boardIn(player, hand);
+        Board board = held.get(FDataComponents.BOARD.get());
+        boolean lift = false;
+        if (board == null || board.solder().isEmpty()) {
+            // A finished circuit that remembers its board: the same drag, with a wick, lifts its parts off.
+            board = reworkable(held);
+            if (board == null)
+                return InteractionResultHolder.pass(iron);
+            if (wickIn(player).isEmpty()) {
+                if (!level.isClientSide)
+                    player.displayClientMessage(Component.translatable("feedback.circuit.lift.no_wick"), true);
+                return InteractionResultHolder.pass(iron);
+            }
+            lift = true;
+        }
         if (level.isClientSide) {
-            io.github.soundgoodizerfan.feedback.client.minigame.SolderScreen.open(board, ItemHeat.get(iron, level).value());
+            io.github.soundgoodizerfan.feedback.client.minigame.SolderScreen.open(board, ItemHeat.get(iron, level).value(), lift);
         } else {
-            SESSIONS.put(player.getUUID(), new Session(level.getGameTime(), ItemHeat.get(iron, level).value(), hand, player.isShiftKeyDown()));
+            SESSIONS.put(player.getUUID(), new Session(level.getGameTime(), ItemHeat.get(iron, level).value(), hand, player.isShiftKeyDown(), lift));
             Material solder = MaterialTable.get().materials().get(board.solder().get());
             if (solder != null)
                 Fumes.release(level, player.position(), Fumes.level(solder));
@@ -114,8 +143,11 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         Level level = player.level();
         ItemStack iron = player.getItemInHand(session.hand());
         ItemStack board = boardIn(player, session.hand());
-        Board data = board.get(FDataComponents.BOARD.get());
+        Board data = session.lift() ? reworkable(board) : board.get(FDataComponents.BOARD.get());
         if (!(iron.getItem() instanceof SolderingIronItem) || data == null || data.solder().isEmpty())
+            return;
+        ItemStack wick = session.lift() ? wickIn(player) : ItemStack.EMPTY;
+        if (session.lift() && wick.isEmpty())
             return;
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
         Material solder = materials.get(data.solder().get());
@@ -145,6 +177,10 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         }
         if (pass.ironTu() < ItemHeat.get(iron, level).value())
             ItemHeat.set(iron, new Tu(pass.ironTu()), level);
+        if (session.lift()) {
+            finishLift(player, board, wick, solder, materials, pass);
+            return;
+        }
         ItemStack result = Soldering.finish(board, materials, pass);
         Board graded = result.get(FDataComponents.BOARD.get());
         Circuit made = Circuit.of(result);
@@ -156,5 +192,37 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         board.shrink(1);
         if (!result.isEmpty() && !player.getInventory().add(result))
             player.drop(result, false);
+    }
+
+    /**
+     * The rework drag's result: parts whose two pads were wet come free (one wick use each), the board comes back bare of solder, a part that
+     * stayed under its kind's limit comes back as the item that was mounted, a scorched pad lifts the traces and the circuit is gone.
+     */
+    private static void finishLift(ServerPlayer player, ItemStack held, ItemStack wick, Material solder,
+                                   Map<ResourceLocation, Material> materials, Soldering.Pass pass) {
+        Level level = player.level();
+        Soldering.Lift lift = Soldering.lift(Circuit.of(held), materials, pass);
+        Fumes.release(level, player.position(), Fumes.level(solder));
+        if (lift.traceLost()) {
+            player.displayClientMessage(Component.translatable("feedback.circuit.lifted"), true);
+            held.shrink(1);
+            give(player, lift.board());
+            return;
+        }
+        if (lift.lifted() == 0) {
+            player.displayClientMessage(Component.translatable("feedback.circuit.lift.none"), true);
+            return;
+        }
+        wick.hurtAndBreak(lift.lifted(), (net.minecraft.server.level.ServerLevel) level, player, broken -> {});
+        player.displayClientMessage(Component.translatable("feedback.circuit.lift.result", lift.lifted(), lift.parts().size()), true);
+        held.shrink(1);
+        give(player, lift.board());
+        for (ItemStack part : lift.parts())
+            give(player, part);
+    }
+
+    private static void give(ServerPlayer player, ItemStack stack) {
+        if (!stack.isEmpty() && !player.getInventory().add(stack))
+            player.drop(stack, false);
     }
 }

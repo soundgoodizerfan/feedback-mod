@@ -83,7 +83,7 @@ public class FCreativeTabs {
     /** Hand tools: grip and prise, shape, then powered hand tools. */
     private static final List<DeferredItem<?>> HAND_TOOLS = of(FItems.TONGS, FItems.WRENCH, FItems.MORTAR,
             FModular.HAFTED_TOOL, FModular.SAWBLADE, FModular.SHEARS, FModular.GLOVE, FModular.SCRATCH_FILES,
-            FItems.JAR_BATON, FItems.SOLDERING_IRON, FItems.ARC_WELDER, FItems.POWER_CUTTER);
+            FItems.JAR_BATON, FItems.SOLDERING_IRON, FItems.WICK, FItems.ARC_WELDER, FItems.POWER_CUTTER);
 
     /** Instruments by what they read: size and mass, heat and pressure, light and field, electricity, matter. */
     private static final List<DeferredItem<?>> INSTRUMENTS = of(FItems.INSTRUMENT_BAG,

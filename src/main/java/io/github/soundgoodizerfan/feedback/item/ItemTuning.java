@@ -177,6 +177,9 @@ public final class ItemTuning {
 
     public static final int SOLDER_LEAVE_LINGER_TICKS = 40;
 
+    /** Placeholder. Parts one wick lifts before it is spent (a count; a wick is a braid of copper wire that soaks solder as it is used). */
+    public static final int WICK_LIFTS = 8;
+
     /** Placeholder. Component tester: finest step it tells apart on a 0-1 figure (response, condition). */
     public static final float TESTER_RESOLUTION = 0.05f;
 

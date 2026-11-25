@@ -120,6 +120,17 @@ public class PhosphorScreenBlockEntity extends BlockEntity implements ThermalBod
         hold = ElectricMachineTuning.SCOPE_SAMPLE_TICKS + 2;
     }
 
+    /** The oscilloscope's row as the client last heard it (never saved, never read by the server): oldest first, shares of full scale. */
+    private final float[] trace = new float[ElectricMachineTuning.SCOPE_HISTORY];
+
+    public void setTrace(float[] samples) {
+        System.arraycopy(samples, 0, trace, 0, Math.min(samples.length, trace.length));
+    }
+
+    public float[] trace() {
+        return trace;
+    }
+
     /** The brightest level burn-in still allows: 3 new, down to 0 dead. */
     public int ceiling() {
         return Math.max(0, 3 - (int) Math.floor(burn * 3f));

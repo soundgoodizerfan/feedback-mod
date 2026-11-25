@@ -16,6 +16,7 @@ G is Glass, W is [Copper Wire](Wire_Drawer.md) and M is Magnetite Dust. Craft it
 Place it in a line like a [cable](Copper_Cable.md). Open, it splits the line in two; welded, it joins them. Whatever is on the far side (a [Relay](Relay.md)'s electromagnet, a load, a [Current Sensor](Instruments.md#current-sensor) linked to a [Controller](Controller.md)) is what the detection turns on.
 
 - **Right-click with an empty hand** to tap it: *"Coherer tapped: grains loose, open"*.
+- **Right-click with a conducting dust** (redstone, say) to shake in fresh grains: one dust gives full [condition](#wear-and-fusing), and the coherer is loose and open again.
 - A [Coherer Clapper](#coherer-clapper) seated on it taps it for you.
 - A [Controller](Controller.md) can tap it with a *Switch* card by switching it off. It can't switch it on: only a spark does.
 
@@ -53,8 +54,14 @@ Right-click a coherer with the clapper to seat it. After a spark welds the coher
 
 ## Left welded
 
-A welded coherer passes everything, like any wire. Without a clapper, forgetting to tap it is the usual failure.
+A welded coherer passes everything, like any wire. Without a clapper, forgetting to tap it is the usual failure. A [fused](#wear-and-fusing) one needs a refill, not a tap.
+
+## Wear and fusing
+
+Each weld wears the grains a little, so the coherer's condition falls with use and a tap frees it less often. Wear from welding alone never takes it below 20%, where one tap in five works. A [Component Tester](Instruments.md#component-tester) reads the condition.
+
+A spark with more than **6 A** behind it fuses the grains into one solid lump. A fused coherer stays welded, hears nothing and shrugs off every tap (*"Coherer: grains fused into one lump, a tap does nothing"*; the tester reads *Fused*). Fresh grains from a conducting dust are the only cure.
 
 ## Overrun
 
-More than **2 A** through a welded coherer sinters the grains. Its condition falls (to 20%), and a tap then frees it only some of the time: at 20% condition, one tap in five. It never stops working, you just tap more. Welding and tapping cost nothing; only the overload wears it.
+More than **2 A** through a welded coherer sinters the grains. Its condition falls (to 20%), and a tap then frees it only some of the time: at 20% condition, one tap in five. It never stops working, you just tap more. Tapping costs nothing.

@@ -1,6 +1,6 @@
 # Basic Electronic Circuit
 
-A soldered board with parts on it. It is not a tier or a key: it carries **properties**, and a machine that can use them works better with a good one. A detector with no circuit works, just with more noise.
+A soldered board with parts on it. It is not a tier or a key: it carries **properties**, and a machine that can use them works better with a good one. A detector with no circuit works, just with more noise. The circuit remembers the board it was made from, so a [Soldering Iron](Soldering_Iron.md#reworking-a-circuit) and a wick can lift its parts back out.
 
 Any item in the circuits tag counts as a circuit wherever a recipe asks for one: the [Recipe Data Stick](Data_Stick.md), [USB Drive](Programming.md#media), [Electric Programmer](Electric_Controller.md#electric-programmer), [Programmed Junction](Pneumatic_Tube.md#tube-junction), [Analog Adapter](Redstone_Bridges.md#analog-adapter), [Dark Cell](Dark_Cell.md), the [Temperature Sensor, Current Sensor](Instruments.md) and [Fill Gauge and other sensors](Sensors.md#crafting), the Oscilloscope and the [Sorting Station](Tube_Station.md#sorting-station). The Basic Electronic Circuit is in that tag.
 

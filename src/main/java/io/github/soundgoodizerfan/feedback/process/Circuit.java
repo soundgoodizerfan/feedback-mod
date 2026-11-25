@@ -69,7 +69,7 @@ import net.minecraft.world.level.Level;
  * the heat or off the current. Neither is wear by uptime.
  */
 public record Circuit(int elements, float speed, float noise, Board.Joint joint, float limitTu, float ratingAmps,
-                      float gain, float power, float warmTu, float warmRate, float clockRate, Line line) implements Testable {
+                      float gain, float power, float warmTu, float warmRate, float clockRate, Line line, java.util.Optional<Board> board) implements Testable {
 
     /**
      * The figures of the amethyst and sculk lines, all zero on a board with neither: one record on the one item, the elements decide which are
@@ -107,6 +107,12 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
     public Circuit(int elements, float speed, float noise, Board.Joint joint, float limitTu, float ratingAmps,
                    float gain, float power, float warmTu, float warmRate, float clockRate) {
         this(elements, speed, noise, joint, limitTu, ratingAmps, gain, power, warmTu, warmRate, clockRate, Line.NONE);
+    }
+
+    /** A circuit that does not remember the board it was soldered from (a bare figure set: tests, JEI examples). */
+    public Circuit(int elements, float speed, float noise, Board.Joint joint, float limitTu, float ratingAmps,
+                   float gain, float power, float warmTu, float warmRate, float clockRate, Line line) {
+        this(elements, speed, noise, joint, limitTu, ratingAmps, gain, power, warmTu, warmRate, clockRate, line, java.util.Optional.empty());
     }
 
     public float stability() {
@@ -148,7 +154,8 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
             Codec.FLOAT.fieldOf("warm_tu").forGetter(Circuit::warmTu),
             Codec.FLOAT.fieldOf("warm_rate").forGetter(Circuit::warmRate),
             Codec.FLOAT.fieldOf("clock_rate").forGetter(Circuit::clockRate),
-            Line.CODEC.optionalFieldOf("line", Line.NONE).forGetter(Circuit::line)).apply(i, Circuit::new));
+            Line.CODEC.optionalFieldOf("line", Line.NONE).forGetter(Circuit::line),
+            Board.CODEC.optionalFieldOf("board").forGetter(Circuit::board)).apply(i, Circuit::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Circuit> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistries(CODEC);
 
@@ -195,7 +202,7 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         float slow = speed * (ProcessTuning.CIRCUIT_COLD_SPEED + (1f - ProcessTuning.CIRCUIT_COLD_SPEED) * w);
         float noisy = Math.min(1f, noise + (1f - w) * ProcessTuning.CIRCUIT_COLD_NOISE);
         // a cold tube amplifies in proportion to its warmth, none at all at ambient
-        return new Circuit(elements, slow, noisy, joint, limitTu, ratingAmps, gain * w, power, warmTu, warmRate, clockRateOf(slow), line);
+        return new Circuit(elements, slow, noisy, joint, limitTu, ratingAmps, gain * w, power, warmTu, warmRate, clockRateOf(slow), line, board);
     }
 
     /**
@@ -234,7 +241,7 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
 
     /** One element fused by over-current; the last one makes it a dead part. */
     public Circuit fused() {
-        return elements <= 1 ? dead(joint) : new Circuit(elements - 1, speed, noise, joint, limitTu, ratingAmps, gain, power, warmTu, warmRate, clockRate, line);
+        return elements <= 1 ? dead(joint) : new Circuit(elements - 1, speed, noise, joint, limitTu, ratingAmps, gain, power, warmTu, warmRate, clockRate, line, board);
     }
 
     /**
@@ -250,6 +257,11 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
 
     /** What kind of part a stack is when mounted on a board, if any. By tag and material property, never by id. */
     public static Board.Part part(ItemStack stack, Material.Located found) {
+        Board.Part made = partOf(stack, found);
+        return made == null ? null : made.withSource(stack);
+    }
+
+    private static Board.Part partOf(ItemStack stack, Material.Located found) {
         // A sealed tube carries its own finished figures; an unsealed one is a bulb of air and mounts as nothing.
         Tube sealed = stack.get(FDataComponents.TUBE.get());
         if (sealed != null)
@@ -283,6 +295,9 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         float stability = 0f, bandwidth = 0f, retention = -1f, adaptation = 0f;
         int selectivity = 0, memory = 0;
         for (Board.Part p : board.parts()) {
+            // A cooked part is still on the board but is no element.
+            if (p.dead())
+                continue;
             switch (p.kind()) {
                 case TUBE -> {
                     Tube t = p.tube().orElse(null);
@@ -337,7 +352,8 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         float rating = board.trace() == Board.Trace.PRINTED ? ProcessTuning.PRINTED_RATING_AMPS : ProcessTuning.ETCHED_RATING_AMPS;
         return new Circuit(elements, speed, Math.max(ProcessTuning.CIRCUIT_NOISE_FLOOR, Math.min(1f, noise)), joint,
                 Soldering.limit(board, materials), rating, gain, power, warmTu, warmTu > 0f ? warmRate : 0f, clockRateOf(speed),
-                new Line(stability, selectivity, bandwidth, Math.min(ProcessTuning.CIRCUIT_MEMORY_MAX, memory), Math.max(0f, retention), adaptation));
+                new Line(stability, selectivity, bandwidth, Math.min(ProcessTuning.CIRCUIT_MEMORY_MAX, memory), Math.max(0f, retention), adaptation),
+                java.util.Optional.of(board));
     }
 
     private static String fmt(Instrument tester, float value) {
@@ -351,6 +367,9 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
             return;
         }
         out.accept(Component.translatable("feedback.circuit.elements", elements));
+        long cooked = board.map(b -> b.parts().stream().filter(Board.Part::dead).count()).orElse(0L);
+        if (cooked > 0)
+            out.accept(Component.translatable("feedback.circuit.cooked", cooked));
         out.accept(Testable.response(tester, speed));
         out.accept(Testable.noise(tester, noise));
         if (line.selectivity() > 0 || line.bandwidth() > 0f || line.stability() > 0f) {

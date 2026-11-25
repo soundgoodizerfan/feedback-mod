@@ -288,6 +288,14 @@ public final class ProcessTuning {
 
     public static final float IRON_JOINT_DRAW_TU = 0.6f;
 
+    /**
+     * Placeholder. The Tu a part's pad may reach before the part itself is cooked, per kind (the board's own limit lifts traces first or last
+     * depending on the substrate): a sealed tube's bulb seal gives first, a crystal plate and a lattice next, a relay and a coherer stand most.
+     * One table by kind until parts carry a material to read a service temperature from.
+     */
+    public static final float PART_LIMIT_TUBE_TU = 280f, PART_LIMIT_CLOCK_TU = 320f, PART_LIMIT_RESONATOR_TU = 330f, PART_LIMIT_SWITCH_TU = 340f,
+            PART_LIMIT_LATTICE_TU = 360f, PART_LIMIT_RELAY_TU = 380f, PART_LIMIT_COHERER_TU = 420f;
+
     /** Placeholder (user's numbers). Hand soldering by drag: pad pitch on screen (px), fraction of the gap a pad closes on the iron each contact tick, ticks on a pad it needs to count as worked, lateral offset (in pitches) past which solder bridges, ticks a pad may be worked per sample, samples the server accepts, ticks leaving the screen with the button held counts as lingering, and noise a cold or bridged pad adds to a circuit. */
     public static final int SOLDER_PAD_PITCH_PX = 26;
 

@@ -420,6 +420,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.ScopeTracePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ScopeTracePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ScopeTracePayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload::handle)
