@@ -22,8 +22,6 @@ public final class ClientTable<T> {
     public static final ClientTable<io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.Listing> GUN_BLUEPRINTS = new ClientTable<>();
 
     private List<T> entries = List.of();
-    private Runnable listener = () -> {
-    };
 
     private ClientTable() {
     }
@@ -34,12 +32,5 @@ public final class ClientTable<T> {
 
     public void set(List<T> incoming) {
         entries = List.copyOf(incoming);
-        listener.run();
-    }
-
-    /** One listener is enough; only JEI wants this. */
-    public void onChanged(Runnable onChanged) {
-        listener = onChanged;
-        onChanged.run();
     }
 }

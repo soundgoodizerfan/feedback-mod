@@ -11,8 +11,6 @@ import java.util.List;
 public final class ClientRemovals {
 
     private static List<Removal> entries = List.of();
-    private static Runnable listener = () -> {
-    };
 
     private ClientRemovals() {
     }
@@ -23,12 +21,5 @@ public final class ClientRemovals {
 
     public static void set(List<Removal> incoming) {
         entries = List.copyOf(incoming);
-        listener.run();
-    }
-
-    /** Called whenever the table is replaced. One listener is enough; only JEI wants this. */
-    public static void onChanged(Runnable onChanged) {
-        listener = onChanged;
-        onChanged.run();
     }
 }

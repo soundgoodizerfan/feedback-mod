@@ -16,12 +16,8 @@ public final class ClientMaterials {
     private ClientMaterials() {
     }
 
-    private static Runnable listener = () -> {
-    };
-
     public static void set(Map<ResourceLocation, Material> incoming) {
         materials = java.util.Collections.unmodifiableSortedMap(new TreeMap<>(incoming));
-        listener.run();
     }
 
     /** The table as last received, for a recipe browser; empty until the server has sent it. */
@@ -35,12 +31,6 @@ public final class ClientMaterials {
      */
     public static Map<ResourceLocation, Material> known() {
         return materials.isEmpty() ? MaterialTable.get().materials() : materials;
-    }
-
-    /** Called whenever the table is replaced. One listener is enough; only JEI wants this. */
-    public static void onChanged(Runnable onChanged) {
-        listener = onChanged;
-        onChanged.run();
     }
 
     /** The materials as {@code level}'s side knows them, sorted by id: the server's table, or this copy. */

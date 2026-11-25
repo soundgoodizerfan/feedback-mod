@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.compat.jei;
 
 import io.github.soundgoodizerfan.feedback.process.ProcessTuning;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,15 +59,11 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * something ask the hammer what it can make. The hammer genuinely does not know; a compatibility
  * layer that implied otherwise would be the mod lying about its own central claim.
  *
- * <h2>Why the recipes arrive late</h2>
- * JEI starts its runtime from the vanilla recipe sync, which lands during the configuration phase,
- * while our table arrives on datapack sync in the play phase. So {@code registerRecipes} would
- * almost always see an empty table on a first join, and adding there as well as here would produce
- * every card twice. Pushing once, from the runtime, is the version with one code path.
- * <p>
- * {@code hideRecipes} before each push is what makes a second push idempotent: a {@code /reload}
- * can deliver a fresh table without JEI restarting, and without this the old cards would linger
- * alongside the new ones.
+ * <h2>Every card is added during registration</h2>
+ * The server posts {@code OnDatapackSyncEvent}, which sends our tables, before it sends the vanilla
+ * recipes (on login and on {@code /reload} alike), and JEI (re)starts on those recipes. So
+ * {@code registerRecipes} sees every table. Nothing is added from the runtime: EMI reads JEI's
+ * recipes as soon as the runtime exists, so a card added later is missing there.
  *
  * <h2>One tab for both, not two</h2>
  * A first pass gave the pooled vanilla/modded cooking recipes their own category and their own
@@ -106,12 +101,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
             stack = runtime.getBookmarkOverlay().getIngredientUnderMouse(mezz.jei.api.constants.VanillaTypes.ITEM_STACK);
         return stack == null ? net.minecraft.world.item.ItemStack.EMPTY : stack;
     }
-    @Nullable
-    private static List<Deformation> published;
-    @Nullable
-    private static List<Removal> publishedRemoval;
-    @Nullable
-    private static List<ThermalProcess> publishedThermal;
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -269,16 +258,40 @@ public class FeedbackJeiPlugin implements IModPlugin {
      * or solutions (philosophy 10, "documentation is a free sense"): what to do with the thing, not
      * what figure to aim for.
      */
-    /** The display-only crafting cards; the bootstrap tools need the modular types as well as the materials, so both tables' arrival publishes them. */
-    private static void publishExamples() {
+    /** Every card made from a synced table. */
+    private static void registerTables(IRecipeRegistration registration) {
         var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
+        registration.addRecipes(DeformationCategory.TYPE, ClientDeformations.get());
+        registration.addRecipes(RemovalCategory.TYPE, withCuts(ClientRemovals.get()));
+        registration.addRecipes(ThermalProcessCategory.TYPE, thermalCards());
+        registration.addRecipes(SolderingCategory.TYPE, SolderingCategory.cards(materials));
+        registration.addRecipes(CircuitChainCategory.TYPE, CircuitChainCategory.cards(materials));
+        registration.addRecipes(MaterialStatsCategory.TYPE, MaterialStatsCategory.cards(materials));
+        registration.addRecipes(BrewingIngredientCategory.TYPE, BrewingIngredientCategory.cards(materials));
+        registration.addRecipes(SeparationCategory.TYPE, SeparationCategory.cards(materials));
+        registration.addRecipes(MinedCategory.TYPE, MinedCategory.cards(materials));
+        registration.addRecipes(OreProcessingCategory.TYPE, OreProcessingCategory.cards(materials));
+        registration.addRecipes(FuelCategory.TYPE, FuelCategory.cards(materials));
+        registration.addRecipes(PotionShapeCategory.TYPE, PotionShapeCategory.cards(materials));
+        registration.addRecipes(PressCategory.TYPE, pressCards(materials));
         var examples = new ArrayList<>(ElectronicsCrafting.examples(materials));
         examples.addAll(CodeRecipeExamples.examples(materials));
-        show(RecipeTypes.CRAFTING, examples);
+        registration.addRecipes(RecipeTypes.CRAFTING, examples);
+        registerModular(registration);
+        registration.addRecipes(MixtureCategory.TYPE, ClientTable.MIXTURES.get());
+        registration.addRecipes(GoodsCategory.TYPE, ClientTable.GOODS.get());
+        registration.addRecipes(GunOptionCategory.TYPE, ClientTable.GUN_OPTIONS.get());
+        registration.addRecipes(GunBlueprintPoolCategory.TYPE, ClientTable.GUN_BLUEPRINTS.get());
+        registration.addRecipes(BuysCategory.TYPE, ClientTable.BUYS.get());
+        registration.addRecipes(ResearchCategory.TYPE, ResearchCategory.cards(ClientTable.RESEARCH.get(),
+                io.github.soundgoodizerfan.feedback.modular.attunement.Attunements.get().effects()));
+        registration.addRecipes(OreVeinCategory.TYPE, ClientTable.ORE_VEINS.get());
+        registration.addRecipes(BasinCategory.TYPE, ClientTable.BASINS.get());
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        registerTables(registration);
         var level = Minecraft.getInstance().level;
         if (level != null) {
             List<EngineeringCategory.Card> cards = new ArrayList<>();
@@ -685,11 +698,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
-        published = null;
-        publishedRemoval = null;
-        publishedThermal = null;
-        partsListed = false;
-        toolsListed = false;
         // Our vessels are the only things left that can run these; vanilla's own built-in
         // categories now describe blocks that are permanently inert (§4f).
         IRecipeManager recipes = jeiRuntime.getRecipeManager();
@@ -720,50 +728,10 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 .forEach(hidden::add);
         jeiRuntime.getIngredientManager().removeIngredientsAtRuntime(
                 mezz.jei.api.constants.VanillaTypes.ITEM_STACK, hidden);
-        ClientDeformations.onChanged(FeedbackJeiPlugin::publish);
-        ClientRemovals.onChanged(FeedbackJeiPlugin::publishRemoval);
-        ClientThermalProcesses.onChanged(FeedbackJeiPlugin::publishThermal);
-        io.github.soundgoodizerfan.feedback.process.ClientMaterials.onChanged(() -> {
-            var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
-            show(SolderingCategory.TYPE, SolderingCategory.cards(materials));
-            show(CircuitChainCategory.TYPE, CircuitChainCategory.cards(materials));
-            show(MaterialStatsCategory.TYPE, MaterialStatsCategory.cards(materials));
-            show(BrewingIngredientCategory.TYPE, BrewingIngredientCategory.cards(materials));
-            show(SeparationCategory.TYPE, SeparationCategory.cards(materials));
-            show(MinedCategory.TYPE, MinedCategory.cards(materials));
-            show(OreProcessingCategory.TYPE, OreProcessingCategory.cards(materials));
-            show(FuelCategory.TYPE, FuelCategory.cards(materials));
-            show(PotionShapeCategory.TYPE, PotionShapeCategory.cards(materials));
-            showPartIngredients(materials);
-            showTemplateTools(materials);
-            publishExamples();
-            publishPress();
-            publishModular();
-        });
-        io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.onChanged(() -> {
-            publishResearch();
-            showTemplateTools(io.github.soundgoodizerfan.feedback.process.ClientMaterials.get());
-            publishExamples();
-            publishModular();
-        });
-        ClientTable.MIXTURES.onChanged(() -> show(MixtureCategory.TYPE, ClientTable.MIXTURES.get()));
-        ClientTable.GOODS.onChanged(() -> show(GoodsCategory.TYPE, ClientTable.GOODS.get()));
-        ClientTable.GUN_OPTIONS.onChanged(() -> show(GunOptionCategory.TYPE, ClientTable.GUN_OPTIONS.get()));
-        ClientTable.GUN_BLUEPRINTS.onChanged(() -> show(GunBlueprintPoolCategory.TYPE, ClientTable.GUN_BLUEPRINTS.get()));
-        ClientTable.BUYS.onChanged(() -> show(BuysCategory.TYPE, ClientTable.BUYS.get()));
-        ClientTable.RESEARCH.onChanged(FeedbackJeiPlugin::publishResearch);
-        ClientTable.ORE_VEINS.onChanged(() -> show(OreVeinCategory.TYPE, ClientTable.ORE_VEINS.get()));
-        ClientTable.BASINS.onChanged(() -> show(BasinCategory.TYPE, ClientTable.BASINS.get()));
+        var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
+        showPartIngredients(materials);
+        showTemplateTools(materials);
     }
-
-    /** The research cards: the apps' subjects arrive with their own table, the volumes and the attunements are read off the schools and effects the client holds. */
-    private static void publishResearch() {
-        show(ResearchCategory.TYPE, ResearchCategory.cards(ClientTable.RESEARCH.get(),
-                io.github.soundgoodizerfan.feedback.modular.attunement.Attunements.get().effects()));
-    }
-
-    private static boolean partsListed;
-    private static boolean toolsListed;
 
     /**
      * One wrought iron tool per single-headed face (pickaxe, axe, shovel...), at the face's default haft (its own rod count), added to the
@@ -771,7 +739,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
      * iron fall back to the type's default material.
      */
     private static void showTemplateTools(Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
-        if (runtime == null || toolsListed)
+        if (runtime == null)
             return;
         var types = io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known();
         if (types.isEmpty())
@@ -788,7 +756,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         });
         if (tools.isEmpty())
             return;
-        toolsListed = true;
         runtime.getIngredientManager().addIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK, tools);
     }
 
@@ -798,7 +765,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
      * is added once; a lookup on it lands on the Tool Table parts card, which already outputs every part.
      */
     private static void showPartIngredients(Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
-        if (runtime == null || partsListed)
+        if (runtime == null)
             return;
         var withIngot = materials.entrySet().stream().filter(e -> e.getValue().item(e.getKey(), "ingot").isPresent()).toList();
         // A plain, familiar metal reads as "a part"; map order alone picked leaded solder.
@@ -808,7 +775,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 .or(() -> withIngot.stream().findFirst());
         if (stock.isEmpty())
             return;
-        partsListed = true;
         List<ItemStack> parts = FModular.PARTS.stream().map(p -> {
             ItemStack s = new ItemStack(p.get());
             s.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
@@ -843,60 +809,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         return out;
     }
 
-    /** What each category last showed, so a fresh table replaces it rather than doubling it. */
-    private static final Map<RecipeType<?>, List<?>> shown = new HashMap<>();
-
-    /**
-     * Show {@code entries} for {@code type}, replacing what was shown. JEI keeps a recipe hidden by
-     * equality, so hiding the old list and adding an equal new one leaves every card hidden (and
-     * the tab empty): only recipes that went away are hidden, and the ones that stay are unhidden
-     * and added again (a duplicate add is ignored).
-     */
-    @SuppressWarnings("unchecked")
-    private static <T> void show(RecipeType<T> type, List<T> entries) {
-        if (runtime == null)
-            return;
-        IRecipeManager recipes = runtime.getRecipeManager();
-        List<T> old = (List<T>) shown.put(type, entries);
-        if (old != null) {
-            List<T> gone = old.stream().filter(o -> !entries.contains(o)).toList();
-            if (!gone.isEmpty())
-                recipes.hideRecipes(type, gone);
-            recipes.unhideRecipes(type, entries);
-        }
-        recipes.addRecipes(type, entries);
-    }
-
     @Override
     public void onRuntimeUnavailable() {
         runtime = null;
-        published = null;
-        publishedRemoval = null;
-        publishedThermal = null;
-        publishedPress = null;
-        shown.clear();
-        partsListed = false;
-        toolsListed = false;
-    }
-
-    private static void publish() {
-        if (runtime == null)
-            return;
-        IRecipeManager recipes = runtime.getRecipeManager();
-        if (published != null)
-            recipes.hideRecipes(DeformationCategory.TYPE, published);
-        published = ClientDeformations.get();
-        recipes.addRecipes(DeformationCategory.TYPE, published);
-    }
-
-    private static void publishRemoval() {
-        if (runtime == null)
-            return;
-        IRecipeManager recipes = runtime.getRecipeManager();
-        if (publishedRemoval != null)
-            recipes.hideRecipes(RemovalCategory.TYPE, publishedRemoval);
-        publishedRemoval = withCuts(ClientRemovals.get());
-        recipes.addRecipes(RemovalCategory.TYPE, publishedRemoval);
     }
 
     /**
@@ -924,22 +839,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         return out;
     }
 
-    @Nullable
-    private static List<PressCategory.Card> publishedPress;
-
-
-
     /**
      * One card per propellant. The case and bullet slots are every {@code case} and {@code bullet}
      * form the material table has -- the press accepts any, so the card says any.
      */
-    private static void publishPress() {
-        if (runtime == null)
-            return;
-        IRecipeManager recipes = runtime.getRecipeManager();
-        if (publishedPress != null)
-            recipes.hideRecipes(PressCategory.TYPE, publishedPress);
-        var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
+    private static List<PressCategory.Card> pressCards(Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
         List<Item> cases = new ArrayList<>(), bullets = new ArrayList<>();
         materials.forEach((id, m) -> {
             m.item(id, "case").ifPresent(cases::add);
@@ -953,17 +857,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
             if (!charge.isEmpty() && !cases.isEmpty() && !bullets.isEmpty())
                 cards.add(new PressCategory.Card(id, charge, cases, bullets, p.peakPressure().value(), p.burnRate()));
         }));
-        publishedPress = List.copyOf(cards);
-        recipes.addRecipes(PressCategory.TYPE, publishedPress);
+        return cards;
     }
 
-    /**
-     * One tool card per pattern of each modular type and one part card per shape the Tool Table can
-     * make, from the client's copies of both tables; they arrive separately, so either changing republishes.
-     */
-    private static void publishModular() {
-        if (runtime == null)
-            return;
+    /** One tool card per pattern of each modular type and one part card per shape the Tool Table can make. */
+    private static void registerModular(IRecipeRegistration registration) {
         var types = io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known();
         List<PartBenchToolCategory.Card> tools = new ArrayList<>();
         types.forEach((id, type) -> {
@@ -972,23 +870,17 @@ public class FeedbackJeiPlugin implements IModPlugin {
             for (int i = 0; i < type.baseForms().size(); i++)
                 tools.add(new PartBenchToolCategory.Card(id, i));
         });
-        show(PartBenchToolCategory.TYPE, tools);
-        show(EngineeringCategory.TYPE, EngineeringCategory.generated(types));
-        show(PartBenchPartCategory.TYPE, io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping.options(types));
+        registration.addRecipes(PartBenchToolCategory.TYPE, tools);
+        registration.addRecipes(EngineeringCategory.TYPE, EngineeringCategory.generated(types));
+        registration.addRecipes(PartBenchPartCategory.TYPE, io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping.options(types));
     }
 
-    private static void publishThermal() {
-        if (runtime == null)
-            return;
-        IRecipeManager recipes = runtime.getRecipeManager();
-        if (publishedThermal != null)
-            recipes.hideRecipes(ThermalProcessCategory.TYPE, publishedThermal);
+    /** The authored rows and the pooled cooking recipes, as one list. */
+    private static List<ThermalProcess> thermalCards() {
         List<ThermalProcess> handAuthored = ClientThermalProcesses.get();
-        // Reaction rows (fluids, catalyst, pressure) have their own card; the item-only card would print "Air" for them.
         List<ThermalProcess> merged = new ArrayList<>(handAuthored);
         merged.addAll(pooled(handAuthored));
-        publishedThermal = List.copyOf(merged);
-        recipes.addRecipes(ThermalProcessCategory.TYPE, publishedThermal);
+        return merged;
     }
 
     /**

@@ -14,17 +14,12 @@ import java.util.List;
  * <p>
  * Nothing here participates in the simulation. The hammer never reads this, and no outcome is ever
  * computed from it -- it is a printed handbook, not a second source of truth.
- *
- * <h2>The listener</h2>
- * JEI has to be told when the table arrives, but this class must not import JEI: it is loaded even
- * when JEI is absent. So the dependency runs the other way -- the JEI plugin leaves a callback
- * here, and an absent JEI simply never leaves one.
+ * <p>
+ * This class must not import JEI: it is loaded even when JEI is absent.
  */
 public final class ClientDeformations {
 
     private static List<Deformation> entries = List.of();
-    private static Runnable listener = () -> {
-    };
 
     private ClientDeformations() {
     }
@@ -35,12 +30,5 @@ public final class ClientDeformations {
 
     public static void set(List<Deformation> incoming) {
         entries = List.copyOf(incoming);
-        listener.run();
-    }
-
-    /** Called whenever the table is replaced. One listener is enough; only JEI wants this. */
-    public static void onChanged(Runnable onChanged) {
-        listener = onChanged;
-        onChanged.run();
     }
 }

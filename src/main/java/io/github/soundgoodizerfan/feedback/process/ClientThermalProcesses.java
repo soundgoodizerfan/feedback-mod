@@ -19,8 +19,6 @@ import java.util.List;
 public final class ClientThermalProcesses {
 
     private static List<ThermalProcess> entries = List.of();
-    private static Runnable listener = () -> {
-    };
 
     private ClientThermalProcesses() {
     }
@@ -31,12 +29,5 @@ public final class ClientThermalProcesses {
 
     public static void set(List<ThermalProcess> incoming) {
         entries = List.copyOf(incoming);
-        listener.run();
-    }
-
-    /** Called whenever the table is replaced. One listener is enough; only JEI wants this. */
-    public static void onChanged(Runnable onChanged) {
-        listener = onChanged;
-        onChanged.run();
     }
 }
