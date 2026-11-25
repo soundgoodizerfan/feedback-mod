@@ -192,7 +192,7 @@ Every wood species also has **Shavings**, a loose form: the sawdust the [Woodwor
 
 - **Ruby** is a hard, transparent crystal (hardness 200). It stands 1400 Tu and **glows under an electric current**.
 - **Jade** is not a crystal but a tough mineral (hardness 65), the toughest of the four (toughness 45).
-- **Garnet** is transparent and hard (hardness 120) but brittle. It is slightly toxic.
+- **Garnet** is transparent and hard (hardness 120) but brittle. It is slightly toxic. Its gem or dust is the grit a [Waterjet Head](Power_Cutter.md#heads) cuts with.
 - **Tourmaline** is transparent and **piezoelectric** (coupling 0.6): squeezed, it makes a voltage. It is also **pyroelectric** (coupling 1.0): a change of temperature makes a charge, which the [Pyroelectric Plate](Pyroelectric_Plate.md) senses. It is slightly toxic.
 
 Ruby, Jade, Garnet and Tourmaline melt like a metal, into **Molten Ruby**, **Molten Jade**, **Molten Garnet** and **Molten Tourmaline** ([Casting](Casting.md#melting)). Like other brittle stock they grind to dust in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust).

@@ -34,12 +34,23 @@ T C T
 
 T is a Tungsten Plate and C is Ceramic. Craft it at the [Engineering Table](Engineering_Table.md) with a [file](Hand_Tools.md#file) in the tool row. It needs Materials Treatise I: Machine-Shop Consumables ([Treatise](Treatise.md)).
 
+- **Waterjet Head** cuts cold stock as a saw head does and any metal plate as a plasma head does, with no current needed. It cuts only with grit loaded in it.
+
+```
+N
+P
+```
+
+N is a Tungsten Carbide Drilled Plate and P is a Steel Pipe. Craft it at the [Engineering Table](Engineering_Table.md) with a [file](Hand_Tools.md#file) in the tool row. It needs Materials Treatise I: Machine-Shop Consumables ([Treatise](Treatise.md)).
+
+Right-click the cutter with a gem or dust of a hard, abrasive material (abrasiveness 0.5 or more; garnet is the natural one, ruby and diamond also work) to load the Waterjet Head. Each piece loads eight cuts' worth, up to sixty-four. Each cut spends one grit. A head with no grit holds the cycle and keeps the input. The nozzle wears by how abrasive the grit is.
+
 ## Using it
 
 - It is an **EHV** sink: about **2.6 A**. See [Electricity](Electricity.md).
 - **Right-click** with a head or a data stick to seat it. **Right-click** empty-handed to take out the output, then the stick. **Sneak** and right-click to take the head.
 - It has one head slot and one stick slot. A hopper feeds it and empties it: stock goes in, cut pieces come out.
-- It idles with no head, no stock or no power.
+- It idles with no head, a Waterjet Head with no grit, no stock or no power.
 - **Right-click empty-handed** on a jammed cutter clears the jam; the next empty-handed click takes the output.
 
 ## Circuit
