@@ -1,0 +1,37 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "N": {
+      "item": "feedback:tungsten_carbide_drilled_plate"
+    },
+    "P": {
+      "item": "feedback:steel_pipe"
+    }
+  },
+  "pattern": [
+    "N",
+    "P"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:waterjet_head",
+    "components": {
+      "feedback:made_of": {
+        "material": "feedback:tungsten_carbide",
+        "stock": "plate",
+        "cells": 1
+      }
+    }
+  },
+  "tool": [
+    {
+      "ability": "feedback:file",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "materials:1"
+}

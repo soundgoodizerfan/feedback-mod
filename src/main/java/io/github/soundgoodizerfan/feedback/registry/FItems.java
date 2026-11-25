@@ -314,6 +314,10 @@ public class FItems {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem> PLASMA_HEAD = ITEMS.register("plasma_head",
             () -> new io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem(io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem.Type.PLASMA,
                     new net.minecraft.world.item.Item.Properties().stacksTo(1)));
+    /** A waterjet nozzle for a Power Cutter: cuts cold stock and any plate with abrasive grit loaded into it, no current. See {@code CutterHeadItem}. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem> WATERJET_HEAD = ITEMS.register("waterjet_head",
+            () -> new io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem(io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem.Type.WATERJET,
+                    new net.minecraft.world.item.Item.Properties().stacksTo(1)));
     /** Records one hand-bench cut and plays it back in a powered machine. See {@code DataStickItem}. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.DataStickItem> DATA_STICK = ITEMS.register("data_stick",
             () -> new io.github.soundgoodizerfan.feedback.item.DataStickItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));

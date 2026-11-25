@@ -45,7 +45,11 @@ public class PowerCutterBlock extends Block implements EntityBlock {
                 give(player, cutter.seatHead(stack));
             else if (stick)
                 give(player, cutter.seatStick(stack));
-            else if (!stack.isEmpty()) {
+            else if (!stack.isEmpty() && level instanceof net.minecraft.server.level.ServerLevel server && cutter.loadGrit(stack, server) != stack) {
+                ItemStack left = cutter.loadGrit(stack.copy(), server);
+                if (!player.hasInfiniteMaterials())
+                    stack.setCount(left.getCount());
+            } else if (!stack.isEmpty()) {
                 ItemStack left = cutter.insertInput(stack.copy(), false);
                 if (!player.hasInfiniteMaterials())
                     stack.setCount(left.getCount());

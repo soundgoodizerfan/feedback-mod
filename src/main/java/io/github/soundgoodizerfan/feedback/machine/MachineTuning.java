@@ -592,6 +592,9 @@ public final class MachineTuning {
     public static final float CUTTER_CUTS_PER_SECOND = 2f;
 
     /** The ticks of full-power running one cut takes: 10 at two cuts a second. */
+    /** A waterjet head: cuts' worth of grit one piece of grit stock loads, the most a head holds, the least abrasiveness a grit needs, and nozzle wear units a cut spends per point of the grit's abrasiveness. */
+    public static final int WATERJET_GRIT_PER_PIECE = 8, WATERJET_GRIT_MAX = 64;
+    public static final float WATERJET_GRIT_MIN_ABRASIVENESS = 0.5f, WATERJET_NOZZLE_WEAR_PER_ABRASIVENESS = 0.6f;
     public static final float CUTTER_TICKS_PER_CUT = 20f / CUTTER_CUTS_PER_SECOND;
 
     /** Placeholder. The Power Cutter's input buffer, in items (one stack). */

@@ -52,6 +52,8 @@ final class CutterCuts {
         return switch (head) {
             case SAW -> Station.STONECUTTING.accepts(m);
             case PLASMA -> what.form().equals("plate") && (m.ampacity().isPresent() || m.kind().filter(k -> k == Material.Kind.METAL).isPresent());
+            // A jet of water and abrasive cuts cold: cold stock as a saw does and any plate as a plasma head does, needing no current.
+            case WATERJET -> Station.STONECUTTING.accepts(m) || what.form().equals("plate");
         };
     }
 
@@ -60,7 +62,7 @@ final class CutterCuts {
         if (!fits(head, what))
             return List.of();
         List<Cut> out = new ArrayList<>();
-        if (head == CutterHeadItem.Type.SAW) {
+        if (head == CutterHeadItem.Type.SAW || head == CutterHeadItem.Type.WATERJET && Station.STONECUTTING.accepts(what.material())) {
             for (WoodCuts.Cut c : WoodCuts.of(level, in)) {
                 int inputs = c.inputs(in);
                 int left = c.leftover(in);

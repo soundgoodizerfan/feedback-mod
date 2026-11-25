@@ -25,7 +25,7 @@ public class CutterHeadItem extends Item {
     /** The role name an attunement row uses for a cutting head: it is a part of its own, not a design ({@code MaterialPerks#attunements(ItemStack)}). */
     public static final String ROLE = "cutter_head";
 
-    public enum Type { SAW, PLASMA }
+    public enum Type { SAW, PLASMA, WATERJET }
 
     private final Type type;
 

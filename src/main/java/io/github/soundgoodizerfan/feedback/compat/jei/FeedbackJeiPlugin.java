@@ -372,6 +372,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.AUTO_ENGINEER.get(), Component.translatable("feedback.jei.info.auto_engineer"));
         registration.addIngredientInfo(FItems.SAW_HEAD.get(), Component.translatable("feedback.jei.info.saw_head"));
         registration.addIngredientInfo(FItems.PLASMA_HEAD.get(), Component.translatable("feedback.jei.info.plasma_head"));
+        registration.addIngredientInfo(FItems.WATERJET_HEAD.get(), Component.translatable("feedback.jei.info.waterjet_head"));
         registration.addIngredientInfo(FItems.DATA_STICK.get(), Component.translatable("feedback.jei.info.data_stick"));
         registration.addIngredientInfo(FItems.ARC_ELECTRODE.get(), Component.translatable("feedback.jei.info.arc_electrode"));
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));

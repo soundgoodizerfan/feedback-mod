@@ -83,6 +83,20 @@ public class FWeapons {
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8)
                     .build());
 
+    /** Grit loaded in a waterjet cutter head, in cuts' worth (garnet or any hard grit stirred into the jet). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> NOZZLE_GRIT =
+            COMPONENTS.register("nozzle_grit", () -> DataComponentType.<Integer>builder()
+                    .persistent(com.mojang.serialization.Codec.intRange(0, 100000))
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT)
+                    .build());
+
+    /** How abrasive the grit in a waterjet head is (the last grit loaded, averaged by amount): it sets how fast the nozzle wears. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> NOZZLE_GRIT_ABRASIVENESS =
+            COMPONENTS.register("nozzle_grit_abrasiveness", () -> DataComponentType.<Float>builder()
+                    .persistent(com.mojang.serialization.Codec.floatRange(0f, 1f))
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
+                    .build());
+
     /** A radio set's band, 1 to {@code RadioTuning.BANDS}; absent reads 1. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RADIO_BAND =
             COMPONENTS.register("radio_band", () -> DataComponentType.<Integer>builder()

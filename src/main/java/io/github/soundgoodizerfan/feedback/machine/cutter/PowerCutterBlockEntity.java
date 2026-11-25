@@ -123,9 +123,39 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
         cut(server);
     }
 
+    /**
+     * Loads grit into a seated waterjet head: a piece of hard, abrasive stock (a gem or its dust, by what its material says, never an item id) is
+     * ground into the jet and gives {@link MachineTuning#WATERJET_GRIT_PER_PIECE} cuts' worth. The head's grit abrasiveness becomes the average by amount.
+     * Returns the stack left over, the same one if nothing was taken.
+     */
+    public ItemStack loadGrit(ItemStack stack, ServerLevel server) {
+        if (!(head.get().getItem() instanceof CutterHeadItem h) || h.type() != CutterHeadItem.Type.WATERJET || stack.isEmpty())
+            return stack;
+        var found = Material.find(ClientMaterials.on(server), stack);
+        if (found.isEmpty() || !(found.get().form().equals("gem") || found.get().form().equals("dust")))
+            return stack;
+        float abrasive = found.get().material().mechanical().abrasiveness().orElse(0f);
+        int held = head.get().getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT.get(), 0);
+        if (abrasive < MachineTuning.WATERJET_GRIT_MIN_ABRASIVENESS || held + MachineTuning.WATERJET_GRIT_PER_PIECE > MachineTuning.WATERJET_GRIT_MAX)
+            return stack;
+        float was = head.get().getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT_ABRASIVENESS.get(), abrasive);
+        int now = held + MachineTuning.WATERJET_GRIT_PER_PIECE;
+        head.get().set(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT.get(), now);
+        head.get().set(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT_ABRASIVENESS.get(), (was * held + abrasive * MachineTuning.WATERJET_GRIT_PER_PIECE) / now);
+        sync();
+        ItemStack left = stack.copy();
+        left.shrink(1);
+        return left;
+    }
+
     private void cut(ServerLevel server) {
         if (!(head.get().getItem() instanceof CutterHeadItem headItem))
             return;
+        // A waterjet with no grit in it cannot cut: the cycle waits, the input stays.
+        if (headItem.type() == CutterHeadItem.Type.WATERJET && head.get().getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT.get(), 0) <= 0) {
+            progress = MachineTuning.CUTTER_TICKS_PER_CUT;
+            return;
+        }
         if (over > 0f)
             wear(over * MachineTuning.CUTTER_OVERVOLT_WEAR_UNITS);
         Optional<Material.Located> found = Material.find(ClientMaterials.on(server), input);
@@ -183,6 +213,11 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
             wear(1f); // running against a full output is misuse
             progress = MachineTuning.CUTTER_TICKS_PER_CUT; // retries next tick rather than spending a cycle
             return;
+        }
+        if (headItem.type() == CutterHeadItem.Type.WATERJET) {
+            // The grit is spent with the cut and wears the nozzle by how hard it is.
+            head.get().set(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT.get(), Math.max(0, head.get().getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT.get(), 0) - 1));
+            wear(MachineTuning.WATERJET_NOZZLE_WEAR_PER_ABRASIVENESS * head.get().getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT_ABRASIVENESS.get(), 0.5f));
         }
         consume(chosen.inputs());
         addOutput(chosen.result());
