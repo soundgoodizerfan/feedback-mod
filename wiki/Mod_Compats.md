@@ -98,9 +98,9 @@ Thaumaturge items that match a Feedback material are read as that material in ev
 - Amber and cinnabar ores, blocks and raw items are amber and cinnabar.
 - Rare earth is rare earth residue.
 - Essentia is a quartz-like crystal that holds an aspect. Its crystal item and the seven world crystals (air, fire, water, earth, order, entropy and flux) are its forms.
-- Thaumium is iron with a little essentia, in three grades (see [Doped thaumium](#doped-thaumium)).
+- Thaumium is iron with a little essentia, in three grades (see [Doped thaumium](#doped-thaumium)). Thaumium and void metal exist only with Thaumaturge installed. Their ingot, nugget, plate and block are Thaumaturge's own items, and they melt, cast and work like any other metal's forms.
 - Void metal is dense, very hard, brittle and dark (88% osmium, 8% ender pearl, 4% essentia). It remembers a shape: its transition is **80 Tu**, so a coil spring of it opens a [Thermal Valve](Valve.md#thermal-valve) at 80 Tu.
-- Thaumium and void metal each make the usual tinted form items. Thaumaturge's thaumium and void swords, pickaxes, axes, shovels, hoes, helmets, chestplates, leggings and boots are converted on the spot into the modular item of that kind, headed or plated in that metal, like vanilla tools (see [Old vanilla tools](Tools_and_Weapons.md#old-vanilla-tools)). Robes and shields are not converted. Other mods' recipes and JEI pages that ask for one of these items accept the converted item too.
+- Thaumaturge's thaumium and void swords, pickaxes, axes, shovels, hoes, helmets, chestplates, leggings and boots are converted on the spot into the modular item of that kind, headed or plated in that metal, like vanilla tools (see [Old vanilla tools](Tools_and_Weapons.md#old-vanilla-tools)). Robes and shields are not converted. Other mods' recipes and JEI pages that ask for one of these items accept the converted item too.
 - Greatwood and silverwood logs are wood materials. Greatwood is a dense hardwood that burns long; silverwood is a lighter, pale wood that burns shorter.
 - Cinderpearl is a pyrophoric herb: it burns at a low temperature, short and hot, as fuel.
 - Fabric is cloth, mirrored glass is mirrored glass and tallow is tallow. These three have no items of their own, and anything tagged tallow or animal fat from any mod counts as tallow.
@@ -117,7 +117,7 @@ A cap's vis cost is lower the better its metal conducts electricity, with silver
 
 ### Doped thaumium
 
-Molten essentia mixed into molten iron in a [Crucible](Crucible.md) makes thaumium, and the share of essentia picks the grade. Each grade is a window; the mix has to land inside one.
+With Thaumaturge installed, molten essentia mixed into molten iron in a [Crucible](Crucible.md) makes thaumium, and the share of essentia picks the grade. Each grade is a window; the mix has to land inside one.
 
 | Grade | Essentia share | Hardness | Toughness | Enchantability |
 | --- | --- | --- | --- | --- |
@@ -125,7 +125,7 @@ Molten essentia mixed into molten iron in a [Crucible](Crucible.md) makes thaumi
 | **Thaumium** | 5 to 10% | 14 | 60 | 22 |
 | **Rich Thaumium** | 11 to 20% | 22 | 12 | 24 |
 
-The rest of each mix is iron. More essentia makes the metal harder and more brittle: Rich Thaumium is the hardest and breaks easily, Lean Thaumium the toughest. All three are magnetic and each makes the usual tinted form items. JEI's *Mixing* card lists the windows.
+The rest of each mix is iron. More essentia makes the metal harder and more brittle: Rich Thaumium is the hardest and breaks easily, Lean Thaumium the toughest. All three are magnetic. Thaumium uses Thaumaturge's own forms; Lean and Rich Thaumium make the usual tinted form items. JEI's *Mixing* card lists the windows.
 
 ### Foods
 

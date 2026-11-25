@@ -138,6 +138,16 @@ public final class VillageEconomy {
                 .map(io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool::blueprint).orElse(ItemStack.EMPTY);
     }
 
+    /** A finished item of the named modular type put together from its starter design; empty if the type has none. */
+    static ItemStack built(ResourceLocation type) {
+        var types = io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known();
+        var materials = MaterialTable.get().materials();
+        return io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.starter(type, types, materials)
+                .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.blank(d.type())
+                        .filter(s -> io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.assemble(s, d, materials, types)))
+                .orElse(ItemStack.EMPTY);
+    }
+
     /** Indices into the goods table of what this merchant sells at its level, in file order. */
     private static List<Integer> shop(AbstractVillager m) {
         ResourceLocation prof = profession(m);
@@ -151,7 +161,8 @@ public final class VillageEconomy {
             Good g = all.get(i);
             if (g.profession().equals(prof) && g.level() <= level && g.guildTier() <= guildTier
                     && (g.types().isEmpty() || g.types().contains(type))
-                    && g.blueprint().map(b -> !blueprint(b).isEmpty()).orElse(true))
+                    && g.blueprint().map(b -> !blueprint(b).isEmpty()).orElse(true)
+                    && g.built().map(b -> !built(b).isEmpty()).orElse(true))
                 out.add(i);
         }
         return out;
@@ -196,6 +207,8 @@ public final class VillageEconomy {
     private static ItemStack stackFor(AbstractVillager m, Good g, int idx, long day) {
         if (g.blueprint().isPresent())
             return blueprint(g.blueprint().get());
+        if (g.built().isPresent())
+            return built(g.built().get());
         if (!g.enchantedBook())
             return g.stack();
         RandomSource rnd = RandomSource.create(m.getUUID().getLeastSignificantBits() ^ (day * 31L + idx));

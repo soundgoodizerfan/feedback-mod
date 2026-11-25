@@ -115,7 +115,7 @@ Some effects need the material to be right: **Heat** on a handle is only as hot 
 
 Every shaped part of every modular tool, weapon, machine, instrument and suit takes each effect the way its nearest relative among the parts above does. Fuses, primers, spark plugs, respirator filters and raw stock parts are consumables or plain stock and take none.
 
-- **Tip-like:** bits (drill bit, hand drill, lathe bit, prospector pick, pry bar, screwdriver), a note block's noisemakers and a spoon's bowl.
+- **Tip-like:** bits (drill bit, hand drill, lathe bit, pry bar, screwdriver), a note block's noisemakers and a spoon's bowl.
 - **Head-like:** abrasive wheels, rolls and wire dies.
 - **Plate-like:** a glove's body. Its metacarpal acts like reinforcing bands.
 - **Shell-like:** a crucible shell (like a vessel shell), a caster tank (like a tank shell), a respirator face piece (like a shell) and a piston cylinder (like a cylinder).

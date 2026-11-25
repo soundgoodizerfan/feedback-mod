@@ -44,18 +44,32 @@ public final class Radiation {
     private Radiation() {
     }
 
-    private static Map<ResourceLocation, Material> builtFrom;
-    private static Map<Item, Float> sources = Map.of();
+    /**
+     * What an item is worth by what material it is, found when first asked (not listed up front, so another mod's uranium ingot or lead
+     * block counts as ours do): memoised per material table, which a reload replaces.
+     */
+    private static final class PerItem {
+        private final Map<ResourceLocation, Material> from;
+        private final java.util.function.Function<Material.Located, Float> figure;
+        private final Map<Item, Float> memo = new java.util.concurrent.ConcurrentHashMap<>();
 
-    /** The activity of one item, in Ru, by material: built once per material table, since few materials radiate. */
-    private static synchronized Map<Item, Float> sources(Map<ResourceLocation, Material> materials) {
-        if (builtFrom != materials) {
-            Map<Item, Float> out = new HashMap<>();
-            materials.forEach((id, material) -> material.radioactivity().ifPresent(ru ->
-                    material.items(id).forEach((form, item) -> out.put(item, ru.value() * FormItems.volume(form) / 144f))));
-            sources = out;
-            builtFrom = materials;
+        PerItem(Map<ResourceLocation, Material> from, java.util.function.Function<Material.Located, Float> figure) {
+            this.from = from;
+            this.figure = figure;
         }
+
+        float of(Item item) {
+            return memo.computeIfAbsent(item, i -> Material.find(from, i).map(figure).orElse(0f));
+        }
+    }
+
+    private static PerItem sources;
+    private static PerItem densities;
+
+    /** The activity of one item, in Ru, by material: its material's figure times its form's volume. */
+    private static synchronized PerItem sources(Map<ResourceLocation, Material> materials) {
+        if (sources == null || sources.from != materials)
+            sources = new PerItem(materials, l -> l.material().radioactivity().map(ru -> ru.value() * FormItems.volume(l.form()) / 144f).orElse(0f));
         return sources;
     }
 
@@ -63,7 +77,7 @@ public final class Radiation {
     public static float activity(ItemStack stack, Map<ResourceLocation, Material> materials) {
         if (stack.isEmpty())
             return 0f;
-        float each = sources(materials).getOrDefault(stack.getItem(), 0f);
+        float each = sources(materials).of(stack.getItem());
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
         if (made != null) {
             Material m = materials.get(made.material());
@@ -82,27 +96,16 @@ public final class Radiation {
         return each * stack.getCount();
     }
 
-    private static Map<ResourceLocation, Material> densitiesFrom;
-    private static Map<Item, Float> densities = Map.of();
-
-    /** The density of every item that is some material, built once per material table: what a wall of it is worth. */
-    private static synchronized Map<Item, Float> densities(Map<ResourceLocation, Material> materials) {
-        if (densitiesFrom != materials) {
-            Map<Item, Float> out = new HashMap<>();
-            materials.forEach((id, material) -> {
-                float density = material.density().muPerMb();
-                if (density > 0f)
-                    material.items(id).values().forEach(item -> out.put(item, density));
-            });
-            densities = out;
-            densitiesFrom = materials;
-        }
+    /** The density of what an item is made of: what a wall of it is worth. */
+    private static synchronized PerItem densities(Map<ResourceLocation, Material> materials) {
+        if (densities == null || densities.from != materials)
+            densities = new PerItem(materials, l -> Math.max(0f, l.material().density().muPerMb()));
         return densities;
     }
 
     /** What a source at point blank gives, in Ru, if the block is one: its material's figure times its form's volume. */
     public static float blockActivity(net.minecraft.world.level.block.Block block, Map<ResourceLocation, Material> materials) {
-        return sources(materials).getOrDefault(block.asItem(), 0f);
+        return sources(materials).of(block.asItem());
     }
 
     /**
@@ -111,7 +114,7 @@ public final class Radiation {
      * to the sky reads 1. {@code centre} is a cell of {@code level}'s own coordinates (a body's plot, for a person aboard).
      */
     public static float openShare(Level level, BlockPos centre, Map<ResourceLocation, Material> materials) {
-        Map<Item, Float> density = densities(materials);
+        PerItem density = densities(materials);
         float sum = 0f;
         for (net.minecraft.core.Direction d : net.minecraft.core.Direction.values())
             sum += through(level, centre, centre.relative(d, HazardTuning.AMBIENT_RAY_BLOCKS), density);
@@ -124,7 +127,7 @@ public final class Radiation {
     }
 
     /** What the blocks strictly between two cells let through, 0 to 1: each is worth its material's density, none for air or a block that is no material. */
-    private static float through(Level level, BlockPos from, BlockPos to, Map<Item, Float> density) {
+    private static float through(Level level, BlockPos from, BlockPos to, PerItem density) {
         int n = Math.max(Math.abs(to.getX() - from.getX()), Math.max(Math.abs(to.getY() - from.getY()), Math.abs(to.getZ() - from.getZ())));
         float thickness = 0f;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -134,7 +137,7 @@ public final class Radiation {
                     from.getZ() + Math.round((to.getZ() - from.getZ()) * (float) i / n));
             var state = level.getBlockState(pos);
             if (!state.isAir())
-                thickness += density.getOrDefault(state.getBlock().asItem(), 0f);
+                thickness += density.of(state.getBlock().asItem());
         }
         return 1f / (1f + HazardTuning.RAD_WALL_GAIN * thickness / 10f);
     }
@@ -145,10 +148,10 @@ public final class Radiation {
      * block that shows radiation reads; {@link io.github.soundgoodizerfan.feedback.machine.glow.RadiationField} caches it.
      */
     public static float rateAt(Level level, BlockPos centre, Map<ResourceLocation, Material> materials) {
-        Map<Item, Float> table = sources(materials);
-        if (table.isEmpty())
+        PerItem table = sources(materials);
+        if (materials.values().stream().noneMatch(m -> m.radioactivity().isPresent()))
             return 0f;
-        Map<Item, Float> density = densities(materials);
+        PerItem density = densities(materials);
         float total = 0f;
         int r = HazardTuning.RAD_REACH_BLOCKS;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -160,7 +163,7 @@ public final class Radiation {
                     if (!level.hasChunkAt(pos))
                         continue;
                     var state = level.getBlockState(pos);
-                    float here = table.getOrDefault(state.getBlock().asItem(), 0f);
+                    float here = table.of(state.getBlock().asItem());
                     var be = state.hasBlockEntity() ? level.getBlockEntity(pos) : null;
                     if (be instanceof RadiationEmitter emitter)
                         here += emitter.radiationRu();

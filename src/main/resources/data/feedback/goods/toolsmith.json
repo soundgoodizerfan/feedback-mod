@@ -14,6 +14,63 @@
       "count": 8
     },
     {
+      "level": 1,
+      "item": "feedback:hafted_tool",
+      "built": "feedback:hand_hammer",
+      "price": 5,
+      "stock": 1
+    },
+    {
+      "level": 1,
+      "item": "feedback:pickaxe_head",
+      "material": "feedback:iron",
+      "price": 4,
+      "stock": 2
+    },
+    {
+      "level": 1,
+      "item": "feedback:axe_head",
+      "material": "feedback:iron",
+      "price": 4,
+      "stock": 2
+    },
+    {
+      "level": 1,
+      "item": "feedback:shovel_head",
+      "material": "feedback:copper",
+      "price": 3,
+      "stock": 2
+    },
+    {
+      "level": 2,
+      "item": "feedback:hoe_head",
+      "material": "feedback:iron",
+      "price": 4,
+      "stock": 2
+    },
+    {
+      "level": 2,
+      "item": "feedback:tool_binding",
+      "material": "feedback:copper",
+      "price": 2,
+      "stock": 4
+    },
+    {
+      "level": 3,
+      "item": "feedback:pickaxe_head",
+      "material": "feedback:bronze",
+      "price": 6,
+      "stock": 2
+    },
+    {
+      "level": 4,
+      "item": "feedback:pickaxe_head",
+      "material": "feedback:steel",
+      "price": 9,
+      "stock": 1,
+      "standing": 10
+    },
+    {
       "level": 2,
       "item": "feedback:tin_ingot",
       "price": 3,

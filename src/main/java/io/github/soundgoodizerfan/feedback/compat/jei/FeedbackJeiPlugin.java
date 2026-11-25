@@ -599,7 +599,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.SAWBLADE.get(), "sawblade");
         for (var part : FModular.PARTS) {
             String id = part.getId().getPath();
-            if (id.equals("pry_head") || id.equals("prospector_head"))
+            if (id.equals("pry_head"))
                 info(registration, part.get(), id);
         }
         info(registration, FModular.GALVANIC_CELL.get(), "galvanic_cell");

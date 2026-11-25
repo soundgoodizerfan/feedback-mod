@@ -1,4 +1,7 @@
 {
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "thaumaturge" }
+  ],
   "fastener": 3,
   "color": "#6a5c9c",
   "kind": "metal",

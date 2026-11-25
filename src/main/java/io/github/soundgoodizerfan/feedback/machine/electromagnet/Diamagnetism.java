@@ -25,7 +25,7 @@ public final class Diamagnetism {
 
     // Every item whose material is diamagnetic, rebuilt when the material table reloads.
     private static int generation = -1;
-    private static Map<Item, Float> byItem = Map.of();
+    private static final Map<Item, Float> byItem = new java.util.concurrent.ConcurrentHashMap<>();
 
     private Diamagnetism() {
     }
@@ -46,17 +46,14 @@ public final class Diamagnetism {
     public static float of(Item item) {
         if (generation != MaterialTable.generation()) {
             generation = MaterialTable.generation();
-            Map<Item, Float> found = new HashMap<>();
-            for (Map.Entry<ResourceLocation, Material> entry : MaterialTable.get().materials().entrySet()) {
-                float d = entry.getValue().separation().diamagnetism();
-                if (d > 0f)
-                    // Tailings are the gangue left over: the same material, but not what the field takes (as for the pull).
-                    entry.getValue().items(entry.getKey()).entrySet().stream().filter(e -> !e.getKey().equals("tailings")).map(Map.Entry::getValue)
-                            .filter(i -> !(i instanceof ModularPartItem)).forEach(i -> found.put(i, d));
-            }
-            byItem = found;
+            byItem.clear();
         }
-        return byItem.getOrDefault(item, 0f);
+        // Tailings are the gangue left over: the same material, but not what the field takes (as for the pull). Asked of the item's material
+        // when first met, so another mod's bismuth ingot is pushed as ours is.
+        return byItem.computeIfAbsent(item, i -> i instanceof ModularPartItem ? 0f
+                : Material.find(MaterialTable.get().materials(), i).filter(l -> !l.form().equals("tailings"))
+                        .map(l -> l.material().separation().diamagnetism()).filter(d -> d > 0f).orElse(0f));
+
     }
 
     /** The material an item is made of, if any (for a readout). */

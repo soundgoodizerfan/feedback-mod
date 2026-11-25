@@ -983,6 +983,17 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         return out;
     }
 
+    /** Every form another mod's item may be this material in by its common tag: the forms it has, and every whole-item form type that applies to it. */
+    public Set<String> tagForms() {
+        Set<String> out = new TreeSet<>(generated(FormItems.types()));
+        FormItems.types().forEach((form, type) -> {
+            if (!type.part() && type.appliesTo(this))
+                out.add(form);
+        });
+        out.addAll(forms.keySet());
+        return out;
+    }
+
     /** Where an item sits in the material table: which material, in which form. */
     public record Located(ResourceLocation id, Material material, String form) {}
 
@@ -1025,6 +1036,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 tags.putIfAbsent(ResourceLocation.fromNamespaceAndPath("c",
                         io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form.getKey()) + "/" + e.getKey().getPath()), at);
             }
+        // Another mod's nugget, plate or block of a material whose file lists no such form is still that material in that form: any form type
+        // that applies to the material is read from its common tag, after every own form so none is displaced.
+        for (Map.Entry<ResourceLocation, Material> e : materials.entrySet())
+            for (String form : e.getValue().tagForms())
+                tags.putIfAbsent(ResourceLocation.fromNamespaceAndPath("c",
+                        io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form) + "/" + e.getKey().getPath()),
+                        new Located(e.getKey(), e.getValue(), form));
         // Foreign items a file names under `accepts` come after every own form, so they never displace one.
         for (Map.Entry<ResourceLocation, Material> e : materials.entrySet())
             e.getValue().accepts().forEach((form, entries) -> {
@@ -1111,7 +1129,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     public java.util.Set<Item> foreignItems(ResourceLocation id) {
         java.util.Set<Item> out = new java.util.LinkedHashSet<>();
-        for (String form : items(id).keySet())
+        for (String form : tagForms())
             tagItems(out, ResourceLocation.fromNamespaceAndPath("c",
                     io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form) + "/" + id.getPath()));
         accepts.values().forEach(entries -> {

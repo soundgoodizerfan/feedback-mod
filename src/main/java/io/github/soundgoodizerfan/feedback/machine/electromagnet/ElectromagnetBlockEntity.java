@@ -73,7 +73,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
 
     // Every item whose material is magnetic, rebuilt when the material table reloads.
     private static int magneticGeneration = -1;
-    private static Set<Item> magneticItems = Set.of();
+    private static final Map<Item, Boolean> magneticItems = new java.util.concurrent.ConcurrentHashMap<>();
 
     private final FigureStore figures = new FigureStore();
 
@@ -300,15 +300,13 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
     public static boolean isMagnetic(Item item) {
         if (magneticGeneration != MaterialTable.generation()) {
             magneticGeneration = MaterialTable.generation();
-            Set<Item> found = new HashSet<>();
-            for (Map.Entry<ResourceLocation, Material> entry : MaterialTable.get().materials().entrySet())
-                if (entry.getValue().separation().magnetic())
-                    // Tailings are the gangue left over: the same material, but not what the magnet takes.
-                    entry.getValue().items(entry.getKey()).entrySet().stream().filter(e -> !e.getKey().equals("tailings")).map(Map.Entry::getValue)
-                            .filter(i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem)).forEach(found::add);
-            magneticItems = found;
+            magneticItems.clear();
         }
-        return magneticItems.contains(item);
+        // Tailings are the gangue left over: the same material, but not what the magnet takes. Asked of the item's material when first met,
+        // so another mod's iron ingot is pulled as ours is.
+        return magneticItems.computeIfAbsent(item, i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem)
+                && Material.find(MaterialTable.get().materials(), i).filter(l -> !l.form().equals("tailings") && l.material().separation().magnetic()).isPresent());
+
     }
 
     @Override

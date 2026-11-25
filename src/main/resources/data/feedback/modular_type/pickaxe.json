@@ -157,6 +157,16 @@
               }
             }
           ]
+        },
+        "point": {
+          "min": 0.6,
+          "max": 1.4,
+          "default": 1.0,
+          "step": 0.05,
+          "scales": false,
+          "variants": [
+            "prospector"
+          ]
         }
       }
     },

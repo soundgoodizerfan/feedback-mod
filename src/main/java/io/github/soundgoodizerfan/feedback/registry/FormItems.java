@@ -180,6 +180,7 @@ public final class FormItems {
         } catch (IOException e) {
             Feedback.LOGGER.error("Could not list {}", dir, e);
         }
-        return out;
+        // A file that names another mod's items carries a mod_loaded condition: without that mod it generates nothing.
+        return io.github.soundgoodizerfan.feedback.core.LoadConditions.filter(out);
     }
 }

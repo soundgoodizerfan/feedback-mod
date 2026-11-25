@@ -345,6 +345,42 @@ public final class PartBenchShaping {
         return Optional.of(new Stock(what, option.cells(), need, coldest, mb));
     }
 
+    /**
+     * Why {@link #check} refuses {@code contents} for {@code option}, as a key under {@code gui.feedback.tool_table.status}: the
+     * stock is too cold or too hot for its material, there is too little of it, or it is not the stock the shape takes.
+     */
+    public static String refusal(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level, float scale) {
+        if (option.forged() && !station.forges())
+            return "no_forge";
+        Material.Located what = null;
+        int mb = 0;
+        float coldest = Float.MAX_VALUE, hottest = -Float.MAX_VALUE;
+        for (ItemStack s : contents) {
+            if (s.isEmpty())
+                continue;
+            Optional<Material.Located> l = s.has(FDataComponents.MADE_OF.get()) ? Optional.empty() : Material.find(materials, s.getItem());
+            if (l.isEmpty() || (what != null && (!what.id().equals(l.get().id()) || !what.form().equals(l.get().form()))))
+                return "wrong_stock";
+            what = l.get();
+            mb += s.getCount() * FormItems.volume(l.get().form());
+            float heat = ItemHeat.get(s, level).value();
+            coldest = Math.min(coldest, heat);
+            hottest = Math.max(hottest, heat);
+        }
+        if (what == null || !takes(station, option, what))
+            return "wrong_stock";
+        if (mb < option.stockMb(scale))
+            return "short";
+        Material m = what.material();
+        if (!station.coldWork() && m.minTemperature().value() > 0) {
+            if (coldest < m.minTemperature().value())
+                return "cold";
+            if (hottest > m.maxTemperature().value())
+                return "hot";
+        }
+        return "wrong_stock";
+    }
+
     /** The part {@code stock} makes in {@code option}, with {@code flaw} flaws, at the stock's heat; empty if the part item is gone. */
     public static Optional<ItemStack> part(Option option, Stock stock, int flaw, Level level) {
         return part(option, stock, flaw, 1f, level);

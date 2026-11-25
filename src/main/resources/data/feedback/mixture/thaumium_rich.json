@@ -1,4 +1,7 @@
 {
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "thaumaturge" }
+  ],
   "parts": {
     "feedback:iron": {
       "min": 0.8,

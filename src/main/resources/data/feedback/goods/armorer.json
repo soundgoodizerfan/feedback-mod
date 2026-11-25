@@ -9,6 +9,49 @@
     },
     {
       "level": 1,
+      "item": "feedback:helmet_plate",
+      "material": "feedback:iron",
+      "price": 5,
+      "stock": 2
+    },
+    {
+      "level": 1,
+      "item": "feedback:chestplate_plate",
+      "material": "feedback:iron",
+      "price": 8,
+      "stock": 1
+    },
+    {
+      "level": 2,
+      "item": "feedback:leggings_plate",
+      "material": "feedback:iron",
+      "price": 7,
+      "stock": 1
+    },
+    {
+      "level": 2,
+      "item": "feedback:boots_plate",
+      "material": "feedback:iron",
+      "price": 4,
+      "stock": 2
+    },
+    {
+      "level": 3,
+      "item": "feedback:chestplate_plate",
+      "material": "feedback:bronze",
+      "price": 10,
+      "stock": 1
+    },
+    {
+      "level": 4,
+      "item": "feedback:chestplate_plate",
+      "material": "feedback:steel",
+      "price": 14,
+      "stock": 1,
+      "standing": 10
+    },
+    {
+      "level": 1,
       "item": "minecraft:coal",
       "price": 1,
       "count": 8

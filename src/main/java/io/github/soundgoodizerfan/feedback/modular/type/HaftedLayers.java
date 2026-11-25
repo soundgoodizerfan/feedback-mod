@@ -126,7 +126,7 @@ public final class HaftedLayers {
             Map.entry("cleaver_head", "cleaver"), Map.entry("sword_blade", "sword"), Map.entry("spear_head", "spear"),
             Map.entry("head_blank", "hand_hammer"), Map.entry("knife_blade", "knife"), Map.entry("file_head", "file"),
             Map.entry("driver_bit", "screwdriver"), Map.entry("drill_tip", "hand_drill"),
-            Map.entry("pry_head", "pry_bar"), Map.entry("prospector_head", "prospector_pick"));
+            Map.entry("pry_head", "pry_bar"));
     /** The kinds whose edge runs with the haft rather than across it. */
     private static final Set<String> ALONG = Set.of("sword", "knife", "spear");
 

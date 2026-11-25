@@ -76,6 +76,18 @@ public final class CombatPose {
                 part.zRot = 0f;
             });
 
+    /**
+     * A raised blade (a blocking crossguard): the arm lifted 36 degrees and turned 30 degrees inward, run before the swing so a
+     * blow still layers on top. Offsets as in Fuzss/sword-blocking-mechanics (MPL-2.0), see THIRD-PARTY-LICENSES.md; its tag gate,
+     * config toggles and 1.7 item chain are not taken.
+     */
+    public static final EnumProxy<HumanoidModel.ArmPose> BLADE_BLOCK_PROXY = new EnumProxy<>(HumanoidModel.ArmPose.class, false,
+            (IArmPoseTransformer) (model, entity, arm) -> {
+                var part = arm == HumanoidArm.RIGHT ? model.rightArm : model.leftArm;
+                part.xRot = part.xRot * 0.5f - 0.62831855f;
+                part.yRot = arm == HumanoidArm.RIGHT ? -0.5235988f : 0.5235988f;
+            });
+
     private CombatPose() {
     }
 

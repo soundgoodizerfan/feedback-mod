@@ -1,4 +1,7 @@
 {
+  "neoforge:conditions": [
+    { "type": "neoforge:mod_loaded", "modid": "thaumaturge" }
+  ],
   "fastener": 3,
   "color": "#7c6fa6",
   "kind": "metal",
@@ -51,6 +54,12 @@
   "composition": {
     "feedback:iron": 0.94,
     "feedback:essentia": 0.06
+  },
+  "forms": {
+    "ingot": "thaumaturge:ingot_thaumium",
+    "nugget": "thaumaturge:nugget_thaumium",
+    "plate": "thaumaturge:plate_thaumium",
+    "block": "thaumaturge:metal_thaumium"
   },
   "accepts": {
     "sword": ["thaumaturge:thaumium_sword"],

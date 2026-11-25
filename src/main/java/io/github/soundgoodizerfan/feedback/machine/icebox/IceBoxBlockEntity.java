@@ -46,7 +46,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refrigerable {
 
     private static final int SIZE = 27;
-    private static Set<Item> coolants = Set.of();
+    private static final java.util.Map<Item, Boolean> coolants = new java.util.concurrent.ConcurrentHashMap<>();
     private static int coolantGeneration = -1;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
@@ -60,15 +60,13 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
 
     private static boolean isCoolant(ItemStack stack) {
         if (coolantGeneration != MaterialTable.generation()) {
-            Set<Item> found = new HashSet<>();
-            MaterialTable.get().materials().forEach((id, m) -> {
-                if (m.thermal().meltingPoint().map(tu -> tu.value() <= 0f).orElse(false))
-                    found.addAll(m.items(id).values());
-            });
-            coolants = found;
+            coolants.clear();
             coolantGeneration = MaterialTable.generation();
         }
-        return coolants.contains(stack.getItem());
+        // Asked of the item's material when first met, so another mod's ice or frozen stock is a coolant as ours is.
+        return coolants.computeIfAbsent(stack.getItem(), i -> io.github.soundgoodizerfan.feedback.process.Material.find(MaterialTable.get().materials(), i)
+                .map(l -> l.material().thermal().meltingPoint().map(tu -> tu.value() <= 0f).orElse(false)).orElse(false));
+
     }
 
     @Override

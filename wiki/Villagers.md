@@ -111,6 +111,34 @@ Standing sets the price: good standing lowers prices by up to 30%, bad standing 
 
 The cleric sells one [Rite](Enchanting_Table.md#rites) per day at a high price, and needs standing first.
 
+### Tool parts
+
+The toolsmith, weaponsmith and armorer sell finished tool parts in a set material, ready to assemble. Iron and copper parts are sold at the lower levels, bronze parts at level 3, and steel parts at level 4 once your standing with the villager is 10. The toolsmith also sells one finished [Hammer](Hammer.md) per day at level 1.
+
+| Profession | Part | Material | Price (emeralds) | Level | Daily stock |
+|---|---|---|---|---|---|
+| Toolsmith | Hammer | as built | 5 | 1 | 1 |
+| Toolsmith | Pickaxe Head | iron | 4 | 1 | 2 |
+| Toolsmith | Axe Head | iron | 4 | 1 | 2 |
+| Toolsmith | Shovel Head | copper | 3 | 1 | 2 |
+| Toolsmith | Hoe Head | iron | 4 | 2 | 2 |
+| Toolsmith | Binding | copper | 2 | 2 | 4 |
+| Toolsmith | Pickaxe Head | bronze | 6 | 3 | 2 |
+| Toolsmith | Pickaxe Head | steel | 9 | 4 | 1 |
+| Weaponsmith | Sword Blade | iron | 5 | 1 | 2 |
+| Weaponsmith | Spear Head | copper | 3 | 1 | 2 |
+| Weaponsmith | Sword Guard | iron | 3 | 2 | 3 |
+| Weaponsmith | Sword Blade | bronze | 7 | 3 | 2 |
+| Weaponsmith | Sword Blade | steel | 10 | 4 | 1 |
+| Armorer | Helmet Shell | iron | 5 | 1 | 2 |
+| Armorer | Chestplate Shell | iron | 8 | 1 | 1 |
+| Armorer | Leggings Shell | iron | 7 | 2 | 1 |
+| Armorer | Boots Shell | iron | 4 | 2 | 2 |
+| Armorer | Chestplate Shell | bronze | 10 | 3 | 1 |
+| Armorer | Chestplate Shell | steel | 14 | 4 | 1 |
+
+The steel lines need standing 10. The list is sorted by profession, then level.
+
 ### Blueprints
 
 Some professions sell a **blueprint**, one per day each, at a high price. A line stays locked until your standing with the villager and its trade level are both high enough. A blueprint is a copyable design: open it at the [Blueprint Table](Blueprint_Table.md), change it and print it again. Guns and the crossbow can only be made from a blueprint.

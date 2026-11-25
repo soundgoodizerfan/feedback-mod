@@ -37,14 +37,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * What the pry bar's and the prospector's pick's faces do to the block under a right click. Both read the head's baked figures and
+ * What the pry bar's face and a prospector's pick head do to the block under a right click. Both read the head's baked figures and
  * the block's own properties, never an id:
  * <ul>
  *   <li><b>Pry</b> ({@code pry_head}): a block of the {@code feedback:fastened} tag (held on by nails, pins or a seal) comes off whole,
  *       as the item it is, if the bar's toughness carries the load the block's hardness sets ({@link ModularTuning#PRY_TOUGHNESS_PER_HARDNESS}).
  *       A bar that cannot carry it bends: a point of wear, nothing lifted. The bar wears by the load it carried. It also pries a
  *       fitting off a fittable holder (a sensor on the face, else the last upgrade), as the crowbar it replaced did.</li>
- *   <li><b>Prospect</b> ({@code prospector_head}): the block's material is found by its item; each metal it {@code bears} throws glints of
+ *   <li><b>Prospect</b> (a {@code pickaxe_head} shaped as the {@code prospector} variant, which also digs and sounds): the block's material is found by its item; each metal it {@code bears} throws glints of
  *       that metal's own colour off the struck face, more where more ingots a piece yields. A block that bears nothing puffs grey dust.</li>
  * </ul>
  */
@@ -62,8 +62,8 @@ public final class FaceWork {
         var pry = ToolAbilities.face(stack, "pry_head");
         if (pry != null)
             return pry(context, stack, pry);
-        var pick = ToolAbilities.face(stack, "prospector_head");
-        if (pick != null)
+        var pick = ToolAbilities.face(stack, "pickaxe_head");
+        if (pick != null && "prospector".equals(pick.part().variant()))
             return prospect(context, stack, pick);
         return InteractionResult.PASS;
     }

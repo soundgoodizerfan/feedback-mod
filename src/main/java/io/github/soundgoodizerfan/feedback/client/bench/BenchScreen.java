@@ -383,7 +383,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
 
     /** The wheel's order for the types a bench makes shapes of: weapons, then tools, then armour head to foot, then the rest. */
     private static final List<String> WHEEL = List.of("sword", "cleaver", "maul", "spear", "twin", "axe", "pickaxe", "shovel", "hoe", "sickle",
-            "shears", "hand_hammer", "hand_knife", "spoon", "sawblade", "file", "screwdriver", "hand_drill", "pry_bar", "prospector_pick", "bow", "crossbow", "flintlock", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
+            "shears", "hand_hammer", "hand_knife", "spoon", "sawblade", "file", "screwdriver", "hand_drill", "pry_bar","bow", "crossbow", "flintlock", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
 
     private static int wheelRank(String type) {
         int i = WHEEL.indexOf(type);
@@ -541,7 +541,8 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         var stock = PartBenchShaping.check(menu.station(), o, menu.stock(), ClientMaterials.on(level), level,
                 n.index == menu.picked() ? menu.aimScale(o) : 1f);
         if (stock.isEmpty()) {
-            reject(Component.translatable("gui.feedback.tool_table.status.cold"));
+            reject(Component.translatable("gui.feedback.tool_table.status." + PartBenchShaping.refusal(menu.station(), o, menu.stock(),
+                    ClientMaterials.on(level), level, n.index == menu.picked() ? menu.aimScale(o) : 1f)));
             return;
         }
         // A part with axes to aim is picked first, so the strip shows; a second click makes it.

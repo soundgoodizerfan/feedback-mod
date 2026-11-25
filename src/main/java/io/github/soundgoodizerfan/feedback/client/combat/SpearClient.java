@@ -22,6 +22,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -160,6 +161,8 @@ public final class SpearClient {
     public static final class Extension implements IClientItemExtensions {
         @Override
         public HumanoidModel.ArmPose getArmPose(LivingEntity entity, InteractionHand hand, ItemStack stack) {
+            if (entity.isUsingItem() && entity.getUsedItemHand() == hand && stack.getUseAnimation() == UseAnim.BLOCK)
+                return HumanoidModel.ArmPose.valueOf("FEEDBACK_BLADE_BLOCK");
             if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(stack) != io.github.soundgoodizerfan.feedback.modular.type.ModularType.Family.SPEAR)
                 return null;
             return hand == InteractionHand.MAIN_HAND && stage(entity) > 0 ? HumanoidModel.ArmPose.valueOf("FEEDBACK_SPEAR") : null;
@@ -168,6 +171,27 @@ public final class SpearClient {
         @Override
         public boolean applyForgeHandTransform(PoseStack pose, LocalPlayer player, HumanoidArm arm, ItemStack stack,
                                                float partialTick, float equip, float swing) {
+            // A raised blade (a blocking crossguard) lies across the body, as the sword-block of old versions did; vanilla's
+            // first-person BLOCK is only the shield's own model pose. Values from Fuzss/sword-blocking-mechanics (MPL-2.0,
+            // snapshot 15w33b's pose), see THIRD-PARTY-LICENSES.md. Equip is held at zero so starting to block does not dip the
+            // item; the swing is layered on top so a blow can be struck while the blade is up.
+            if (player.isUsingItem() && player.getUseItem() == stack && stack.getUseAnimation() == UseAnim.BLOCK) {
+                int d = arm == HumanoidArm.RIGHT ? 1 : -1;
+                pose.translate(d * 0.56f, -0.52f, -0.72f);
+                if (swing > 0) {
+                    float f = Mth.sin(swing * swing * Mth.PI);
+                    pose.mulPose(Axis.YP.rotationDegrees(d * (45f + f * -20f)));
+                    float g = Mth.sin(Mth.sqrt(swing) * Mth.PI);
+                    pose.mulPose(Axis.ZP.rotationDegrees(d * g * -20f));
+                    pose.mulPose(Axis.XP.rotationDegrees(g * -80f));
+                    pose.mulPose(Axis.YP.rotationDegrees(d * -45f));
+                }
+                pose.translate(d * -0.14142136f, 0.08f, 0.14142136f);
+                pose.mulPose(Axis.XP.rotationDegrees(-102.25f));
+                pose.mulPose(Axis.YP.rotationDegrees(d * 13.365f));
+                pose.mulPose(Axis.ZP.rotationDegrees(d * 78.05f));
+                return true;
+            }
             // Only a spear's face stabs and braces; the one hafted item is every other tool too.
             if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(stack) != io.github.soundgoodizerfan.feedback.modular.type.ModularType.Family.SPEAR)
                 return false;

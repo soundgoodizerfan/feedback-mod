@@ -154,6 +154,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
             // rock, tailings less. Every form of a rung is one form-agnostic row, so a finer form melts sooner; a form some
             // authored row already takes keeps to that row.
             java.util.Map<Float, List<String>> rungs = new java.util.TreeMap<>();
+            // by-item-ok: finds which forms of the ore ladder no authored row takes; the rows made are form-agnostic MaterialIngredients
             material.items(id).forEach((form, item) -> {
                 if (selfBearing && !OreLadder.LADDER_FORMS.contains(form) || !isRock(form))
                     return;
@@ -206,7 +207,9 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                 if (item == null
                         || authored.stream().anyMatch(p -> p.inputs().size() == 1 && p.inputs().get(0).test(new ItemStack(item))))
                     continue;
-                out.add(new ThermalProcess(List.of(Ingredient.of(item)),
+                // By material and form, not by our item: another mod's ingot tagged c:ingots/<material> melts as ours does.
+                out.add(new ThermalProcess(List.of(new MaterialIngredient(Optional.of(form), Optional.empty(), Optional.empty(),
+                        Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY, Optional.of(id), List.of()).toVanilla()),
                         melt.get(), melt.get(), new Tu(Float.MAX_VALUE), meltHold(form), new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
                         new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
                         new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), melted(form)),

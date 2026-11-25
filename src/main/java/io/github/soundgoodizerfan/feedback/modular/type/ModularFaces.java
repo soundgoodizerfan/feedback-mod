@@ -43,7 +43,7 @@ public final class ModularFaces {
     public static final ResourceLocation PLAN = Feedback.id("hafted_tool");
     /** The head kinds in the order the item model's {@code feedback:face} overrides list them: the property is 1 plus a kind's place here. */
     public static final List<String> KINDS = List.of("pickaxe_head", "axe_head", "shovel_head", "hoe_head", "maul_head", "sickle_head",
-            "cleaver_head", "sword_blade", "spear_head", "head_blank", "knife_blade", "file_head", "driver_bit", "drill_tip", "pry_head", "prospector_head");
+            "cleaver_head", "sword_blade", "spear_head", "head_blank", "knife_blade", "file_head", "driver_bit", "drill_tip", "pry_head");
     /** The face letters, front first: the grid's reading order seats the first face here. */
     public static final List<String> LETTERS = List.of("H", "J", "K");
     /** State key on a face's part: the share of its life spent, 0 new to 1 spent. */

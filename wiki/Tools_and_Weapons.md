@@ -50,7 +50,7 @@ You can add:
 - A **tip** part, below.
 - Armor and shields can take a **grip** or **lining**.
 
-A plain sword guard is drawn as a thin cross bar centered on the haft. The **crossguard** variant is a thick solid bar with quillons turned toward the blade, so a sword that can block looks different from a plain one: hold use to raise the blade and the bar catches part of a blow from the front, at a point of wear a blow.
+A plain sword guard is drawn as a thin cross bar centered on the haft. The **crossguard** variant is a thick solid bar with quillons turned toward the blade, so a sword that can block looks different from a plain one: hold use to raise the blade across your body and the bar catches part of a blow from the front, at a point of wear a blow.
 
 A tip, binding, guard, pommel, rim and crossbow prod are shaped at a bench first, like a head, so a stack of ingots is never ambiguous: the item says what it is. A tip, a pommel and the other optional extras are added to a finished tool on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab).
 
@@ -137,7 +137,7 @@ A finished tool or weapon is named by rule from its blade, head, face or limb: i
 - **Long blade.** Wait for a full swing and it hits everything around your target; mash it and it is weak.
 - **Short blade.** Strike from behind or at unaware mobs, especially while sneaking; face to face it is worse than a plain blade.
 - **Leaf blade.** A kill readies your next swing and speeds you up, and fighting a crowd hits harder.
-- **Prospector's pick.** Right click to ping: ore glows through the stone for 6 seconds, out to 4 blocks for each stick of the haft (one stick 4 blocks, four sticks 16). Each ore is outlined in the color of the metal or mineral it is an ore of, copper orange and so on; an ore with no material color is amber. It is slow to recharge (10 seconds) and wears the pick, so ping and then dig.
+- **Prospector's pick head (a pickaxe head shaped as the prospector variant).** It digs like any pickaxe head and has two right-click jobs. Right click on a block to assay it: if the block bears metal, glints in each metal's own color fly off the struck face, more where more of the metal is held; a block that bears nothing puffs gray dust. Every assay wears the pick. The **point** setting (0.6 to 1.4, on this variant only) trades a finer point, with more glints and faster wear, for a blunter one, with fewer glints and less wear. Right click in the air to ping: ore glows through the stone for 6 seconds, out to 4 blocks for each stick of the haft (one stick 4 blocks, four sticks 16). Each ore is outlined in the color of the metal or mineral it is an ore of, copper orange and so on; an ore with no material color is amber. It is slow to recharge (10 seconds) and wears the pick, so ping and then dig.
 - **Miner's pick.** Mine one ore and the connected ore of the same kind comes with it, up to 8 more, at a small extra wear each. It will not spend the pick's last point. Sneak to mine a single block.
 - **Large axe head (a felling axe).** Break a log and the whole connected tree comes down, up to 24 logs. Each log costs extra durability, and sneaking breaks one log only.
 - **Small axe head (a hatchet).** Hold right click to wind up, release to throw. It hits harder the farther it flies (up to 2.5 times), costs 2 durability per throw and lands as an item to pick up.

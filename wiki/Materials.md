@@ -105,7 +105,7 @@ Electrical behavior is on the pages that use it: how much current a wire of each
 
 ## Items from other mods
 
-An item from another mod that carries a common metal tag counts as that material and form. An item tagged as a brass ingot is a brass ingot in every process: it smelts, casts, forms and machines like ours, and works in any recipe that asks for brass. It has the same figures as the material on this page. Tags exist per form (ingots, nuggets, plates, storage blocks, ores, dusts and so on). Feedback's own items are always read as themselves.
+An item from another mod that carries a common metal tag counts as that material and form. An item tagged as a brass ingot is a brass ingot in every process: it smelts, casts, forms and machines like ours, and works in any recipe that asks for brass. It has the same figures as the material on this page: it glows when hot, shields and radiates by the material's density and activity, is pulled by electromagnets, pushed by diamagnetism and counts as coolant in an ice box, as ours does. Tags exist per form (ingots, nuggets, plates, storage blocks, ores, dusts and so on). Feedback's own items are always read as themselves.
 
 ## Heat and other figures
 

@@ -405,7 +405,7 @@ public final class ModularTuning {
     public static final float PRY_TOUGHNESS_PER_HARDNESS = 10f;
     /** Load (toughness units) that costs the bar one point of wear. */
     public static final float PRY_LOAD_PER_WEAR = 20f;
-    /** Glints a prospector's pick throws per ingot a piece bears, and the most it throws for one metal. */
+    /** Glints a prospector's pick head throws per ingot a piece bears, and the most it throws for one metal. */
     public static final float PROSPECT_GLINTS_PER_INGOT = 6f;
     public static final int PROSPECT_MAX_GLINTS = 24;
 

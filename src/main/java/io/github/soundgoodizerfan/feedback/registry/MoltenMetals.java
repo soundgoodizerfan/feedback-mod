@@ -57,6 +57,9 @@ public final class MoltenMetals {
 
     static {
         for (String id : IDS) {
+            // The thaumium grades exist only with Thaumaturge (their material files carry the condition).
+            if (id.startsWith("thaumium") && !net.neoforged.fml.ModList.get().isLoaded("thaumaturge"))
+                continue;
             String name = "molten_" + id;
             boolean cool = LIQUID_AT_AMBIENT.contains(id);
             DeferredHolder<FluidType, FluidType> type = TYPES.register(name, () -> new FluidType(FluidType.Properties.create()

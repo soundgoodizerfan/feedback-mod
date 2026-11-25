@@ -8,6 +8,42 @@
       "count": 2
     },
     {
+      "level": 1,
+      "item": "feedback:sword_blade",
+      "material": "feedback:iron",
+      "price": 5,
+      "stock": 2
+    },
+    {
+      "level": 1,
+      "item": "feedback:spear_head",
+      "material": "feedback:copper",
+      "price": 3,
+      "stock": 2
+    },
+    {
+      "level": 2,
+      "item": "feedback:sword_guard",
+      "material": "feedback:iron",
+      "price": 3,
+      "stock": 3
+    },
+    {
+      "level": 3,
+      "item": "feedback:sword_blade",
+      "material": "feedback:bronze",
+      "price": 7,
+      "stock": 2
+    },
+    {
+      "level": 4,
+      "item": "feedback:sword_blade",
+      "material": "feedback:steel",
+      "price": 10,
+      "stock": 1,
+      "standing": 10
+    },
+    {
       "level": 2,
       "item": "feedback:bronze_ingot",
       "price": 4,

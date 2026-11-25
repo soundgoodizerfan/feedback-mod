@@ -30,7 +30,7 @@ The tool does what its faces do, together:
 | Drill tip | | drills a plate held in your other hand ([Hand Tools](Hand_Tools.md#hand-drill)) |
 | Knife blade, file head, screwdriver bit | | the knife, the file and the driver the benches ask for; a file head is cut bastard, second or smooth, a screwdriver bit flat, cross or hex ([Hand Tools](Hand_Tools.md#file)) |
 
-A pick face and an axe face on one haft dig both, and an axe face with a hoe face strips and tills. What a head's shape adds (a prospector's pick, a billhook, a bearded axe) rides with that face.
+A pick face and an axe face on one haft dig both, and an axe face with a hoe face strips and tills. What a head's shape adds (a prospector's pick that assays the block it is pressed to, a billhook, a bearded axe) rides with that face.
 
 Each face **wears on its own**. Mining wears the face that dug the block, a blow wears the front face. The durability bar shows the most worn face. A worn-out face stops working but the others still do; the tool is spent only when every face is.
 

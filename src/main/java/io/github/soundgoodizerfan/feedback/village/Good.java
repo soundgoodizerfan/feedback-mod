@@ -20,15 +20,20 @@ import net.minecraft.world.item.ItemStack;
  * @param types         villager types (biome: {@code desert}, {@code taiga}) that sell the line; empty means every type
  * @param calibrated    an instrument sold as a reference standard: it reads at the truth tier
  * @param weekly        sold at most once in {@link VillageTuning#WEEK_DAYS} days to a villager, whatever its day stock
+ * @param material      the stack is a shaped part (the line's item) made of this material
+ * @param form          the stock form that part was cut from
+ * @param built         the stack is a finished modular item of this type, put together from its starter design
  */
 public record Good(ResourceLocation profession, int level, Item item, int count, int price, int stock, int standing,
                    boolean enchantedBook, java.util.Optional<ResourceLocation> blueprint, int guildTier, java.util.List<String> types,
-                   boolean calibrated, boolean weekly) {
+                   boolean calibrated, boolean weekly, java.util.Optional<ResourceLocation> material, String form,
+                   java.util.Optional<ResourceLocation> built) {
 
     /** A line as a file writes it, under its profession. */
     public record Line(int level, Item item, int count, int price, int stock, int standing, boolean enchantedBook,
                        java.util.Optional<ResourceLocation> blueprint, int guildTier, java.util.List<String> types,
-                       boolean calibrated, boolean weekly) {
+                       boolean calibrated, boolean weekly, java.util.Optional<ResourceLocation> material, String form,
+                       java.util.Optional<ResourceLocation> built) {
 
         public static final Codec<Line> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.intRange(1, 5).optionalFieldOf("level", 1).forGetter(Line::level),
@@ -42,7 +47,10 @@ public record Good(ResourceLocation profession, int level, Item item, int count,
                 Codec.intRange(0, 3).optionalFieldOf("guild_tier", 0).forGetter(Line::guildTier),
                 Codec.STRING.listOf().optionalFieldOf("types", java.util.List.of()).forGetter(Line::types),
                 Codec.BOOL.optionalFieldOf("calibrated", false).forGetter(Line::calibrated),
-                Codec.BOOL.optionalFieldOf("weekly", false).forGetter(Line::weekly)).apply(i, Line::new));
+                Codec.BOOL.optionalFieldOf("weekly", false).forGetter(Line::weekly),
+                ResourceLocation.CODEC.optionalFieldOf("material").forGetter(Line::material),
+                Codec.STRING.optionalFieldOf("form", "ingot").forGetter(Line::form),
+                ResourceLocation.CODEC.optionalFieldOf("built").forGetter(Line::built)).apply(i, Line::new));
     }
 
     /** A whole shop file. */
@@ -66,10 +74,15 @@ public record Good(ResourceLocation profession, int level, Item item, int count,
             Codec.INT.optionalFieldOf("guild_tier", 0).forGetter(Good::guildTier),
             Codec.STRING.listOf().optionalFieldOf("types", java.util.List.of()).forGetter(Good::types),
             Codec.BOOL.optionalFieldOf("calibrated", false).forGetter(Good::calibrated),
-            Codec.BOOL.optionalFieldOf("weekly", false).forGetter(Good::weekly)).apply(i, Good::new));
+            Codec.BOOL.optionalFieldOf("weekly", false).forGetter(Good::weekly),
+            ResourceLocation.CODEC.optionalFieldOf("material").forGetter(Good::material),
+            Codec.STRING.optionalFieldOf("form", "ingot").forGetter(Good::form),
+            ResourceLocation.CODEC.optionalFieldOf("built").forGetter(Good::built)).apply(i, Good::new));
 
     public ItemStack stack() {
         ItemStack s = new ItemStack(item, count);
+        material.ifPresent(m -> s.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
+                new io.github.soundgoodizerfan.feedback.process.MadeOf(m, form, 1)));
         if (calibrated)
             s.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CALIBRATED.get(), true);
         return s;

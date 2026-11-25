@@ -118,8 +118,7 @@
         "file_head",
         "driver_bit",
         "drill_tip",
-        "pry_head",
-        "prospector_head"
+        "pry_head"
       ],
       "stock": [
         "@lump",
@@ -263,8 +262,7 @@
         "file_head",
         "driver_bit",
         "drill_tip",
-        "pry_head",
-        "prospector_head"
+        "pry_head"
       ],
       "stock": [
         "@lump",
@@ -298,8 +296,7 @@
         "file_head",
         "driver_bit",
         "drill_tip",
-        "pry_head",
-        "prospector_head"
+        "pry_head"
       ],
       "stock": [
         "@lump",

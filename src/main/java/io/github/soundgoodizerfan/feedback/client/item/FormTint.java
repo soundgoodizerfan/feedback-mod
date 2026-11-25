@@ -63,7 +63,13 @@ public final class FormTint {
 
     /** Whether {@code stack} is stock that gives off light when hot (a metal or an incandescent material), so a screen may glow it. */
     public static boolean glowing(net.minecraft.world.item.ItemStack stack) {
-        return GLOWING.contains(stack.getItem());
+        return GLOWING.contains(stack.getItem()) || foreignGlows(stack.getItem());
+    }
+
+    /** Another mod's (or vanilla's) item that is a glowing material in some form, by the material table: a hot iron ingot glows as ours does. */
+    private static boolean foreignGlows(Item item) {
+        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(item)
+                .map(l -> io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.glows(l.material())).orElse(false);
     }
 
     private FormTint() {
@@ -174,6 +180,14 @@ public final class FormTint {
             event.register((stack, layer) -> layer != 0 ? 0xFFFFFFFF
                     : 0xFF000000 | (glows ? GlowColours.heated(MaterialColors.of(id), stack) : MaterialColors.of(id)), item);
         });
+        // Every other item (vanilla's iron ingot, another mod's brass plate) keeps its own sprite and takes only the heat: tags are not loaded
+        // yet, so each stack asks the material table when it is drawn, and a stack with no temperature draws untouched.
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (colors.containsKey(item) || event.getItemColors().getColor(new net.minecraft.world.item.ItemStack(item), 0) != -1)
+                continue;
+            event.register((stack, layer) -> layer != 0 || !stack.has(FDataComponents.TEMPERATURE.get()) || !foreignGlows(stack.getItem())
+                    ? 0xFFFFFFFF : 0xFF000000 | GlowColours.heated(0xFFFFFF, stack), item);
+        }
         // A cable's metal rides on the stack, so its tint cannot be fixed per item.
         event.register((stack, layer) -> {
             MadeOf made = stack.get(FDataComponents.MADE_OF.get());
