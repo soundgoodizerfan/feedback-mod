@@ -5,11 +5,7 @@ package io.github.soundgoodizerfan.feedback.client.screen;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselMenu;
-import java.util.ArrayList;
-import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
-import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.client.gui.Gauge;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 import io.github.soundgoodizerfan.feedback.client.gui.HeatGlow;
@@ -103,7 +99,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
             int sx = ThermalVesselMenu.GRID_X + slot % ThermalVesselMenu.GRID_COLUMNS * ThermalVesselMenu.SLOT_PX;
             int sy = ThermalVesselMenu.GRID_Y + slot / ThermalVesselMenu.GRID_COLUMNS * ThermalVesselMenu.SLOT_PX;
             if (FormTint.glowing(stack))
-                HeatGlow.embers(specks, sx, sy, tu);
+                HeatGlow.embers(specks, sx, sy, stack);
             else if (stack.has(FDataComponents.FOOD_STATE.get()) && tu >= 100)
                 HeatGlow.steam(specks, sx, sy);
         }
@@ -117,6 +113,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        menu.showHeat(minecraft.level);
         int gaugeTu = menu.getGaugeTu();
         skin.heat(gaugeTu); // a data skin's heat decor glows with the chamber
         skin.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
@@ -139,9 +136,9 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
             int row = slot / ThermalVesselMenu.GRID_COLUMNS;
             int sx = gx + column * ThermalVesselMenu.SLOT_PX, sy = gy + row * ThermalVesselMenu.SLOT_PX;
             skin.slot(graphics, sx, sy);
-            // Glowing stock throws its own bloom, at the chamber's live heat (a workpiece has no stamped heat while it cooks).
+            // Glowing stock throws its own bloom, at its own heat.
             if (FormTint.glowing(menu.getSlot(slot).getItem()))
-                HeatGlow.slot(graphics, sx, sy, gaugeTu);
+                HeatGlow.slot(graphics, sx, sy, menu.getSlot(slot).getItem());
         }
 
         // The fire mouth: an arch under the fuel, glowing while lit, the glow flickering as a fire does.
@@ -201,21 +198,6 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
         int nx = x + 1 + Math.min(ROD_W - 3, Math.round((ROD_W - 2) * rpm / span));
         boolean inside = hi <= 0 || rpm >= lo && rpm <= hi;
         g.fill(nx, dy + 1, nx + 1, dy + dh - 1, inside ? skin.ink() : skin.warn());
-    }
-
-    /**
-     * A workpiece mid-cook has no stamped {@code ItemHeat} of its own -- see {@code
-     * ThermalVesselMenu}'s {@code HeatStampingSlot}, which only stamps one at the moment it leaves -- so
-     * this is the one place a figure has to come from the vessel's own live reading instead of
-     * the item. Only for the nine workpiece slots; the fuel slot has no comparable claim to a
-     * temperature of its own.
-     */
-    @Override
-    protected List<Component> getTooltipFromContainerItem(ItemStack stack) {
-        List<Component> tooltip = new ArrayList<>(super.getTooltipFromContainerItem(stack));
-        if (hoveredSlot != null && hoveredSlot.getContainerSlot() < ThermalVesselBlockEntity.SLOTS)
-            tooltip.add(Readout.temperatureReading(new Tu(menu.getGaugeTu())));
-        return tooltip;
     }
 
     static int firstBandAbove(int tu) {

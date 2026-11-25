@@ -38,11 +38,11 @@ A built crucible is drawn as a plain square box with straight vertical walls, a 
 - **Right-click with an item** to drop one in. Shift shows the same. A bucket or other fluid container is poured into the crucible's tank as far as it has room, and the empty bucket comes back (water here is what a dirt dip turns into clay, and what sets concrete powder into concrete). It holds as many items as it has charge slots.
 - **Right-click with an empty hand** to open its screen. Its item slots are in rows of three, beside a heat gauge and a tank gauge. Inputs and finished products share the slots: a product lands in a free slot.
 - The **heat gauge** is banded in the same ten bands as the glow of a Thermal Vessel; hover it to read the temperature in Tu.
-- Slots holding glowing stock shine with a faint bloom in the glow color, and sparks lift off them, more of them the hotter the stock. The chamber gives off a soft, flickering halo as it heats. Once the crucible is above 480 Tu, bubbles rise in the melt in the tank. With reduce motion on, the sparks and bubbles do not appear.
+- Each charge has [its own temperature](Heat.md#warming-in-a-vessel), shown on its tooltip. Slots holding glowing stock shine with a faint bloom in the glow color of that item's heat, and sparks lift off them, more of them the hotter the item. The chamber gives off a soft, flickering halo as it heats. Once the crucible is above 480 Tu, bubbles rise in the melt in the tank. With reduce motion on, the sparks and bubbles do not appear.
 - The **tank gauge** is filled in the melt's color, which shines toward the glow color as the crucible heats; hover it to see the fluid and its amount in ingots. Molds fill from the tank, not from the screen.
-- Items taken out of a slot come out **at the crucible's temperature** and start cooling at once. Ingots taken a click apart differ by a few Tu and do not stack on their own. **Right-click** one held on the cursor onto the other in any inventory or container to merge them at their [average heat](Heat.md#merging-heated-stacks).
+- Items taken out of a slot come out **at the temperature they have reached** and start cooling at once. Ingots taken a click apart differ by a few Tu and do not stack on their own. **Right-click** one held on the cursor onto the other in any inventory or container to merge them at their [average heat](Heat.md#merging-heated-stacks).
 
-Whatever is inside sits at the crucible's temperature. The crucible doesn't know what you're making. It just gets hot, and the items do whatever they do at that temperature (see JEI's *Thermal process* pages).
+Whatever is inside warms toward the crucible's temperature. The crucible doesn't know what you're making. It just gets hot, and the items do whatever they do at the crucible's temperature (see JEI's *Thermal process* pages).
 
 ### Making things
 

@@ -44,6 +44,19 @@ public final class HeatGlow {
     }
 
     /** Called once a tick per glowing slot at (x, y), panel-relative: sparks lift off, more of them the hotter it is. Silent under reduce motion or below the faint red band. */
+    public static void embers(Specks specks, int x, int y, net.minecraft.world.item.ItemStack stack) {
+        var level = net.minecraft.client.Minecraft.getInstance().level;
+        if (level != null)
+            embers(specks, x, y, io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(stack, level).value());
+    }
+
+    /** The bloom of the stack in a slot, at its own heat. */
+    public static void slot(GuiGraphics g, int x, int y, net.minecraft.world.item.ItemStack stack) {
+        var level = net.minecraft.client.Minecraft.getInstance().level;
+        if (level != null)
+            slot(g, x, y, io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(stack, level).value());
+    }
+
     public static void embers(Specks specks, int x, int y, float tu) {
         if (ClientSettings.reduceMotion() || Incandescence.light(tu) <= 0)
             return;

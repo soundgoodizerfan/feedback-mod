@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.client.render;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.Incandescence;
-import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -36,7 +35,7 @@ public final class GlowColours {
      */
     public static int heated(int base, ItemStack stack) {
         var level = Minecraft.getInstance().level;
-        if (level == null || !stack.has(FDataComponents.TEMPERATURE.get()))
+        if (level == null || !io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.tracked(stack, level))
             return base;
         return heated(base, io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(stack, level).value());
     }

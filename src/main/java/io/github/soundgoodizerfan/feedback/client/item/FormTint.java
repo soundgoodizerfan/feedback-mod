@@ -66,6 +66,11 @@ public final class FormTint {
         return GLOWING.contains(stack.getItem()) || foreignGlows(stack.getItem());
     }
 
+    private static boolean tracked(net.minecraft.world.item.ItemStack stack) {
+        var level = Minecraft.getInstance().level;
+        return level != null && io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.tracked(stack, level);
+    }
+
     /** Another mod's (or vanilla's) item that is a glowing material in some form, by the material table: a hot iron ingot glows as ours does. */
     private static boolean foreignGlows(Item item) {
         return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(item)
@@ -188,7 +193,7 @@ public final class FormTint {
             if (colors.containsKey(item) || Feedback.MOD_ID.equals(BuiltInRegistries.ITEM.getKey(item).getNamespace())
                     || event.getItemColors().getColor(new net.minecraft.world.item.ItemStack(item), 0) != -1)
                 continue;
-            event.register((stack, layer) -> layer != 0 || !stack.has(FDataComponents.TEMPERATURE.get()) || !foreignGlows(stack.getItem())
+            event.register((stack, layer) -> layer != 0 || !tracked(stack) || !foreignGlows(stack.getItem())
                     ? 0xFFFFFFFF : 0xFF000000 | GlowColours.heated(0xFFFFFF, stack), item);
         }
         // A cable's metal rides on the stack, so its tint cannot be fixed per item.

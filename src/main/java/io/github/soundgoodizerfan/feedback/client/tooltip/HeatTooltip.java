@@ -6,7 +6,6 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
-import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -22,8 +21,8 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
  * <h2>It needs no packet, which is the stamp design paying out</h2>
  * A workpiece stores the temperature it was stamped at and the tick that happened on, both
  * network-synchronised components, and the client's game time is the server's. So the client can
- * compute the current figure itself, exactly, with no round trip and no per-item sync. A design
- * that stored a live temperature would have needed one of those and would have been stale anyway.
+ * compute the current figure itself, exactly, with no round trip and no per-item sync. A stack still
+ * in its heater is not stamped yet; its menu sends the figure ({@code LiveHeat}).
  *
  * <h2>Why this is a separate listener from {@link WorkpieceTooltip}</h2>
  * The two are independent facts about a stack and one does not imply the other -- a hot ingot
@@ -37,12 +36,9 @@ public class HeatTooltip {
     @SubscribeEvent
     public static void onTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        if (!stack.has(FDataComponents.TEMPERATURE.get())
-                && !(stack.getItem() instanceof ItemHeat.Cooling hold && hold.holdsAt(stack) != null))
-            return;
-
         Level level = Minecraft.getInstance().level;
-        if (level == null)
+        if (level == null || !ItemHeat.tracked(stack, level)
+                && !(stack.getItem() instanceof ItemHeat.Cooling hold && hold.holdsAt(stack) != null))
             return;
 
         Tu tu = ItemHeat.get(stack, level);

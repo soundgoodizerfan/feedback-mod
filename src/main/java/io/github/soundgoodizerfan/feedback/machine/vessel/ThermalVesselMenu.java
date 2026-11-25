@@ -3,6 +3,8 @@
 package io.github.soundgoodizerfan.feedback.machine.vessel;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.core.thermal.LiveHeat;
+import net.minecraft.world.level.Level;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.process.Fuel;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
@@ -48,20 +50,24 @@ public class ThermalVesselMenu extends AbstractContainerMenu {
 
     private final Container container;
     private final ContainerData data;
+    /** Each workpiece slot's temperature (see {@link LiveHeat}). */
+    private final ContainerData slotHeat;
 
     private final VesselKind kind;
 
     /** Client side: the open packet carries the kind's ordinal. */
     public ThermalVesselMenu(int id, Inventory playerInventory, int kindOrdinal) {
         this(id, playerInventory, new SimpleContainer(ThermalVesselBlockEntity.SLOTS + 1), new SimpleContainerData(6),
-                VesselKind.values()[kindOrdinal]);
+                new SimpleContainerData(ThermalVesselBlockEntity.SLOTS), VesselKind.values()[kindOrdinal]);
     }
 
     public ThermalVesselMenu(int id, Inventory playerInventory, ThermalVesselBlockEntity vessel) {
-        this(id, playerInventory, vessel, vessel.getContainerData(), vessel.getKind());
+        this(id, playerInventory, vessel, vessel.getContainerData(), LiveHeat.readings(vessel, ThermalVesselBlockEntity.SLOTS),
+                vessel.getKind());
     }
 
-    private ThermalVesselMenu(int id, Inventory playerInventory, Container container, ContainerData data, VesselKind kind) {
+    private ThermalVesselMenu(int id, Inventory playerInventory, Container container, ContainerData data, ContainerData slotHeat,
+            VesselKind kind) {
         super(FMenus.THERMAL_VESSEL.get(), id);
         this.kind = kind;
         checkContainerSize(container, ThermalVesselBlockEntity.SLOTS + 1);
@@ -83,7 +89,14 @@ public class ThermalVesselMenu extends AbstractContainerMenu {
         for (int column = 0; column < 9; column++)
             addSlot(new Slot(playerInventory, column, 8 + column * 18, INV_Y + 58));
 
+        this.slotHeat = slotHeat;
         addDataSlots(data);
+        addDataSlots(slotHeat);
+    }
+
+    /** Client: note what each workpiece is at against the stacks about to be drawn. */
+    public void showHeat(Level level) {
+        LiveHeat.show(slots, slotHeat, level);
     }
 
     public VesselKind getKind() {
