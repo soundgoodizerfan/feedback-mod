@@ -148,6 +148,9 @@ dependencies {
     // Better Combat -- a required mod (all rights reserved: never jarJar'd, never copied; players install it).
     // We use its animation player, upswing gearing, and sounds; its attack rules are not ours.
     compileOnly "maven.modrinth:better-combat:${better_combat_version}"
+    // Simple Voice Chat's addon API, for compat/voicechat only (the radio). All rights reserved, API published for addons: compile-only, never bundled; the
+    // plugin class is only ever loaded by the voice chat mod itself.
+    compileOnly "de.maxhenkel.voicechat:voicechat-api:${voicechat_api_version}"
     devMods "maven.modrinth:better-combat:${better_combat_version}"
     devMods "maven.modrinth:cloth-config:${cloth_config_version}"
 
@@ -258,6 +261,11 @@ repositories {
     maven {
         name = 'KosmX'               // playerAnimator
         url = 'https://maven.kosmx.dev/'
+    }
+    maven {
+        name = 'Henkelmax'           // Simple Voice Chat's published API (compile-only)
+        url = 'https://maven.maxhenkel.de/repository/public'
+        content { includeGroup 'de.maxhenkel.voicechat' }
     }
     maven {
         name = 'Modrinth'            // Jade

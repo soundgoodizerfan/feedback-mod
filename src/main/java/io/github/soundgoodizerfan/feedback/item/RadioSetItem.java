@@ -1,0 +1,69 @@
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
+package io.github.soundgoodizerfan.feedback.item;
+
+import java.util.List;
+
+import io.github.soundgoodizerfan.feedback.radio.RadioSets;
+import io.github.soundgoodizerfan.feedback.radio.RadioTuning;
+import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+
+/**
+ * A hand-held radio set. Sneak-use steps its band; use with copper wire in the other hand winds a hundred millimetres more onto its antenna, up to
+ * its limit; each band wants an antenna of its own length (a quarter wave), and the closer the length the better the set hears and is heard. Held to
+ * talk, the voice chat compat ({@code compat/voicechat}) carries a speaker's voice to every set on the same band within reach.
+ */
+public class RadioSetItem extends Item {
+
+    public RadioSetItem(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack set = player.getItemInHand(hand);
+        if (level.isClientSide)
+            return InteractionResultHolder.success(set);
+        ItemStack other = player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+        if (!player.isShiftKeyDown() && other.is(io.github.soundgoodizerfan.feedback.registry.FTags.RADIO_ANTENNA_WIRE)) {
+            int now = RadioSets.antennaMm(set);
+            if (now >= RadioTuning.MAX_ANTENNA_MM) {
+                player.displayClientMessage(Component.translatable("message.feedback.radio.antenna_full"), true);
+                return InteractionResultHolder.fail(set);
+            }
+            other.shrink(1);
+            set.set(FWeapons.RADIO_ANTENNA_MM.get(), Math.min(RadioTuning.MAX_ANTENNA_MM, now + RadioTuning.ANTENNA_MM_PER_WIRE));
+            player.displayClientMessage(Component.translatable("message.feedback.radio.antenna", RadioSets.antennaMm(set)), true);
+            return InteractionResultHolder.success(set);
+        }
+        if (player.isShiftKeyDown()) {
+            int next = RadioSets.band(set) % RadioTuning.BANDS + 1;
+            set.set(FWeapons.RADIO_BAND.get(), next);
+            player.displayClientMessage(Component.translatable("message.feedback.radio.band", next), true);
+            return InteractionResultHandling.consume(set);
+        }
+        return InteractionResultHolder.pass(set);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.translatable("tooltip.feedback.radio.band", RadioSets.band(stack)));
+        tooltip.add(Component.translatable("tooltip.feedback.radio.antenna", RadioSets.antennaMm(stack)));
+    }
+
+    /** InteractionResultHolder shortcuts. */
+    private static final class InteractionResultHandling {
+        static InteractionResultHolder<ItemStack> consume(ItemStack s) {
+            return InteractionResultHolder.consume(s);
+        }
+    }
+}

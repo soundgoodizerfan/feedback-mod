@@ -228,6 +228,9 @@ public final class FModular {
 
     public static final DeferredItem<Item> BALANCE_SCALE = ITEMS.registerItem("balance_scale",
             io.github.soundgoodizerfan.feedback.item.BalanceScaleItem::new, new Item.Properties().stacksTo(1));
+    /** A hand-held radio set: band, antenna, push to talk (compat/voicechat carries the voice). */
+    public static final DeferredItem<Item> RADIO_SET = ITEMS.registerItem("radio_set",
+            io.github.soundgoodizerfan.feedback.item.RadioSetItem::new, new Item.Properties().stacksTo(1));
     /** Reads what a sample is made of, on tooltips, for whoever carries it. */
     public static final DeferredItem<Item> SPECTROMETER = ITEMS.registerItem("spectrometer",
             io.github.soundgoodizerfan.feedback.item.SpectrometerItem::new, new Item.Properties().stacksTo(1));

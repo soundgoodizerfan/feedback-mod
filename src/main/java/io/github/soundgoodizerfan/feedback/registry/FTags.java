@@ -18,6 +18,8 @@ public final class FTags {
 
     /** What a Controller or Programmer accepts as its program card. */
     /** Media a Programmer can erase and print over (controller spec section 2): Floppy Disk and USB Drive. */
+    /** Wire a radio set's antenna can be wound from. */
+    public static final TagKey<Item> RADIO_ANTENNA_WIRE = TagKey.create(Registries.ITEM, Feedback.id("radio_antenna_wire"));
     public static final TagKey<Item> SOFT_CARDS = TagKey.create(Registries.ITEM, Feedback.id("soft_cards"));
     /** The media a mechanical Controller and Programmer take: the Punch Card alone. Every other medium needs an electric host. */
     public static final TagKey<Item> MECHANICAL_CARDS = TagKey.create(Registries.ITEM, Feedback.id("mechanical_cards"));

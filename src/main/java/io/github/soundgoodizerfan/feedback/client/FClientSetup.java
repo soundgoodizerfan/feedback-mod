@@ -184,6 +184,7 @@ public class FClientSetup {
     public static void registerKeys(net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent event) {
         event.register(GunClient.RELOAD);
         event.register(GunClient.UNLOAD);
+        event.register(io.github.soundgoodizerfan.feedback.client.radio.RadioKeys.TALK);
         event.register(GunClient.OPTION);
         event.register(OffhandStrikeClient.KEY);
         event.register(OffhandStrikeClient.BARE_TOGGLE);

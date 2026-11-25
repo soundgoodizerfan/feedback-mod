@@ -76,6 +76,20 @@ public class FWeapons {
                     .networkSynchronized(FireMode.STREAM_CODEC)
                     .build());
 
+    /** A radio set's band, 1 to {@code RadioTuning.BANDS}; absent reads 1. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RADIO_BAND =
+            COMPONENTS.register("radio_band", () -> DataComponentType.<Integer>builder()
+                    .persistent(com.mojang.serialization.Codec.intRange(1, 16))
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT)
+                    .build());
+
+    /** A radio set's antenna length in mm of wire wound on; absent is none. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RADIO_ANTENNA_MM =
+            COMPONENTS.register("radio_antenna_mm", () -> DataComponentType.<Integer>builder()
+                    .persistent(com.mojang.serialization.Codec.intRange(0, 100000))
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT)
+                    .build());
+
     /** A bipod's last order: game time plus one when told to deploy, minus that when told to fold; absent is folded since forever. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> BIPOD_AT =
             COMPONENTS.register("bipod_at", () -> DataComponentType.<Long>builder()
