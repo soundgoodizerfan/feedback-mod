@@ -93,11 +93,15 @@ public class RackBlock extends Block implements EntityBlock {
         if (level.isClientSide)
             return ItemInteractionResult.SUCCESS;
         Bay b = rack.bay(bay);
-        if (!b.empty() || b.fitting != Fitting.PALLET) {
+        Fitting put = fitting.fitting();
+        if (!b.empty() || (put.treatment() ? b.treatment : b.fitting) != Fitting.PALLET) {
             player.displayClientMessage(Component.translatable(b.empty() ? "message.feedback.rack.fitted" : "message.feedback.rack.not_empty"), true);
             return ItemInteractionResult.CONSUME;
         }
-        b.fitting = fitting.fitting();
+        if (put.treatment())
+            b.treatment = put;
+        else
+            b.fitting = put;
         stack.consume(1, player);
         rack.changed();
         level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1f, 0.8f);
@@ -113,14 +117,19 @@ public class RackBlock extends Block implements EntityBlock {
             return InteractionResult.SUCCESS;
         Bay b = rack.bay(bay);
         if (player.isShiftKeyDown()) {
-            if (b.fitting == Fitting.PALLET)
+            if (b.fitting == Fitting.PALLET && b.treatment == Fitting.PALLET)
                 return InteractionResult.CONSUME;
             if (!b.empty()) {
                 player.displayClientMessage(Component.translatable("message.feedback.rack.not_empty"), true);
                 return InteractionResult.CONSUME;
             }
-            ItemStack out = new ItemStack(FittingItem.of(b.fitting));
-            b.fitting = Fitting.PALLET;
+            // The treatment comes off first, then the container.
+            Fitting took = b.treatment != Fitting.PALLET ? b.treatment : b.fitting;
+            ItemStack out = new ItemStack(FittingItem.of(took));
+            if (took.treatment())
+                b.treatment = Fitting.PALLET;
+            else
+                b.fitting = Fitting.PALLET;
             if (!player.getInventory().add(out))
                 player.drop(out, false);
             rack.changed();
@@ -133,6 +142,8 @@ public class RackBlock extends Block implements EntityBlock {
 
     private static Component describe(Bay b) {
         Component fitting = Component.translatable("fitting.feedback.rack." + b.fitting.id());
+        if (b.treatment != Fitting.PALLET)
+            fitting = Component.translatable("message.feedback.rack.treated", fitting, Component.translatable("fitting.feedback.rack." + b.treatment.id()));
         if (b.empty())
             return Component.translatable("message.feedback.rack.empty", fitting);
         MutableComponent held = Component.empty();

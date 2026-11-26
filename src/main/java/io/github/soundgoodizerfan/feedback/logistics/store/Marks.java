@@ -21,6 +21,14 @@ public final class Marks {
         return (marks & bit(band)) != 0;
     }
 
+    /** Whether {@code marks} records any band of {@code property}. */
+    public static boolean hasProperty(int marks, io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty property) {
+        for (Band b : Band.values())
+            if (b.property() == property && has(marks, b))
+                return true;
+        return false;
+    }
+
     /** Every band of the property {@code band} belongs to. */
     private static int property(Band band) {
         int all = 0;

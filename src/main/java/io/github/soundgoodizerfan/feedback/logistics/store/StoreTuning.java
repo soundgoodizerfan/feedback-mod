@@ -18,6 +18,14 @@ public final class StoreTuning {
     public static final float BIN_UNIT_MAX_MU = 0.2f;
     public static final float BIN_MASS_MU = 128f;
 
+    /** A cabinet: single pieces it holds and its mass cap on the reference shelf. */
+    public static final int CABINET_PIECES = 16;
+    public static final float CABINET_MASS_MU = 256f;
+
+    /** Ticks between settling a rack's goods to its climate, and between rereads of an aisle that holds goods which change with time. */
+    public static final int CLIMATE_SETTLE_TICKS = 100;
+    public static final int DYNAMIC_REFRESH_TICKS = 200;
+
     /** The shelf yield strength and frame yield strength that give a bay exactly the reference cap, and the span the share may take. */
     public static final float REF_SHELF_YIELD = 250f;
     public static final float REF_FRAME_YIELD = 250f;

@@ -23,6 +23,7 @@ import io.github.soundgoodizerfan.feedback.logistics.belt.BeltModule;
 import io.github.soundgoodizerfan.feedback.logistics.sort.Band;
 import io.github.soundgoodizerfan.feedback.logistics.sort.Detector;
 import io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty;
+import io.github.soundgoodizerfan.feedback.logistics.sort.SortReader;
 import io.github.soundgoodizerfan.feedback.logistics.sort.Sorter;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import net.minecraft.core.component.DataComponentMap;
@@ -87,6 +88,9 @@ public class DockBlockEntity extends ElectricNode {
     private Component name;
     private List<Lot> counted;
     private int countedAisle, countedStock;
+    private long countedAt;
+    /** Whether the last count met goods that change with time. */
+    private boolean changing;
 
     private final List<ItemStack> intake = new ArrayList<>();
     private final List<ItemStack> output = new ArrayList<>();
@@ -143,10 +147,15 @@ public class DockBlockEntity extends ElectricNode {
      */
     public List<Lot> stock() {
         aisle();
-        if (counted == null || countedAisle != aisleRead || countedStock != AisleChanges.stockGeneration()) {
+        // Goods that change with time (hot, rotting) are read again every so often, though nothing moved.
+        if (counted == null || countedAisle != aisleRead || countedStock != AisleChanges.stockGeneration()
+                || changing && level.getGameTime() - countedAt >= StoreTuning.DYNAMIC_REFRESH_TICKS) {
             countedAisle = aisleRead;
             countedStock = AisleChanges.stockGeneration();
+            countedAt = level.getGameTime();
             counted = count(Set.of());
+            // Settling goods to their climate changes them in place; that is not a movement, so it must not force a recount.
+            countedStock = AisleChanges.stockGeneration();
         }
         return counted;
     }
@@ -273,25 +282,33 @@ public class DockBlockEntity extends ElectricNode {
     private List<Lot> count(Set<BlockPos> skip) {
         // Goods recorded differently stay apart, so a property search never mixes one bay's readings with another's.
         Map<ItemStack, List<Lot>> out = new Object2ObjectLinkedOpenCustomHashMap<>(ItemStackLinkedSet.TYPE_AND_TAG);
+        boolean dynamic = false;
         for (Aisle.Cell cell : aisle().racks()) {
             RackBlockEntity rack = rackAt(cell.pos());
             if (rack == null || skip.contains(cell.pos()))
                 continue;
+            rack.settle(false);
             for (int i = 0; i < StoreTuning.BAYS_PER_CELL; i++)
                 for (Lot lot : rack.bay(i).lots) {
+                    dynamic |= lot.dynamic();
                     List<Lot> same = out.computeIfAbsent(lot.item, k -> new ArrayList<>(1));
+                    // A temperature recorded at intake is the goods' now: read again, as the heads would, without their noise.
+                    int marks = lot.marks;
+                    if (lot.item.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TEMPERATURE.get()) && Marks.hasProperty(marks, SortProperty.TEMPERATURE))
+                        marks = Marks.merge(marks, Marks.bit(SortReader.bandOf(SortReader.read(lot.item, level), SortProperty.TEMPERATURE)));
                     Lot sum = null;
                     for (Lot have : same)
-                        if (have.marks == lot.marks)
+                        if (have.marks == marks)
                             sum = have;
                     if (sum == null) {
                         sum = new Lot(lot.item, 0);
-                        sum.marks = lot.marks;
+                        sum.marks = marks;
                         same.add(sum);
                     }
                     sum.count += lot.count;
                 }
         }
+        changing = dynamic;
         List<Lot> all = new ArrayList<>();
         out.values().forEach(all::addAll);
         return all;
@@ -419,7 +436,7 @@ public class DockBlockEntity extends ElectricNode {
             if (rackAt(cell.pos()) == null)
                 return;
         List<Lot> held = stock();
-        if (requests.removeIf(r -> held.stream().noneMatch(l -> l.matches(r.item))))
+        if (requests.removeIf(r -> held.stream().noneMatch(l -> l.like(r.item))))
             setChanged();
     }
 
@@ -476,7 +493,7 @@ public class DockBlockEntity extends ElectricNode {
                 if (rack == null)
                     continue;
                 for (int i = 0; i < StoreTuning.BAYS_PER_CELL; i++) {
-                    Lot lot = rack.bay(i).find(r.item);
+                    Lot lot = rack.bay(i).findLike(r.item);
                     if (lot == null)
                         continue;
                     int n = Math.min(Math.min(r.remaining, lot.count), Math.min(room, fits(StoreTuning.SHUTTLE_MASS_MU, unit)));
@@ -575,6 +592,8 @@ public class DockBlockEntity extends ElectricNode {
             return;
         Bay bay = rack.bay(job.bay);
         if (job.fetch) {
+            // What comes out is what the shelf's climate has made of it by now.
+            rack.settle(true);
             job.load = bay.take(job.item, job.planned);
             if (job.load > 0)
                 rack.changed();

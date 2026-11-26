@@ -57,6 +57,16 @@ public class RackRenderer implements BlockEntityRenderer<RackBlockEntity> {
                         ItemDisplayContext.GROUND, lit, overlay, pose, buffers, rack.getLevel(), i);
                 pose.popPose();
             }
+            // A treatment shows beside the container, or alone on a bare bay.
+            if (bay.treatment != io.github.soundgoodizerfan.feedback.logistics.store.Fitting.PALLET && bay.empty()) {
+                boolean bare = bay.fitting == io.github.soundgoodizerfan.feedback.logistics.store.Fitting.PALLET;
+                pose.pushPose();
+                pose.translate(x, y + (bare ? 0.14 : 0.32), z);
+                pose.scale(bare ? 0.7f : 0.4f, bare ? 0.7f : 0.4f, bare ? 0.7f : 0.4f);
+                items.renderStatic(new ItemStack(io.github.soundgoodizerfan.feedback.logistics.store.FittingItem.of(bay.treatment)),
+                        ItemDisplayContext.GROUND, lit, overlay, pose, buffers, rack.getLevel(), i + 16);
+                pose.popPose();
+            }
         }
         // A filtered rack wears the head that reads its property as a tag on the front of its upper deck.
         var filter = rack.filter();

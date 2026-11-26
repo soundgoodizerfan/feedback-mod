@@ -27,10 +27,14 @@ import org.jetbrains.annotations.Nullable;
  * One rack cell: eight pallet positions (2 across, 2 up, 2 deep) on a built frame and shelf. It holds stock and never
  * ticks; the aisle's dock is what moves things in and out. Broken, it keeps its stock on the item.
  */
-public class RackBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.modular.bake.FigureHolder {
+public class RackBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.modular.bake.FigureHolder,
+        io.github.soundgoodizerfan.feedback.core.thermal.Refrigerable, io.github.soundgoodizerfan.feedback.core.hazard.RadiationEmitter {
 
     private final FigureStore figures = new FigureStore();
     private final Bay[] bays = new Bay[StoreTuning.BAYS_PER_CELL];
+    /** A pump holds the cold-plate bays at {@code heldTu} until this game time; goods are settled to the climate at {@code settledAt}. */
+    private long heldUntil, settledAt;
+    private float heldTu;
 
     public RackBlockEntity(BlockPos pos, BlockState state) {
         super(FStore.RACK_ENTITY.get(), pos, state);
@@ -64,6 +68,60 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
 
     public Bay bay(int i) {
         return bays[i];
+    }
+
+    @Override
+    public void holdCold(io.github.soundgoodizerfan.feedback.core.unit.Tu setpoint) {
+        if (level == null || level.isClientSide)
+            return;
+        // Goods sat at room until the pump came on: bring them up to now before the cold counts.
+        if (level.getGameTime() >= heldUntil)
+            settle(true);
+        heldUntil = level.getGameTime() + io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning.REFRIGERATION_LAPSE_TICKS;
+        heldTu = setpoint.value();
+        settle(false);
+    }
+
+    /**
+     * Brings every lot up to now: a cold-plate bay at the pump's set point while a pump holds it, every other at the room's.
+     * Runs at most every {@link StoreTuning#CLIMATE_SETTLE_TICKS} unless {@code force} (retrieval, a pump coming on): the rack never
+     * ticks, so a lapse between settles is spent at the room's rate (a cold store a pump leaves looks fine until opened).
+     * Returns whether any lot changed.
+     */
+    public boolean settle(boolean force) {
+        if (level == null || level.isClientSide || empty())
+            return false;
+        long now = level.getGameTime();
+        if (!force && now - settledAt < StoreTuning.CLIMATE_SETTLE_TICKS)
+            return false;
+        settledAt = now;
+        float room = io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level).value();
+        boolean cold = now < heldUntil;
+        boolean changed = false;
+        for (Bay b : bays)
+            changed |= b.settle(level, cold && b.treatment == Fitting.COLD_PLATE ? Math.min(heldTu, room) : room);
+        // Settling is not a movement: saved and shown, but no dock is told to recount.
+        if (changed) {
+            setChanged();
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+        return changed;
+    }
+
+    /** What the lined bays let out is a share of what they hold; a bare bay lets out all of it. */
+    @Override
+    public float radiationRu() {
+        var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        var lead = materials.get(io.github.soundgoodizerfan.feedback.Feedback.id("lead"));
+        float lined = lead == null ? 1f : io.github.soundgoodizerfan.feedback.core.hazard.Radiation.containerShield(lead);
+        float total = 0f;
+        for (Bay b : bays) {
+            float held = 0f;
+            for (Lot l : b.lots)
+                held += io.github.soundgoodizerfan.feedback.core.hazard.Radiation.activity(l.item.copyWithCount(l.count), materials);
+            total += b.treatment == Fitting.LINER ? held * lined : held;
+        }
+        return total;
     }
 
     /** The share of the reference bay cap this rack carries: the weaker of frame and shelf, less what the shelf has worn. */
@@ -168,7 +226,7 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
         if (filter != null)
             return true;
         for (Bay b : bays)
-            if (!b.empty() || b.fitting != Fitting.PALLET)
+            if (!b.empty() || b.fitting != Fitting.PALLET || b.treatment != Fitting.PALLET)
                 return true;
         return false;
     }
