@@ -990,6 +990,7 @@
     "feedback:market_cross",
     "feedback:mechanical_hammer",
     "feedback:mechanical_press",
+    "feedback:membrane_sensor",
     "feedback:mercury_block",
     "feedback:mercury_pipe",
     "feedback:micarta_block",

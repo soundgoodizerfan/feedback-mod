@@ -30510,6 +30510,36 @@
         "aspect": "thaumaturge:fabrico"
       }
     ],
+    "feedback:membrane_sensor": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:bestia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 28,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 21,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:victus"
+      }
+    ],
     "feedback:memory_board": [
       {
         "amount": 5,

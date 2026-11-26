@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "feedback:block/data_sensor_top",
+    "side": "feedback:block/data_sensor_side",
+    "bottom": "feedback:block/data_sensor_bottom"
+  }
+}

@@ -1286,6 +1286,11 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_PURPLE)
                     .strength(1.5f)
                     .sound(SoundType.METAL)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.membrane.MembraneSensorBlock> MEMBRANE_SENSOR = BLOCKS.register("membrane_sensor",
+            () -> new io.github.soundgoodizerfan.feedback.machine.membrane.MembraneSensorBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(1.5f)
+                    .sound(SoundType.METAL)));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.glow.RadiationSensorBlock> RADIATION_SENSOR = BLOCKS.register("radiation_sensor",
             () -> new io.github.soundgoodizerfan.feedback.machine.glow.RadiationSensorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_LIGHT_GREEN)

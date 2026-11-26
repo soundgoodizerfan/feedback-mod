@@ -595,6 +595,9 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.glow.AuraSensorBlockEntity>> AURA_SENSOR =
             BLOCK_ENTITIES.register("aura_sensor", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.glow.AuraSensorBlockEntity::new, FBlocks.AURA_SENSOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.membrane.MembraneSensorBlockEntity>> MEMBRANE_SENSOR =
+            BLOCK_ENTITIES.register("membrane_sensor", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.membrane.MembraneSensorBlockEntity::new, FBlocks.MEMBRANE_SENSOR.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.glow.RadiationSensorBlockEntity>> RADIATION_SENSOR =
             BLOCK_ENTITIES.register("radiation_sensor", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.glow.RadiationSensorBlockEntity::new, FBlocks.RADIATION_SENSOR.get()).build(null));

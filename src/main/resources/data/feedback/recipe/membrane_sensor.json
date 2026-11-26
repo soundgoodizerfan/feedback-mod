@@ -1,0 +1,13 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "P": { "item": "feedback:brass_plate" },
+    "M": { "item": "minecraft:phantom_membrane" },
+    "W": { "item": "feedback:copper_fine_wire" }
+  },
+  "pattern": [ "PMP", "WWW" ],
+  "result": { "count": 1, "id": "feedback:membrane_sensor" },
+  "tool": [ { "ability": "feedback:driver", "wear": 1 } ],
+  "fasteners": { "count": 2, "floor": 1, "forms": [ "screw" ] },
+  "school": "electrical:2"
+}

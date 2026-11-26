@@ -626,6 +626,9 @@ public final class MachineTuning {
     /** The cutter's water tank (mB) and the water one waterjet cut drives through the nozzle (mB). Placeholder. */
     public static final int WATERJET_TANK_MB = 2000, WATERJET_WATER_PER_CUT = 25;
 
+    /** The membrane sensor's reach (blocks), and the sleeplessness (ticks since rest) that calls phantoms, which reads as 1. */
+    public static final int MEMBRANE_REACH = 8, MEMBRANE_PHANTOM_TICKS = 72000;
+
     // --- the laser (roadmap O4); placeholder figures, none tuned ---
     /** Blocks the beam reaches. */
     public static final int LASER_RANGE = 24;

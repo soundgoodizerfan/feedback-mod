@@ -200,6 +200,7 @@
     "feedback:market_cross",
     "feedback:mechanical_hammer",
     "feedback:mechanical_press",
+    "feedback:membrane_sensor",
     "feedback:mercury_pipe",
     "feedback:micro_cell",
     "feedback:mixer",

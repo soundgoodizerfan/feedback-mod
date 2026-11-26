@@ -133,7 +133,7 @@ public class FCreativeTabs {
 
     /** Signals: a note, a redstone line, then sensors by what they sense. */
     private static final List<DeferredItem<?>> SIGNALS = of(FItems.REDSTONE_EMITTER, FItems.REDSTONE_RECEIVER,
-            FItems.ANALOG_ADAPTER, FItems.TEMPERATURE_SENSOR, FItems.CURRENT_SENSOR, FItems.DATA_SENSOR, FItems.RADIATION_SENSOR, FItems.AURA_SENSOR);
+            FItems.ANALOG_ADAPTER, FItems.TEMPERATURE_SENSOR, FItems.CURRENT_SENSOR, FItems.DATA_SENSOR, FItems.RADIATION_SENSOR, FItems.AURA_SENSOR, FItems.MEMBRANE_SENSOR);
 
     /** Controllers: mechanical, electric, then computing; media and cards last. */
     private static final List<DeferredItem<?>> CONTROLLERS = of(FItems.TIMER, FItems.CONTROLLER, FItems.PROGRAMMER,
