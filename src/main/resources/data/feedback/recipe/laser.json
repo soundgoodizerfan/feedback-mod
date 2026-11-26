@@ -10,5 +10,5 @@
   "result": { "count": 1, "id": "feedback:laser" },
   "tool": [ { "ability": "feedback:driver", "wear": 1 } ],
   "fasteners": { "count": 4, "floor": 1, "forms": [ "screw" ] },
-  "school": "electrical:3"
+  "school": "electrical:4"
 }

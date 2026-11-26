@@ -20,4 +20,4 @@ A [Thermometer](Instruments.md#thermometer) with a lens in it. Right-click a ves
 
 Two lenses and a tube make a [Telescope](Telescope.md): hold right click to look through it, magnified by the ratio of the lenses' focal lengths. Held in the other hand beside a [Camera](Camera.md), it is the camera's lens.
 
-A pumped crystal makes a [Laser](Laser.md): a placed block that measures distance and cuts what its beam rests on.
+A pumped crystal makes a [Laser](Laser.md): a placed block that measures distance and cuts what its beam rests on. A split beam counts light fringes in the hand-held [Interferometer](Interferometer.md), which reads lengths to 0.001 mm.

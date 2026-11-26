@@ -7,6 +7,7 @@ Nothing is locked behind an instrument; they are how you do on purpose what you 
 | Name | What it detects | Quality |
 | --- | --- | --- |
 | [Calipers](#calipers) | Work done on a piece, machine wear, gun barrel size | Wear to 5%; barrel to 0.1 mm |
+| [Interferometer](Interferometer.md) | Length of a part | 0.001 mm |
 | [Balance Scale](#balance-scale) | Mass of a tool, weapon or armor piece | 0.1 Mu |
 | [Scratch File Set](#scratch-file-set) | Hardness of an edge or plate | One of eight rungs, not a number |
 | [Spectrometer](#spectrometer) | Makeup of an alloy, metals an ore bears | Shares to the nearest 5% |

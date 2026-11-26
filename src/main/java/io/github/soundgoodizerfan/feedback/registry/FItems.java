@@ -201,6 +201,9 @@ public class FItems {
     public static final DeferredItem<Item> CALIPERS =
             ITEMS.registerItem("calipers", CalipersItem::new, new Item.Properties().stacksTo(1));
 
+    public static final DeferredItem<Item> INTERFEROMETER =
+            ITEMS.registerItem("interferometer", io.github.soundgoodizerfan.feedback.item.InterferometerItem::new, new Item.Properties().stacksTo(1));
+
     // Beat 1's overrun chain. Every step is a real item, and only the last one is a mistake:
     // foil is a genuine sidegrade that beat 2's thermometer needs. See slice 1, "Overrun".
 

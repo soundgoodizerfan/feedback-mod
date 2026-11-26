@@ -10,7 +10,7 @@ T W T
 P P P
 ```
 
-P is a Steel Plate, L is an Optical Glass Lens, T is Glass Tubing and W is Copper Fine Wire. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 4 screws. It needs electrical school 3.
+P is a Steel Plate, L is an Optical Glass Lens, T is Glass Tubing and W is Copper Fine Wire. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 4 screws. It needs Electrical Treatise IV: Lasers ([Treatise](Treatise.md)).
 
 The lens is the beam's exit, the tubes are the flash lamps that pump the crystal, and the wire is the pump's supply. It takes no circuit: it has no figure for one to set.
 
@@ -24,13 +24,15 @@ The lens is the beam's exit, the tubes are the flash lamps that pump the crystal
 
 ## Ranging
 
-Powered with a crystal and switched off, the laser sends a weak beam and reads the distance to the first solid block in front of it, out to about two dozen blocks. A linked Controller reads three channels from it: *Beam range* (the distance in blocks, 0 with nothing in reach), *Crystal heat* and *Cut progress* ([Programming](Programming.md)).
+Powered with a crystal and switched off, the laser sends a weak beam and reads the distance to the first solid block in front of it, out to about two dozen blocks. A linked Controller reads three channels from it: *Beam range* (the distance in blocks, 0 with nothing in reach), *Crystal heat* and *Cut progress* ([Programming](Programming.md)). A [robot](Robots.md#senses) or a [Radio Mast](Radio_Mast.md) reads the same beam range from a powered Laser in the block ahead of the robot.
 
 ## Firing
 
 A beam puts energy into the block it hits, and a clearer crystal puts in more. When the block has taken as much as its hardness is worth, it breaks and drops what it drops: soft stone goes in seconds, obsidian takes minutes, and a block that cannot be broken stays. A block breaks only where the world lets blasts break blocks. Moving the beam to another block starts that block's count from nothing.
 
 Anything living in the beam takes fire damage and burns.
+
+A made part lying in the beam while it fires is marked: its axes are stamped exact, as [Calipers](Instruments.md#calipers) would stamp them by hand, with a spark where it happens. Marking needs no instrument in your inventory.
 
 ## The crystal
 

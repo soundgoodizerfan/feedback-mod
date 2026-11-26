@@ -25,7 +25,7 @@ A mast pairs with one robot at a time.
 
 ## What a Controller does with it
 
-- An **Input** card of kind *Mast* reads one of the robot's senses. Click the card's channel row to pick which: *Blocked ahead*, *Breakable ahead*, *Items ahead*, *Cargo full*, *Battery charge*, *Distance ahead*, *Hardness ahead*, *Heading*, *Beacon near*, *Dock ahead*, *Position east*, *Position south* and *Height above start*. They mean what they do on the robot itself ([Robots](Robots.md#programming-a-robot)); a sense the robot's parts do not give reads zero.
+- An **Input** card of kind *Mast* reads one of the robot's senses. Click the card's channel row to pick which: *Blocked ahead*, *Breakable ahead*, *Items ahead*, *Cargo full*, *Battery charge*, *Distance ahead*, *Hardness ahead*, *Heading*, *Beacon near*, *Dock ahead*, *Position east*, *Position south*, *Height above start* and *Laser ahead: beam reach*. They mean what they do on the robot itself ([Robots](Robots.md#programming-a-robot)); a sense the robot's parts do not give reads zero.
 - A **Switch** card of kind *Mast* holds one of the robot's actions on while the card is on and lets it go while the card is off. Click the card's channel row to pick the action: roll forward, turn left, turn right, break, place, pick up, drop, put into or take from a container, use the held item, switch a machine, climb and descend.
 
 The robot works its actions as a hand-programmed robot does, so one base Controller can drive a free robot.

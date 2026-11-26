@@ -109,4 +109,15 @@ public final class Measured {
             io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(sp, Component.translatable("message.feedback.measure.stamped", read.size()), 50);
         return InteractionResultHolder.success(tool);
     }
+
+    /** Stamps the figures {@code kind} reads off {@code item} onto it, as the instrument in a hand does (a laser's mark does it with no hand). Whether anything new was stamped. */
+    public static boolean stamp(Kind kind, ItemStack item) {
+        Map<String, Float> read = read(kind, item);
+        if (read.isEmpty() || of(item).entrySet().containsAll(read.entrySet()))
+            return false;
+        Map<String, Float> stamped = new HashMap<>(of(item));
+        stamped.putAll(read);
+        item.set(FModular.MEASURED.get(), stamped);
+        return true;
+    }
 }

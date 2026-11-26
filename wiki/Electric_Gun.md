@@ -1,6 +1,6 @@
 # Electric Gun
 
-The electric gun, or **pulse gun**, fires a pulse of electrical energy from a battery's charge instead of a bullet. The pulse is instant: it holds its full damage out to a range, then nothing. It is not a [gun](Guns.md): it burns no powder and takes no ammunition, a shot costs battery charge and makes heat. It is assembled at the [Engineering Table](Engineering_Table.md) from its parts. A **Blueprint** (draw one at the [Blueprint Table](Blueprint_Table.md), under Weapons) is optional; drawing it and assembling it both take Weapons Treatise III: Electric Guns, which covers the gun, every seat and every fitting below.
+The electric gun, or **pulse gun**, fires a pulse of electrical energy from a battery's charge instead of a bullet. The pulse is instant: it holds its full damage out to a range, then nothing. It is not a [gun](Guns.md): it burns no powder and takes no ammunition, a shot costs battery charge and makes heat. It is assembled at the [Engineering Table](Engineering_Table.md) from its parts. A **Blueprint** (draw one at the [Blueprint Table](Blueprint_Table.md), under Weapons) is optional; drawing it and assembling it both take Weapons Treatise III: Electric Guns, which covers the gun, every seat and every fitting below. Researching that volume at the [Research Table](Research_Table.md) also needs Electrical Treatise IV: Lasers.
 
 ## Parts
 

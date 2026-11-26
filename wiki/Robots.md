@@ -154,6 +154,7 @@ Readings (an *Input* card reads them):
 | Chosen slot state | 0 free, 1 mine, 2 claimed by another, 3 done |
 | Chosen slot figure | The figure held in the chosen slot |
 | A job board hears me | Whether a board hears this robot |
+| Laser ahead: beam reach | Blocks the beam of a powered [Laser](Laser.md) in the block in front reaches; 0 with no Laser there or an unpowered one. Needs no sensor part |
 | Dock ahead is free | Whether a dock or reel in front has live current and no robot on it |
 
 ### Fleets

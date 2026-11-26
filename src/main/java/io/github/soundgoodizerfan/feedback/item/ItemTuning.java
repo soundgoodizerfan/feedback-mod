@@ -110,6 +110,9 @@ public final class ItemTuning {
     /** Calipers read a part's dimensions to this, in mm. */
     public static final float CALIPERS_RESOLUTION_MM = 0.1f;
 
+    /** An interferometer reads a part's dimensions to this, in mm (a fringe count, a hundred times finer than calipers). */
+    public static final float INTERFEROMETER_RESOLUTION_MM = 0.001f;
+
     /** The survey meter: reach in blocks, the step its ore count reads to, and the wait between uses. Placeholders. */
     public static final int SURVEY_RADIUS = 16, SURVEY_COOLDOWN_TICKS = 40;
 

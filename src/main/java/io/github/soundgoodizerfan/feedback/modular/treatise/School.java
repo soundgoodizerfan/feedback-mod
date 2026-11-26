@@ -27,7 +27,7 @@ public enum School {
     /** Machine heads, then smelting, annealing and the heat a metal is worked and treated by (materials engineering). */
     MATERIALS(2),
     /** Cells and static charge, coils, magnets and motors, then circuits: what makes, moves, holds and decides on charge (electrical engineering). */
-    ELECTRICAL(3),
+    ELECTRICAL(4),
     /** Fission: the reactor, its fuel and what keeps it from running away (nuclear engineering). */
     NUCLEAR(1),
     /** Experience: carrying and holding it, drawing it from the world, then converting it to Work and spending it. */

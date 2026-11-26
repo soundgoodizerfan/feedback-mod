@@ -509,6 +509,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.CAMERA.get(), "camera");
         info(registration, FModular.DRAW_GAUGE.get(), "draw_gauge");
         info(registration, FModular.SURVEY_METER.get(), "survey_meter");
+        info(registration, FItems.INTERFEROMETER.get(), "interferometer");
         info(registration, FItems.XP_METER.get(), "xp_meter");
         info(registration, FItems.ELECTRIC_CONTROLLER.get(), "electric_controller");
         info(registration, FItems.ELECTRIC_PROGRAMMER.get(), "electric_programmer");

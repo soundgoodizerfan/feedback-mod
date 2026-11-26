@@ -217,13 +217,23 @@ public class LaserBlockEntity extends ElectricNode implements Switchable, Channe
         server.sendParticles(new DustParticleOptions(new org.joml.Vector3f(((color() >> 16) & 255) / 255f, ((color() >> 8) & 255) / 255f, (color() & 255) / 255f), 1f),
                 (from.x + end.x) / 2, (from.y + end.y) / 2, (from.z + end.z) / 2, 3,
                 Math.abs(end.x - from.x) / 3, Math.abs(end.y - from.y) / 3, Math.abs(end.z - from.z) / 3, 0);
-        if (server.getGameTime() % MachineTuning.LASER_HURT_EVERY == 0)
+        if (server.getGameTime() % MachineTuning.LASER_HURT_EVERY == 0) {
             burn(server, from, end);
+            mark(server, from, end);
+        }
         if (hit.getType() == HitResult.Type.MISS) {
             resetTarget();
             return;
         }
         cut(server, hit.getBlockPos());
+    }
+
+    /** A made part lying in the beam is marked: its axes are stamped exact, as calipers would, with no hand and no instrument (roadmap O5). */
+    private void mark(ServerLevel server, Vec3 from, Vec3 end) {
+        for (net.minecraft.world.entity.item.ItemEntity item : server.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new AABB(from, end).inflate(0.5)))
+            if (item.getBoundingBox().inflate(0.1).clip(from, end).isPresent()
+                    && io.github.soundgoodizerfan.feedback.modular.bench.Measured.stamp(io.github.soundgoodizerfan.feedback.modular.bench.Measured.Kind.CALIPERS, item.getItem()))
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, item.getX(), item.getY() + 0.2, item.getZ(), 3, 0.1, 0.1, 0.1, 0.01);
     }
 
     /** Burns the living things the beam passes through. */

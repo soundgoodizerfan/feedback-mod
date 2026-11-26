@@ -92,7 +92,9 @@ public enum RobotChannel {
     /** Post the chosen slot as a free job whose figure is the number of cargo stacks carried, once each time the switch comes on. */
     POST(true, true),
     /** Choose the next slot (wraps 15 to 0), once each time the switch comes on. */
-    NEXT_SLOT(true, true);
+    NEXT_SLOT(true, true),
+    /** Blocks the beam of a powered Laser ahead reaches before it meets something: the laser is the rangefinder, the robot only reads it; 0 with no Laser ahead or an unpowered one. Needs no sensor part. */
+    LASER_RANGE(false, false);
 
     private final boolean actuator;
     private final boolean bool;

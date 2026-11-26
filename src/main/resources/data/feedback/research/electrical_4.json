@@ -1,0 +1,83 @@
+{
+  "school": "electrical",
+  "volume": 4,
+  "title": "Light, amplified",
+  "concepts": {
+    "pump": {
+      "label": "A flash lamp",
+      "traits": [
+        "current",
+        "light"
+      ]
+    },
+    "wire": {
+      "label": "A discharge wire",
+      "traits": [
+        "current",
+        "line"
+      ]
+    },
+    "crystal": {
+      "label": "A clear crystal",
+      "traits": [
+        "light",
+        "lattice"
+      ]
+    },
+    "inversion": {
+      "label": "A crowded crystal",
+      "traits": [
+        "lattice",
+        "store"
+      ]
+    },
+    "emission": {
+      "label": "Stimulated light",
+      "traits": [
+        "store",
+        "resonance"
+      ]
+    },
+    "cavity": {
+      "label": "A resonant cavity",
+      "traits": [
+        "resonance",
+        "line"
+      ]
+    },
+    "mirror": {
+      "label": "A mirror",
+      "traits": [
+        "line",
+        "light"
+      ]
+    },
+    "beam": {
+      "label": "A beam",
+      "traits": [
+        "light",
+        "resonance"
+      ]
+    }
+  },
+  "start": "pump",
+  "goal": "beam",
+  "replay": [
+    "A flash of light pumped into a clear crystal crowds its atoms with stored energy.",
+    "One passing light wave makes a crowded atom give up its energy in step with it.",
+    "Two mirrors keep the light bouncing through the crystal until it leaves as a single narrow beam."
+  ],
+  "question": "What does the crystal in a laser do?",
+  "options": [
+    "It stores the pump's light and gives it back in step",
+    "It cools the lamp",
+    "It bends the beam"
+  ],
+  "answer": 0,
+  "eureka": {
+    "kind": "crafted",
+    "item": "feedback:laser",
+    "threshold": 2,
+    "ink": 2
+  }
+}

@@ -36,7 +36,7 @@ public class RobotMastBlockEntity extends ElectricNode implements ChannelSource,
     /** The senses a Sensor card can pick, by channel. */
     public static final RobotChannel[] SENSES = { RobotChannel.SOLID_AHEAD, RobotChannel.BREAKABLE_AHEAD, RobotChannel.ITEM_AHEAD,
             RobotChannel.CARGO_FULL, RobotChannel.CHARGE, RobotChannel.RANGE_AHEAD, RobotChannel.HARDNESS_AHEAD, RobotChannel.HEADING,
-            RobotChannel.BEACON_NEAR, RobotChannel.DOCK_AHEAD, RobotChannel.POS_X, RobotChannel.POS_Z, RobotChannel.ALTITUDE };
+            RobotChannel.BEACON_NEAR, RobotChannel.DOCK_AHEAD, RobotChannel.POS_X, RobotChannel.POS_Z, RobotChannel.ALTITUDE, RobotChannel.LASER_RANGE };
     /** The actions an Actuator card can hold on, by channel (channel 0 is the plain switch: the first). */
     public static final RobotChannel[] ACTIONS = { RobotChannel.WALK, RobotChannel.TURN_LEFT, RobotChannel.TURN_RIGHT, RobotChannel.MINE,
             RobotChannel.PLACE, RobotChannel.PICK_UP, RobotChannel.DROP, RobotChannel.GIVE, RobotChannel.TAKE, RobotChannel.USE,

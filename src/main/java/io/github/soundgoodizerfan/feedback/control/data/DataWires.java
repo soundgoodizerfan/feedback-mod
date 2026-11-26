@@ -132,11 +132,23 @@ public final class DataWires {
                 if (found.isPresent() && found.get().material().ampacity().orElse(0f) > 0f) {
                     float thick = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(found.get().form())
                             / (float) Math.max(1, io.github.soundgoodizerfan.feedback.registry.FormItems.volume("wire"));
-                    return Math.max(1, Math.round(found.get().material().ampacity().orElse(0f) * ControlTuning.WIRE_LINKS_PER_AMPACITY * thick));
+                    return Math.max(1, Math.round(found.get().material().ampacity().orElse(0f) * ControlTuning.WIRE_LINKS_PER_AMPACITY * thick
+                            * coldGain(player.level())));
                 }
                 break;
             }
-        return ControlTuning.WIRE_CRITICAL_LINKS;
+        return Math.max(1, Math.round(ControlTuning.WIRE_CRITICAL_LINKS * coldGain(player.level())));
+    }
+
+    /**
+     * What the cold does to a wire's critical current (roadmap L3): a conductor's critical current rises as it is cooled, so a line laid in a
+     * dimension colder than the room (the frozen moon) carries more links than the same wire in the Overworld. One share per Tu below the room's
+     * temperature, capped.
+     */
+    private static float coldGain(net.minecraft.world.level.Level level) {
+        float below = Math.max(0f, io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning.AMBIENT_TU.value()
+                - io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level).value());
+        return Math.min(ControlTuning.WIRE_COLD_GAIN_MAX, 1f + ControlTuning.WIRE_COLD_GAIN_PER_TU * below);
     }
 
     private static void take(Player player, Grade grade, int pieces) {

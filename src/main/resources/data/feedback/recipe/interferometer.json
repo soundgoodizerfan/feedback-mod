@@ -1,0 +1,23 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "L": { "item": "feedback:optical_glass_lens" },
+    "P": { "item": "feedback:steel_plate" },
+    "T": { "item": "feedback:glass_tubing" },
+    "W": { "item": "feedback:copper_fine_wire" }
+  },
+  "pattern": [
+    "L L",
+    "PTP",
+    " W "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:interferometer"
+  },
+  "tool": [
+    { "ability": "feedback:driver", "wear": 1 }
+  ],
+  "fasteners": { "count": 2, "floor": 1, "forms": ["screw"] },
+  "school": "electrical:4"
+}

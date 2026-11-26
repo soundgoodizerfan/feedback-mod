@@ -2,6 +2,9 @@
   "school": "weapons",
   "volume": 3,
   "title": "Lightning on a leash",
+  "requires": [
+    "electrical:4"
+  ],
   "concepts": {
     "powder": {
       "label": "Powder",
