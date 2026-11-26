@@ -287,6 +287,18 @@ public final class DataWires {
         return found;
     }
 
+    /** Ticks the longest-dark good line at {@code node} still has to recover, 0 when none is dark. Read from the server's quench memory. */
+    public static int darkTicks(Level level, DataNode node) {
+        long now = level.getGameTime();
+        long left = 0;
+        for (DataNodeRef other : node.getNodeLinks()) {
+            Long until = QUENCHED_UNTIL.get(key(level, node.getNodeRef(), other));
+            if (until != null)
+                left = Math.max(left, until - now);
+        }
+        return (int) left;
+    }
+
     private static boolean quenched(Level level, DataNode node, DataNodeRef other, long now) {
         String k = key(level, node.getNodeRef(), other);
         Long until = QUENCHED_UNTIL.get(k);

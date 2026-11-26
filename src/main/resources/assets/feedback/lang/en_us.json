@@ -7605,6 +7605,7 @@
   "gui.feedback.counter.no_market": "No villager buys this",
   "feedback.jade.data.kind": "Data kind: %s",
   "feedback.jade.data.link_color": "Link color: %s",
+  "feedback.jade.data.dark": "Line dark, recovers in %s s",
   "feedback.jade.counter.catchment": "In reach %s, want something here %s",
   "feedback.jade.counter.errands": "Errands pending %s",
   "feedback.jade.counter.sealed": "Out of reach %s",
