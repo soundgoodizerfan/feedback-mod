@@ -184,6 +184,7 @@
       "class": "housing",
       "forms": [
         "@loose",
+        "ball",
         "@cord",
         "@mat",
         "@skin"

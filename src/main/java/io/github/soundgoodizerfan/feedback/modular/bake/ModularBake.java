@@ -1074,6 +1074,8 @@ public final class ModularBake {
                         case "underlayer" -> {
                             // A foam gives under a blow and absorbs it: its crush energy pads as well as a harder lining's competence would.
                             float c = Math.max(competence(pm), pm.mechanical().crushEnergy().map(e -> e / ModularTuning.CRUSH_ENERGY_PER_COMPETENCE).orElse(0f));
+                            // A shear-thickening lining (slime) is soft slowly and stiffens against a fast blow: the gain in its viscosity at speed is competence a blow meets.
+                            c += pm.molten().shearThickening().orElse(0f) * ModularTuning.SHEAR_LINING_COMPETENCE;
                             points += type.armourMax() * ModularTuning.LINING_SHARE * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);
                         }
                         case "battery_bay" -> {

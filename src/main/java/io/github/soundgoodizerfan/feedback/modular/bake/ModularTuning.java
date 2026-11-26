@@ -444,6 +444,8 @@ public final class ModularTuning {
     public static final float ARMOUR_DURABILITY_FLOOR = 1.5f;
     /** Share of a piece's points a lining adds, by how good the lining is. */
     public static final float LINING_SHARE = 0.1f;
+    /** Placeholder. Competence a lining gains per unit of its shear thickening (slime's 4 adds about as much as a good foam's crush energy). */
+    public static final float SHEAR_LINING_COMPETENCE = 0.3f;
 
     /** Suit servo: amps of drive per amp of the winding conductor's ampacity per cell of wire. */
     public static final float SUIT_DRIVE_PER_AMPACITY = 11f;

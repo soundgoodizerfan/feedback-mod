@@ -45,7 +45,7 @@
   "molten": {
     "viscosity": 100,
     "density": 0.99,
-    "shear_thickening": 0
+    "shear_thickening": 4
   },
   "enchantability": 15
 }

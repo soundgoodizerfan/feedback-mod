@@ -26,7 +26,7 @@ Put the piece in the item slot of the Engineering Table's [Fit tab](Engineering_
 | studs | studded |
 | lining, studs | lined and studded |
 
-A soft foam such as aluminum foam pads by what it absorbs as it is crushed, so a lining of it protects about as well as a hard metal one.
+A soft foam such as aluminum foam pads by what it absorbs as it is crushed, so a lining of it protects about as well as a hard metal one. A lining of slime balls is soft under a slow push and stiffens against a fast blow, so it protects well for something so soft. Chestplates, helmets, leggings and boots take it; gloves do not.
 
 To take a lining or studs off, take the piece apart on the Repair tab and fit the rest again; a plain piece is worn as it is.
 
