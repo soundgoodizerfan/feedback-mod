@@ -11,12 +11,14 @@ import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;
 import io.github.soundgoodizerfan.feedback.client.gui.SkinnedScreen;
 import io.github.soundgoodizerfan.feedback.logistics.sort.Band;
 import io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty;
+import io.github.soundgoodizerfan.feedback.logistics.store.DockBlockEntity;
 import io.github.soundgoodizerfan.feedback.logistics.store.Marks;
 import io.github.soundgoodizerfan.feedback.logistics.store.StoreMenu;
 import io.github.soundgoodizerfan.feedback.logistics.store.StoreTuning;
 import io.github.soundgoodizerfan.feedback.logistics.store.StoreView;
 import io.github.soundgoodizerfan.feedback.net.DockNamePayload;
 import io.github.soundgoodizerfan.feedback.net.StoreRequestPayload;
+import io.github.soundgoodizerfan.feedback.net.StoreWatchPayload;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -40,6 +42,9 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
     private static final int SHEET_W = QUEUE_X + QUEUE_W - LIST_X, CHIP_X = 54, CHIP_W = 38, CHIP_H = 13, MIN_Y = 8 * CHIP_H + 4;
     /** Most docks a tooltip lists before it counts the rest. */
     private static final int LISTED = 12;
+
+    /** The four program watches of a dock: slots at the foot of the queue column, 20 wide, 18 high. */
+    private static final int WATCH_Y = STATUS_Y - 2, WATCH_W = 20, WATCH_H = 18;
 
     private final boolean desk;
     private EditBox search, amount;
@@ -216,6 +221,25 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
         super.onClose();
     }
 
+    /** What program channel {@code c} (from 0) watches on this dock. */
+    private ItemStack watched(int c) {
+        List<StoreView.Source> sources = menu.view().sources();
+        if (sources.isEmpty() || c >= sources.get(0).watches().size())
+            return ItemStack.EMPTY;
+        return sources.get(0).watches().get(c);
+    }
+
+    private int watchAt(double mouseX, double mouseY) {
+        if (desk)
+            return -1;
+        for (int c = 0; c < DockBlockEntity.WATCHES; c++) {
+            double wx = leftPos + QUEUE_X + c * (WATCH_W + 2), wy = topPos + WATCH_Y;
+            if (mouseX >= wx && mouseX < wx + WATCH_W && mouseY >= wy && mouseY < wy + WATCH_H)
+                return c;
+        }
+        return -1;
+    }
+
     private void fetch() {
         if (picked.isEmpty() || amount.getValue().isEmpty())
             return;
@@ -270,6 +294,16 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
             GuiStyle.marquee(g, font, line.item().getHoverName(), x + LIST_X + 23, ry + 5, cx - x - LIST_X - 27, skin.ink());
         }
         skin.scrollbar(g, x + LIST_X + LIST_W - 3, y + LIST_Y + 1, ROWS * ROW - 2, lines.size(), ROWS, scroll);
+        if (!desk)
+            for (int c = 0; c < DockBlockEntity.WATCHES; c++) {
+                int wx = x + QUEUE_X + c * (WATCH_W + 2), wy = y + WATCH_Y;
+                skin.inset(g, wx, wy, WATCH_W, WATCH_H);
+                ItemStack w = watched(c);
+                if (w.isEmpty())
+                    g.drawString(font, Integer.toString(c + 1), wx + 7, wy + 5, skin.dim(), false);
+                else
+                    g.renderItem(w, wx + 2, wy + 1);
+            }
         List<StoreView.Queued> queue = menu.view().queue();
         int waiting = rowAt(mouseX, mouseY, QUEUE_X, QUEUE_W);
         queueScroll = Math.max(0, Math.min(queueScroll, queue.size() - ROWS));
@@ -323,6 +357,17 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
 
     @Override
     protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
+        int slot = filtering ? -1 : watchAt(mouseX, mouseY);
+        if (slot >= 0) {
+            ItemStack w = watched(slot);
+            List<Component> text = new ArrayList<>();
+            text.add(Component.translatable("screen.feedback.dock.watch", slot + 1));
+            text.add(w.isEmpty() ? Component.translatable("screen.feedback.dock.watch_none")
+                    : Component.translatable("screen.feedback.dock.watch_of", w.getHoverName()).withStyle(net.minecraft.ChatFormatting.GRAY));
+            text.add(Component.translatable("screen.feedback.dock.watch_use").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
+            g.renderComponentTooltip(font, text, mouseX, mouseY);
+            return;
+        }
         int row = rowAt(mouseX, mouseY, LIST_X, LIST_W);
         List<StoreView.Line> lines = shown();
         if (row >= 0 && scroll + row < lines.size()) {
@@ -378,6 +423,14 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
             if (chip != null) {
                 pickedBands ^= Marks.bit(chip);
                 filtered = -1;
+                GuiSkin.play(skin.click(), 1f);
+                return true;
+            }
+            // A watch slot takes the picked line; with nothing picked, or a right click, it is cleared.
+            int slot = filtering ? -1 : watchAt(mouseX, mouseY);
+            if (slot >= 0) {
+                ItemStack set = button == 0 ? picked : ItemStack.EMPTY;
+                PacketDistributor.sendToServer(new StoreWatchPayload(menu.containerId, slot + 1, set));
                 GuiSkin.play(skin.click(), 1f);
                 return true;
             }

@@ -66,10 +66,23 @@ public record StoreView(boolean full, List<Line> stock, List<Queued> queue, List
     }
 
     /** A dock: its name, what holds it up, its rack cells and the round trip to its farthest one (0 when still). */
-    public record Source(Component name, State state, int racks, int tripTicks) {
+    public record Source(Component name, State state, int racks, int tripTicks, List<ItemStack> watches) {
         static final StreamCodec<RegistryFriendlyByteBuf, Source> CODEC = StreamCodec.composite(
                 ComponentSerialization.STREAM_CODEC, Source::name, STATE, Source::state, ByteBufCodecs.VAR_INT, Source::racks,
-                ByteBufCodecs.VAR_INT, Source::tripTicks, Source::new);
+                ByteBufCodecs.VAR_INT, Source::tripTicks,
+                ItemStack.OPTIONAL_LIST_STREAM_CODEC, Source::watches, Source::new);
+
+        /** What a program watches on a dock, by channel, empty for none; a stack has no value equality, so this is compared by hand. */
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof Source s && name.equals(s.name) && state == s.state && racks == s.racks && tripTicks == s.tripTicks
+                    && ItemStack.listMatches(watches, s.watches);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(name, state, racks, tripTicks);
+        }
     }
 
     public static final StreamCodec<RegistryFriendlyByteBuf, StoreView> STREAM_CODEC = StreamCodec.composite(

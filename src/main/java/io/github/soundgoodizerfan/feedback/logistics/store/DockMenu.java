@@ -62,6 +62,12 @@ public class DockMenu extends StoreMenu {
         return new Snapshot(stock, queue, List.of(d.source(d.customName() != null ? d.customName() : Component.empty())), d.state());
     }
 
+    public void watch(int channel, ItemStack item) {
+        DockBlockEntity d = dock();
+        if (d != null)
+            d.setWatch(channel, item);
+    }
+
     public void rename(String name) {
         DockBlockEntity d = dock();
         if (d != null)

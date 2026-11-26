@@ -61,7 +61,85 @@ import net.neoforged.neoforge.items.IItemHandler;
  * stock listed as a union over separate stores keyed on item plus components, and stock kept on a broken store's item.
  * Rejected: any container joining the list, an instant distance-free grid, channels, capacity tiers and autocrafting.
  */
-public class DockBlockEntity extends ElectricNode {
+public class DockBlockEntity extends ElectricNode
+        implements io.github.soundgoodizerfan.feedback.control.ChannelSource, io.github.soundgoodizerfan.feedback.control.Steppable {
+
+    /** What a program can watch: one item each, read as the count held. A pulse on the same channel asks for a stack of it. */
+    public static final int WATCHES = 4;
+    private final ItemStack[] watches = {ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY};
+    private final boolean[] pulseHeld = new boolean[WATCHES + 1];
+    /** Switched off by a program: no retrieval starts, storing goes on. */
+    private boolean paused;
+
+    public ItemStack watch(int channel) {
+        return channel >= 1 && channel <= WATCHES ? watches[channel - 1] : ItemStack.EMPTY;
+    }
+
+    /** Sets what channel {@code channel} watches; an empty stack clears it. */
+    void setWatch(int channel, ItemStack item) {
+        if (channel < 1 || channel > WATCHES)
+            return;
+        watches[channel - 1] = item.copyWithCount(1);
+        setChanged();
+    }
+
+    /** The count of the watched goods the aisle holds; channel 0 and a channel with nothing watched read zero. */
+    @Override
+    public float read(int channel) {
+        ItemStack want = watch(channel);
+        if (want.isEmpty() || level == null || level.isClientSide)
+            return 0f;
+        int n = 0;
+        for (Lot l : stock())
+            if (l.item.getItem() == want.getItem() && l.like(want))
+                n += l.count;
+        return n;
+    }
+
+    @Override
+    public int defaultChannel() {
+        return 1;
+    }
+
+    @Override
+    public String[] channelKeys() {
+        return new String[] {"feedback.channel.dock.switch", "feedback.channel.dock.watch_1", "feedback.channel.dock.watch_2",
+                "feedback.channel.dock.watch_3", "feedback.channel.dock.watch_4"};
+    }
+
+    /**
+     * A rising edge on a watch channel asks for one stack of the watched goods, as a player at the screen would: the same
+     * queue, added to a line already waiting for it, so a program never fills the queue with copies nor is refused for one.
+     */
+    @Override
+    public void pulse(int channel, boolean on) {
+        if (channel < 1 || channel > WATCHES)
+            return;
+        boolean rising = on && !pulseHeld[channel];
+        pulseHeld[channel] = on;
+        ItemStack want = watch(channel);
+        if (!rising || want.isEmpty() || level == null || level.isClientSide)
+            return;
+        // The watch was picked at some earlier look: ask for the goods as the aisle holds them now.
+        for (Lot l : stock())
+            if (l.item.getItem() == want.getItem() && l.like(want)) {
+                request(l.item, want.getMaxStackSize(), 0);
+                return;
+            }
+    }
+
+    @Override
+    public void setEngaged(boolean engaged) {
+        if (paused == engaged) {
+            paused = !engaged;
+            setChanged();
+        }
+    }
+
+    @Override
+    public boolean isEngaged() {
+        return !paused;
+    }
 
     /** Reader heads fitted on the sides and top. */
     private final Map<Direction, Head> heads = new EnumMap<>(Direction.class);
@@ -334,7 +412,8 @@ public class DockBlockEntity extends ElectricNode {
         Aisle a = aisle();
         float speed = speed();
         float far = a.racks().isEmpty() ? 0f : a.racks().get(a.racks().size() - 1).distance();
-        return new StoreView.Source(called, state(), a.racks().size(), speed <= 0f ? 0 : Math.round(2f * far / speed));
+        return new StoreView.Source(called, state(), a.racks().size(), speed <= 0f ? 0 : Math.round(2f * far / speed),
+                java.util.List.of(watches));
     }
 
     @Nullable
@@ -476,7 +555,7 @@ public class DockBlockEntity extends ElectricNode {
     }
 
     private boolean startFetch() {
-        if (requests.isEmpty())
+        if (paused || requests.isEmpty())
             return false;
         if (fetchWait > 0) {
             fetchWait--;
@@ -863,6 +942,11 @@ public class DockBlockEntity extends ElectricNode {
         }
         tag.put("Requests", asked);
         writeHeads(tag);
+        tag.putBoolean("Paused", paused);
+        ListTag watched = new ListTag();
+        for (ItemStack w : watches)
+            watched.add(w.isEmpty() ? new CompoundTag() : w.save(registries));
+        tag.put("Watches", watched);
         tag.putInt("Reads", reads);
         if (job != null)
             tag.put("Job", job.save(registries));
@@ -888,6 +972,10 @@ public class DockBlockEntity extends ElectricNode {
             clientSince = level == null ? 0L : level.getGameTime();
             return;
         }
+        paused = tag.getBoolean("Paused");
+        ListTag watched = tag.getList("Watches", Tag.TAG_COMPOUND);
+        for (int i = 0; i < WATCHES; i++)
+            watches[i] = i < watched.size() ? ItemStack.parseOptional(registries, watched.getCompound(i)) : ItemStack.EMPTY;
         read(intake, tag.getList("Intake", Tag.TAG_COMPOUND), registries);
         read(output, tag.getList("Output", Tag.TAG_COMPOUND), registries);
         requests.clear();

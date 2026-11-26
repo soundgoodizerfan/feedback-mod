@@ -68,7 +68,7 @@ public class DeskMenu extends StoreMenu {
             Component name = dock != null && dock.customName() != null ? dock.customName()
                     : Component.translatable("screen.feedback.desk.dock", s + 1, linked.distance());
             if (dock == null) {
-                sources.add(new StoreView.Source(name, StoreView.State.AWAY, 0, 0));
+                sources.add(new StoreView.Source(name, StoreView.State.AWAY, 0, 0, List.of()));
                 continue;
             }
             sources.add(dock.source(name));

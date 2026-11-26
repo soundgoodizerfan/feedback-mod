@@ -85,6 +85,23 @@ Press **Filter** to open a sheet over the stock list and queue, and press it aga
 
 The button shows how many filters are on.
 
+## Watching stock
+
+The four **watch slots** at the bottom right of the screen each hold one kind of goods. Pick a line in the stock list, then **click a slot** to watch it; **right-click** a slot to clear it.
+
+## Control
+
+The dock is a data node: link it with the [Data Connector](Data_Connector.md) to a [Controller](Controller.md) (see [Sensors](Sensors.md)). It offers five channels.
+
+| Channel | Sensor card reads | Actuator card does |
+| --- | --- | --- |
+| 0, the switch | Nothing | Off holds retrievals while storing goes on; on lets them run |
+| 1 to 4 | The count of the goods in that watch slot that the aisle holds, or 0 when the slot is empty | A rising edge (off to on) queues a retrieval of one stack of the watched item |
+
+- The queued stack is the item's full stack size. It is added to a line already waiting for that item, and it is limited to what the aisle holds beyond what the queue already asks for.
+- The goods come out like any other retrieval, at the output.
+- Holding a channel on asks once; it has to turn off and on again to ask again.
+
 ## Catalog Desk
 
 A [Catalog Desk](Catalog_Desk.md) lists and orders the stock of several docks at once. Link a dock to it with the [Data Connector](Data_Connector.md).
