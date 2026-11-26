@@ -15,6 +15,9 @@
       "sedative": 0.03
     }
   },
+  "mechanical": {
+    "yield_strength": 5
+  },
   "parent": "_kind_animal",
   "perks": {"featherlight": 1}
 }

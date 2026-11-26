@@ -89,6 +89,8 @@ public final class HazardTuning {
     /** A gas this many times denser than air settles to the floor when vented ({@code FumeCloud}), sinking at most this many blocks. */
     public static final float HEAVY_GAS_DENSITY_RATIO = 1.5f;
     public static final int HEAVY_GAS_SINK_BLOCKS = 16;
+    /** The membrane sensor's gas reading reads this cloud strength (the strongest {@code toxic} perk) as 1. */
+    public static final int FUME_READING_FULL_LEVEL = 2;
 
     public static final int FUME_POISON_TICKS_PER_LEVEL = 100;
 

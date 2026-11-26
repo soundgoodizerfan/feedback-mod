@@ -53,12 +53,31 @@ public final class FumeCloud {
         final Vec3 at;
         int level;
         long until;
+        /** Denser than air: it settled to the floor when let go. */
+        final boolean heavy;
 
-        Cloud(Vec3 at, int level, long until) {
+        Cloud(Vec3 at, int level, long until, boolean heavy) {
             this.at = at;
             this.level = level;
             this.until = until;
+            this.heavy = heavy;
         }
+    }
+
+    /** The strongest cloud a sensor reaches: its strength and whether it is a heavy gas that settled. */
+    public record Reading(int level, boolean heavy) {
+    }
+
+    /** The strongest cloud within {@code reach} blocks of {@code from}, or null if none. Server side; the membrane sensor's gas reading. */
+    public static Reading strongest(ServerLevel level, Vec3 from, float reach) {
+        List<Cloud> clouds = CLOUDS.get(level);
+        if (clouds == null)
+            return null;
+        Cloud best = null;
+        for (Cloud c : clouds)
+            if (c.until > level.getGameTime() && c.at.distanceToSqr(from) <= reach * reach && (best == null || c.level > best.level))
+                best = c;
+        return best == null ? null : new Reading(best.level, best.heavy);
     }
 
     private static final Map<ServerLevel, List<Cloud>> CLOUDS = new WeakHashMap<>();
@@ -69,6 +88,10 @@ public final class FumeCloud {
 
     /** Lets a cloud of strength {@code toxic} go at {@code at}; one already within a block grows to the stronger and lasts the longer. Server side. */
     public static void release(Level level, Vec3 at, int toxic) {
+        release(level, at, toxic, false);
+    }
+
+    private static void release(Level level, Vec3 at, int toxic, boolean heavy) {
         if (toxic <= 0 || !(level instanceof ServerLevel server))
             return;
         long until = server.getGameTime() + (long) HazardTuning.FUME_CLOUD_TICKS_PER_LEVEL * toxic;
@@ -79,7 +102,7 @@ public final class FumeCloud {
                 c.until = Math.max(c.until, until);
                 return;
             }
-        clouds.add(new Cloud(at, toxic, until));
+        clouds.add(new Cloud(at, toxic, until, heavy));
     }
 
     /** A toxic fluid with nowhere to go lets its cloud go: the strength is its material's {@code toxic} perk, 0 for a harmless one. */
@@ -92,7 +115,7 @@ public final class FumeCloud {
         // A gas denser than air does not hang where it was let go: it sinks to the floor and settles there (chlorine, sulfur dioxide).
         Material air = MaterialTable.get().materials().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "air"));
         boolean heavy = air != null && m.density().muPerMb() > air.density().muPerMb() * HazardTuning.HEAVY_GAS_DENSITY_RATIO;
-        release(level, heavy ? settle(level, at) : at, Fumes.level(m));
+        release(level, heavy ? settle(level, at) : at, Fumes.level(m), heavy);
     }
 
     /** Where a heavy gas let go at {@code at} comes to rest: straight down through open air to the first floor, at most {@link HazardTuning#HEAVY_GAS_SINK_BLOCKS}. */

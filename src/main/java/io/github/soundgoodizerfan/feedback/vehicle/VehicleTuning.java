@@ -320,6 +320,12 @@ public final class VehicleTuning {
 
     /** Placeholder. Extra sink (blocks per tick) a gliding wing takes in air of no density at all, scaled by the missing share of the suit's reference density. */
     public static final float ELYTRA_THIN_AIR_SINK = 0.06f;
+    /**
+     * Placeholder. A gliding wing's extra sink (blocks per tick) per unit of load share (armour mass over a bare body's), and per unit of worn
+     * share (damage over durability); the extra load share the membrane carries per St of its {@code yield_strength}; the extra damage a second
+     * per unit of load share carried past that rating.
+     */
+    public static final float ELYTRA_LOAD_SINK = 0.05f, ELYTRA_WORN_SINK = 0.03f, ELYTRA_RATING_PER_ST = 0.1f, ELYTRA_TEAR_PER_EXCESS = 10f;
 
     /** Placeholder. The flight sensor's resolutions: altitude in blocks, airspeed in blocks per second, attitude in degrees. */
     public static final float FLIGHT_ALTITUDE_RESOLUTION = 1f, FLIGHT_AIRSPEED_RESOLUTION = 0.5f, FLIGHT_ATTITUDE_RESOLUTION = 2f,

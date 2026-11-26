@@ -4,6 +4,8 @@ package io.github.soundgoodizerfan.feedback.machine.membrane;
 
 import io.github.soundgoodizerfan.feedback.control.ChannelSource;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
+import io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud;
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
 import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -20,7 +22,9 @@ import net.minecraft.world.level.block.state.BlockState;
  * A phantom membrane's film in a block: it answers to the volatiles a tired creature gives off, the same ones that draw phantoms to a sleepless
  * player. Channel 0 reads the fatigue of the most tired player within {@link MachineTuning#MEMBRANE_REACH} blocks as a share of the sleeplessness
  * that calls phantoms (0 to 1, saturating), channel 1 reads whether anyone is in reach at all. A creature that does not sleep gives off nothing
- * the film answers to. Measurement only: it ticks nothing and controls nothing, and what a controller does with a reading is the controller's
+ * the film answers to. The film answers to the volatiles of a gas as well: channel 2 reads the strength of the strongest loose gas cloud in reach
+ * (a share of {@link HazardTuning#FUME_READING_FULL_LEVEL}), channel 3 its class: 0.5 a gas that hangs in the air, 1 a heavy gas that settled
+ * to the floor, 0 none. Measurement only: it ticks nothing and controls nothing, and what a controller does with a reading is the controller's
  * business.
  */
 public class MembraneSensorBlockEntity extends BlockEntity implements DataNode, ChannelSource {
@@ -34,6 +38,12 @@ public class MembraneSensorBlockEntity extends BlockEntity implements DataNode, 
         if (!(level instanceof ServerLevel server))
             return 0f;
         float reach = MachineTuning.MEMBRANE_REACH;
+        if (channel >= 2) {
+            var gas = FumeCloud.strongest(server, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), reach);
+            if (gas == null)
+                return 0f;
+            return channel == 2 ? Math.min(1f, gas.level() / (float) HazardTuning.FUME_READING_FULL_LEVEL) : gas.heavy() ? 1f : 0.5f;
+        }
         int tired = 0;
         boolean near = false;
         for (ServerPlayer p : server.players()) {
