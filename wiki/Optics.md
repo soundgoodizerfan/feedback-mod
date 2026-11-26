@@ -19,3 +19,5 @@ A [Thermometer](Instruments.md#thermometer) with a lens in it. Right-click a ves
 ## Telescope
 
 Two lenses and a tube make a [Telescope](Telescope.md): hold right click to look through it, magnified by the ratio of the lenses' focal lengths. Held in the other hand beside a [Camera](Camera.md), it is the camera's lens.
+
+A pumped crystal makes a [Laser](Laser.md): a placed block that measures distance and cuts what its beam rests on.

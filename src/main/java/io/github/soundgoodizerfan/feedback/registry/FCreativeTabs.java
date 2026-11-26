@@ -194,7 +194,7 @@ public class FCreativeTabs {
     private static final List<DeferredItem<?>> TUBES = of(FItems.TUBE, FItems.LINED_TUBE, FItems.WIDE_TUBE,
             FItems.EVACUATED_TUBE, FItems.TUBE_JUNCTION, FItems.PROGRAMMED_JUNCTION, FItems.TUBE_STATION,
             FItems.SORTING_STATION, FModular.LINEAR_MOTOR, FItems.CARRIER, FItems.MAGNETIC_CARRIER, FItems.POD,
-            FItems.ENDER_PORT, FItems.DATA_PORT, FItems.OPTICAL_TERMINAL, FItems.ENDER_ANCHOR);
+            FItems.ENDER_PORT, FItems.DATA_PORT, FItems.OPTICAL_TERMINAL, FItems.LASER, FItems.ENDER_ANCHOR);
 
     /** Cultures, taps and relays: the biological and mystical machines. */
     private static final List<DeferredItem<?>> CULTURES = of(FItems.CULTURE_DISH, FItems.SCULK_GROWER, FItems.CULTURE_SEED,

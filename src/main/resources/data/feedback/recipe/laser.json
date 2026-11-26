@@ -1,0 +1,14 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "P": { "item": "feedback:steel_plate" },
+    "L": { "item": "feedback:optical_glass_lens" },
+    "W": { "item": "feedback:copper_fine_wire" },
+    "T": { "item": "feedback:glass_tubing" }
+  },
+  "pattern": [ "PLP", "TWT", "PPP" ],
+  "result": { "count": 1, "id": "feedback:laser" },
+  "tool": [ { "ability": "feedback:driver", "wear": 1 } ],
+  "fasteners": { "count": 4, "floor": 1, "forms": [ "screw" ] },
+  "school": "electrical:3"
+}

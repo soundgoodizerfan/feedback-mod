@@ -27232,6 +27232,32 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:laser": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 31,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 20,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 31,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:vitreus"
+      }
+    ],
     "feedback:lathe": [
       {
         "amount": 8,

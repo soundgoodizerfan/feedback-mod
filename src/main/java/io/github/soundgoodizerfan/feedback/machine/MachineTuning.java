@@ -625,6 +625,21 @@ public final class MachineTuning {
     public static final float WATERJET_GRIT_MIN_ABRASIVENESS = 0.5f, WATERJET_NOZZLE_WEAR_PER_ABRASIVENESS = 0.6f;
     /** The cutter's water tank (mB) and the water one waterjet cut drives through the nozzle (mB). Placeholder. */
     public static final int WATERJET_TANK_MB = 2000, WATERJET_WATER_PER_CUT = 25;
+
+    // --- the laser (roadmap O4); placeholder figures, none tuned ---
+    /** Blocks the beam reaches. */
+    public static final int LASER_RANGE = 24;
+    /** Amps the pump draws on an MV line while it only ranges, and while it fires. */
+    public static final float LASER_RANGING_AMPS = 0.1f, LASER_FIRING_AMPS = 1.0f;
+    /** Dose a tick of beam puts into the block it hits, per unit of crystal clarity; a block is cut when its dose reaches hardness times {@code LASER_DOSE_PER_HARDNESS}. */
+    public static final float LASER_DOSE_PER_TICK = 0.5f, LASER_DOSE_PER_HARDNESS = 40f;
+    /** Heat the crystal gains a firing tick: the base, plus a share of this for what the crystal turns back (one minus its clarity); it sheds {@code LASER_COOL_PER_TICK} a tick not firing. It cracks at {@code LASER_CRACK_HEAT}. */
+    public static final float LASER_HEAT_PER_TICK = 1f, LASER_HEAT_LOSS_SHARE = 4f, LASER_COOL_PER_TICK = 0.6f, LASER_CRACK_HEAT = 2400f;
+    /** Reflectivity of a crystal whose material states none. */
+    public static final float LASER_DEFAULT_REFLECTIVITY = 0.1f;
+    /** Hurt a living thing in the beam takes every {@code LASER_HURT_EVERY} ticks, and the seconds it burns. */
+    public static final float LASER_HURT = 3f;
+    public static final int LASER_HURT_EVERY = 10, LASER_BURN_SECONDS = 3;
     public static final float CUTTER_TICKS_PER_CUT = 20f / CUTTER_CUTS_PER_SECOND;
 
     /** Placeholder. The Power Cutter's input buffer, in items (one stack). */

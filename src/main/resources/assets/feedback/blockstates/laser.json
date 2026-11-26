@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=north": { "model": "feedback:block/laser" },
+    "facing=east": { "model": "feedback:block/laser", "y": 90 },
+    "facing=south": { "model": "feedback:block/laser", "y": 180 },
+    "facing=west": { "model": "feedback:block/laser", "y": 270 },
+    "facing=up": { "model": "feedback:block/laser", "x": 270 },
+    "facing=down": { "model": "feedback:block/laser", "x": 90 }
+  }
+}

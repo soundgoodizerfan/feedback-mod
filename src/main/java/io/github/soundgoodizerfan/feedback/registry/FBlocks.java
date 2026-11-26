@@ -1597,6 +1597,8 @@ public class FBlocks {
 
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.optical.OpticalTerminalBlock> OPTICAL_TERMINAL = BLOCKS.register("optical_terminal",
             () -> new io.github.soundgoodizerfan.feedback.machine.optical.OpticalTerminalBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_YELLOW).strength(3.0f).sound(SoundType.METAL)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.laser.LaserBlock> LASER = BLOCKS.register("laser",
+            () -> new io.github.soundgoodizerfan.feedback.machine.laser.LaserBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(3.0f).sound(SoundType.METAL)));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.rub.RubGeneratorBlock> RUB_GENERATOR = BLOCKS.register("rub_generator",
             () -> new io.github.soundgoodizerfan.feedback.machine.rub.RubGeneratorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(2.5f).sound(SoundType.WOOD)));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.scrubber.EssentiaVentBlock> ESSENTIA_VENT = BLOCKS.register("essentia_vent",

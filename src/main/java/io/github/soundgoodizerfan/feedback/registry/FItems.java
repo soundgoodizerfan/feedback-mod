@@ -881,6 +881,7 @@ public class FItems {
     /** One end of an entangled data pair (endernet layer 1). */
     public static final DeferredItem<BlockItem> DATA_PORT = ITEMS.registerSimpleBlockItem(FBlocks.DATA_PORT);
     public static final DeferredItem<BlockItem> OPTICAL_TERMINAL = ITEMS.registerSimpleBlockItem(FBlocks.OPTICAL_TERMINAL);
+    public static final DeferredItem<BlockItem> LASER = ITEMS.registerSimpleBlockItem(FBlocks.LASER);
     public static final DeferredItem<BlockItem> SCRUBBING_BED = ITEMS.registerSimpleBlockItem(FBlocks.SCRUBBING_BED);
     public static final DeferredItem<BlockItem> ESSENTIA_VENT = ITEMS.registerSimpleBlockItem(FBlocks.ESSENTIA_VENT);
     public static final DeferredItem<BlockItem> RUB_GENERATOR = ITEMS.registerSimpleBlockItem(FBlocks.RUB_GENERATOR);
