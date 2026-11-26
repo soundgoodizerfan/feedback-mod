@@ -9,6 +9,7 @@ import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 
 import io.github.soundgoodizerfan.feedback.control.Analog;
@@ -40,6 +41,8 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
     private Joint joint;
     /** The piston's level; the other kinds ignore it. */
     private float pistonLevel;
+    /** A locked joint's release was asked for by a card (set off the physics thread, acted on at the next server tick). */
+    private boolean releaseAsked;
     /** The facing as last ticked: what a broken joint's body is put back about once the block's state is gone. */
     private Direction lastFacing;
 
@@ -156,7 +159,34 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
             return;
         }
         lastFacing = facing();
+        if (releaseAsked) {
+            releaseAsked = false;
+            release(level);
+            return;
+        }
         joint.tick(level, worldPosition, anchor(), lastFacing, pistonLevel);
+    }
+
+    /**
+     * Staging: a locked joint lets go on a controller's word. A spring in the joint parts the two bodies, an equal and opposite push along the
+     * joint's facing, a speed change of {@link MachineTuning#STAGE_KICK_SPEED} on the held body, then the constraint is removed and the joint
+     * is empty again: the held body is a free body of its own, a stage that has gone.
+     */
+    private void release(ServerLevel level) {
+        ServerSubLevel held = joint.held(level);
+        ServerSubLevel parent = Joint.parentOf(level, worldPosition);
+        if (held != null) {
+            Vector3d dir = new Vector3d(lastFacing.getStepX(), lastFacing.getStepY(), lastFacing.getStepZ());
+            if (parent != null)
+                parent.logicalPose().transformNormal(dir);
+            Vector3d impulse = dir.mul(held.getMassTracker().getMass() * MachineTuning.STAGE_KICK_SPEED);
+            io.github.soundgoodizerfan.feedback.vehicle.BodyPush.impulseAt(held, new Vector3d(held.logicalPose().position()), impulse);
+            if (parent != null)
+                io.github.soundgoodizerfan.feedback.vehicle.BodyPush.impulseAt(parent, new Vector3d(parent.logicalPose().position()), new Vector3d(impulse).negate());
+        }
+        joint.letGo();
+        joint = null;
+        setChanged();
     }
 
     /** Broken or unloaded: the joint goes (a body broken off goes back into the world, or falls free when it cannot). */
@@ -177,11 +207,17 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
     public void setLevel(int channel, float level) {
         if (channel == 0 && block().kind() == Joint.Kind.PISTON)
             pistonLevel = Math.clamp(level, -1f, 1f);
+        else if (channel == 0 && block().kind() == Joint.Kind.LOCKED && level >= MachineTuning.STAGE_RELEASE_LEVEL)
+            releaseAsked = true;
     }
 
     @Override
     public String[] channelKeys() {
-        return block().kind() == Joint.Kind.PISTON ? new String[]{"feedback.channel.piston_level"} : new String[0];
+        return switch (block().kind()) {
+            case PISTON -> new String[]{"feedback.channel.piston_level"};
+            case LOCKED -> new String[]{"feedback.channel.release"};
+            default -> new String[0];
+        };
     }
 
     // --- DataNode ---------------------------------------------------------------------------
@@ -209,7 +245,7 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
 
     @Override
     public boolean isNodeValid() {
-        return !isRemoved() && block().kind() == Joint.Kind.PISTON;
+        return !isRemoved() && (block().kind() == Joint.Kind.PISTON || block().kind() == Joint.Kind.LOCKED);
     }
 
     @Override

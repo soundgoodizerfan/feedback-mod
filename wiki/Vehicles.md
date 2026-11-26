@@ -69,7 +69,7 @@ A joint is a block you place against a block or in finespace, with its **front**
 | [Ring Gear](Ring_Gear.md) | Turns about its axis, driven from the side by a cog. |
 | [Large Ring Gear](Ring_Gear.md#large-ring-gear) | Turns about its axis, driven from the side by a cog with a large cog's teeth. |
 | [Ball Joint](Joints.md#ball-joint) | Swings inside a cone. |
-| [Locked Joint](Joints.md#locked-joint) | Holds two bodies as one rigid piece; can anchor to a world block. |
+| [Locked Joint](Joints.md#locked-joint) | Holds two bodies as one rigid piece; can anchor to a world block; a controller card can release it to drop a stage. |
 | [Slider Joint](Joints.md#slider-joint) | Slides along its front axis against a spring: suspension. |
 | [Piston Joint](Joints.md#piston-joint) | Slides to a level a card sets. |
 

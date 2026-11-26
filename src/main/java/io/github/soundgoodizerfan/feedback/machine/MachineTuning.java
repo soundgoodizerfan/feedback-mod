@@ -223,6 +223,8 @@ public final class MachineTuning {
 
     /** Placeholder. Reach either side of rest of a piston, blocks (a slider's is {@link #SPRING_TRAVEL}). */
     public static final float PISTON_TRAVEL = 0.5f;
+    /** Placeholder. Staging: the card level (0 to 1) at which a locked joint lets go, and the speed (blocks per second) the held body is parted at. */
+    public static final float STAGE_RELEASE_LEVEL = 0.5f, STAGE_KICK_SPEED = 2f;
 
     /** Placeholder. A piston servo's stiffness rate per second, per unit of reduced mass. */
     public static final double PISTON_SERVO_RATE = 20;

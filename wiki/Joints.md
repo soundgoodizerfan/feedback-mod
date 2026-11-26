@@ -40,6 +40,10 @@ I is a Wrought Iron Plate, B is a [Rotary Bearing](Rotary_Bearing.md) and R is a
 
 Placed against a world block, it anchors the build to that block.
 
+### Staging
+
+Link a Locked Joint to a Controller with a [Data Connector](Data_Connector.md) and it has a **Release** channel. When a card sets the channel to one half or more, the joint lets go: a spring pushes the two bodies apart along the joint's front, an equal push on each, and the held body flies free as a body of its own. The joint is empty again and can be assembled anew. Put one between a [Thruster](Thruster.md) stage and the rest of a rocket to drop the spent stage in flight.
+
 ## Slider Joint
 
 Lets a body slide along its front axis against a spring. It is a suspension: a wheel on a slider rides over bumps and rebounds, since a [Tire Hub](Tire.md#tire-hub) has no suspension of its own.
