@@ -22,7 +22,7 @@ public abstract class IngredientMixin {
 
     @Inject(method = "test(Lnet/minecraft/world/item/ItemStack;)Z", at = @At("RETURN"), cancellable = true)
     private void feedback$acceptsConverted(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (!cir.getReturnValueZ() && stack != null && ConvertedIngredients.accepts((Ingredient) (Object) this, stack))
+        if (!cir.getReturnValueZ() && stack != null && ConvertedIngredients.accepts(((Ingredient) (Object) this)::test, stack))
             cir.setReturnValue(true);
     }
 

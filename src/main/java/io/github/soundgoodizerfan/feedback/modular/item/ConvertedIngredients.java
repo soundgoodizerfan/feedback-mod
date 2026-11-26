@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
@@ -21,7 +22,6 @@ import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 
 /**
  * {@link ModularConvert} turns a vanilla item into ours the moment a player holds it, so another mod's
@@ -104,9 +104,18 @@ public final class ConvertedIngredients {
         return null;
     }
 
-    /** Whether {@code stack} is what a vanilla item {@code ingredient} accepts turns into. Cheap for a stack that is not a conversion product. */
-    public static boolean accepts(Ingredient ingredient, ItemStack stack) {
-        if (stack.isEmpty() || (!stack.has(FDataComponents.MADE_OF.get()) && ModularStacks.design(stack) == null))
+    /**
+     * Whether {@code stack} takes the place of an item {@code wanted} accepts: it is our block's item for a replaced vanilla block
+     * ({@link StandIns}), or what a vanilla item turns into. Cheap for a stack that is neither.
+     */
+    public static boolean accepts(Predicate<ItemStack> wanted, ItemStack stack) {
+        if (stack.isEmpty())
+            return false;
+        // by-item-ok: a replaced vanilla block is one id on each side, and other mods ask for theirs by id
+        for (Map.Entry<Item, Item> e : StandIns.items().entrySet())
+            if (stack.is(e.getValue()) && wanted.test(new ItemStack(e.getKey())))
+                return true;
+        if (!stack.has(FDataComponents.MADE_OF.get()) && ModularStacks.design(stack) == null)
             return false;
         String key = key(stack);
         if (key == null)
@@ -115,19 +124,31 @@ public final class ConvertedIngredients {
         if (from == null)
             return false;
         for (Item item : from)
-            if (ingredient.test(new ItemStack(item)))
+            if (wanted.test(new ItemStack(item)))
                 return true;
         return false;
+    }
+
+    /** What to show a player where {@code asked} is wanted: the item they can hold in its place, or {@code asked} itself. */
+    public static ItemStack shown(ItemStack asked) {
+        Item ours = StandIns.items().get(asked.getItem());
+        if (ours != null)
+            return new ItemStack(ours, asked.getCount());
+        ItemStack made = index().products().get(asked.getItem());
+        return made == null ? asked : made.copyWithCount(asked.getCount());
     }
 
     /** {@code shown} with the conversion of each vanilla item in it added, so a list of what an ingredient takes (JEI, the recipe book) names the item a player holds. */
     public static ItemStack[] widen(ItemStack[] shown) {
         Map<Item, ItemStack> products = index().products();
-        if (products.isEmpty())
+        // by-item-ok: as in accepts, one replaced vanilla id to our one id
+        Map<Item, Item> standIns = StandIns.items();
+        if (products.isEmpty() && standIns.isEmpty())
             return shown;
         List<ItemStack> extra = null;
         for (ItemStack s : shown) {
-            ItemStack made = products.get(s.getItem());
+            Item ours = standIns.get(s.getItem());
+            ItemStack made = ours != null ? new ItemStack(ours) : products.get(s.getItem());
             if (made == null)
                 continue;
             if (extra == null)

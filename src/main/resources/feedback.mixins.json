@@ -4,7 +4,15 @@
   "package": "io.github.soundgoodizerfan.feedback.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "IngredientMixin"
+    "IngredientMixin",
+    "thaumaturge.BlueprintBlockMixin",
+    "thaumaturge.BlueprintStateMixin",
+    "thaumaturge.ItemMatchMixin",
+    "thaumaturge.ResearchRequirementMixin"
+  ],
+  "client": [
+    "thaumaturge.EntryDetailIconMixin",
+    "thaumaturge.RequirementIconMixin"
   ],
   "injectors": {
     "defaultRequire": 1

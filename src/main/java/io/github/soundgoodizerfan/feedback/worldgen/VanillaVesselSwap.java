@@ -54,6 +54,11 @@ public final class VanillaVesselSwap {
             Map.entry(Blocks.COMPARATOR, io.github.soundgoodizerfan.feedback.registry.FAutomation.SENSORS.get(
                     io.github.soundgoodizerfan.feedback.machine.sensor.SensorKind.FILL).get())));
 
+    /** Every replaced block to the one that takes its place. Only once the registries are filled. */
+    public static Map<Block, Block> swaps() {
+        return SWAP;
+    }
+
     /** The table plus every vanilla bed: each of the sixteen colours becomes the one placed bed, dyed by the colour it was. */
     private static Map<Block, Block> swapTable(Map<Block, Block> base) {
         var all = new java.util.HashMap<>(base);

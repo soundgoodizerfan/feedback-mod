@@ -27,7 +27,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [Born in Chaos](#born-in-chaos) | Optional | Dark Metal counts as a material |
 | [Thaumic Bases](#thaumic-bases) | Optional | Thauminite counts as a material |
 | [Deeper and Darker](#deeper-and-darker) | Optional | Resonarium and Soul Crystal count as materials |
-| [Other mods](#other-mods) | Optional | Fluid tags and shared biome and stone tags |
+| [Other mods](#other-mods) | Optional | Fluid tags, shared biome and stone tags, and Feedback blocks accepted in place of vanilla ones |
 
 ## Sable, Dimensional Sable and Sable Scaling
 
@@ -110,6 +110,14 @@ Thaumaturge items that match a Feedback material are read as that material in ev
 - Cinderpearl is a pyrophoric herb: it burns at a low temperature, short and hot, as fuel.
 - Fabric is cloth, mirrored glass is mirrored glass and tallow is tallow. These three have no items of their own, and anything tagged tallow or animal fat from any mod counts as tallow.
 - Flux Goo, Thaumaturge's fluid, is a corrosive acidic sludge with pH 3.
+
+### Vanilla blocks Feedback replaces
+
+Feedback's version of a [replaced vanilla block](#vanilla-blocks-in-other-mods-recipes) counts wherever Thaumaturge asks for the vanilla one.
+
+- Research that asks for the item accepts Feedback's, and the research page shows it. The Vis Powered Generator's piston is one example.
+- Golem components and filters accept it.
+- The golem press multiblock takes Feedback's [Anvil](Anvil.md) and a Feedback [Piston](Piston.md) facing up.
 
 ### Wand caps and rods
 
@@ -458,5 +466,24 @@ The [Energy Fitting](Energy_Fitting.md) is the one place Forge Energy (FE) leave
 ## Other mods
 
 Every Feedback fluid and gas is published under the common fluid tags, so other mods' pumps and tanks accept them. Gases lighter than air are tagged `c:gaseous`, and each fluid has a tag of its own named for it, such as `c:molten_copper`.
+
+### Vanilla blocks in other mods' recipes
+
+Other mods' recipes that ask for one of these vanilla blocks accept Feedback's block in its place, and JEI lists it among the ingredients.
+
+| Vanilla block | Feedback block |
+|---|---|
+| Furnace, Smoker | Furnace, Smoker |
+| Blast Furnace | Crude Blast Furnace |
+| Campfire, Soul Campfire | Campfire, Soul Campfire |
+| Anvil (any wear) | Anvil |
+| Smithing Table, Stonecutter | Smithing Table, Stonecutter |
+| Brewing Stand, Enchanting Table | Brewing Stand, Enchanting Table |
+| Piston, Sticky Piston | Piston |
+| Hopper, Dropper, Dispenser | Hopper, Dropper, Dispenser |
+| Note Block | Note Block |
+| Observer | Observer |
+| Comparator | Fill Gauge |
+| Redstone Lamp | Glowstone Lamp |
 
 The biome lists for oil, evaporite and emerald deposits also accept other mods' biomes through the common biome tags (`c:is_desert`, `c:is_plains`, `c:is_mountain`). Ore that generates in Nether stone also generates in other mods' stone tagged `c:netherrack`.
