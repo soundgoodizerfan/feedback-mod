@@ -32,7 +32,8 @@ public final class Timber implements ModularTrait {
             return;
         int cap = (int) params.get("cap", 24);
         int radius = (int) params.get("max_radius", 12);
-        int wear = (int) params.get("wear_per_log", 1);
+        float wear = params.get("wear_per_log", 1);
+        float owed = 0; // fractional wear carries across logs; whole points are charged, the rest rounds down
         BlockPos origin = event.getPos();
         Set<BlockPos> seen = new HashSet<>(Set.of(origin));
         ArrayDeque<BlockPos> queue = new ArrayDeque<>(java.util.List.of(origin));
@@ -51,7 +52,11 @@ public final class Timber implements ModularTrait {
                     queue.add(next.immutable());
                     if (player.gameMode.destroyBlock(next)) {
                         felled++;
-                        weapon.hurtAndBreak(ModularStacks.cap(weapon, wear), player, EquipmentSlot.MAINHAND);
+                        owed += wear;
+                        int whole = (int) owed;
+                        owed -= whole;
+                        if (whole > 0)
+                            weapon.hurtAndBreak(ModularStacks.cap(weapon, whole), player, EquipmentSlot.MAINHAND);
                     }
                 }
             }

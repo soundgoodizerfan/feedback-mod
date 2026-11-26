@@ -143,9 +143,9 @@
               "name": "large",
               "trait": "timber",
               "params": {
-                "cap": 24,
-                "max_radius": 12,
-                "wear_per_log": 1
+                "cap": 96,
+                "max_radius": 24,
+                "wear_per_log": 0.5
               }
             }
           ]
