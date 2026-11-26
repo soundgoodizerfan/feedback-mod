@@ -41,6 +41,9 @@ public class PowerCutterBlock extends Block implements EntityBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         boolean head = stack.getItem() instanceof CutterHeadItem, stick = stack.getItem() instanceof DataStickItem;
         if (!level.isClientSide) {
+            // A bucket or other fluid container fills or drains the water tank first.
+            if (!head && !stick && net.neoforged.neoforge.fluids.FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
+                return ItemInteractionResult.sidedSuccess(false);
             if (head)
                 give(player, cutter.seatHead(stack));
             else if (stick)

@@ -623,6 +623,8 @@ public final class MachineTuning {
     /** A waterjet head: cuts' worth of grit one piece of grit stock loads, the most a head holds, the least abrasiveness a grit needs, and nozzle wear units a cut spends per point of the grit's abrasiveness. */
     public static final int WATERJET_GRIT_PER_PIECE = 8, WATERJET_GRIT_MAX = 64;
     public static final float WATERJET_GRIT_MIN_ABRASIVENESS = 0.5f, WATERJET_NOZZLE_WEAR_PER_ABRASIVENESS = 0.6f;
+    /** The cutter's water tank (mB) and the water one waterjet cut drives through the nozzle (mB). Placeholder. */
+    public static final int WATERJET_TANK_MB = 2000, WATERJET_WATER_PER_CUT = 25;
     public static final float CUTTER_TICKS_PER_CUT = 20f / CUTTER_CUTS_PER_SECOND;
 
     /** Placeholder. The Power Cutter's input buffer, in items (one stack). */

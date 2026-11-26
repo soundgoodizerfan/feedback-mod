@@ -22,6 +22,11 @@ public class WearingComponent implements IBlockComponentProvider {
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
         if (accessor.getServerData().getBoolean(WearingServerData.JAMMED))
             tooltip.add(Readout.gloss(Component.translatable("feedback.readout.jammed").withStyle(net.minecraft.ChatFormatting.GOLD), "feedback.gloss.jammed"));
+        if (accessor.getServerData().contains(WearingServerData.WATER)) {
+            float water = accessor.getServerData().getFloat(WearingServerData.WATER);
+            tooltip.add(Component.translatable(water <= 0f ? "feedback.readout.jet_water.dry" : water < 0.25f ? "feedback.readout.jet_water.low"
+                    : "feedback.readout.jet_water.full").withStyle(water <= 0f ? net.minecraft.ChatFormatting.GOLD : net.minecraft.ChatFormatting.GRAY));
+        }
         if (accessor.getServerData().contains(WearingServerData.PLUG)) {
             Component plug = Readout.conditionReading(accessor.getServerData().getFloat(WearingServerData.PLUG));
             if (plug != null)

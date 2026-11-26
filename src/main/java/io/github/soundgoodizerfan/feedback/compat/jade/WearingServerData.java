@@ -20,7 +20,7 @@ public class WearingServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final WearingServerData INSTANCE = new WearingServerData();
 
-    static final String CONDITION = "WornCondition", JAMMED = "Jammed", PLUG = "PlugCondition", DAMAGE = "EngineDamage", SEIZED = "Seized";
+    static final String CONDITION = "WornCondition", JAMMED = "Jammed", PLUG = "PlugCondition", DAMAGE = "EngineDamage", SEIZED = "Seized", WATER = "JetWater";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -31,8 +31,12 @@ public class WearingServerData implements IServerDataProvider<BlockAccessor> {
             data.putFloat(DAMAGE, engine.condition());
             data.putBoolean(SEIZED, engine.isSeized());
         }
-        if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlockEntity cutter)
+        if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlockEntity cutter) {
             data.putBoolean(JAMMED, cutter.isJammed());
+            if (cutter.getHead().get().getItem() instanceof io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem h
+                    && h.type() == io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem.Type.WATERJET)
+                data.putFloat(WATER, cutter.waterAmount() / (float) io.github.soundgoodizerfan.feedback.machine.MachineTuning.WATERJET_TANK_MB);
+        }
     }
 
     @Override

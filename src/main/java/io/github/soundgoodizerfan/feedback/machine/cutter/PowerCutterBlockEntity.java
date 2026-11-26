@@ -57,6 +57,15 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
     private ItemStack stick = ItemStack.EMPTY;
     private ItemStack input = ItemStack.EMPTY;
     private ItemStack output = ItemStack.EMPTY;
+    /** The water a waterjet head drives: any fluid tagged water, filled by a bucket, a pipe or a hopper-side port. Only a waterjet head draws it. */
+    private final net.neoforged.neoforge.fluids.capability.templates.FluidTank water =
+            new net.neoforged.neoforge.fluids.capability.templates.FluidTank(MachineTuning.WATERJET_TANK_MB,
+                    s -> s.is(net.minecraft.tags.FluidTags.WATER)) {
+                @Override
+                protected void onContentsChanged() {
+                    setChanged();
+                }
+            };
     private float progress;
     private float rate;
     private float over;
@@ -156,6 +165,11 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
             progress = MachineTuning.CUTTER_TICKS_PER_CUT;
             return;
         }
+        // ... and with no water in the tank there is no jet: the cycle waits the same way.
+        if (headItem.type() == CutterHeadItem.Type.WATERJET && water.getFluidAmount() < MachineTuning.WATERJET_WATER_PER_CUT) {
+            progress = MachineTuning.CUTTER_TICKS_PER_CUT;
+            return;
+        }
         if (over > 0f)
             wear(over * MachineTuning.CUTTER_OVERVOLT_WEAR_UNITS);
         Optional<Material.Located> found = Material.find(ClientMaterials.on(server), input);
@@ -215,7 +229,8 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
             return;
         }
         if (headItem.type() == CutterHeadItem.Type.WATERJET) {
-            // The grit is spent with the cut and wears the nozzle by how hard it is.
+            // The water is driven out with the cut; the grit is spent with it and wears the nozzle by how hard it is.
+            water.drain(MachineTuning.WATERJET_WATER_PER_CUT, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
             head.get().set(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT.get(), Math.max(0, head.get().getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT.get(), 0) - 1));
             wear(MachineTuning.WATERJET_NOZZLE_WEAR_PER_ABRASIVENESS * head.get().getOrDefault(io.github.soundgoodizerfan.feedback.registry.FWeapons.NOZZLE_GRIT_ABRASIVENESS.get(), 0.5f));
         }
@@ -408,6 +423,17 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
         tag.put("Output", output.saveOptional(registries));
         tag.putFloat("Progress", progress);
         tag.putBoolean("Jammed", jammed);
+        tag.put("Water", water.writeToNBT(registries, new CompoundTag()));
+    }
+
+    /** The water tank, for a bucket or a pipe. */
+    public net.neoforged.neoforge.fluids.capability.IFluidHandler waterPort() {
+        return water;
+    }
+
+    /** mB of water in the tank. */
+    public int waterAmount() {
+        return water.getFluidAmount();
     }
 
     @Override
@@ -420,6 +446,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
         output = ItemStack.parseOptional(registries, tag.getCompound("Output"));
         progress = tag.getFloat("Progress");
         jammed = tag.getBoolean("Jammed");
+        water.readFromNBT(registries, tag.getCompound("Water"));
     }
 
     @Override
