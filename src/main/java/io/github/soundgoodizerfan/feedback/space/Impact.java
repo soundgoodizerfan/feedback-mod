@@ -28,7 +28,7 @@ import org.joml.Vector3d;
  * that would stop a person as fast ({@code dv^2 / 2g}) and every living thing aboard takes fall damage for the part over
  * {@link SpaceTuning#IMPACT_FREE_FALL_BLOCKS}. The physics thread only notes the hit; the damage is done on the level's own tick.
  * <p>
- * shortcut: blocks at the contact are not broken by the hit yet; upgrade with a contact-point source from Sable.
+ * shortcut: blocks at the contact are not singled out (Sable gives no contact point); a very hard hit shatters the brittle blocks anywhere aboard instead.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class Impact {
@@ -82,6 +82,8 @@ public final class Impact {
             float damage = (float) Math.ceil(hit.fall() - SpaceTuning.IMPACT_FREE_FALL_BLOCKS);
             if (hit.fall() > SpaceTuning.IMPACT_PUNCTURE_FALL_BLOCKS)
                 puncture(level, body, hit.fall());
+            if (hit.fall() > SpaceTuning.IMPACT_BREAK_FALL_BLOCKS)
+                shatter(level, body, hit.fall());
             if (damage <= 0)
                 continue;
             var b = body.boundingBox();
@@ -107,6 +109,28 @@ public final class Impact {
                     if (be instanceof io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlockEntity cell && level.random.nextDouble() < chance)
                         cell.puncture();
             }
+    }
+
+    /**
+     * A very hard hit shatters what is brittle aboard: every block in the body's plot at or under {@link SpaceTuning#IMPACT_BRITTLE_HARDNESS}
+     * (glass, panes) breaks, with a chance that grows from nothing at {@link SpaceTuning#IMPACT_BREAK_FALL_BLOCKS} to certain at twice it. The
+     * blocks at the contact are not singled out: Sable gives no contact point, so the brittle ones anywhere in the body stand for them.
+     */
+    private static void shatter(ServerLevel level, ServerSubLevel body, double fall) {
+        double chance = Math.min(1.0, (fall - SpaceTuning.IMPACT_BREAK_FALL_BLOCKS) / SpaceTuning.IMPACT_BREAK_FALL_BLOCKS);
+        var box = body.getPlot().getBoundingBox();
+        var at = new net.minecraft.core.BlockPos.MutableBlockPos();
+        for (int x = box.minX(); x <= box.maxX(); x++)
+            for (int y = box.minY(); y <= box.maxY(); y++)
+                for (int z = box.minZ(); z <= box.maxZ(); z++) {
+                    at.set(x, y, z);
+                    var state = level.getBlockState(at);
+                    if (state.isAir())
+                        continue;
+                    float hardness = state.getDestroySpeed(level, at);
+                    if (hardness >= 0f && hardness <= SpaceTuning.IMPACT_BRITTLE_HARDNESS && level.random.nextDouble() < chance)
+                        level.destroyBlock(at, false);
+                }
     }
 
     @SubscribeEvent

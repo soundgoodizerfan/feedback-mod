@@ -53,6 +53,11 @@ public final class SpaceTuning {
     public static final double IMPACT_FREE_FALL_BLOCKS = 3;
     /** The fall, in blocks, that a hit must be worth before it tears gas cells aboard (the chance is nothing here and certain at twice it). */
     public static final double IMPACT_PUNCTURE_FALL_BLOCKS = 6;
+    /** Placeholder [OPEN]. A hit worse than this fall (blocks) shatters brittle blocks aboard (those at or under {@code IMPACT_BRITTLE_HARDNESS}), each with a chance growing to certain at twice it. */
+    public static final double IMPACT_BREAK_FALL_BLOCKS = 10, IMPACT_BRITTLE_HARDNESS = 0.6;
+    /** Placeholder [OPEN]. Acid rain: how often (ticks) a body is looked at, how many random blocks of it each time, and the most chance an exposed block of the least resistant metal is eaten. */
+    public static final int ACID_SAMPLE_TICKS = 100, ACID_SAMPLES = 16;
+    public static final float ACID_ERODE_CHANCE = 0.3f;
     /** Ticks the crossing overlay takes to clear. */
     public static final int FADE_TICKS = 60;
 

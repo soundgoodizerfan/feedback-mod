@@ -24,6 +24,8 @@ The world has a yellow-green sky and fog, acid-green water and rain, and no mobs
 
 Its crust is rich in osmiridium, from y 20 to 90 ([Ores](Ores.md)), the platinum-group ore.
 
+The rain eats a hull. Every few seconds, exposed blocks of a metal with a **corrosion resistance under 0.9** (a block with air on at least one face) can be eaten away, the less resistant the metal the likelier. Steel, iron, bronze and lead go over minutes; tin, stainless steel, titanium and the noble metals are untouched. An eaten block leaves a gap in the hull, which you can patch with a block of a resistant metal. Resistances are on each [metal's page](Metals.md).
+
 ## The frozen moon by rocket
 
 The frozen moon is a point in the Gap along its own fixed bearing, the pale blue-white disc in the sky. A craft that gets within its capture sphere while heading toward it arrives on the moon at full size, high up, coming in fast and descending. A craft that misses coasts on. The moon grows in the sky as the craft closes on it.
@@ -48,7 +50,7 @@ A Thermal Vessel standing where the air has no oxygen (the Gap, the End) runs ai
 
 ## Coming back
 
-A body moving fast through air heats on its leading face. Blocks on the windward side burn off a voxel at a time when the heat passes what their material can take: burnable ones oxidize and metals melt. A block counts by the material it is a form of, so an iron block holds until iron melts and a wool block burns away at wool's oxidation temperature. A block that is no material's form does not burn. Thick burnable layers last longer, and refractory plates hold. Blocks that are only touching are not broken. A hard landing hurts everyone aboard like a fall of the speed change.
+A body moving fast through air heats on its leading face. Blocks on the windward side burn off a voxel at a time when the heat passes what their material can take: burnable ones oxidize and metals melt. A block counts by the material it is a form of, so an iron block holds until iron melts and a wool block burns away at wool's oxidation temperature. A block that is no material's form does not burn. Thick burnable layers last longer, and refractory plates hold. Blocks that are only touching are not broken. A hard landing hurts everyone aboard like a fall of the speed change. A landing worse than a fall of about 10 blocks also shatters brittle blocks aboard, those with a hardness of 0.6 or under (glass and glass panes): each one breaks with a chance that rises from nothing at that fall to certain at twice it, and which ones go is not tied to where the craft touched.
 
 ## Living in it
 
