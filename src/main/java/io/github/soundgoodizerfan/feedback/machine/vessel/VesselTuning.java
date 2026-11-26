@@ -52,6 +52,8 @@ public final class VesselTuning {
      */
     /** A built crucible whose wall condition falls to this share has given way. */
     public static final float CRUCIBLE_WALL_BREAK = 0.1f;
+    /** Tu above ambient a level of wall heat (experience fed to a crucible's attuned wall) lifts the crucible's heat source to. Placeholder. */
+    public static final float WALL_HEAT_TU_PER_LEVEL = 60f;
     /** Invented. Wall condition a pour costs per multiple of the wall's shock limit its temperature jump overshoots (a glass wall poured on at three times its limit loses a half). */
     public static final float CRUCIBLE_SHOCK_WEAR = 0.25f;
     public static final ThermalMass CRUCIBLE_SMALL_MASS = new ThermalMass(25f);

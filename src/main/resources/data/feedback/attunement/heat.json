@@ -1,6 +1,7 @@
 {
   "aspect": "fire",
   "stages": 2,
+  "draw_level": 15,
   "reagent": "feedback:ignite",
   "target": 0.6,
   "band": 0.12,
@@ -88,6 +89,9 @@
     },
     "wheel": {
       "kind": "ignite_target"
+    },
+    "crucible_shell": {
+      "kind": "wall_heat"
     },
     "burner_nozzle": {
       "kind": "burn_wielder"

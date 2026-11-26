@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
  * <li>{@link #wearShare} and {@link #blastShare}: what a machine's misuse wear and its burst keep of what they would have been.</li>
  * <li>{@link #vessel}: the shell of a pressure holder wears above its danger line, and mend, tithe and soak act on that wear.</li>
  * </ul>
- * Wear is still only from misuse; nothing here costs a machine anything for running.
+ * Wear is still only from misuse. The active kinds (mend, lure, scare, grow, reap, ring, bane, wall heat) cost experience, paid by {@link #draw}.
  */
 public final class MachineKinds {
 
@@ -81,8 +81,11 @@ public final class MachineKinds {
     /** Ticks between mends; experience points one mend costs; condition one level of mend closes per mend. */
     private static final int MEND_INTERVAL = 40, MEND_XP = 1;
     private static final float MEND_PER_LEVEL = 0.02f;
-    /** How far from a machine a mend reaches for the experience it costs, in blocks. */
-    private static final double MEND_REACH = 6.0;
+    /** What a machine's last draw found (read by Jade): it paid, the run was empty or absent, the run stood below the kind's level. */
+    public static final int DREW = 0, EMPTY = 1, TOO_LOW = 2;
+    /** Ticks a draw status is still current. */
+    private static final long STATUS_TICKS = 100;
+    private static final Map<net.minecraft.world.level.block.entity.BlockEntity, long[]> LAST_DRAW = new java.util.WeakHashMap<>();
     /** Experience points a level of tithe pays per whole condition a shell wears away. */
     private static final float TITHE_XP_PER_CONDITION = 400f;
 
@@ -183,16 +186,45 @@ public final class MachineKinds {
 
     /** Takes the experience one mend costs from the nearest player within reach; false when none has any. */
     public static boolean payMend(ServerLevel server, BlockPos pos) {
-        // A reserve housing on the machine pays before anyone standing near does.
+        return draw(server, pos, "mend", MEND_XP);
+    }
+
+    /**
+     * Pays {@code points} of experience for a placed machine's active kind (roadmap X5, L2: a machine draws from a reservoir the player filled,
+     * never from whoever stands near). Its own reserve housing pays first, then the XP run of any node touching it, which must stand at the
+     * kind's {@code draw_level} ({@link Attunements#drawLevel}). Short of either the machine is quiet, not harmed.
+     */
+    public static boolean draw(ServerLevel server, BlockPos pos, String kind, int points) {
         var be = server.getBlockEntity(pos);
-        if (be != null && ReservoirKinds.machineTake(be, MEND_XP) >= MEND_XP)
-            return true;
-        Player payer = server.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MEND_REACH,
-                p -> p instanceof Player pl && pl.totalExperience > 0 && !pl.isSpectator());
-        if (payer == null)
-            return false;
-        payer.giveExperiencePoints(-MEND_XP);
-        return true;
+        int status = EMPTY;
+        boolean paid = false;
+        if (be != null && ReservoirKinds.machineStored(be) >= points)
+            paid = ReservoirKinds.machineTake(be, points) >= points;
+        float min = Attunements.drawLevel(kind);
+        for (net.minecraft.core.Direction d : net.minecraft.core.Direction.values()) {
+            if (paid)
+                break;
+            if (!(server.getBlockEntity(pos.relative(d)) instanceof io.github.soundgoodizerfan.feedback.core.xp.XpNode node) || node.network() == null)
+                continue;
+            var run = node.network();
+            if (run.level() < min)
+                status = TOO_LOW;
+            else if (run.canPay(points, min))
+                paid = run.draw(points) >= points;
+        }
+        if (be != null)
+            LAST_DRAW.put(be, new long[] { paid ? DREW : status, server.getGameTime() });
+        if (paid && server.random.nextInt(3) == 0) {
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.ENCHANT, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 4, 0.3, 0.2, 0.3, 0.4);
+            server.playSound(null, pos, net.minecraft.sounds.SoundEvents.EXPERIENCE_ORB_PICKUP, net.minecraft.sounds.SoundSource.BLOCKS, 0.12f, 0.6f);
+        }
+        return paid;
+    }
+
+    /** What the machine's last draw found: {@link #DREW}, {@link #EMPTY} or {@link #TOO_LOW}; -1 when it has not tried lately. */
+    public static int lastDraw(net.minecraft.world.level.block.entity.BlockEntity be, long now) {
+        long[] last = LAST_DRAW.get(be);
+        return last == null || now - last[1] > STATUS_TICKS ? -1 : (int) last[0];
     }
 
     /** Condition one level of mend closes per mend. */

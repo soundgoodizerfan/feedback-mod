@@ -139,7 +139,7 @@ A machine's parts are attuned at the table like a tool's, and a built machine's 
 ### Wear and repair
 
 - **Ward** slows the wear that misuse causes, on every part named on the machine's page. About 1 in (levels + 1) of the wear gets through: one level halves it, two levels leave a third. It turns away the wear of a [Pressure Vessel](Pressure_Vessel.md), [Boiler](Boiler.md) or [Gas Tank](Gas_Tank.md) held past its danger line, of a [Pump](Pump.md) running dry or against a closed line, of a [Water Wheel](Water_Wheel.md) held still in flowing water, of a [Flywheel](Flywheel.md) past its rim speed, of a [Transmission](Transmission.md) shifted at speed, of a [Propeller](Propeller.md) past its blade-tip limit, of a [Conveyor Belt](Conveyor_Belt.md) carrying hot cargo, of a [Mechanical Hammer](Mechanical_Hammer.md) or [Mechanical Press](Mechanical_Press.md) stroke that achieves nothing, and the overload, knock, surge and thermal-shock wear of a [Dynamotor](Dynamotor.md), [Battery](Battery.md), [Engine](Engine.md), [Gas Compressor](Gas_Compressor.md), [Heat Exchanger](Heat_Exchanger.md), [Electromagnet](Electromagnet.md) and [Lamp](Lamp.md).
-- **Mend** closes a machine's wear on any part Ward takes. Each step costs 1 experience point, about every 2 seconds, paid first from a reserve housing on the machine (see Reservoir below), then from the nearest player within 6 blocks who has experience. With nobody near and no reserve, the machine stays worn.
+- **Mend** closes a machine's wear on any part Ward takes. Each step costs 1 experience point, about every 2 seconds, paid from a reservoir (see [Paying for attunements](#paying-for-attunements)). With none, the machine stays worn.
 - **Tithe** (Mend's mirror) on a vessel, boiler or tank shell or its reinforcing bands pays out experience orbs for the wear the shell takes.
 - A worn pressure vessel, boiler or gas tank shell bursts at a lower pressure: a shell worn to its floor lets go at 60% of its rated pressure. Shell wear only accrues above the danger line.
 - **Slip** (Hold's mirror) on a frame turns some misuse wear into slipping, at the price of torque.
@@ -150,7 +150,7 @@ A machine's parts are attuned at the table like a tool's, and a built machine's 
 | --- | --- | --- |
 | **Edge** | The face moves more per turn and takes more to turn; a saw or plasma head cuts faster; a hammer or press head hits 25% harder per level | Pump Impeller, Compressor Rotor, Cutting Head, hammer and press heads |
 | **Spread** | The same reversed: less per turn, less to turn, a gentler stroke, a slower cut | the same parts |
-| **Heat** | The face runs hotter and loses more of its power as heat | Compressor Rotor, Core, Machine Winding |
+| **Heat** | The face runs hotter and loses more of its power as heat; on a [Crucible](Crucible.md#wall-heat) wall it heats the pot for experience | Compressor Rotor, Core, Machine Winding, Crucible Shell |
 | **Cold** | The face runs colder and loses less as heat; a lagging or housing sheds less of its heat | the same, plus Lagging and Housing |
 | **Charge** | A battery, jar or galvanic cell holds more charge | Plates, Case, Foil, Jar Glass, Outer Sleeve, Cell Anode |
 | **Conduct** | A winding loses less to resistance; a jar's foil carries a harder discharge | Machine Winding, Foil |
@@ -183,6 +183,18 @@ A machine's parts are attuned at the table like a tool's, and a built machine's 
 ### Around the machine
 
 These act on the world near a running machine, every 2 seconds or so. A machine that wears acts only while it runs; Mend, Reservoir and Grudge work either way.
+
+### Paying for attunements
+
+Mend, Bait, Spook, Bloom, Reap, Ring, Bane and Heat on a crucible wall cost experience, drawn from a reservoir: first a **Reservoir** attunement on the machine itself, then any [XP wire or Crystal Holder run](Experience.md#drawing-from-a-run) touching the machine. A player standing near pays nothing. Each effect needs the run to stand at a minimum level, shown here by effect:
+
+| Effect | Run level |
+| --- | --- |
+| Mend | 5 |
+| Bait, Spook, Bloom, Reap, Ring, Bane | 10 |
+| Heat (Crucible Shell) | 15 |
+
+Below that level, or with the run empty, the attunement is quiet and nothing is lost. A draw shows as a soft green glyph particle and a chime. Jade on the machine reads *Attunement drawing*, *Attunement quiet: no experience reaches it* or *Attunement quiet: the run stands too low*. Effects that only shape the figure, such as scaling, are free.
 
 | Effect | In a machine | Parts |
 | --- | --- | --- |

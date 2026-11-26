@@ -68,6 +68,8 @@ public final class MachineAura {
     /** Ticks a sticky bed holds a hostile creature slowed; knockback per level of a slick or pulling bed. Placeholder. */
     private static final int BED_HOLD_TICKS = 100;
     private static final float BED_SHOVE_PER_LEVEL = 0.4f;
+    /** Experience points a machine's field kind (lure, scare, grow, reap, ring, bane) draws each time it acts; points a level of wall heat draws each read. Placeholders. */
+    private static final int FIELD_XP = 1, HEAT_XP_PER_LEVEL = 2;
     /** Crop radius cap. */
     private static final int CROP_MAX = 2;
 
@@ -144,18 +146,21 @@ public final class MachineAura {
             mend(level, be, mend);
         if (be instanceof Headed headed && !headed.getHead().isEmpty())
             mendHead(level, pos, headed.getHead().get());
+        int wall = levels.getOrDefault("wall_heat", 0);
+        if (wall > 0 && be instanceof io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleBlockEntity c)
+            c.wallHeat(wall, c.holdsAnything() && MachineKinds.draw(level, pos, "wall_heat", HEAT_XP_PER_LEVEL * wall), level.getGameTime());
         ReservoirKinds.absorb(level, be);
         GrudgeKinds.aura(level, be, levels.getOrDefault("grudge", 0));
         if (!running(be))
             return;
         int lure = levels.getOrDefault("lure", 0), scare = levels.getOrDefault("scare", 0);
-        if (lure + scare > 0)
+        if (lure + scare > 0 && MachineKinds.draw(level, pos, lure >= scare ? "lure" : "scare", FIELD_XP))
             draw(level, pos, lure, scare);
         int grow = levels.getOrDefault("grow", 0), reap = levels.getOrDefault("reap", 0);
-        if (grow + reap > 0 && period % WORK_EVERY == 0)
+        if (grow + reap > 0 && period % WORK_EVERY == 0 && MachineKinds.draw(level, pos, grow >= reap ? "grow" : "reap", FIELD_XP))
             crops(level, pos, grow, reap);
         int ring = levels.getOrDefault("ring", 0);
-        if (ring > 0 && period % RING_EVERY == 0) {
+        if (ring > 0 && period % RING_EVERY == 0 && MachineKinds.draw(level, pos, "ring", FIELD_XP)) {
             level.gameEvent(null, GameEvent.EXPLODE, Vec3.atCenterOf(pos));
             for (Mob mob : level.getEntitiesOfClass(Mob.class, new net.minecraft.world.phys.AABB(pos).inflate(RING_PER_LEVEL * ring),
                     m -> m instanceof Enemy && m.getTarget() == null))
@@ -194,10 +199,16 @@ public final class MachineAura {
         if (bane + calm + mark + stick + slick + keen + pull == 0)
             return;
         var box = new net.minecraft.world.phys.AABB(pos).inflate(CREATURE_REACH);
+        // Bane pays one read's worth the first time a quarry is near; a run that cannot pay leaves it quiet.
+        Boolean baneFed = null;
         for (net.minecraft.world.entity.LivingEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, box, x -> x instanceof Enemy)) {
             boolean quarry = e.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD) || e.getType().is(net.minecraft.tags.EntityTypeTags.ARTHROPOD);
-            if (bane > 0 && quarry)
-                e.hurt(level.damageSources().generic(), BANE_DAMAGE_PER_LEVEL * bane);
+            if (bane > 0 && quarry) {
+                if (baneFed == null)
+                    baneFed = MachineKinds.draw(level, pos, "bane", FIELD_XP);
+                if (baneFed)
+                    e.hurt(level.damageSources().generic(), BANE_DAMAGE_PER_LEVEL * bane);
+            }
             if (calm > 0 && e.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD) && e instanceof Mob m)
                 m.setTarget(null);
             if (mark > 0)

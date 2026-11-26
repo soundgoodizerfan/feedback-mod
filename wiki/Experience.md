@@ -108,6 +108,8 @@ G is a grindstone, A an amethyst shard, P a steel plate.
 
 An [Enchanting Table](Enchanting_Table.md) touching a Crystal Holder, XP wire or other node of a run pays a session out of the run when the run stands at level 5 or higher and holds the points. It spends the run's points before yours. A Creative XP Source pays without spending.
 
+An attuned machine touching a run draws from it the same way, at the level its effect needs; see [Paying for attunements](Enchanting_Table.md#paying-for-attunements).
+
 Sneak-use a [Reservoir](Enchanting_Table.md) tool on any node of a run: the lower level gives to the higher, up to 20 points a use. A tool below the run's level draws from it; a tool above it gives back.
 
 ## Sculk

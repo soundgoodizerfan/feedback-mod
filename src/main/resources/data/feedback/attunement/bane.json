@@ -1,6 +1,7 @@
 {
   "aspect": "dark",
   "stages": 2,
+  "draw_level": 10,
   "target": 0.6,
   "band": 0.1,
   "roles": {

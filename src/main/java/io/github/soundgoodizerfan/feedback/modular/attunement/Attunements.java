@@ -65,12 +65,14 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
      * @param aspect  the element a rite of this effect refines to (fire, water, earth, air, light or dark): the grid the rite game is played on keeps cells of it
      *                ({@code RitePurify}).
      * @param stages  how many grids that game is, 1 to 3.
+     * @param drawLevel the XP level a run must stand at for a placed machine's active kinds of this effect to draw from it (0: no minimum level, the draw still costs points);
+     *                  below it the machine's attunement is quiet, not lost ({@link MachineKinds#draw}).
      * @param reagent optional potion effect id: a bottle of that potion in the player's inventory is burned for the session and lowers its experience cost
      *                (potions spec 12.4, 14.9).
      */
     public record Effect(ResourceLocation id, float target, float band, Map<String, Behaviour> roles, Map<String, Behaviour> mirror,
             java.util.Optional<ResourceLocation> reagent, boolean starter, java.util.List<ResourceLocation> books, java.util.Optional<String> offering,
-            String aspect, int stages) {
+            String aspect, int stages, float drawLevel) {
         public static final Codec<Effect> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("id").forGetter(Effect::id),
                 Codec.floatRange(0.05f, 1f).fieldOf("target").forGetter(Effect::target),
@@ -84,7 +86,8 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
                 Codec.STRING.validate(s -> java.util.Arrays.asList(io.github.soundgoodizerfan.feedback.modular.research.RitePurify.ELEMENT_NAMES).contains(s)
                         ? com.mojang.serialization.DataResult.success(s) : com.mojang.serialization.DataResult.error(() -> "not an element: " + s))
                         .fieldOf("aspect").forGetter(Effect::aspect),
-                Codec.intRange(1, 3).fieldOf("stages").forGetter(Effect::stages)
+                Codec.intRange(1, 3).fieldOf("stages").forGetter(Effect::stages),
+                Codec.floatRange(0f, 60f).optionalFieldOf("draw_level", 0f).forGetter(Effect::drawLevel)
         ).apply(i, Effect::new));
 
         public String key() {
@@ -136,6 +139,16 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
     /** The effects this JVM knows: the client's copy when it has one, else the server's. */
     public static Map<ResourceLocation, Effect> known() {
         return client.isEmpty() ? INSTANCE.effects : client;
+    }
+
+    /** The run level a machine kind must draw at: the {@code draw_level} of the effect that names {@code kind} on a role (the highest if several), 0 when none does. */
+    public static float drawLevel(String kind) {
+        float level = 0f;
+        for (Effect e : known().values())
+            if (e.drawLevel() > level && (e.roles().values().stream().anyMatch(b -> b.kind().equals(kind))
+                    || e.mirror().values().stream().anyMatch(b -> b.kind().equals(kind))))
+                level = e.drawLevel();
+        return level;
     }
 
     /** The effect a {@code attunement.<path>} key names, or null. */

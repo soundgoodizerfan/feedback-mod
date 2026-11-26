@@ -1,6 +1,7 @@
 {
   "aspect": "earth",
   "stages": 2,
+  "draw_level": 10,
   "target": 0.3,
   "band": 0.08,
   "roles": {

@@ -1,6 +1,7 @@
 {
   "aspect": "water",
   "stages": 3,
+  "draw_level": 5,
   "target": 0.9,
   "band": 0.1,
   "roles": {

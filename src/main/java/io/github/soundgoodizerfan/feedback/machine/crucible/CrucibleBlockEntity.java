@@ -194,6 +194,23 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
                 ? figures.get("Mass", crucible.getThermalMass().workPerTu()) : VesselTuning.CRUCIBLE_SMALL_MASS.workPerTu();
     }
 
+    /** Game time until which the attuned wall's experience-fed heat holds, and the Tu above ambient it lifts the heat source to. Not saved: a read renews it. */
+    private long wallHeatUntil;
+    private float wallHeatTu;
+
+    /** Whether the crucible holds any stack or fluid (an attuned wall draws experience only then). */
+    public boolean holdsAnything() {
+        return processSlots().stream().anyMatch(s -> !s.isEmpty()) || alloy.amount() > 0 || !tank.isEmpty();
+    }
+
+    /** One aura read of the wall's heat attunement: when {@code fed} the heat source holds until the next read. */
+    public void wallHeat(int level, boolean fed, long now) {
+        if (fed) {
+            wallHeatUntil = now + 45;
+            wallHeatTu = level * VesselTuning.WALL_HEAT_TU_PER_LEVEL;
+        }
+    }
+
     public boolean isArcHearth() {
         return getBlockState().is(io.github.soundgoodizerfan.feedback.registry.FBlocks.ARC_HEARTH.get());
     }
@@ -321,6 +338,9 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
         Tu fireTu = HeatSource.at(level, this);
         Tu ambient = AmbientTable.at(level);
+        // An attuned wall fed experience is a small heat source of its own, never above what the wall's level lifts it to.
+        if (level.getGameTime() < wallHeatUntil)
+            fireTu = new Tu(Math.max(fireTu.value(), ambient.value() + wallHeatTu));
         long away = offline.take(level);
         if (away > 0L)
             Catchup.settle(this, HeatSource.spanAt(level, this, away), ambient, away);
