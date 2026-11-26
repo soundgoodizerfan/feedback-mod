@@ -36,7 +36,7 @@ The shaft can't share the fluid's direction, so it goes in **across** it: from a
 ## Where it draws from
 
 - **A tank** behind it: a [Condenser](Condenser.md), a boiler, a crucible, a [Pipe](Pipe.md) run, another mod's tank.
-- **A source block** behind it, if it's a fluid that **renews itself**. Water does, so a pump in a pool of water (two or more sources) draws water forever without draining it. Lava doesn't renew, so a pump won't make lava from nothing.
+- **A source block** behind it, if it's a fluid that **renews itself**. Water does, so a pump in a pool of water (two or more sources) draws water forever without draining it. Water drawn from the sea (an ocean or beach) is **sea water**: it carries salt, does not mix with fresh water in a tank, and leaves a crust of salt in a vessel that boils it. Lava doesn't renew, so a pump won't make lava from nothing.
 
 If there's nowhere for the fluid to go in front, it doesn't pump.
 

@@ -713,8 +713,20 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
                 continue;
             int before = tank.getFluidAmount();
             float at = temperature;
+            float salinity = held.getOrDefault(FDataComponents.SALINITY.get(), 0f);
             tank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
             temperature -= boilCost(cut, amount);
+            // The water that leaves as vapour leaves its salt behind: a crust, a salt item for each SALT_MB_PER_ITEM of sea boiled.
+            if (salinity > 0f) {
+                saltOwed += amount * salinity / VesselTuning.SALT_MB_PER_ITEM;
+                int crust = (int) saltOwed;
+                if (crust > 0) {
+                    saltOwed -= crust;
+                    net.minecraft.world.Containers.dropItemStack(level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5,
+                            new net.minecraft.world.item.ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.SALT.get(), crust));
+                }
+                setChanged();
+            }
             // The lights drawn off are no longer in the feed.
             if (cut.lightShare().isPresent() && !tank.isEmpty() && before > amount)
                 tank.getFluid().set(FDataComponents.CRUDE_GRADE.get(), grade.withLightsDrawn(light, before, amount));
@@ -818,6 +830,9 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
     /** Experience a vanilla cooking recipe banked here, in points; a Smelter Tap drains it, a broken vessel spills it. */
     private float bankedXp;
 
+    /** Salt a boiled sea left that is not yet a whole item, in items. */
+    private float saltOwed;
+
     /** Points banked, whole. */
     public int bankedXp() {
         return (int) bankedXp;
@@ -846,6 +861,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         tag.putFloat("Temperature", temperature);
         tag.putFloat("CurrentTpu", currentTpu);
         tag.putFloat("BankedXp", bankedXp);
+        tag.putFloat("SaltOwed", saltOwed);
         for (int i = 0; i < slotTpu.length; i++)
             tag.putFloat("SlotTpu" + i, slotTpu[i]);
         int[] bits = new int[soakFrom.length];
@@ -869,6 +885,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         currentTpu = tag.getFloat("CurrentTpu");
         bankedXp = tag.getFloat("BankedXp");
+        saltOwed = tag.getFloat("SaltOwed");
         List<ItemStack> held = processSlots();
         slotTpu = new float[held.size()];
         for (int i = 0; i < slotTpu.length; i++)

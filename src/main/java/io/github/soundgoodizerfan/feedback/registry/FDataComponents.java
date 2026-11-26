@@ -61,6 +61,13 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.geology.CrudeGrade.STREAM_CODEC)
                     .build());
 
+    /** The salt in water drawn from the sea (0 to 1, the share of the sea's own), riding on the fluid stack like a crude's grade; fresh water carries none. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> SALINITY =
+            COMPONENTS.register("salinity", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.floatRange(0f, 1f))
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
     /** What a catalyst bed has lost, on the bed item itself (activity is one minus the three): coke burns off with an oxidiser, poison needs a reducing sweep, sinter never comes back. Fouled by feed and misuse, not time. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BED_COKE = bedLoss("bed_coke");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BED_POISON = bedLoss("bed_poison");

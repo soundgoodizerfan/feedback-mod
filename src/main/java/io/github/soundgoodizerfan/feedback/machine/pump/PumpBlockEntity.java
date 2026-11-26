@@ -157,9 +157,14 @@ public class PumpBlockEntity extends RotationNode implements io.github.soundgood
             return;
         }
         FluidState pool = level.getFluidState(behind);
-        if (pool.isSource() && pool.canConvertToSource(level, behind))
-            target.fill(new FluidStack(pool.getType(), amount), IFluidHandler.FluidAction.EXECUTE);
-        else
+        if (pool.isSource() && pool.canConvertToSource(level, behind)) {
+            FluidStack drawn = new FluidStack(pool.getType(), amount);
+            // Water drawn where the sea is carries the sea's salt: it rides on the stack, a vessel boiling it leaves a crust.
+            if (pool.is(net.minecraft.tags.FluidTags.WATER)
+                    && (level.getBiome(behind).is(net.minecraft.tags.BiomeTags.IS_OCEAN) || level.getBiome(behind).is(net.minecraft.tags.BiomeTags.IS_BEACH)))
+                drawn.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.SALINITY.get(), 1f);
+            target.fill(drawn, IFluidHandler.FluidAction.EXECUTE);
+        } else
             misuse();
     }
 }
