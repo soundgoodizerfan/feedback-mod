@@ -1,0 +1,27 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:cast_iron",
+      "forms": ["ingot"]
+    }
+  ],
+  "min_temperature": 800,
+  "optimal_temperature": 950,
+  "max_temperature": 1100,
+  "required_tpu": 900,
+  "max_rate": 2,
+  "result": { "id": "feedback:iron_ingot" },
+  "spoil_temperature": 1150,
+  "spoiled": { "id": "feedback:burnt_iron" },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 300
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 4
+  }
+}

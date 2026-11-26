@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T13:21:15.932660191	Tags for minecraft:fluid mod id feedback
+// 1.21.1	2026-11-26T17:45:50.140987032	Tags for minecraft:fluid mod id feedback
 5ae7af34ed7ee675d2dc65d80ea3c8397e250dfd data/c/tags/fluid/acetaldehyde.json
 c203a55f68fcb3630c88c0f962262cf2dc8345a3 data/c/tags/fluid/air.json
 1902902e70065592c2e3734fc2d5ce39c1036b7e data/c/tags/fluid/alkaline_water.json
@@ -47,6 +47,7 @@ baeecaf3b3fb0ddf14a17f10fafa5c0fd4c35223 data/c/tags/fluid/gold_chloride.json
 e252282ed00f27a731e395325cf4dee591f216bb data/c/tags/fluid/hydrofluoric_acid.json
 19cc7228a61f5d485ae6053c9091808f297cf18a data/c/tags/fluid/hydrogen.json
 0399fcdc207dafe70803e0cd564ceae0bcb413a6 data/c/tags/fluid/hypochlorite.json
+a1a1501226de1843aded0a0ddfe49dcb99c2a333 data/c/tags/fluid/iron_sulfate.json
 277cf89d99ee44b8c778e023eab6f1d288c21311 data/c/tags/fluid/kerosene.json
 145837fb82fb803bf8d9028a8a358f6411c9979e data/c/tags/fluid/kerosene_vapour.json
 5c1b31de7ff783491dbcea1aac4ae9eb92b4abe3 data/c/tags/fluid/liquid_air.json

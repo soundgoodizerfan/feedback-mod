@@ -77,7 +77,7 @@ Finer forms speed any reaction that accepts more than one form: roasting pyrite 
 
 ## Leaching and winning
 
-Leaching dissolves the metal out of a concentrate into a **liquor**, a fluid named for the salt it carries, in the [Reactor](Reactor.md). Each liquor then gives up its metal one of two ways: **electrowinning** in the [Electrolyser](Electrolyser.md#plated-metal), which plates it on the cathode as nuggets, or **precipitation** in the Reactor with a reducing gas.
+Leaching dissolves the metal out of a concentrate into a **liquor**, a fluid named for the salt it carries, in the [Reactor](Reactor.md). Each liquor then gives up its metal one of two ways: **electrowinning** in the [Electrolyser](Electrolyser.md#plated-metal), which plates it on the cathode as nuggets, or **precipitation** in the Reactor with a reducing gas. Iron ore also reduces straight to Pure Iron with hydrogen, without a liquor ([Iron](Iron.md#getting-it)).
 
 | Ore, as fed | Reagent | Liquor | Also leaves | Then |
 | --- | --- | --- | --- | --- |
@@ -88,7 +88,8 @@ Leaching dissolves the metal out of a concentrate into a **liquor**, a fluid nam
 | Cobaltite (roasted) | sulfuric acid | Cobalt Sulfate | Silicate Slag | electrowin cobalt |
 | Gold | brine and hypochlorite | Gold Chloride | 2 silver nuggets | precipitate gold with sulfur dioxide |
 | Argentite (roasted) | brine and hypochlorite | Silver Chloride | a lead nugget | precipitate silver with hydrogen |
-| Ilmenite | sulfuric acid | Titanyl Sulfate | 3 iron nuggets | precipitate titanium with hydrogen |
+| Cast iron nuggets, swarf, dust | sulfuric acid | Iron Sulfate | hydrogen, graphite dust | electrowin iron |
+| Ilmenite | sulfuric acid | Titanyl Sulfate | 3 iron nuggets (cast iron) | precipitate titanium with hydrogen |
 | Wolframite | lye | Sodium Tungstate | 2 manganese nuggets | precipitate tungsten with hydrogen |
 | End Stone | lye | Sodium Tungstate | nothing | precipitate tungsten with hydrogen |
 | Uraninite | sulfuric acid and oxygen | Uranyl Sulfate | 2 lead nuggets | precipitate uranium with hydrogen |

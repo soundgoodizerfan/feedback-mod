@@ -1,0 +1,24 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "tag": "feedback:iron_bearers",
+      "forms": ["raw", "crushed", "concentrate", "dust"]
+    }
+  ],
+  "min_temperature": 500,
+  "optimal_temperature": 700,
+  "max_temperature": 1000,
+  "required_tpu": 400,
+  "result": { "id": "feedback:iron_ingot" },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 450
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 6
+  }
+}

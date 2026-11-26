@@ -42,7 +42,7 @@ A heavy toxic gas from the anode (front) of an Electrolyser running on brine. It
 
 ## Sulfur dioxide
 
-A heavy toxic gas. Roasting pyrite in a Reactor gives it, with iron nuggets; roasting a sulfide concentrate and smelting galena concentrate give it too ([Ore Processing](Ore_Processing.md#roasting-sulfides)).
+A heavy toxic gas. Roasting pyrite in a Reactor gives it, with cast iron nuggets; roasting a sulfide concentrate and smelting galena concentrate give it too ([Ore Processing](Ore_Processing.md#roasting-sulfides)).
 
 ## Carbon dioxide
 
@@ -50,7 +50,7 @@ A gas that comes off when malachite is leached with sulfuric acid in a [Reactor]
 
 ## Leach liquors
 
-Leaching an ore concentrate in the Reactor leaves its metal dissolved in a liquor: Copper Sulfate, Zinc Sulfate, Nickel Sulfate, Cobalt Sulfate, Gold Chloride, Silver Chloride, Titanyl Sulfate, Sodium Tungstate, Uranyl Sulfate, Thorium Hydroxide and Sodium Aluminate. Pipe them like any fluid. The [Electrolyser](Electrolyser.md#what-it-splits) wins copper, zinc, nickel and cobalt out of theirs; the others give up their metal to a reducing gas in the Reactor. See [Ore Processing](Ore_Processing.md#leaching-and-winning).
+Leaching an ore concentrate in the Reactor leaves its metal dissolved in a liquor: Copper Sulfate, Zinc Sulfate, Nickel Sulfate, Cobalt Sulfate, Iron Sulfate, Gold Chloride, Silver Chloride, Titanyl Sulfate, Sodium Tungstate, Uranyl Sulfate, Thorium Hydroxide and Sodium Aluminate. Pipe them like any fluid. The [Electrolyser](Electrolyser.md#what-it-splits) wins copper, zinc, nickel, cobalt and iron out of theirs; the others give up their metal to a reducing gas in the Reactor. See [Ore Processing](Ore_Processing.md#leaching-and-winning).
 
 ## Liquid Teleportant
 

@@ -61,7 +61,7 @@ Some reactions give off heat, which warms the reactor.
 | **Dissolve salt** | one Salt, 250 mB water | 250 mB [brine](Chemicals.md#brine) | 20 to 100 Tu, best 60 |
 | **Bayer (bauxite)** | any bauxite item, 250 mB [lye](Chemicals.md#lye) | 2 [alumina](Guide_Making_Aluminum.md) and 200 mB lye back | 150 to 250 Tu, best 200 |
 | **Bayer (lapis)** | one Lapis Lazuli, 250 mB lye | 1 alumina, one Silicate Slag and 200 mB lye back; the lapis' stored experience is lost | 150 to 250 Tu, best 200 |
-| **Roast pyrite** | any pyrite item | 4 iron nuggets and 200 mB [sulfur dioxide](Chemicals.md#sulfur-dioxide) | 500 to 900 Tu, best 700 |
+| **Roast pyrite** | any pyrite item | 4 cast iron nuggets and 200 mB [sulfur dioxide](Chemicals.md#sulfur-dioxide) | 500 to 900 Tu, best 700 |
 | **Sulfuric acid** | 100 mB sulfur dioxide, 50 mB oxygen, 100 mB water, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 100 mB [sulfuric acid](Chemicals.md#acids), and some heat | 400 to 550 Tu, best 450 |
 | **Hydrochloric acid** | 100 mB hydrogen, 100 mB chlorine | 100 mB [hydrochloric acid](Chemicals.md#acids), and some heat | 20 to 200 Tu, best 60 |
 | **Hydrofluoric acid** | one Cryolite Ore, 100 mB [sulfuric acid](Chemicals.md#acids) | 200 mB [hydrofluoric acid](Chemicals.md#fluorine-and-ptfe), and some heat | 100 to 250 Tu, best 150 |
@@ -93,7 +93,7 @@ Some reactions give off heat, which warms the reactor.
 | **Liquid Teleportant** | 100 mB Damped Spatial Solvent, one Redstone dust, an [Arc Head](Arc_Furnace.md#the-arc-head) against the reactor | 100 mB [Liquid Teleportant](Liquid_Teleportant.md); above 2200 Tu, solvent vapor | 300 to 2200 Tu, best 900 |
 | **End stone** | one End Stone | 250 mB hydrogen, 100 mB [helium](Chemicals.md#helium) and one Porous Aggregate | 700 to 1300 Tu, best 900 |
 | **Alkaline Electrolyte** | 500 mB water, 10 mB [lye](Chemicals.md#lye) | 500 mB Alkaline Electrolyte | 0 to 80 Tu, best 20 |
-| **Roast a sulfide concentrate** | one concentrate of chalcopyrite, sphalerite, pentlandite, cobaltite or argentite, 100 mB oxygen | one Roasted concentrate, 100 mB sulfur dioxide, sulfur (and iron nuggets for some) | 500 to 900 Tu, best 700 |
+| **Roast a sulfide concentrate** | one concentrate of chalcopyrite, sphalerite, pentlandite, cobaltite or argentite, 100 mB oxygen | one Roasted concentrate, 100 mB sulfur dioxide, sulfur (and cast iron nuggets for some) | 500 to 900 Tu, best 700 |
 | **Diamond (high pressure)** | one Graphite and one Diamond Seed in the hopper, 160 mB [argon](Chemicals.md#argon), an iron, nickel or cobalt ingot bed, **3.8 Pu** at least (best at 4.6 Pu) | 1 Diamond, the argon returned; over 1700 Tu, a Graphite instead | 1400 to 1700 Tu, best 1550 |
 | **Diamond (vapor)** | one Diamond Seed, 8 mB [methane](Chemicals.md#fluorine-and-ptfe), 72 mB hydrogen, **1.5 Pu** at least (best at 2 Pu) | 2 Diamonds and 64 mB hydrogen; over 950 Tu, a Graphite instead | 780 to 950 Tu, best 880 |
 | **Purify redstone** | one Redstone dust, 50 mB sulfuric or hydrochloric acid | one [Purified Redstone](Materials.md#superconductor) | 40 to 120 Tu, best 60 |

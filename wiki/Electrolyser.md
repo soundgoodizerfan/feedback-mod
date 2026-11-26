@@ -34,6 +34,7 @@ JEI's *Thermal process* card lists every liquid it can split, the band it splits
 | Zinc Sulfate Liquor | MV | 1 Zinc Nugget plated per 16 mB | 1 mB oxygen per mB | |
 | Nickel Sulfate Liquor | MV | 1 Nickel Nugget plated per 16 mB | 1 mB oxygen per mB | |
 | Cobalt Sulfate Liquor | MV | 1 Cobalt Nugget plated per 16 mB | 1 mB oxygen per mB | |
+| Iron Sulfate Liquor | MV | 1 Pure Iron Nugget plated per 16 mB | 1 mB oxygen per mB | |
 | Cryolite bath with alumina | MV | 1 mB molten aluminum per unit | 1 mB oxygen per unit | needs the bath at **950 Tu** or hotter |
 
 ### Plated metal

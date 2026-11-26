@@ -1,0 +1,37 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:cast_iron",
+      "forms": ["nugget", "swarf", "dust"]
+    }
+  ],
+  "min_temperature": 40,
+  "optimal_temperature": 70,
+  "max_temperature": 110,
+  "required_tpu": 200,
+  "result": {
+    "id": "feedback:graphite_dust",
+    "count": 1
+  },
+  "spoil_temperature": 160,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 150
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:iron_sulfate",
+        "mb": 250
+      },
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 100
+      }
+    ],
+    "heat": 3
+  }
+}
