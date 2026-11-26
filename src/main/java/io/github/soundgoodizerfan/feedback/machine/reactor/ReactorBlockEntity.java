@@ -56,7 +56,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * temperatures; a bed whose item names none uses the {@code FTuning} figures.
  * shortcut: no concentration window beyond "enough of every input"; pressure is the gas held over {@link ReactorTuning#REACTOR_GAS_MB_PER_PU}, there is no compressor yet.
  */
-public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements PressureHolder, HeatedTanks {
+public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements PressureHolder, HeatedTanks, io.github.soundgoodizerfan.feedback.machine.Wearing {
 
     private static final int INPUT_TANKS = 3;
 
@@ -68,6 +68,10 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
     private final java.util.List<ItemStack> hopper = new java.util.ArrayList<>(
             java.util.Collections.nCopies(3, ItemStack.EMPTY));
     private float progress;
+    /** How sound the steel shell is, 1 as built: an acid or a base in a tank bites it ({@link io.github.soundgoodizerfan.feedback.core.hazard.Corrosion}) and the pressure it gives way at falls with it. */
+    private float condition = 1f;
+    /** Condition a corroded shell wears down to and no further: a bitten reactor is weak, never gone at once. */
+    private static final float CONDITION_FLOOR = 0.3f;
     /** Away-time bookkeeping: see {@link io.github.soundgoodizerfan.feedback.core.thermal.Catchup}. */
     private final io.github.soundgoodizerfan.feedback.core.thermal.Catchup offline = new io.github.soundgoodizerfan.feedback.core.thermal.Catchup();
     @Nullable
@@ -316,12 +320,15 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         react();
         regenerate();
         // A spatially unstable fluid held at or over its boiling point makes premature transitions, once a second.
-        if (level.getGameTime() % 20 == 0)
+        if (level.getGameTime() % 20 == 0) {
             for (HeatedTank tank : heatedTanks())
                 if (io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.boiling(tank.getFluid(), temperature))
                     io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.hop(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), tank.getFluidAmount());
-        if (PressureBurst.fails(getPressure(), FluidTuning.PRESSURE_VESSEL_DANGER_PU, FluidTuning.PRESSURE_VESSEL_CRITICAL_PU,
-                level.random)) {
+            corrode();
+        }
+        float lines = io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.lines(condition);
+        if (PressureBurst.fails(getPressure(), new io.github.soundgoodizerfan.feedback.core.unit.Pu(FluidTuning.PRESSURE_VESSEL_DANGER_PU.value() * lines),
+                new io.github.soundgoodizerfan.feedback.core.unit.Pu(FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value() * lines), level.random)) {
             for (HeatedTank tank : heatedTanks())
                 tank.setFluid(FluidStack.EMPTY);
             PressureBurst.burst(level, worldPosition, MachineTuning.BOILER_BURST_POWER);
@@ -329,6 +336,29 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         }
         pushOutput();
         setChanged();
+    }
+
+    /** An acid or a base in any tank bites the steel a little each second; nothing corrosive, or a steel that resists it, leaves the shell as it was. */
+    private void corrode() {
+        boolean bitten = false;
+        for (HeatedTank tank : heatedTanks())
+            bitten |= io.github.soundgoodizerfan.feedback.core.hazard.Corrosion.corrosive(tank.getFluid());
+        if (!bitten || condition <= CONDITION_FLOOR)
+            return;
+        var steel = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()
+                .get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "steel"));
+        float resistance = steel == null ? 0f : steel.corrosionResistance().orElse(0f);
+        condition = Math.max(CONDITION_FLOOR, condition - io.github.soundgoodizerfan.feedback.core.hazard.Corrosion.wearPerSecond(resistance));
+    }
+
+    @Override
+    public float getCondition() {
+        return condition;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running != null;
     }
 
     /** Reaches for any fluid some reaction row lists as an input, from any side, when an input tank has room. The reactor names nothing: the rows do. */
@@ -464,6 +494,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         offline.save(tag, level);
         tag.putFloat("Temperature", temperature);
         tag.putFloat("Progress", progress);
+        tag.putFloat("Condition", condition);
         for (int i = 0; i < INPUT_TANKS; i++)
             tag.put("In" + i, inputs[i].writeToNBT(registries, new CompoundTag()));
         for (int i = 0; i < outputs.length; i++)
@@ -481,6 +512,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         offline.load(tag);
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         progress = tag.getFloat("Progress");
+        condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         for (int i = 0; i < INPUT_TANKS; i++)
             if (tag.contains("In" + i))
                 inputs[i].readFromNBT(registries, tag.getCompound("In" + i));

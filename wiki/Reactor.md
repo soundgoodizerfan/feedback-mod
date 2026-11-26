@@ -131,9 +131,15 @@ The bed's activity is shown as a percentage. It falls three ways:
 
 Both read the fluid's properties, never its name.
 
+## Shell wear
+
+A reactor starts with a sound steel shell. While any of its tanks holds a corrosive fluid (an acid such as [sulfuric acid](Chemicals.md#acids), or a base such as [lye](Chemicals.md#lye)), the shell wears a little every second, never all at once. It wears down to about a third of its condition and no further, and stops wearing when the tanks hold nothing corrosive. Condition shows in Jade as *Wearing*.
+
+A worn shell gives way at a lower pressure: the risk line and the burst line in [Pressure](#pressure) both come down as condition falls. The [Pipe](Pipe.md) has no wall material to eat, so a pipe carrying acid does not wear.
+
 ## Pressure
 
-The reactor's pressure is the **gas** in its input tanks: **1 Pu for every 40 mB**. It reads like any [pressure vessel](Pressure_Vessel.md):
+The reactor's pressure is the **gas** in its input tanks: **1 Pu for every 40 mB**. It reads like any [pressure vessel](Pressure_Vessel.md); the figures below are for an unworn shell:
 
 | Pressure | What happens |
 | --- | --- |
