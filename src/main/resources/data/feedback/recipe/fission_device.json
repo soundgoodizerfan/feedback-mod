@@ -1,0 +1,22 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "S": { "item": "feedback:steel_plate" },
+    "T": { "item": "minecraft:tnt" },
+    "P": { "item": "feedback:plutonium_ingot" }
+  },
+  "pattern": [
+    "STS",
+    "PPP",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:fission_device"
+  },
+  "tool": [
+    { "ability": "feedback:driver", "wear": 1 }
+  ],
+  "fasteners": { "count": 4, "floor": 2, "forms": ["machine_bolt"] },
+  "school": "nuclear:1"
+}

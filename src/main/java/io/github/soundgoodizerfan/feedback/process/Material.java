@@ -296,7 +296,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
          * An ore whose oxide or silicate a furnace cannot reduce by heat alone (ilmenite, dolomite, beryl): it still {@code bears} its metal (so the
          * ore forms and the ladder exist) but has no derived direct melt; only an authored reducing row (Kroll, Pidgeon, fluoride reduction) makes the metal.
          */
-        REFRACTORY;
+        REFRACTORY,
+        /** Reacts violently with water (an alkali metal): where it meets water in a vessel it blasts ({@code CoolantPortBlockEntity#meet}). */
+        WATER_REACTIVE;
 
         public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
 

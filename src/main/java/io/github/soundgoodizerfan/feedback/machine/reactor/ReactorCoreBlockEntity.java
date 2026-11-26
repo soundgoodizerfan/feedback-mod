@@ -206,7 +206,7 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
             flaws.add("and " + (bad - flaws.size()) + " more");
         formed = bad == 0;
 
-        flowing = port != null && port.water() > 0;
+        flowing = port != null && (port.water() > 0 || port.metal() > 0);
         int in = r - 1;
         for (int dx = -in; dx <= in; dx++)
             for (int dy = -2 * r + 1; dy <= -1; dy++)
@@ -378,6 +378,15 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
     private void coolant() {
         if (port == null || channels == 0)
             return;
+        // A liquid metal (sodium) and water in one port is a blast; a liquid metal alone carries heat off without boiling.
+        if (level instanceof ServerLevel server && port.meet(server))
+            return;
+        if (port.metal() > 0) {
+            float rise = temperature - AmbientTable.at(level).value();
+            if (rise > 0f)
+                Heat.warm(this, -port.carry(Math.min(channels * ReactorTuning.REACTOR_CHANNEL_MAX_WORK, channels * ReactorTuning.REACTOR_CHANNEL_CONDUCT * rise), temperature));
+            return;
+        }
         var cut = io.github.soundgoodizerfan.feedback.process.ThermalProcessTable.get()
                 .boiling(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1)).orElse(null);
         if (cut == null)

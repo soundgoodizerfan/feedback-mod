@@ -35,6 +35,23 @@ public class CoolantPortBlockEntity extends BlockEntity {
         }
     };
 
+    /** A liquid-metal coolant (the {@code liquid_metal_coolants} tag) comes in cold; the core heats it and it leaves hot, its temperature stamped on it. */
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid> METALS = net.minecraft.tags.FluidTags
+            .create(io.github.soundgoodizerfan.feedback.Feedback.id("liquid_metal_coolants"));
+
+    private final FluidTank metal = new FluidTank(ReactorTuning.REACTOR_PORT_TANK_MB, s -> s.is(METALS)) {
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+        }
+    };
+    private final FluidTank hot = new FluidTank(ReactorTuning.REACTOR_PORT_TANK_MB, s -> s.is(METALS)) {
+        @Override
+        protected void onContentsChanged() {
+            setChanged();
+        }
+    };
+
     public CoolantPortBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.COOLANT_PORT.get(), pos, state);
     }
@@ -61,17 +78,82 @@ public class CoolantPortBlockEntity extends BlockEntity {
         return moved;
     }
 
-    /** The pipe-facing handler: water in, steam out. */
+    /** The cold liquid-metal coolant waiting in the port, mB. */
+    public int metal() {
+        return metal.getFluidAmount();
+    }
+
+    /**
+     * Carries {@code work} of heat off a core standing at {@code coreTu} into the liquid metal in the port: each mB that passes takes its mass
+     * times its specific heat times the rise from the inlet's temperature, and leaves in the hot tank stamped at the core's temperature. Limited
+     * by the metal waiting and the room in the hot tank. Returns the work taken, 0 with no coolant.
+     */
+    public float carry(float work, float coreTu) {
+        FluidStack cold = metal.getFluid();
+        if (cold.isEmpty() || work <= 0f)
+            return 0f;
+        var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        var coolant = io.github.soundgoodizerfan.feedback.process.Mixture.fluidMaterial(materials, cold.getFluid()).map(materials::get).orElse(null);
+        if (coolant == null)
+            return 0f;
+        float inlet = io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.of(cold).value();
+        float rise = coreTu - inlet;
+        float perMb = coolant.thermal().specificHeat().map(h -> h.workPerMuPerTu()).orElse(0f)
+                * coolant.molten().density().orElse(coolant.density()).muPerMb() * rise;
+        if (rise <= 0f || perMb <= 0f)
+            return 0f;
+        int mb = Math.min((int) Math.ceil(work / perMb), Math.min(metal.getFluidAmount(), hot.getSpace()));
+        if (mb <= 0)
+            return 0f;
+        metal.drain(mb, IFluidHandler.FluidAction.EXECUTE);
+        hot.fill(io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.stamp(cold.copyWithAmount(mb), coreTu), IFluidHandler.FluidAction.EXECUTE);
+        return mb * perMb;
+    }
+
+    /**
+     * A water-reactive metal meeting water: sodium and water in one port. It blasts, empties every tank and the water goes with it; the core
+     * calls this each tick. True if it went off.
+     */
+    public boolean meet(net.minecraft.server.level.ServerLevel server) {
+        if (water.isEmpty() && steam.isEmpty())
+            return false;
+        var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        boolean reactive = false;
+        for (FluidTank tank : new FluidTank[] {metal, hot}) {
+            if (tank.isEmpty())
+                continue;
+            var m = io.github.soundgoodizerfan.feedback.process.Mixture.fluidMaterial(materials, tank.getFluid().getFluid()).map(materials::get).orElse(null);
+            reactive |= m != null && m.traits().contains(io.github.soundgoodizerfan.feedback.process.Material.Trait.WATER_REACTIVE);
+        }
+        if (!reactive)
+            return false;
+        float power = ReactorTuning.SODIUM_WATER_BLAST * Math.min(1f, (water.getFluidAmount() + steam.getFluidAmount()) / 1000f + 0.5f);
+        water.setFluid(FluidStack.EMPTY);
+        steam.setFluid(FluidStack.EMPTY);
+        metal.setFluid(FluidStack.EMPTY);
+        hot.setFluid(FluidStack.EMPTY);
+        setChanged();
+        server.explode(null, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, power,
+                net.minecraft.world.level.Level.ExplosionInteraction.BLOCK);
+        return true;
+    }
+
+    /** The pipe-facing handler: water or liquid-metal coolant in; steam or hot coolant out. */
     public IFluidHandler handler() {
         return new IFluidHandler() {
             @Override
             public int getTanks() {
-                return 2;
+                return 4;
             }
 
             @Override
             public FluidStack getFluidInTank(int tank) {
-                return tank == 0 ? water.getFluid() : steam.getFluid();
+                return switch (tank) {
+                    case 0 -> water.getFluid();
+                    case 1 -> steam.getFluid();
+                    case 2 -> metal.getFluid();
+                    default -> hot.getFluid();
+                };
             }
 
             @Override
@@ -81,22 +163,25 @@ public class CoolantPortBlockEntity extends BlockEntity {
 
             @Override
             public boolean isFluidValid(int tank, FluidStack stack) {
-                return tank == 0 && water.isFluidValid(stack);
+                return (tank == 0 && water.isFluidValid(stack)) || (tank == 2 && metal.isFluidValid(stack));
             }
 
             @Override
             public int fill(FluidStack resource, FluidAction action) {
-                return water.fill(resource, action);
+                return metal.isFluidValid(resource) ? metal.fill(resource, action) : water.fill(resource, action);
             }
 
             @Override
             public FluidStack drain(FluidStack resource, FluidAction action) {
+                if (hot.isFluidValid(resource))
+                    return hot.drain(resource, action);
                 return steam.isFluidValid(resource) ? steam.drain(resource, action) : FluidStack.EMPTY;
             }
 
             @Override
             public FluidStack drain(int maxDrain, FluidAction action) {
-                return steam.drain(maxDrain, action);
+                FluidStack got = hot.drain(maxDrain, action);
+                return got.isEmpty() ? steam.drain(maxDrain, action) : got;
             }
         };
     }
@@ -106,6 +191,8 @@ public class CoolantPortBlockEntity extends BlockEntity {
         super.saveAdditional(tag, registries);
         tag.put("Water", water.writeToNBT(registries, new CompoundTag()));
         tag.put("Steam", steam.writeToNBT(registries, new CompoundTag()));
+        tag.put("Metal", metal.writeToNBT(registries, new CompoundTag()));
+        tag.put("Hot", hot.writeToNBT(registries, new CompoundTag()));
     }
 
     @Override
@@ -113,5 +200,7 @@ public class CoolantPortBlockEntity extends BlockEntity {
         super.loadAdditional(tag, registries);
         water.readFromNBT(registries, tag.getCompound("Water"));
         steam.readFromNBT(registries, tag.getCompound("Steam"));
+        metal.readFromNBT(registries, tag.getCompound("Metal"));
+        hot.readFromNBT(registries, tag.getCompound("Hot"));
     }
 }

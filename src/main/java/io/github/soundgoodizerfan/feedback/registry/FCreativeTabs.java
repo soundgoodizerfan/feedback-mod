@@ -158,7 +158,7 @@ public class FCreativeTabs {
     /** Fire and furnaces (hand-fed to powered), crucibles, casting and moulds, then cold. */
     private static final List<DeferredItem<?>> HEAT = of(FItems.CAMPFIRE, FItems.SOUL_CAMPFIRE, FItems.FIREBOX,
             FItems.HEARTH, FItems.FURNACE, FItems.SMOKER, FItems.BLAST_FURNACE, FItems.IMPROVED_FURNACE,
-            FItems.KILN, FItems.ANNEALING_FURNACE, FItems.PUDDLING_FURNACE, FItems.ARC_HEARTH, FItems.ARC_HEAD, FItems.STAR_BURNER, FItems.FUSION_CHAMBER,
+            FItems.KILN, FItems.ANNEALING_FURNACE, FItems.PUDDLING_FURNACE, FItems.ARC_HEARTH, FItems.ARC_HEAD, FItems.STAR_BURNER, FItems.FUSION_CHAMBER, FItems.FISSION_DEVICE,
             FItems.INDUCTION_STOVE, FItems.REFLOW_OVEN, FModular.BURNER, FModular.BOILER, FModular.HEAT_EXCHANGER,
             FModular.THERMAL_STORE, FModular.CRUCIBLE, FItems.CASTING_BASIN,
             FItems.INGOT_MOLD, FItems.TUBE_MOLD, FItems.GLASS_BLOCK_MOLD, FItems.GLASS_PANE_MOLD,

@@ -26,7 +26,7 @@ Salt water. Dissolve Salt in water in a [Reactor](Reactor.md). The [Electrolyser
 
 ## Lye
 
-A strong base. It is left in the Electrolyser's cell when brine is split; draw it off a side face. It dissolves bauxite in the Reactor ([Guide: Making Aluminum](Guide_Making_Aluminum.md)), turns chlorine into bleach, and can serve as the electrolyte of an [Electrolytic Cell](Electrolytic_Cell.md). It bites vessels that are not lined for it ([Hazards](Hazards.md)).
+A strong base. It is left in the Electrolyser's cell when brine is split; draw it off a side face. It dissolves bauxite in the Reactor ([Guide: Making Aluminum](Guide_Making_Aluminum.md)), turns chlorine into bleach, can serve as the electrolyte of an [Electrolytic Cell](Electrolytic_Cell.md), and split hot in the [Electrolyser](Electrolyser.md#what-it-splits) it gives [molten sodium](Materials.md#sodium). It bites vessels that are not lined for it ([Hazards](Hazards.md)).
 
 ## Battery Electrolyte
 

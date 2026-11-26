@@ -99,6 +99,10 @@ public final class ReactorTuning {
 
     /** Invented. Work a tick one coolant channel carries off per Tu the core stands over the water's boiling point, and the most one carries. */
     public static final float REACTOR_CHANNEL_CONDUCT = 0.03f, REACTOR_CHANNEL_MAX_WORK = 20f;
+    /** Placeholder [OPEN]. The blast power when a water-reactive coolant meets water in a coolant port. */
+    public static final float SODIUM_WATER_BLAST = 5f;
+    /** Placeholder [OPEN]. The blast power of a fission device (a core breach is {@code REACTOR_BURST_POWER}). */
+    public static final float FISSION_DEVICE_BLAST = 24f;
 
     /** Invented. Moderation a flowing coolant channel gives a fuel cell beside it: light water slows neutrons; lose the water and this goes. */
     public static final float REACTOR_COOLANT_MODERATION = 0.15f;

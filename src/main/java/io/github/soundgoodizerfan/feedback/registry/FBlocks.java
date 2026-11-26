@@ -533,6 +533,13 @@ public class FBlocks {
                     .strength(4.0f)
                     .sound(SoundType.METAL)));
 
+    /** A plutonium core in an explosive shell, set off by redstone; config-gated and off by default. See {@code FissionDeviceBlock}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.FissionDeviceBlock> FISSION_DEVICE = BLOCKS.register("fission_device",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.FissionDeviceBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(5.0f)
+                    .sound(SoundType.METAL)));
+
     /** A held plasma loop: hydrogen to helium and heat, held by an EHV field. See {@code FusionChamberBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.fusion.FusionChamberBlock> FUSION_CHAMBER = BLOCKS.register("fusion_chamber",
             () -> new io.github.soundgoodizerfan.feedback.machine.fusion.FusionChamberBlock(BlockBehaviour.Properties.of()

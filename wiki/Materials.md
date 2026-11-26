@@ -34,7 +34,8 @@ Fifteen of these metals have their own page: see [Metals](Metals.md).
 | Titanium | 15 | 4.51 | 20 | 1668 Tu | Light, strong, stands the heat. For cermet. |
 | Tungsten | 34 | 19.25 | 38 | 3422 Tu | The highest melting point of any metal. |
 | Magnesium | 4.5 | 1.74 | 4.5 | 650 Tu | Very light. Burns hot, at a flame temperature of 3100 Tu. |
-| Lithium | 0.05 | 0.534 | 0.1 | 181 Tu | The lightest and softest metal. Bites at air from 180 Tu. |
+| Lithium | 0.05 | 0.534 | 0.1 | 181 Tu | The lightest and softest metal. Bites at air from 180 Tu. **Water-reactive.** |
+| Sodium | 0.04 | 0.968 | 0.1 | 98 Tu | A soft alkali metal that melts below boiling water's heat. **Water-reactive**; toxic. See [Sodium](#sodium). |
 | Bismuth | 2 | 9.78 | 1 | 271 Tu | Dense and brittle; melts low. A byproduct of smelting galena. |
 | Beryllium | 16.5 | 1.85 | 12 | 1287 Tu | Light and stiff; **moderates neutrons** like graphite. Toxic. |
 | Antimony | 3 | 6.7 | 0.5 | 631 Tu | Brittle and toxic. Hardens tin into pewter and babbitt. A mineral of its own: stibnite, which [iron precipitates](Ore_Processing.md#leaching-and-winning) to antimony. |
@@ -256,6 +257,10 @@ Uraninite melts into uranium (1132 Tu) like any ore, and molten uranium casts in
 - It is the fuel of the [Fission Reactor](Fission_Reactor.md): clad in stainless steel it becomes a [Fuel Rod](Nuclear_Fuel.md#fuel-rod).
 
 See [Radiation](Radiation.md) before carrying any of it.
+
+## Sodium
+
+A soft, silvery alkali metal that melts at 98 Tu. It has no ore: it is split out of hot [lye](Chemicals.md#lye) in an [Electrolyser](Electrolyser.md#what-it-splits), which gives **molten sodium** at the cathode. A [Fission Reactor](Fission_Reactor.md#liquid-metal-coolant) can use molten sodium as coolant. Sodium and lithium are **water-reactive**: meeting water or steam in a [Coolant Port](Fission_Reactor.md#liquid-metal-coolant) blasts the port.
 
 ## Plutonium
 

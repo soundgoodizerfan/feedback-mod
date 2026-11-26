@@ -103,6 +103,12 @@ S T S
 
 S is a Stainless Steel Plate and T is Copper Tubing.
 
+### Liquid-metal coolant
+
+A Coolant Port also takes **molten sodium** (see [Materials](Materials.md#sodium)) by pipe or bucket. The cold metal goes in and leaves the same port hot, for a pipe to carry to a [Heat Exchanger](Heat_Exchanger.md) or a [Boiler](Boiler.md). With metal in the port the core's coolant carries heat by the mass that passes, its specific heat and how far it warms, in place of boiling water; the core is cooled without making steam, and without the pressure of boiling.
+
+**Never let a water-reactive metal (sodium, lithium) share a port with water or steam.** The port blasts, and both its tanks empty. See [Misuse and hazards](#misuse-and-hazards).
+
 ### Reflectors
 
 A **Neutron Reflector** in a shell face counts as a sound wall and sends neutrons back into the fuel cells it touches, raising their multiplication. A lead plate and smooth stone make one:
@@ -141,6 +147,7 @@ Dropping the control rods in ends the chain, but a shut-down core is not cold.
 
 - **Fuel damage.** Rods lose condition when the core is over **1100 Tu**, and when power runs over **115%**. Worn rods make less power. A rod's condition never falls below a small remainder.
 - **Pressure.** Over **900 Tu** the vessel builds pressure, reported in Pu on Jade, like any [pressure vessel](Pressure_Vessel.md). It hisses and puffs steam well before it fails. Above **5 Pu** each tick it may burst, and at **7 Pu** it does. A burst is a steam blast, and the core and a scatter of blocks around it become **Core Slag**.
+- **Sodium and water.** Molten sodium in the same Coolant Port as water or steam blasts the port and empties its tanks. The blast is larger the more water and steam are in it.
 - **Core Slag.** Slag drops nothing, gives off radiation and keeps doing so for hours of play. See [Radiation](Radiation.md#the-reactor).
 - **Radiation while it works.** A running core, every loaded rod and any Spent Fuel Rod give off radiation. See [Radiation](Radiation.md).
 

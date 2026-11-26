@@ -96,6 +96,7 @@ public class Feedback {
         }
 
         container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, io.github.soundgoodizerfan.feedback.robot.RobotConfig.SPEC);
+        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, io.github.soundgoodizerfan.feedback.core.NuclearConfig.SPEC, "feedback-nuclear.toml");
         modBus.addListener(io.github.soundgoodizerfan.feedback.robot.RobotTickets::register);
         NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.server.ServerStoppedEvent e) ->
         {

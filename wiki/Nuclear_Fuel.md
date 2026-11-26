@@ -77,6 +77,8 @@ A spent rod can be dissolved in a thermal vessel, and two acids give two product
 - **Hydrofluoric acid**, hot (150 to 260 Tu): recovers nuggets of enriched uranium, which go back into [Enriched Fuel Rods](#enriched-fuel-rod).
 - **Hydrochloric acid**, 500 mB at a mild heat (60 to 110 Tu): dissolves the rod into 3 plutonium nuggets, which cast into ingots for [Plutonium Fuel Rods](#plutonium-fuel-rod).
 
+Plutonium Ingots are also the core of the [Fission Device](Fission_Device.md).
+
 A reactor that burns uranium rods can in this way feed itself with plutonium rods from its own spent fuel.
 
 ## Spent Fuel Rod

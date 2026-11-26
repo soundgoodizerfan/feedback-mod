@@ -363,6 +363,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.ARC_HEAD.get(), Component.translatable("feedback.jei.info.arc_head"));
         registration.addIngredientInfo(FItems.STAR_BURNER.get(), Component.translatable("feedback.jei.info.star_burner"));
         registration.addIngredientInfo(FItems.FUSION_CHAMBER.get(), Component.translatable("feedback.jei.info.fusion_chamber"));
+        registration.addIngredientInfo(FItems.FISSION_DEVICE.get(), Component.translatable("feedback.jei.info.fission_device"));
         registration.addIngredientInfo(FItems.REACTOR_CORE.get(), Component.translatable("feedback.jei.info.reactor_core"));
         registration.addIngredientInfo(FItems.FUEL_CHANNEL.get(), Component.translatable("feedback.jei.info.fuel_channel"));
         registration.addIngredientInfo(FItems.CONTROL_ASSEMBLY.get(), Component.translatable("feedback.jei.info.control_assembly"));

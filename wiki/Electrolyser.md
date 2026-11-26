@@ -1,6 +1,6 @@
 # Electrolyser
 
-Runs electric current through a liquid and collects what comes apart at each electrode. It splits water into [hydrogen](Chemicals.md#hydrogen) and [oxygen](Chemicals.md#oxygen), [brine](Chemicals.md#brine) into hydrogen, [chlorine](Chemicals.md#chlorine) and [lye](Chemicals.md#lye), the [leach liquors](Chemicals.md#leach-liquors) of copper, zinc, nickel and cobalt into metal plated on the cathode and oxygen, and a molten [cryolite bath](Chemicals.md#cryolite-bath) into [aluminum](Guide_Making_Aluminum.md) and oxygen. It is a different machine from the [Electrolytic Cell](Electrolytic_Cell.md), which dissolves and plates metal.
+Runs electric current through a liquid and collects what comes apart at each electrode. It splits water into [hydrogen](Chemicals.md#hydrogen) and [oxygen](Chemicals.md#oxygen), [brine](Chemicals.md#brine) into hydrogen, [chlorine](Chemicals.md#chlorine) and [lye](Chemicals.md#lye), the [leach liquors](Chemicals.md#leach-liquors) of copper, zinc, nickel and cobalt into metal plated on the cathode and oxygen, and a molten [cryolite bath](Chemicals.md#cryolite-bath) into [aluminum](Guide_Making_Aluminum.md) and oxygen, and hot lye into [molten sodium](Materials.md#sodium) and oxygen. It is a different machine from the [Electrolytic Cell](Electrolytic_Cell.md), which dissolves and plates metal.
 
 ## Crafting
 
@@ -35,6 +35,7 @@ JEI's *Thermal process* card lists every liquid it can split, the band it splits
 | Nickel Sulfate Liquor | MV | 1 Nickel Nugget plated per 16 mB | 1 mB oxygen per mB | |
 | Cobalt Sulfate Liquor | MV | 1 Cobalt Nugget plated per 16 mB | 1 mB oxygen per mB | |
 | Iron Sulfate Liquor | MV | 1 Pure Iron Nugget plated per 16 mB | 1 mB oxygen per mB | |
+| Lye | MV | 1 mB molten sodium per mB | 1 mB oxygen per mB | needs the lye at **320 Tu** or hotter |
 | Cryolite bath with alumina | MV | 1 mB molten aluminum per unit | 1 mB oxygen per unit | needs the bath at **950 Tu** or hotter |
 
 ### Plated metal

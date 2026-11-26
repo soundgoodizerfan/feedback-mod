@@ -52,6 +52,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Radiation](Radiation.md)
 - [Fission Reactor](Fission_Reactor.md): uranium fuel, control rods and decay heat
 - [Fusion Chamber](Fusion_Chamber.md): a held plasma loop that burns hydrogen into helium
+- [Fission Device](Fission_Device.md): a plutonium bomb, inert unless the server allows it
 - [Optics](Optics.md)
 - [Rotation](Rotation.md): shafts, power and gearing
 - [Heat](Heat.md): fires, vessels, processes
@@ -86,7 +87,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Shaping metal:** [Hammer](Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Rolling Mill](Rolling_Mill.md) · [Machine Heads](Machine_Heads.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Gear Cutter](Gear_Cutter.md) · [Vice](Vice.md) · [Grinding Wheel](Grinding_Wheel.md)
 
-**Heat:** [Arc Furnace](Arc_Furnace.md) · [Induction](Induction.md) · [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Puddling Furnace](Puddling_Furnace.md) · [Heating Coil](Heating_Coil.md) · [Star Burner](Star_Burner.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Thermal Store](Thermal_Store.md) · [Radiator Panel](Radiator_Panel.md) · [Condenser](Condenser.md) · [Cryocooler](Cryocooler.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Thermal Valve](Valve.md#thermal-valve) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Fission Reactor](Fission_Reactor.md) · [Fusion Chamber](Fusion_Chamber.md) · [Control Rod Assembly](Control_Rod.md) · [Nuclear Fuel](Nuclear_Fuel.md) · [Gas Centrifuge](Gas_Centrifuge.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
+**Heat:** [Arc Furnace](Arc_Furnace.md) · [Induction](Induction.md) · [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Puddling Furnace](Puddling_Furnace.md) · [Heating Coil](Heating_Coil.md) · [Star Burner](Star_Burner.md) · [Crucible](Crucible.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Thermal Store](Thermal_Store.md) · [Radiator Panel](Radiator_Panel.md) · [Condenser](Condenser.md) · [Cryocooler](Cryocooler.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Thermal Valve](Valve.md#thermal-valve) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Fission Reactor](Fission_Reactor.md) · [Fusion Chamber](Fusion_Chamber.md) · [Fission Device](Fission_Device.md) · [Control Rod Assembly](Control_Rod.md) · [Nuclear Fuel](Nuclear_Fuel.md) · [Gas Centrifuge](Gas_Centrifuge.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
 
 **Flight:** [Airship](Airship.md) · [Ballast Tank](Ballast_Tank.md) · [Bearing Sensor](Bearing_Sensor.md) · [Gas Cell](Gas_Cell.md) · [Jet](Jet.md) · [Propeller](Propeller.md) · [Vent Valve](Vent_Valve.md) · [Thruster](Thruster.md) · [The Gap](The_Gap.md) · [Air Valve](Air_Valve.md)
 
