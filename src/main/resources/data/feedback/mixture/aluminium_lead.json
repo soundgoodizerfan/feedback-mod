@@ -1,0 +1,17 @@
+{
+  "parts": {
+    "feedback:aluminium": {
+      "min": 0.86,
+      "max": 0.94
+    },
+    "feedback:lead": {
+      "min": 0.06,
+      "max": 0.14
+    }
+  },
+  "result_fluid": {
+    "id": "feedback:molten_aluminium_lead",
+    "amount": 144
+  },
+  "free_fall": true
+}

@@ -106,6 +106,8 @@ public class MixtureCategory implements IRecipeCategory<Mixture> {
         }
         graphics.drawString(font, recipe.stray() > 0 ? Component.translatable("feedback.jei.mixture.stray", Math.round(recipe.stray() * 100)) : Component.translatable("feedback.jei.mixture.pure"), 1, y + 2, LABEL_COLOUR, false);
         graphics.drawString(font, band(recipe), 1, y + 13, LABEL_COLOUR, false);
+        if (recipe.freeFall())
+            graphics.drawString(font, Component.translatable("feedback.jei.mixture.free_fall"), 1, y + 22, LABEL_COLOUR, false);
         ReachCard.draw(graphics, WIDTH, 102, io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE, LABEL_COLOUR, VALUE_COLOUR);
     }
 

@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-25T19:45:58.860855868	Loot Tables
+// 1.21.1	2026-11-26T13:21:15.928077513	Loot Tables
 3ec2d8235a145e9ecd4bc49404e31bff70407cfb data/feedback/loot_table/blocks/alnico_block.json
 7ceaa2b8bfe1b647eb0a2c985f24c7b8138994b8 data/feedback/loot_table/blocks/alnico_pipe.json
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
@@ -7,6 +7,8 @@ e8b9eb8f398fc5db293d44e293b27087ca13e1c1 data/feedback/loot_table/blocks/alumina
 a14570fdef856b9dfc18e35609ab82df9ef57004 data/feedback/loot_table/blocks/aluminium_block.json
 bab0e44a9eaa102600bcbadebc7baecf38690b16 data/feedback/loot_table/blocks/aluminium_foam_block.json
 1c4593ec7cd268637dd6d0d14eeedf714f2a042c data/feedback/loot_table/blocks/aluminium_foam_pipe.json
+d46b0df00d2d99e53e2e54ef0a0a1dee04b14694 data/feedback/loot_table/blocks/aluminium_lead_block.json
+ef5f65e3cbcba84cac89d3a22d8a239e4f62f1bb data/feedback/loot_table/blocks/aluminium_lead_pipe.json
 880c2102f080509ad6175c6fe1aabd07e461c2fe data/feedback/loot_table/blocks/aluminium_pipe.json
 7094741af6c13f6cfb2f9c956d88b3e8080b1d5d data/feedback/loot_table/blocks/amber_block.json
 e91469d10d9428c2259fc48e8f78ffa83b8f74a6 data/feedback/loot_table/blocks/amber_pipe.json

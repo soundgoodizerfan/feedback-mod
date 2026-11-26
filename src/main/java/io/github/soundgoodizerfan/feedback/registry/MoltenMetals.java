@@ -39,7 +39,7 @@ public final class MoltenMetals {
             "tungsten_carbide", "titanium_carbide", "thorium_tungsten", "cermet", "redstone_chromium",
             "magnesium", "lithium", "bismuth", "beryllium", "platinum", "gallium", "molybdenum", "palladium", "cadmium",
             "duralumin", "nichrome", "woods_metal", "beryllium_copper", "invar", "electrum", "amethyst_bronze", "borosilicate_glass", "uranium_glass",
-            "antimony", "vanadium", "indium", "mercury", "galinstan", "constantan", "cupronickel", "alnico", "high_speed_steel", "titanium_6al_4v", "stellite", "pewter", "babbitt", "bell_metal", "shakudo", "aluminium_foam", "lumen_glass",
+            "antimony", "vanadium", "indium", "mercury", "galinstan", "constantan", "cupronickel", "alnico", "high_speed_steel", "titanium_6al_4v", "stellite", "pewter", "babbitt", "aluminium_lead", "bell_metal", "shakudo", "aluminium_foam", "lumen_glass",
             "thaumium", "ruby", "jade", "garnet", "tourmaline"), essentiaIds()).flatMap(List::stream).toList();
 
     /** Each Thaumaturge aspect's essentia and the iron alloy it makes ({@code scripts/gen_essentia_materials.py} writes the files). */

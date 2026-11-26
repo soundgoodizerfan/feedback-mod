@@ -1,7 +1,8 @@
-// 1.21.1	2026-11-26T07:05:46.578285089	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-26T13:21:15.933693602	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
+8f5f0c0b2b49e38008fd10a8e54e59f916edc08e data/c/tags/item/birdshots/aluminium_lead.json
 5155590db5e6680f8d590f896fa35c91d490ca15 data/c/tags/item/birdshots/amber.json
 f3555fb20b020241592681f6e9d7da84be513969 data/c/tags/item/birdshots/amethyst_bronze.json
 1cdc1d7e7cfdc3d4b5b106e3bbab0fbc23d28526 data/c/tags/item/birdshots/ancient_metal.json
@@ -141,6 +142,7 @@ f34bb86928d20a19fd7f69b9b270f663022da0ff data/c/tags/item/blooms/iron_bloom.json
 7890c3c5055f4933944118f8a5eab5bd54358296 data/c/tags/item/bullets/alnico.json
 9f0da8e1df20131e98df4bc568dc2a53e0081309 data/c/tags/item/bullets/aluminium.json
 35c2cf83ece263d216d75da6e43357d31ac6b193 data/c/tags/item/bullets/aluminium_foam.json
+47e6ad69c74365d93d52802b2940a0852bdc54c6 data/c/tags/item/bullets/aluminium_lead.json
 fc1634ff358a7c8927fea0a6847354346d80a3d6 data/c/tags/item/bullets/amber.json
 61afabe4d0866b03d4f8bc2fa9c6f8418f93f650 data/c/tags/item/bullets/amethyst_bronze.json
 b93b6035f30847bbddffb49fcbefe7bb4ffb4d1b data/c/tags/item/bullets/ancient_metal.json
@@ -313,6 +315,7 @@ deb362f82ebb006a2e68e338c90d80d11ccd05f8 data/c/tags/item/calcines/wolframite.js
 33a5e76df55a824bb65f8e566d2335d140727e90 data/c/tags/item/cases/alnico.json
 74dcdd471a3aa8e82b0cb233d080c613a94cedce data/c/tags/item/cases/aluminium.json
 e08042f0a316da043be1b45e40b91bfda0858566 data/c/tags/item/cases/aluminium_foam.json
+3a6f24f1feb508f5cff5a116c2808459c5e7c1c1 data/c/tags/item/cases/aluminium_lead.json
 af74e24ca43a234ae9b479922f7d0add43503db2 data/c/tags/item/cases/amethyst_bronze.json
 31e001d58f795451d0e05719b25d50346d69d717 data/c/tags/item/cases/ancient_metal.json
 69b5f59c6c6e3b39d7e81bb8ffbb9cc28b3e6bb4 data/c/tags/item/cases/antimony.json
@@ -432,6 +435,7 @@ e46c61e630c70c05b43ebfc298ed188210359830 data/c/tags/item/cobbles/stone.json
 f6cc6242467d052710e7d4e9ef2143d6f99d08f1 data/c/tags/item/coil_springs/alnico.json
 0f2c88104261f151f1f6d1d786690a21805bb094 data/c/tags/item/coil_springs/aluminium.json
 ccedd8be12529caaa932d50faac91ed07486a268 data/c/tags/item/coil_springs/aluminium_foam.json
+d8a9b6eac064102e03bd91ef66d69aa5f18ce553 data/c/tags/item/coil_springs/aluminium_lead.json
 597c6778db5e223b35b8a7f0f667a0b990fcc470 data/c/tags/item/coil_springs/amethyst_bronze.json
 4777a611dd725884253902985c9f71a7ce16ff42 data/c/tags/item/coil_springs/ancient_metal.json
 4730d439bd3b4f2013206b1f33842af712cd6315 data/c/tags/item/coil_springs/antimony.json
@@ -562,6 +566,7 @@ d8e3176b3a9a40933ef1ab1036d03391300ac5e7 data/c/tags/item/coil_springs/zinc.json
 c235046c3cbfa2f02c22b65e1edec56e2a930529 data/c/tags/item/coins/alnico.json
 01c50e096a00621ac9c06136cb5663ecd9162e42 data/c/tags/item/coins/aluminium.json
 fb6e826117de24f534c6941d2aef8832d10205d2 data/c/tags/item/coins/aluminium_foam.json
+5ffc017575c85162392c64194d26326df92d0a43 data/c/tags/item/coins/aluminium_lead.json
 71b5bb078cef1aa7178a95fcd364851b3808b62d data/c/tags/item/coins/amethyst_bronze.json
 6d252817b0b29f94236ff3f01f8dec767332d81d data/c/tags/item/coins/ancient_metal.json
 c9c766949d3970a902693b53ab0fe481e4020045 data/c/tags/item/coins/antimony.json
@@ -815,6 +820,7 @@ f12275caf94ea2eaaffef20d4b962fe77aaeab63 data/c/tags/item/crystal_plates/spodume
 d94ca810462dfa97c404afd29e9b4b47e5f06eac data/c/tags/item/cut_machine_bolts/alnico.json
 265b4981da15f03463518eee2e95b161115a5bc0 data/c/tags/item/cut_machine_bolts/aluminium.json
 e907ee86794ebe55c52922278fa09b37f8d2ba94 data/c/tags/item/cut_machine_bolts/aluminium_foam.json
+46fb90e14bad874c242444a80a6ddaa1ffd7bbec data/c/tags/item/cut_machine_bolts/aluminium_lead.json
 133a0eb03e4dc18584d3c9d6ffa36f5d953ab51e data/c/tags/item/cut_machine_bolts/amethyst_bronze.json
 b13c132b688e454696fbf226db3b0b1cad10ad13 data/c/tags/item/cut_machine_bolts/ancient_metal.json
 bf97306507289aa25ed42db344d8a0776088482c data/c/tags/item/cut_machine_bolts/antimony.json
@@ -946,6 +952,7 @@ c90290749bc72d8e4b379c724e357519b34d9cfd data/c/tags/item/cut_machine_bolts/wood
 b9ab71ec2279359270af352dc4e4a577493bbe01 data/c/tags/item/cut_screws/alnico.json
 949772e45dc382a0c1dc93c0bfd4c87ce4f6bee0 data/c/tags/item/cut_screws/aluminium.json
 e7421835e018485bd9f8d2bcdae4cd71d90b6e0c data/c/tags/item/cut_screws/aluminium_foam.json
+ba20a74c89337048b150de73e3832e2f39e5f816 data/c/tags/item/cut_screws/aluminium_lead.json
 2d74bef0402cd0ca0eebbececcff0bbcff9e02bd data/c/tags/item/cut_screws/amethyst_bronze.json
 c9fe1b06177beaa8e1a1f4dbb54af542a428c45b data/c/tags/item/cut_screws/ancient_metal.json
 ca571ef04d24a1fd4de17216df45370321cc52f1 data/c/tags/item/cut_screws/antimony.json
@@ -1077,6 +1084,7 @@ d81ad1151a8fbf88da17d682a165022c8143fb46 data/c/tags/item/cut_screws/wrought_iro
 19d0d7f1383cc98fb0bb367dc1cf24bbb4534fb9 data/c/tags/item/cut_thread_rods/alnico.json
 fb2d5c5aef2f0b6ae78fcc7947220183366ae55b data/c/tags/item/cut_thread_rods/aluminium.json
 205efd55186e3bb572b6f9f5037e6e25f03be86b data/c/tags/item/cut_thread_rods/aluminium_foam.json
+8dd92045e540980d1b2eba2a7b4d7d19204db10a data/c/tags/item/cut_thread_rods/aluminium_lead.json
 53d712e3a47a5ce69d84788af4d393b3eef0664e data/c/tags/item/cut_thread_rods/amethyst_bronze.json
 6c08bd63b67bd1c55a77dc77d9f1ab6438155dd4 data/c/tags/item/cut_thread_rods/ancient_metal.json
 62872b22a42eefd1996947f8a2fb9e694d232ad8 data/c/tags/item/cut_thread_rods/antimony.json
@@ -1256,6 +1264,7 @@ e979406a5b2e7beb6d99a903dcf28d3ad718931f data/c/tags/item/deepslate_ores/wolfram
 1f4d1e0c5a08c946e79ae71e112abde4cc863308 data/c/tags/item/drilled_plates/alnico.json
 b07a4d5102539c8fc17d3e9dfe2de08697c5ca0d data/c/tags/item/drilled_plates/aluminium.json
 68c0f56fadffab3be7a177a2b3255657b4740ffc data/c/tags/item/drilled_plates/aluminium_foam.json
+95486cd38bdf287849652738822dd948a9bc8a73 data/c/tags/item/drilled_plates/aluminium_lead.json
 7f6eae653e9a7899c6d57129f10db22f7ee65870 data/c/tags/item/drilled_plates/amethyst_bronze.json
 656bbcb0aee05c5abe44166befd74396ba9177f3 data/c/tags/item/drilled_plates/ancient_metal.json
 464b04d85803cf0d997a7f1dc6833a5c90444452 data/c/tags/item/drilled_plates/antimony.json
@@ -1366,6 +1375,7 @@ ed947d96aafd833d273ee2985a28887bb1a88f9d data/c/tags/item/dusts/alnico.json
 4a98c52570adaf45f34464f6c6d5e3ee29bba32f data/c/tags/item/dusts/alumina.json
 0a722e4fc9e1724ea3378d716af9938c31fa90b8 data/c/tags/item/dusts/aluminium.json
 38ab6e0f0c390095a3497e9842bfcbb160b574ad data/c/tags/item/dusts/aluminium_foam.json
+671ea4f65a91e84d02b9a35dd062d80b2013195b data/c/tags/item/dusts/aluminium_lead.json
 c2d926e70942593d2aaf781598dd01b80fb57c61 data/c/tags/item/dusts/amethyst.json
 e3107a7e522347a71f868b60ea702566024647c3 data/c/tags/item/dusts/amethyst_bronze.json
 1a91926f1ed83508fa37edea2651abc0767a394d data/c/tags/item/dusts/ancient_metal.json
@@ -1605,6 +1615,7 @@ c4fa7f55912d0e8a3c497d85c4302695d1bfb714 data/c/tags/item/fibres/synthetic_rubbe
 7f3119ced650fc0a8bc33aa7bbe59e4b0bad6efd data/c/tags/item/fine_wires/alnico.json
 5e1927a165adc9a65eb918944a97f9a4c2bd99d9 data/c/tags/item/fine_wires/aluminium.json
 c8e8849a231fd83c67d6a9f6a7c0a5346c94148f data/c/tags/item/fine_wires/aluminium_foam.json
+80c509537ecea9700c312f932e7257ade0c30c51 data/c/tags/item/fine_wires/aluminium_lead.json
 f08576a1a261dd0dca24b3ff6f7101c1f30f0c09 data/c/tags/item/fine_wires/amethyst_bronze.json
 82bf9252e92c17c0f3694a90264bd1bf69aea1eb data/c/tags/item/fine_wires/ancient_metal.json
 a58627e5671826088fb3f77769e2cd0593df4eae data/c/tags/item/fine_wires/antimony.json
@@ -1710,6 +1721,7 @@ a28f584d91b68de6b1565cbd8e765b4e077cc578 data/c/tags/item/fine_wires/zinc.json
 871ae59f0c9dcf7ba5f6a4beda6c68fcb9dab53b data/c/tags/item/flat_nose_bullets/alnico.json
 a2bc52537320e231264b7b42426004537448e6b9 data/c/tags/item/flat_nose_bullets/aluminium.json
 3cd1007046a4e1c3e2a84d8153667a86c081c23d data/c/tags/item/flat_nose_bullets/aluminium_foam.json
+205016d9bfaedef5b2bd56a01a09e4d86f12d9d8 data/c/tags/item/flat_nose_bullets/aluminium_lead.json
 c2e063713076224b35ab986010c9d342a73cb5d3 data/c/tags/item/flat_nose_bullets/amber.json
 3ae55264876dc2818d4071e7a32b22762c670867 data/c/tags/item/flat_nose_bullets/amethyst_bronze.json
 ec406bab7850224e83eaedccdb8d4a9380e8215b data/c/tags/item/flat_nose_bullets/ancient_metal.json
@@ -1848,6 +1860,7 @@ edfde97dbadc8ec780d2104591e31f1d9fdf620c data/c/tags/item/flat_nose_bullets/zinc
 81dedf5e33cc5db80cdf6eb0e8965fb5b4f0ebd2 data/c/tags/item/flechettes/alnico.json
 87cc2c5d9bda1f7ca35ca553ef126d2ae628a74d data/c/tags/item/flechettes/aluminium.json
 b2a54abce4e8ee2c0f8226ba647d31fe065ae417 data/c/tags/item/flechettes/aluminium_foam.json
+df7c8429c8437f19fcbc530de4a16a44c212437e data/c/tags/item/flechettes/aluminium_lead.json
 3ca49c267e99b50f551768ad773bd86cba519920 data/c/tags/item/flechettes/amber.json
 a113f99ef2d7e6b11cf5aee9b9435ef0ac816ab3 data/c/tags/item/flechettes/amethyst_bronze.json
 57ed573913c9c5eb665fcd9a0230d2d2e9f01743 data/c/tags/item/flechettes/ancient_metal.json
@@ -1993,6 +2006,7 @@ cc8d0cecd07c1435fd05c980f5df287efdddea22 data/c/tags/item/foams/pvc.json
 48852f872c06f1443a71cfd234b26a7b05c13c2b data/c/tags/item/foils/alnico.json
 cef8ca38c816087882def1c632d7bbe79547dd24 data/c/tags/item/foils/aluminium.json
 4efb4b6d9db31ed28fc175d775472c24efac749a data/c/tags/item/foils/aluminium_foam.json
+fd091fb3295a36dfc392bee2e01ef6545a0f986a data/c/tags/item/foils/aluminium_lead.json
 ec932ab26696f79cc2c18d3abe27d29e0ad55c5f data/c/tags/item/foils/amethyst_bronze.json
 d44e3531583b51591a501ea5d28308585c4de98e data/c/tags/item/foils/ancient_metal.json
 9c8b0915d136a7cc9ef009b86b95bd138526b6c4 data/c/tags/item/foils/antimony.json
@@ -2109,6 +2123,7 @@ d77d60cd7d09cca955e8e16eaf20ed344bb5ac78 data/c/tags/item/grips/acacia.json
 ae08a12335ce6aaef8a1f9d2a9c9eba52b1343af data/c/tags/item/grips/alnico.json
 84d1c220cb6de292c816e19ecf5f4b4d0c9e37ad data/c/tags/item/grips/aluminium.json
 1ba988c5fd22967d666b076497a1790a13e4ddc9 data/c/tags/item/grips/aluminium_foam.json
+1c96faf0334d589f36acb5dd1fac9df36a489d4c data/c/tags/item/grips/aluminium_lead.json
 657db52a0d2d425a6542b7b9ab1d89d9e97d6007 data/c/tags/item/grips/amber.json
 1e34b76a66aae6a32d91ab3f317965b30b1f7a97 data/c/tags/item/grips/amethyst_bronze.json
 bf94acbff9e36f519f93aa61b1c16875d058dbbb data/c/tags/item/grips/ancient_metal.json
@@ -2250,6 +2265,7 @@ ed3501f34b9a4be84541525a4223df3166230443 data/c/tags/item/grips/vanadium.json
 90736284d3afa98c440e9b8299c8d8c5d045fdfd data/c/tags/item/ground_ingots/alnico.json
 078f59c02e881499dbce4a64165418337954ff7b data/c/tags/item/ground_ingots/aluminium.json
 eabf35567c93caa15765d54bd5fbbc5841e1cba1 data/c/tags/item/ground_ingots/aluminium_foam.json
+4e9760a24e8ce0087203fb326b6e865db3af0377 data/c/tags/item/ground_ingots/aluminium_lead.json
 5bcc558b4c0243a06db9e1d20a84aed79b07c5fa data/c/tags/item/ground_ingots/amethyst_bronze.json
 08f2513146b215923f1b0cc0521ec5508d01a736 data/c/tags/item/ground_ingots/ancient_metal.json
 eb8e886b9454cb982a20eba6c3ed903959e77d66 data/c/tags/item/ground_ingots/antimony.json
@@ -2369,6 +2385,7 @@ bddaeed843834d86ca6d881b0649f158787850f0 data/c/tags/item/heavy_cores/osmium.jso
 ef1dffce91a72e95e5cacae336149f1737766e40 data/c/tags/item/hollow_point_bullets/alnico.json
 cad3f408c7d54bc8a9858b23885981d3df14a208 data/c/tags/item/hollow_point_bullets/aluminium.json
 eddd85a29fdb8ef9a614190d6d743155edffea7e data/c/tags/item/hollow_point_bullets/aluminium_foam.json
+443a2a04cc4b39a8778e09af54778a8a712a8d71 data/c/tags/item/hollow_point_bullets/aluminium_lead.json
 c20d41250f0faa01a2870aeb0722ac38e7a60ead data/c/tags/item/hollow_point_bullets/amber.json
 2ef6d87dbf7004c36c00c787b4254416931f5fea data/c/tags/item/hollow_point_bullets/amethyst_bronze.json
 a56539c3ef6cdce8ec2ba3cb40eae028bb0c79f1 data/c/tags/item/hollow_point_bullets/ancient_metal.json
@@ -2507,6 +2524,7 @@ d05c987450372ab91eea9443c5fec411780bb549 data/c/tags/item/hollow_point_bullets/v
 a4685c749ded90e47b4484f38f2646d0b24f74d2 data/c/tags/item/ingots/alnico.json
 e326eb23ee5e8b83e0d16bd45489d1fcf0cb397e data/c/tags/item/ingots/aluminium.json
 bcfc6d23241be2c3102a70a63538bfd56d8c2edc data/c/tags/item/ingots/aluminium_foam.json
+92a7d04b1181ad6e6b9d78749c26a0722a33ea41 data/c/tags/item/ingots/aluminium_lead.json
 7047e069b0dbc8fc26018d1ce46f5a87ca624d30 data/c/tags/item/ingots/amber.json
 6c6a81fb8186c8566bacc84d8815fb2b9f9367c4 data/c/tags/item/ingots/amethyst_bronze.json
 946c07975cc766e77e19a431852fe6607cd791d2 data/c/tags/item/ingots/ancient_metal.json
@@ -2679,6 +2697,7 @@ be8d5d79107375080950560792d7c5633bfb3775 data/c/tags/item/insulations/polytetraf
 bdbea23cb177524608115004b88822577429dc22 data/c/tags/item/large_shots/alnico.json
 dc13cb69690364d1a9722c28d34649a2413505a7 data/c/tags/item/large_shots/aluminium.json
 be36e18c7fd79967b91044e23df9b584aba41f30 data/c/tags/item/large_shots/aluminium_foam.json
+a439f5097abe4be0661b765479367ced7ae38fe6 data/c/tags/item/large_shots/aluminium_lead.json
 65e2817c6a328585869cc0c00ee8682746919dbe data/c/tags/item/large_shots/amber.json
 66f172b79b754172aed687752a123bec7e62ef64 data/c/tags/item/large_shots/amethyst_bronze.json
 becfdd51c270c6918c1c17b04cb73e8f7e75e600 data/c/tags/item/large_shots/ancient_metal.json
@@ -2918,6 +2937,7 @@ df3bfafce8751065d10fdebf6d1eaf33db847789 data/c/tags/item/lumps/vanadinite.json
 32f626dcc60dbd59907bad96c88f445548b002a0 data/c/tags/item/machine_bolts/alnico.json
 8cabcf40e66dfa488cf24f4aee7c199a5a19a2ad data/c/tags/item/machine_bolts/aluminium.json
 0861981fdd6ba4835b0c11141c2cd43deb91bfd5 data/c/tags/item/machine_bolts/aluminium_foam.json
+47cd613042c6a2384c12f2881b5b5e6c3bb89ee0 data/c/tags/item/machine_bolts/aluminium_lead.json
 ebc3c7c70e8387811e8f2673e66e595175a4f9ee data/c/tags/item/machine_bolts/amethyst_bronze.json
 7ee2c866ee2bec02e967fc80f40e8eeb2e1fae48 data/c/tags/item/machine_bolts/ancient_metal.json
 2f9f004843221f39c53373caf328ba096f1d5f2d data/c/tags/item/machine_bolts/antimony.json
@@ -3056,6 +3076,7 @@ a341b11c93c5c3c0fbf8bfaa733b24204d14596e data/c/tags/item/mats/pvc.json
 d2a0e815152b95c2b1604b30e5e9ecdb58ef1bbf data/c/tags/item/nuggets/alnico.json
 5a66e26800bb74f7e78f5526044fd32353ed047a data/c/tags/item/nuggets/aluminium.json
 74b69b0ad79a381c5915e8f97499b84cb2de624e data/c/tags/item/nuggets/aluminium_foam.json
+ee084e88eaa3acbd6a0affd194b25cf4b1884ded data/c/tags/item/nuggets/aluminium_lead.json
 57526a6a5a559d53bc5e18028415ac06b47216a9 data/c/tags/item/nuggets/amethyst_bronze.json
 db28c9067934d43199b86252844634220419cf4b data/c/tags/item/nuggets/ancient_metal.json
 215e46f74ad86618cd3adbdafb0c90be7f1df199 data/c/tags/item/nuggets/antimony.json
@@ -3221,6 +3242,7 @@ d4a420c9b9da1af8c1637f8ad6de8f4893483f72 data/c/tags/item/ores/wolframite.json
 3e82d091e2edfe0198d3b7a9d3dcebf4b114ee04 data/c/tags/item/pipes/alnico.json
 5e2de7ed3b0c74986247e87b0ab33c1627e75ae6 data/c/tags/item/pipes/aluminium.json
 28ccd58252c896ea5c6d6db6f6d6403ce48d032f data/c/tags/item/pipes/aluminium_foam.json
+e62c535a43b795f64151c2b3cd7b4bb35603b04f data/c/tags/item/pipes/aluminium_lead.json
 a6c79558fbc7d3ab9f3236712889c5ccfa764aca data/c/tags/item/pipes/amber.json
 8ce594c218388fc42bb9490a9aea5d8ba486ff56 data/c/tags/item/pipes/amethyst_bronze.json
 4bf49d1c84757c450fe0a85b40bb36f2bf07375f data/c/tags/item/pipes/ancient_metal.json
@@ -3353,6 +3375,7 @@ ba8dd4c801dac2bb0a23fe5b5e94dee4faa6334e data/c/tags/item/pipes/woods_metal.json
 83d4f384513d4d8feeabfbe9c0c144ed095ff050 data/c/tags/item/plates/alnico.json
 76557c5ba90a2db5851536dbdd6148fce9ec7c7c data/c/tags/item/plates/aluminium.json
 a20579615d0ce9d62d61ef1d96ed1d38c9c6f602 data/c/tags/item/plates/aluminium_foam.json
+0a5cd7eed53bad39f62fdaed0a579bc6a0b4a4fe data/c/tags/item/plates/aluminium_lead.json
 a35121be89f967f9634acbffa93ec9b0d4a7d607 data/c/tags/item/plates/amethyst_bronze.json
 355b8a899e09166aa3e54c68114cbf31e9ecf3f9 data/c/tags/item/plates/ancient_metal.json
 89d292d6896ee4a8990be52b5d3540e72672058c data/c/tags/item/plates/antimony.json
@@ -3484,6 +3507,7 @@ fec55ae7dc9dba84bd82f3e534299c4a09614fcd data/c/tags/item/plates/wrought_iron.js
 c7f8c9c04a3fd61b99d7fa53af14309e7458f714 data/c/tags/item/pointed_bullets/alnico.json
 cce2f2b34415e375221d937db763535c1d888e3d data/c/tags/item/pointed_bullets/aluminium.json
 5272ba791a1caae82f9ea0aa64cfd95db46e8be5 data/c/tags/item/pointed_bullets/aluminium_foam.json
+d484c8c1e5538079892fe872329dc5aee4231e71 data/c/tags/item/pointed_bullets/aluminium_lead.json
 fd83b957a00f04876a0724eddbf487db1510e67f data/c/tags/item/pointed_bullets/amber.json
 92b4a39f94b8099770ea8cf4c433d8796ba47059 data/c/tags/item/pointed_bullets/amethyst_bronze.json
 64c1171df1294282b80c5b8e5376072b831d405a data/c/tags/item/pointed_bullets/ancient_metal.json
@@ -3622,6 +3646,7 @@ a52bd39d57d898d6970beeb95bcecfc46ec61ee8 data/c/tags/item/pointed_bullets/zinc.j
 03127f7610e68d8adaa6257c5a4d8b4176208301 data/c/tags/item/rivets/alnico.json
 05914bd6a69fc61b4384a7cb22064b3b21d1b57c data/c/tags/item/rivets/aluminium.json
 21061f134f63fc76015a4dea73ccbcde042d6ea9 data/c/tags/item/rivets/aluminium_foam.json
+87b924110d6fc985a8ccd5e11b4899eb8ebb388d data/c/tags/item/rivets/aluminium_lead.json
 18c252ffedb030dbd27049dbcf593ea74a84bca8 data/c/tags/item/rivets/amethyst_bronze.json
 60a6ccaaa661a42693ffa1ce369be925d00a23c5 data/c/tags/item/rivets/ancient_metal.json
 a57599d7f76d42bcef9074c71bd3ecd6d69fbadf data/c/tags/item/rivets/antimony.json
@@ -3752,6 +3777,7 @@ ec0ba3f07bbb2ccfa800bd7b6b9cf91f8eb8f916 data/c/tags/item/rivets/witherite.json
 3f8112f0154faff9c424209ee4252054ec7a2688 data/c/tags/item/rods/alnico.json
 1a09bd7033a1349224ed4bab8ee28499b0a81d37 data/c/tags/item/rods/aluminium.json
 d19639c5e425cfb60936c9c29f7b0e6220a9f6a1 data/c/tags/item/rods/aluminium_foam.json
+22d58526a5c7ae0ea73013a8235a48bacb1d61a8 data/c/tags/item/rods/aluminium_lead.json
 72cc0f931fda7c16bd9d75e0a1897cba6ca8c710 data/c/tags/item/rods/amethyst_bronze.json
 c66a1b12c43f1f11cd53352e203683e52575b833 data/c/tags/item/rods/ancient_metal.json
 fa3c9551d4ca4e49008994916afc9ee8703bb1ac data/c/tags/item/rods/antimony.json
@@ -3895,6 +3921,7 @@ a38276c5c8ef6ec3e091f184f881e0db892e2863 data/c/tags/item/rods/uranium_enriched.
 056b08711c2ef6d6801b58713b346e05e1e9f9fd data/c/tags/item/rolled_machine_bolts/alnico.json
 faa97a4d2562d5d94c39480b60c9b1af957f277d data/c/tags/item/rolled_machine_bolts/aluminium.json
 a663801a376aba22074259f765bacdc7f5aabee6 data/c/tags/item/rolled_machine_bolts/aluminium_foam.json
+8d3adb9813740ccdf057f48414f0ddfa0f4cce08 data/c/tags/item/rolled_machine_bolts/aluminium_lead.json
 3f013309b9a78489c3ad61766aa6b12ef5c19091 data/c/tags/item/rolled_machine_bolts/amethyst_bronze.json
 463921add1f5e51d4f92d8029c882aa306960c0b data/c/tags/item/rolled_machine_bolts/ancient_metal.json
 c21f773fcb437c468f833f8af4542a41b19dec11 data/c/tags/item/rolled_machine_bolts/antimony.json
@@ -4026,6 +4053,7 @@ a5fef0f1b2a53e7d45012c8507dca29d7d30b55e data/c/tags/item/rolled_machine_bolts/z
 e4577160003f754278a8042630c2b30f6c26940e data/c/tags/item/rolled_screws/alnico.json
 3735809fb68f31be3ef5a7a42cc66bd1a7ed784e data/c/tags/item/rolled_screws/aluminium.json
 29e207d44657c8ca4554ef177441ee37d1767094 data/c/tags/item/rolled_screws/aluminium_foam.json
+66266d362ce4aec713f2f0d095bd60dfaecb1fbc data/c/tags/item/rolled_screws/aluminium_lead.json
 2c20a86e4564c4f10c07acd29fc53332ed4291ad data/c/tags/item/rolled_screws/amethyst_bronze.json
 f7ed0bf1d8434a9af4c4f2b9e5725dbeea6e172e data/c/tags/item/rolled_screws/ancient_metal.json
 894f0e28d86b70337fa0143edb4efcdb86f915f6 data/c/tags/item/rolled_screws/antimony.json
@@ -4157,6 +4185,7 @@ b842ce5367b16d83eaf3aaa4949b243a6d2d16fc data/c/tags/item/rolled_screws/vanadium
 ad3907ddc2eeb5364841e1fd4363a0b0180468d5 data/c/tags/item/rolled_thread_rods/alnico.json
 2ef91eceacc189c036bf04fa943171768a3b17f8 data/c/tags/item/rolled_thread_rods/aluminium.json
 a245fb7833c1d5a0cef973f771b5dffa09bab8ae data/c/tags/item/rolled_thread_rods/aluminium_foam.json
+e1832d29b8d475bb07b89936a5490e524be6bae7 data/c/tags/item/rolled_thread_rods/aluminium_lead.json
 d3ed9a14c5d21f6a030b750054b29121cfd9d893 data/c/tags/item/rolled_thread_rods/amethyst_bronze.json
 a95552baeee88be4341af7cb2e4871c6c2e7b077 data/c/tags/item/rolled_thread_rods/ancient_metal.json
 4b1754c039b56c55370cafee49cb7437635c8459 data/c/tags/item/rolled_thread_rods/antimony.json
@@ -4288,6 +4317,7 @@ f23584e30829b151f77218a068b066f6ba4b0e38 data/c/tags/item/rolled_thread_rods/wro
 ca7229793c05e315a344eb2e4c8be344e39a6630 data/c/tags/item/round_balls/alnico.json
 1bffed7504fbf505084079d159c5721d44be2aff data/c/tags/item/round_balls/aluminium.json
 99206eaa62370f839076a7172c01ec535e40ae31 data/c/tags/item/round_balls/aluminium_foam.json
+9e6cacde8e57db8e64c45c7ce8c18a3b9987cb39 data/c/tags/item/round_balls/aluminium_lead.json
 8ace7ece833a0afa8d3076224e5e6780a574fa37 data/c/tags/item/round_balls/amber.json
 33287957d87434d9bce2a526127de296a954b416 data/c/tags/item/round_balls/amethyst_bronze.json
 6ef08cc15429c6bdc0bba5776330354bd46f51ce data/c/tags/item/round_balls/ancient_metal.json
@@ -4426,6 +4456,7 @@ a7eb181e2dce7e96250a085cd85d27c590773e44 data/c/tags/item/round_balls/zinc.json
 494884b959b11f15150262ef3fed8498c1a1cc5f data/c/tags/item/scraps/alnico.json
 705b923eb8008444dc5281f915f7bf528d99a765 data/c/tags/item/scraps/aluminium.json
 d06750d99a37b3590b908c01fc0ccb58250d8707 data/c/tags/item/scraps/aluminium_foam.json
+13e90917b95177f91856e3d5c1b3388920015f4b data/c/tags/item/scraps/aluminium_lead.json
 71454dc4a18af0b6a1147df23bd0a90900d166cf data/c/tags/item/scraps/amethyst_bronze.json
 cb0f9d87467ed30f78e37b5d6e79af05a674fa36 data/c/tags/item/scraps/ancient_metal.json
 93545cf05639813df63d9a374b5a6c68ea7144f4 data/c/tags/item/scraps/antimony.json
@@ -4534,6 +4565,7 @@ dcd6eaeb0ce5dcd0fb7b2d5be981a0589830b79d data/c/tags/item/scraps/zinc.json
 dba5508f821d1b160f15a54d94b3903c38769ede data/c/tags/item/screws/alnico.json
 645655f7121da31573823f2bf6f959a109e430eb data/c/tags/item/screws/aluminium.json
 1526b77981b239c8e7574400d1ddfe5940cb4663 data/c/tags/item/screws/aluminium_foam.json
+76145a2499d7154463013d06bdd77481f06dcf31 data/c/tags/item/screws/aluminium_lead.json
 2dc4fa002c123ee73b2f5062cdb003268b4b189f data/c/tags/item/screws/amethyst_bronze.json
 c1c320059a51042df109eca51e570b8a92b9d812 data/c/tags/item/screws/ancient_metal.json
 0073de90344f0a28634d315191d283b2d7d63ede data/c/tags/item/screws/antimony.json
@@ -4691,6 +4723,7 @@ d87a57ed1a16cecfbad19ec633159678f6dfea32 data/c/tags/item/solder_wires/solder_fr
 cbd781a35ff408b516345a0c26b562ac35cb547f data/c/tags/item/storage_blocks/alnico.json
 ea479b6935828ece76c68316722b04918a70fe0b data/c/tags/item/storage_blocks/aluminium.json
 55edd955ce0f4762d61b8754fc580aeb06c26ab1 data/c/tags/item/storage_blocks/aluminium_foam.json
+03abbbfbe6ecda9c2a578e40ba67feeb796f0484 data/c/tags/item/storage_blocks/aluminium_lead.json
 08160006b051e6d0b9c5378b9b0eeeb33fee80f3 data/c/tags/item/storage_blocks/amber.json
 205d1f7b0de7d264990b84ddb1b896e878244232 data/c/tags/item/storage_blocks/amethyst.json
 20f2ef141f382d38526fb661324b80e9d8bb6591 data/c/tags/item/storage_blocks/amethyst_bronze.json
@@ -4912,6 +4945,7 @@ f6413023dae3744791297308ff93dcd96507ba27 data/c/tags/item/substrates/nether_bric
 9ab2fea621da92feec6e9779c8cc630cd4f2c8dd data/c/tags/item/swarfs/alnico.json
 991ecc2803e7d30021d269d6946e9cb564ee733c data/c/tags/item/swarfs/aluminium.json
 b47798bb534479d2919474e44f81b8af8d5f83e9 data/c/tags/item/swarfs/aluminium_foam.json
+18c2599185f1154e7071c9a91f9b2517ff1b9e88 data/c/tags/item/swarfs/aluminium_lead.json
 051a97b7f95b5b4c9823d134f2688be20f76f25f data/c/tags/item/swarfs/amethyst_bronze.json
 8a487ac197a4bd1a4eefd4243510225631d23b7f data/c/tags/item/swarfs/ancient_metal.json
 75c178ecdbea8576656eb28d52a8b40d21a704b6 data/c/tags/item/swarfs/antimony.json
@@ -5072,6 +5106,7 @@ d7e5ef366361d154d55f7f66d30c74b1722b5052 data/c/tags/item/tires/natural_rubber.j
 43f73257f3a093be9b56530944a998125429bade data/c/tags/item/turned_rods/alnico.json
 7711d924c6f76cfbdc5f504ebc5383a6d1ec7d98 data/c/tags/item/turned_rods/aluminium.json
 c42deed59162c4a6fbbb6905a1f79455af3d85e6 data/c/tags/item/turned_rods/aluminium_foam.json
+dfbad29f9d4760e5c705defab70041a9960b5262 data/c/tags/item/turned_rods/aluminium_lead.json
 6ba8b767c41e334bbef7b9fa1aba34bb3cdf79ec data/c/tags/item/turned_rods/amethyst_bronze.json
 456d363c0a3f5a018dd80fce82512bff25e63f15 data/c/tags/item/turned_rods/ancient_metal.json
 6651432d4dbe8a568ab0a6bb49bc661ebaed1ae6 data/c/tags/item/turned_rods/antimony.json
@@ -5181,6 +5216,7 @@ eea9494a46705da085310d80d02fbe3905644acb data/c/tags/item/turned_rods/witherite.
 da63557125d74e3fae26fe3cdb589e3cebe5a633 data/c/tags/item/welding_rods/alnico.json
 4dbb104ce0de61d839eeac5429dca00e8ae873e3 data/c/tags/item/welding_rods/aluminium.json
 77b6be565a8d09f830720b45bc5510727345cd55 data/c/tags/item/welding_rods/aluminium_foam.json
+922c3d4870ee86a97625e0bf43fa38a578a462b0 data/c/tags/item/welding_rods/aluminium_lead.json
 374ce75195490c78aeedc6110efa16e5de30f91b data/c/tags/item/welding_rods/amethyst_bronze.json
 b30a45cceaec89187d380a1c0e41aeb13f7c8b07 data/c/tags/item/welding_rods/ancient_metal.json
 07d2bdf1e111e15cbf17b1feca7facbd3feee67f data/c/tags/item/welding_rods/antimony.json
@@ -5311,6 +5347,7 @@ ba9c25877187aeaedf3cb81ce980ef556397c2e9 data/c/tags/item/welding_rods/wrought_i
 7b3c1fb719e73b3f11536d4fecd89ed503004a70 data/c/tags/item/wires/alnico.json
 4e9a113933d6076975705b273e9828cd66fd84e9 data/c/tags/item/wires/aluminium.json
 8aebd0a0379e593c5110e3d3eeb7bd29ffb83ae9 data/c/tags/item/wires/aluminium_foam.json
+d4031c4f23ce07b78ef238886845ebb39ef173f9 data/c/tags/item/wires/aluminium_lead.json
 90f3f910f8a6f64248569310b215d6c590bd4ac6 data/c/tags/item/wires/amethyst_bronze.json
 9b969b7da93094bae57ee5becfcc76f29903ecf7 data/c/tags/item/wires/ancient_metal.json
 f426f0939f7f2e2c304bce927496dfa75fcd93bd data/c/tags/item/wires/antimony.json

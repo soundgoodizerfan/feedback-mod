@@ -32,9 +32,11 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * @param resultFluid    what it resolves into as a melt, per part (per mB for a crucible melt); empty for an item result.
  * @param minTemperature the mixture must be at or above this. Unset means no floor.
  * @param maxTemperature the mixture must be at or below this. Unset means no ceiling.
+ * @param freeFall       the melt only resolves in free fall: metals that separate by density under gravity (a heavy lead sinking out of aluminium) stay mixed
+ *                       where nothing sinks, so the alloy can be made nowhere else.
  */
 public record Mixture(Map<ResourceLocation, Range> parts, float stray, ItemStack result, FluidStack resultFluid,
-                      Tu minTemperature, Tu maxTemperature) {
+                      Tu minTemperature, Tu maxTemperature, boolean freeFall) {
 
     /** Float slack on a window's edges, so a mix sitting exactly on a boundary is not lost to rounding. */
     private static final float EPSILON = 1e-4f;
@@ -64,7 +66,8 @@ public record Mixture(Map<ResourceLocation, Range> parts, float stray, ItemStack
             ItemStack.CODEC.optionalFieldOf("result", ItemStack.EMPTY).forGetter(Mixture::result),
             FluidStack.OPTIONAL_CODEC.optionalFieldOf("result_fluid", FluidStack.EMPTY).forGetter(Mixture::resultFluid),
             Units.codec(Tu::new).optionalFieldOf("min_temperature", new Tu(-Float.MAX_VALUE)).forGetter(Mixture::minTemperature),
-            Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Mixture::maxTemperature)
+            Units.codec(Tu::new).optionalFieldOf("max_temperature", new Tu(Float.MAX_VALUE)).forGetter(Mixture::maxTemperature),
+            Codec.BOOL.optionalFieldOf("free_fall", false).forGetter(Mixture::freeFall)
     ).apply(i, Mixture::new));
 
     /** A fluid part of a mixture: the material the fluid is and how much of it, mB. */

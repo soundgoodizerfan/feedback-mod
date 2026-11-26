@@ -342,10 +342,15 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
     protected void onPour(net.minecraft.world.level.material.Fluid fluid, float pourTu) {
     }
 
+    /** Whether nothing sinks here: the vessel stands in the Gap. */
+    protected boolean freeFall() {
+        return level != null && level.dimension().equals(io.github.soundgoodizerfan.feedback.space.SpaceTravel.GAP);
+    }
+
     /** The tank shows what the ledger resolves to; a vessel whose ledger is empty leaves a foreign fluid in the tank alone. */
     protected void refreshTank() {
         if (alloy.amount() > 0) {
-            tank.setFluid(alloy.resolve());
+            tank.setFluid(alloy.resolve(freeFall()));
             ledgerOwned = true;
         } else if (ledgerOwned) {
             tank.setFluid(FluidStack.EMPTY);
@@ -582,7 +587,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
                         * (1f - io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.PART_REMELT_LOSS));
             FluidStack result = process.resultFluid().copyWithAmount(Math.round(poured * (1f - burnt)));
             int overflow = alloy.amount() + result.getAmount() - tank.getCapacity();
-            if (overflow > 0 && alloy.resolve().isEmpty())
+            if (overflow > 0 && alloy.resolve(freeFall()).isEmpty())
                 alloy.remove(Math.min(overflow, alloy.amount()));
             alloy.add(result.getFluid(), Math.min(result.getAmount(), tank.getCapacity() - alloy.amount()));
             temperature = Math.max(ThermalTuning.AMBIENT_TU.value(), temperature - fusionCost(first, result.getAmount()));

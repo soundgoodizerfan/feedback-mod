@@ -177,6 +177,11 @@ public final class AlloyMix {
      * behaves exactly as it did before this class existed), or empty.
      */
     public FluidStack resolve() {
+        return resolve(false);
+    }
+
+    /** As {@link #resolve()}; {@code freeFall} says nothing sinks where the vessel stands, so a row that only holds in free fall may match. */
+    public FluidStack resolve(boolean freeFall) {
         int total = amount();
         if (total <= 0)
             return FluidStack.EMPTY;
@@ -194,7 +199,7 @@ public final class AlloyMix {
         }
         solids.forEach((id, mb) -> byMaterial.merge(id, mb, Integer::sum));
         for (Mixture row : MixtureTable.get().entries())
-            if (row.hasFluidResult() && row.matchesAmounts(byMaterial))
+            if (row.hasFluidResult() && (freeFall || !row.freeFall()) && row.matchesAmounts(byMaterial))
                 return new FluidStack(row.resultFluid().getFluid(), total);
         return FluidStack.EMPTY;
     }

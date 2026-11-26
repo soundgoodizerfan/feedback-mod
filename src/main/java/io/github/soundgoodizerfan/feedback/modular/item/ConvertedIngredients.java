@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import io.github.soundgoodizerfan.feedback.modular.attunement.Rites;
 import io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularFaces;
@@ -134,6 +135,9 @@ public final class ConvertedIngredients {
         Item ours = StandIns.items().get(asked.getItem());
         if (ours != null)
             return new ItemStack(ours, asked.getCount());
+        // An enchanted book cannot be had: show the rite it converts to.
+        if (Rites.convertibleBook(asked))
+            return Rites.fromBook(asked).map(r -> r.copyWithCount(asked.getCount())).orElse(asked);
         ItemStack made = index().products().get(asked.getItem());
         return made == null ? asked : made.copyWithCount(asked.getCount());
     }

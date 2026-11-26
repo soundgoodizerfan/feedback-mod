@@ -204,6 +204,25 @@ public final class Rites {
     /** Vanilla weights within this of the rarest count as equally rare. */
     private static final int CLOSE = 2;
 
+    /**
+     * Whether {@code stack} is a rite standing for an enchanted book that holds {@code wanted}: its attunement is the one an asked enchantment
+     * is named by, and its quality lets that level (up to the highest a rite carries) be written. Vanilla books cannot be had, so another
+     * mod's ask for one (a research page wanting Silk Touch) takes the rite.
+     */
+    public static boolean standsForBook(ItemStack stack, ItemEnchantments wanted) {
+        Rite rite = of(stack);
+        if (rite == null)
+            return false;
+        for (var entry : wanted.entrySet()) {
+            ResourceLocation id = entry.getKey().unwrapKey().map(k -> k.location()).orElse(null);
+            Optional<Attunements.Effect> effect = id == null ? Optional.empty() : effectOf(id);
+            if (effect.isPresent() && effect.get().id().equals(rite.effect())
+                    && maxLevel(rite.quality()) >= Math.min(entry.getIntValue(), ModularTuning.RITE_MAX_LEVEL))
+                return true;
+        }
+        return false;
+    }
+
     /** Whether the stack is a vanilla enchanted book that converts to a rite. */
     public static boolean convertibleBook(ItemStack stack) {
         return stack.is(Items.ENCHANTED_BOOK);

@@ -1250,6 +1250,676 @@
         "aspect": "thaumaturge:lux"
       }
     ],
+    "feedback:aluminium_lead_birdshot": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_block": [
+      {
+        "amount": 31,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 43,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 45,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 23,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_bullet": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_case": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_coil_spring": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_coin": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_cut_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_cut_screw": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_cut_thread_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_drilled_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_dust": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:aluminium_lead_fine_wire": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_flat_nose_bullet": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_flechette": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_foil": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_grip": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_ground_ingot": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_hollow_point_bullet": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_ingot": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_large_shot": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_nugget": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_pipe": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_pointed_bullet": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_rivet": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_rolled_machine_bolt": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_rolled_screw": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_rolled_thread_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_round_ball": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_scrap": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_screw": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_swarf": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_turned_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_welding_rod": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:aluminium_lead_wire": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:aluminium_machine_bolt": [
       {
         "amount": 3,
