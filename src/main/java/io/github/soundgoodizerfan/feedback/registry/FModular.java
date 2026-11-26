@@ -94,6 +94,11 @@ public final class FModular {
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.blueprint.ModularBlueprints.Loot>> MODULE_PLAN_LOOT =
             LOOT_MODIFIERS.register("module_plan", () -> io.github.soundgoodizerfan.feedback.modular.blueprint.ModularBlueprints.Loot.CODEC);
 
+    /** Adds a starter-design blueprint to a village chest. */
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
+            com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.blueprint.ModularBlueprints.StarterLoot>> STARTER_BLUEPRINT_LOOT =
+            LOOT_MODIFIERS.register("starter_blueprint", () -> io.github.soundgoodizerfan.feedback.modular.blueprint.ModularBlueprints.StarterLoot.CODEC);
+
     /** Adds a gun blueprint from the pool to a chest. */
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.Loot>> GUN_BLUEPRINT_LOOT =

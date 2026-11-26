@@ -135,4 +135,36 @@ public final class ModularBlueprints {
             return CODEC;
         }
     }
+
+    /** A blueprint of a random type's starter design (never a gun, dish, face or suit module); empty if none has one. */
+    public static Optional<ItemStack> randomStarter(RandomSource random) {
+        var types = ModularTypes.known();
+        var materials = MaterialTable.get().materials();
+        List<ResourceLocation> ids = ToolDesigns.drawable(types).stream()
+                .filter(id -> types.get(id).family() != ModularType.Family.GUN && !id.equals(Feedback.id("suit_module"))).toList();
+        if (ids.isEmpty()) return Optional.empty();
+        return ToolDesigns.starter(ids.get(random.nextInt(ids.size())), types, materials)
+                .map(io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool::blueprint);
+    }
+
+    /** Adds a starter blueprint to a village chest's loot; the chest tables and the chance are the modifier's conditions. */
+    public static class StarterLoot extends LootModifier {
+
+        public static final MapCodec<StarterLoot> CODEC = RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, StarterLoot::new));
+
+        public StarterLoot(LootItemCondition[] conditions) {
+            super(conditions);
+        }
+
+        @Override
+        protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
+            randomStarter(context.getRandom()).ifPresent(loot::add);
+            return loot;
+        }
+
+        @Override
+        public MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier> codec() {
+            return CODEC;
+        }
+    }
 }
