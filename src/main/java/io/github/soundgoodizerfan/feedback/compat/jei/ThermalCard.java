@@ -34,8 +34,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
  */
 final class ThermalCard {
 
-    static final int HEIGHT = 168;
-    private static final int WIDTH = 168, MAX_ROWS = 3, TOP = 14, ROWS_Y = TOP + 18 * MAX_ROWS + 6, VALUE_X = 72;
+    static final int HEIGHT = 190;
+    private static final int WIDTH = 168, MAX_ROWS = 3, TOP = 14, VALUE_X = 72, CONTAINERS_PER_LINE = WIDTH / 18;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626, SPOIL_COLOUR = 0xFF8A2B12;
 
     private ThermalCard() {
@@ -92,7 +92,18 @@ final class ThermalCard {
         }
     }
 
+    /** The top of the container icons, which sit along the bottom edge, as many lines as {@code count} needs. */
+    private static int containersY(int count) {
+        return HEIGHT - 18 * ((count + CONTAINERS_PER_LINE - 1) / CONTAINERS_PER_LINE);
+    }
+
     static void layout(IRecipeLayoutBuilder builder, ThermalProcess p) {
+        // Containers are catalyst slots, so looking up the uses of one finds exactly the cards that show it.
+        var containers = ThermalContainers.of(p);
+        for (int i = 0; i < containers.size(); i++)
+            builder.addSlot(RecipeIngredientRole.CATALYST, 1 + 18 * (i % CONTAINERS_PER_LINE),
+                            containersY(containers.size()) + 18 * (i / CONTAINERS_PER_LINE))
+                    .setStandardSlotBackground().addItemStack(new ItemStack(containers.get(i)));
         Side in = new Side(builder, RecipeIngredientRole.INPUT, false);
         Side out = new Side(builder, RecipeIngredientRole.OUTPUT, true);
         if (p.dip().isPresent()) {
@@ -190,7 +201,13 @@ final class ThermalCard {
     static void draw(ThermalProcess p, IRecipeSlotsView slots, GuiGraphics graphics) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, title(p).toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
-        int y = ROWS_Y;
+        int containers = ThermalContainers.of(p).size();
+        if (containers > 0)
+            graphics.drawString(font, t("feedback.jei.containers"), 1, containersY(containers) - 10, LABEL_COLOUR, false);
+        // The figures start under the tallest column of slots.
+        int slotRows = Math.min(MAX_ROWS, Math.max(slots.getSlotViews(RecipeIngredientRole.INPUT).size(),
+                slots.getSlotViews(RecipeIngredientRole.OUTPUT).size()));
+        int y = TOP + 18 * Math.max(1, slotRows) + 4;
         for (Row r : rows(p, shownForm(p, slots))) {
             graphics.drawString(font, r.label, 1, y, LABEL_COLOUR, false);
             if (!r.value.isEmpty())

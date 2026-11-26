@@ -297,7 +297,7 @@ public final class PartBenchShaping {
                 continue;
             if (s.has(FDataComponents.MADE_OF.get()))
                 return Optional.empty();
-            Optional<Material.Located> l = Material.find(materials, s.getItem());
+            Optional<Material.Located> l = Material.find(materials, s);
             int share = Math.max(1, (int) Math.ceil(need * option.shaping().shareOf(i) / ModularTuning.NUGGET_MB - 1e-3f)) * ModularTuning.NUGGET_MB;
             int mb = s.getCount() * (l.isEmpty() ? 0 : FormItems.volume(l.get().form()));
             if (l.isEmpty() || !station.accepts(l.get().material()) || !slots.get(i).accepts(l.get(), option.shaping().stock()) || mb < share)
@@ -327,7 +327,7 @@ public final class PartBenchShaping {
                 continue;
             if (s.has(FDataComponents.MADE_OF.get()))
                 return Optional.empty();
-            Optional<Material.Located> l = Material.find(materials, s.getItem());
+            Optional<Material.Located> l = Material.find(materials, s);
             if (l.isEmpty() || (what != null && (!what.id().equals(l.get().id()) || !what.form().equals(l.get().form()))))
                 return Optional.empty();
             what = l.get();
@@ -358,7 +358,7 @@ public final class PartBenchShaping {
         for (ItemStack s : contents) {
             if (s.isEmpty())
                 continue;
-            Optional<Material.Located> l = s.has(FDataComponents.MADE_OF.get()) ? Optional.empty() : Material.find(materials, s.getItem());
+            Optional<Material.Located> l = s.has(FDataComponents.MADE_OF.get()) ? Optional.empty() : Material.find(materials, s);
             if (l.isEmpty() || (what != null && (!what.id().equals(l.get().id()) || !what.form().equals(l.get().form()))))
                 return "wrong_stock";
             what = l.get();

@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_humanus",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_humanus_flowing",
+      "required": false
+    }
+  ]
+}

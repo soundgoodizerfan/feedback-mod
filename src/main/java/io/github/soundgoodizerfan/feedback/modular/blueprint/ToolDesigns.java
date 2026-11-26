@@ -151,7 +151,7 @@ public final class ToolDesigns {
         materials.forEach((id, m) -> {
             // The smallest piece that fits: ingots before a block, which only fills a shape that is a whole number of blocks.
             Material.Located best = null;
-            for (String form : m.items(id).keySet()) {
+            for (String form : m.stockForms(id)) {
                 Material.Located l = new Material.Located(id, m, form);
                 boolean fits = shape != null
                         ? ModularType.fits(shape.shaping().stock(), form) && MaterialNeeds.hasAll(m, role.traits())
@@ -173,7 +173,7 @@ public final class ToolDesigns {
         List<Material.Located> out = new ArrayList<>();
         materials.forEach((id, m) -> {
             Material.Located best = null;
-            for (String form : m.items(id).keySet()) {
+            for (String form : m.stockForms(id)) {
                 Material.Located l = new Material.Located(id, m, form);
                 if (slot.accepts(l, shaping.stock()) && (best == null || io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)
                         < io.github.soundgoodizerfan.feedback.registry.FormItems.volume(best.form())))

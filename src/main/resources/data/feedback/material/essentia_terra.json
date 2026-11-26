@@ -1,0 +1,63 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumaturge"
+    }
+  ],
+  "color": "#6fae2a",
+  "kind": "crystal",
+  "hardness": 150,
+  "density": 5.2,
+  "thermal": {
+    "expansion": 8e-06,
+    "melting_point": 1750,
+    "cooling_rate": 2.62,
+    "conductivity": 0.0012,
+    "service_temperature": 1000,
+    "specific_heat": 0.8,
+    "latent_heat_fusion": 180.0,
+    "boiling_point": 2900,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1750
+  },
+  "mechanical": {
+    "toughness": 4.0,
+    "friction": 0.8,
+    "abrasiveness": 0.8,
+    "yield_strength": 14.0
+  },
+  "molten": {
+    "viscosity": 300000.0,
+    "density": 4.42,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "exclude": [
+    "dust"
+  ],
+  "enchantability": 14,
+  "attuning": {
+    "temperature": 650,
+    "lock": 585,
+    "coercive": 0.7,
+    "loop_width": 0.3,
+    "lag": 12,
+    "cold": true
+  },
+  "electrical": {
+    "insulation": "ehv",
+    "piezo_coupling": 0.3,
+    "rectifying": 0.2
+  },
+  "corrosion_resistance": 1.0,
+  "toxicity": 0.0,
+  "accepts": {
+    "crystal": [
+      "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:terra\"}]",
+      "thaumaturge:crystal_terra"
+    ]
+  }
+}

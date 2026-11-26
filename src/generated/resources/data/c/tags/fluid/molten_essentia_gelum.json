@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_gelum",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_gelum_flowing",
+      "required": false
+    }
+  ]
+}

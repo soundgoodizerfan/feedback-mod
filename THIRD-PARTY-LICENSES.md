@@ -1433,6 +1433,8 @@ only, the strength dial, and every asset. Site: `vehicle/micro/TireHubBlock.java
 
 `Leclowndu93150/Thaumaturge`, custom source-available licence (all rights reserved, MIT on dormancy); the author-chosen reading of §2.1 permits studying the source for format facts. Only the aspect data-map format and aspect ids are used, in our own datagen output (`data/AspectData`). No code, assets, text or values copied.
 
+Per-aspect essentia (2026-11-25, `scripts/gen_essentia_materials.py`, `process/ComponentItem`), read at commit `999486b`. Taken, as interop facts: the aspect ids and which two aspects make each compound, the essentia crystal item and its aspect component's id and field name, that thaumium is iron with praecantatio and terra, and the crucible recipe format and thaumium's research gate id (`data/feedback/recipe/crucible/`). Rejected: code, assets, text, aspect colours and recipe amounts.
+
 ## Sword Blocking Mechanics (blade-block pose, 2026-11-25)
 
 `Fuzss/sword-blocking-mechanics` (`1.21.1`, `1751444`), MPL-2.0; no Exhibit B incompatibility notice is attached to any source file, so it is read as adaptable into GPL-3.0 code. Taken: the first-person blocking pose values (from snapshot 15w33b), the vanilla attack transform layered on top so a blow can be struck while blocking, holding equip progress at zero while blocking so use start does not dip the item, and the third-person arm offsets (36 degrees up, 30 degrees inward), in `client/combat/SpearClient` and `CombatPose`. Rejected: the "can block" item tag gate (ours is the item's use animation and the `blocking` trait), the PuzzlesLib event layer and mixin stack, the 1.7 third-person item chain, the config toggles, assets.

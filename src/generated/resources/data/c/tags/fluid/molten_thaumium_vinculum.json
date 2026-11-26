@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_vinculum",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_vinculum_flowing",
+      "required": false
+    }
+  ]
+}

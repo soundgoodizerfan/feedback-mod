@@ -273,7 +273,99 @@
     "feedback:tempered_steel_pipe",
     "feedback:tension_gauge",
     {
-      "id": "feedback:thaumium_lean_pipe",
+      "id": "feedback:thaumium_aer_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_alienis_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_alkimia_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_aqua_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_auram_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_aversio_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_bestia_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_cognitio_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_desiderium_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_exanimis_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_fabrico_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_gelum_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_herba_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_humanus_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_ignis_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_instrumentum_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_lux_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_machina_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_metallum_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_mortuus_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_motus_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_ordo_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_perditio_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_permutatio_pipe",
       "required": false
     },
     {
@@ -281,7 +373,55 @@
       "required": false
     },
     {
-      "id": "feedback:thaumium_rich_pipe",
+      "id": "feedback:thaumium_potentia_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_praecantatio_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_praemunio_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_sensus_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_spiritus_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_tenebrae_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_terra_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_vacuos_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_victus_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_vinculum_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_vitium_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_vitreus_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:thaumium_volatus_pipe",
       "required": false
     },
     "feedback:thermal_store",

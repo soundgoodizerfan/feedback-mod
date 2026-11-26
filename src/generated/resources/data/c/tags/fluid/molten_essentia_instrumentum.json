@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_instrumentum",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_instrumentum_flowing",
+      "required": false
+    }
+  ]
+}

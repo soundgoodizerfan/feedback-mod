@@ -1,0 +1,64 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumaturge"
+    }
+  ],
+  "color": "#77177a",
+  "kind": "crystal",
+  "hardness": 56,
+  "density": 1.913,
+  "thermal": {
+    "expansion": 8e-06,
+    "melting_point": 1044,
+    "cooling_rate": 2.62,
+    "conductivity": 0.0035,
+    "service_temperature": 994,
+    "specific_heat": 0.7375,
+    "latent_heat_fusion": 98.75,
+    "boiling_point": 2900,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1044
+  },
+  "mechanical": {
+    "toughness": 0.7,
+    "friction": 0.4625,
+    "abrasiveness": 0.6687,
+    "yield_strength": 3.125
+  },
+  "molten": {
+    "viscosity": 9000.0,
+    "density": 1.63,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.1163
+  },
+  "luminance": 3,
+  "exclude": [
+    "dust"
+  ],
+  "enchantability": 22,
+  "attuning": {
+    "temperature": 369,
+    "lock": 332,
+    "coercive": 0.215,
+    "loop_width": 0.6813,
+    "lag": 3,
+    "cold": true
+  },
+  "electrical": {
+    "insulation": "ehv",
+    "piezo_coupling": 0.425,
+    "rectifying": 0.5437
+  },
+  "corrosion_resistance": 0.2,
+  "toxicity": 3.5,
+  "accepts": {
+    "crystal": [
+      "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:vitium\"}]",
+      "thaumaturge:crystal_vitium"
+    ]
+  }
+}

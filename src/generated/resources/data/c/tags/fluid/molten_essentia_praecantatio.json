@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_praecantatio",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_praecantatio_flowing",
+      "required": false
+    }
+  ]
+}

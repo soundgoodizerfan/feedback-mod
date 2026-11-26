@@ -589,7 +589,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
     /** What the stock in the centre is made of, or empty with no stock or a part among it. */
     public Optional<Material.Located> stuff(Level level) {
         ItemStack s = centreStack();
-        return s.isEmpty() || s.has(FDataComponents.MADE_OF.get()) ? Optional.empty() : Material.find(ClientMaterials.on(level), s.getItem());
+        return s.isEmpty() || s.has(FDataComponents.MADE_OF.get()) ? Optional.empty() : Material.find(ClientMaterials.on(level), s);
     }
 
     /** The stock to shape, as the shaping code reads it: the centre's stack. */

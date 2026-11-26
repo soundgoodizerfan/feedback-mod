@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_ordo",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_ordo_flowing",
+      "required": false
+    }
+  ]
+}

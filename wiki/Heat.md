@@ -56,7 +56,7 @@ Some processes care how **fast** the temperature is changing as well as what it 
 
 ## Hot items stay hot, and cool down anywhere
 
-When you take something out of a hot vessel, it comes out **at that temperature** and starts cooling straight away, at a steady rate set by what it is made of: iron **1.5 Tu per tick** (30 Tu a second), steel 1.38, copper 1.54, gold 2.13, tin 3.19, lead 3.61. Dense, poorly conducting stuff cools differently from light, well-conducting stuff. Anything that is not a material cools at 1.5 Tu per tick. It cools in your hand, on the ground, in a chest, in a hopper, even in an unloaded chunk. Hover over it to see how hot it is.
+When you take something out of a hot vessel, it comes out **at the temperature it has reached** and starts cooling straight away, at a steady rate set by what it is made of: iron **1.5 Tu per tick** (30 Tu a second), steel 1.38, copper 1.54, gold 2.13, tin 3.19, lead 3.61. Dense, poorly conducting stuff cools differently from light, well-conducting stuff. Anything that is not a material cools at 1.5 Tu per tick. It cools in your hand, on the ground, in a chest, in a hopper, even in an unloaded chunk. Hover over it to see how hot it is.
 
 Because the cooling is steady, you can work out your time. Steel straight out of the crucible at about 1400 Tu has **about 11 seconds** before it drops under its 1100 Tu working limit, and 18 seconds before it's too cold to work at all (900 Tu). Hot pieces also hurt to hold: see [Hazards](Hazards.md).
 
@@ -75,6 +75,14 @@ A made part of glass, ceramic, brick, concrete or obsidian takes a flaw when you
 A hot [Phosphor Screen](Phosphor_Screen.md#overrun) envelope crazes and shatters when rain or water beside it cools it too fast.
 
 A brick, glass or ceramic [Crucible](Crucible.md#thermal-shock) wall takes the same shock from a molten metal poured into it.
+
+### Warming in a vessel
+
+An item laid in a furnace, [Crucible](Crucible.md) or [Arc Hearth](Arc_Furnace.md#the-arc-hearth) starts at its own temperature and moves toward the vessel's over several seconds. A cold piece in a hot vessel warms where you can watch it.
+
+With the vessel's screen open, each item in a working slot shows its own temperature as it changes. Hover over a warm item for the color word, or a figure with a [Thermometer](Instruments.md#thermometer). Hot metal is tinted on its icon, and its slot glows and throws sparks to match. The fuel slot is not a working slot.
+
+What a batch does, whether it cooks, melts, reacts or spoils, goes by the vessel's temperature.
 
 ### Merging heated stacks
 
@@ -99,6 +107,22 @@ Melting, smelting, steel, ceramics, tempering, boiling and condensing, quenching
 - **Hold**: how long it takes if you keep it exactly at the optimum. Further from the optimum, it takes longer.
 - **Max rate**: if listed, how fast the temperature may be changing while it works.
 - **Spoils**: above this temperature the batch is **ruined instantly** (for example, iron burns to *Burnt Iron*).
+- **Containers**: a row of icons along the bottom, one for each thing that can run the card. Click an icon to look it up; looking up the uses of a container or a mold (`U`) lists the cards that show it.
+
+Which icons a card shows follows from what it asks for:
+
+| Card | Containers shown |
+| --- | --- |
+| Heating a charge | The crucibles and furnaces able to reach its temperature. A card that needs no air shows sealed furnaces, and a puddling card the [Puddling Furnace](Puddling_Furnace.md). |
+| Chemical reaction | [Reactor](Reactor.md) |
+| Electrolysis | [Electrolyser](Electrolyser.md) |
+| Boiling and condensing | Crucibles and furnaces able to reach its temperature, and the [Condenser](Condenser.md); the [Boiler](Boiler.md) for water, the [Reboiler](Fractionating_Column.md#reboiler) for distillation shares |
+| Water quench | Water Bucket |
+| Oil quench | Crucibles and furnaces |
+| Dip | Crucibles and furnaces able to reach its temperature; a potion soak shows none |
+| Freezing in a mold | The matching mold and the [Casting Basin](Casting.md#casting-basin) |
+
+A card with a single input and no puddling can also show the [Kiln Zone](Furnaces.md#kiln-zone), for open-air work that makes an item and asks for no particular fire or atmosphere, or a [buried campfire](Campfire.md#buried-making-charcoal), for a cool airless card that makes an item and asks for no particular atmosphere. **Max rate** leaves every icon in place: a gently fired small vessel can hold a slow rate.
 
 Open a vessel's screen and look the recipe up in JEI within about a minute, and a card with a temperature requirement also lists that vessel's name with the temperature it **reaches**, and a *Your reading* line: the finest temperature instrument you carry and its step, or *by eye: words only* when you carry none.
 

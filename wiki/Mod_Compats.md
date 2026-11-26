@@ -97,9 +97,9 @@ Thaumaturge items that match a Feedback material are read as that material in ev
 - Clusters (iron, gold, copper, tin, silver, lead, cinnabar and quartz) are a cluster form of those metals and minerals.
 - Amber and cinnabar ores, blocks and raw items are amber and cinnabar.
 - Rare earth is rare earth residue.
-- Essentia is a quartz-like crystal that holds an aspect. Its crystal item and the seven world crystals (air, fire, water, earth, order, entropy and flux) are its forms.
-- Thaumium is iron with a little essentia, in three grades (see [Doped thaumium](#doped-thaumium)). Thaumium and void metal exist only with Thaumaturge installed. Their ingot, nugget, plate and block are Thaumaturge's own items, and they melt, cast and work like any other metal's forms.
-- Void metal is dense, very hard, brittle and dark (88% osmium, 8% ender pearl, 4% essentia). It remembers a shape: its transition is **80 Tu**, so a coil spring of it opens a [Thermal Valve](Valve.md#thermal-valve) at 80 Tu.
+- Each essentia crystal is a crystal material of its aspect, from Aer Essentia to Vitium Essentia (see [Essentia and thaumium](#essentia-and-thaumium)). The air, fire, water, earth, order, entropy and flux world crystals are also the essentia of their aspect.
+- Thaumium is iron with a little Praecantatio and Terra essentia. Thaumium and void metal exist only with Thaumaturge installed. Their ingot, nugget, plate and block are Thaumaturge's own items, and they melt, cast and work like any other metal's forms.
+- Void metal is dense, very hard, brittle and dark (88% osmium, 8% ender pearl, 2% Metallum essentia, 2% Vitium essentia). It remembers a shape: its transition is **80 Tu**, so a coil spring of it opens a [Thermal Valve](Valve.md#thermal-valve) at 80 Tu.
 - Thaumaturge's thaumium and void swords, pickaxes, axes, shovels, hoes, helmets, chestplates, leggings and boots are converted on the spot into the modular item of that kind, headed or plated in that metal, like vanilla tools (see [Old vanilla tools](Tools_and_Weapons.md#old-vanilla-tools)). Robes and shields are not converted. Other mods' recipes and JEI pages that ask for one of these items accept the converted item too.
 - Greatwood and silverwood logs are wood materials. Greatwood is a dense hardwood that burns long; silverwood is a lighter, pale wood that burns shorter.
 - Cinderpearl is a pyrophoric herb: it burns at a low temperature, short and hot, as fuel.
@@ -115,17 +115,119 @@ Feedback adds wand parts made of its own materials. They work in Thaumaturge's w
 
 A cap's vis cost is lower the better its metal conducts electricity, with silver as the reference. Its craft cost rises with how high the metal melts. A rod holds more vis the better its material insulates and the denser it is. See [Materials](Materials.md) for these properties.
 
-### Doped thaumium
+### Essentia and thaumium
 
-With Thaumaturge installed, molten essentia mixed into molten iron in a [Crucible](Crucible.md) makes thaumium, and the share of essentia picks the grade. Each grade is a window; the mix has to land inside one.
+With Thaumaturge installed, each of its 37 aspects is a separate crystal material named for the aspect, such as **Ignis Essentia**, with its own figures. Thaumaturge's essentia crystal of that aspect is its item. A compound aspect's figures sit between those of the two aspects that make it, with a few traits of its own.
 
-| Grade | Essentia share | Hardness | Toughness | Enchantability |
-| --- | --- | --- | --- | --- |
-| **Lean Thaumium** | 1 to 4% | 10 | 80 | 18 |
-| **Thaumium** | 5 to 10% | 14 | 60 | 22 |
-| **Rich Thaumium** | 11 to 20% | 22 | 12 | 24 |
+An essentia crystal melts in a [Crucible](Crucible.md) at its aspect's melting point, from 320 Tu (Gelum) to 1750 Tu (Terra), into one ingot's volume of molten essentia.
 
-The rest of each mix is iron. More essentia makes the metal harder and more brittle: Rich Thaumium is the hardest and breaks easily, Lean Thaumium the toughest. All three are magnetic. Thaumium uses Thaumaturge's own forms; Lean and Rich Thaumium make the usual tinted form items. JEI's *Mixing* card lists the windows.
+Every essentia crystal solders onto a [circuit board](Basic_Electronic_Circuit.md) as a switching part, and seats in a [Cat's Whisker Detector](Cats_Whisker_Detector.md) or an [Optical Terminal](Optical_Terminal.md). A higher rectifying figure makes a better crystal.
+
+An essentia crystal is also **gem stock**. A [part slot](What_a_Part_Slot_Takes.md) that takes the gem shape takes it, if the essentia has the properties the slot asks for. Shape it at a part bench such as the [Stonecutter](Stonecutter.md).
+
+One crystal makes a **tool tip**: shape it into a Tip, then put it on the tool on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). The tool takes the tip's hardness, so a tip harder than the tool's body raises what it digs (see [Tips](Tools_and_Weapons.md#tips)). The hardest tips are **Instrumentum** (180), **Vitreus** (170), **Aversio** (160) and **Terra** (150). Vitreus and Aversio are very brittle.
+
+Each essentia crystal also grinds on a [Grinding Wheel](Grinding_Wheel.md) into that essentia's **crystal plate**, as a gem does. The plate:
+
+- makes a [Resonator](Resonator.md) crystal;
+- mounts on a circuit board as a clock for Aer, Alienis, Alkimia, Aqua, Auram, Bestia, Exanimis, Fabrico, Instrumentum, Machina, Metallum, Motus, Ordo, Permutatio, Potentia, Praecantatio, Sensus, Vinculum and Volatus, and as a switching part for the other essentias;
+- makes a [Mass Probe](Instruments.md#mass-probe) from any of the essentias that mount as a clock.
+
+The six primal essentias:
+
+| Essentia | Melts at (Tu) | Density | Hardness | Toughness | Enchantability | Rectifying | Stands out for |
+|---|---|---|---|---|---|---|---|
+| Aer | 900 | 0.9 | 50 | 0.6 | 24 | 0.1 | Very light, faint glow |
+| Terra | 1750 | 5.2 | 150 | 4 | 14 | 0.2 | Dense, hard, very thick melt |
+| Ignis | 650 | 2.4 | 80 | 0.8 | 20 | 0.3 | Glows brightly |
+| Aqua | 550 | 1.4 | 40 | 1.2 | 18 | 0.1 | Takes much heat to warm and melt, very runny |
+| Ordo | 1500 | 3.1 | 130 | 2 | 30 | 0.05 | Highest enchantability of the six |
+| Perditio | 1100 | 2.0 | 35 | 0.4 | 8 | 0.95 | Brittle, toxic, strong rectifier |
+
+#### Thaumium and aspect alloys
+
+Molten essentia mixed into molten iron in a Crucible makes an iron alloy. The mix has to land inside the window, and JEI's *Mixing* card lists each one.
+
+| Alloy | Iron | Essentia |
+|---|---|---|
+| **Thaumium** | 90 to 95% | Praecantatio and Terra, 2.5 to 5% each |
+| Each [aspect alloy](#aspect-alloy-names) | 90 to 95% | its aspect, 5 to 10% |
+
+Each alloy has its own figures. Thaumium uses Thaumaturge's own items; the aspect alloys make the usual tinted form items. All are magnetic except Xenium, Lysium, Allagium and Aesthium.
+
+#### Thaumaturge's crucible
+
+Each aspect alloy ingot can also be made in Thaumaturge's own crucible: drop an iron ingot into a crucible holding **10** of the alloy's aspect, and one ingot of the alloy comes out. It unlocks at the same Metallurgy research stage as thaumium and has no Thaumonomicon page of its own. A crucible holding enough for more than one recipe yields only one of them, so dissolve only the aspect you want. In that crucible, thaumium is made by Thaumaturge's own recipe.
+
+#### Aspect alloy names
+
+Each aspect has its own alloy. The six primals come first, then the compounds in alphabetical order:
+
+| Aspect | Alloy |
+|---|---|
+| Aer | Aerialite |
+| Terra | Chthonium |
+| Ignis | Cindersteel |
+| Aqua | Thalassium |
+| Ordo | Eunomium |
+| Perditio | Lysium |
+| Alienis | Xenium |
+| Alkimia | Azoth |
+| Auram | Halcyon |
+| Aversio | Fangsteel |
+| Bestia | Ferinium |
+| Cognitio | Noetium |
+| Desiderium | Tantalus' Metal |
+| Exanimis | Wiedergang |
+| Fabrico | Daedalium |
+| Gelum | Rimeiron |
+| Herba | Briarsteel |
+| Humanus | Anthropium |
+| Instrumentum | Organon |
+| Lux | Dawnsteel |
+| Machina | Rotium |
+| Metallum | Adamantium |
+| Mortuus | Necrium |
+| Motus | Kinesis |
+| Permutatio | Allagium |
+| Potentia | Stormsteel |
+| Praecantatio | Goetium |
+| Praemunio | Aegis |
+| Sensus | Aesthium |
+| Spiritus | Eidolon |
+| Tenebrae | Skotium |
+| Vacuos | Kenium |
+| Victus | Quickblood |
+| Vinculum | Desmos |
+| Vitium | Miasma |
+| Vitreus | Hyalium |
+| Volatus | Pteron |
+
+#### Alloy figures
+
+Thaumium and some of the aspect alloys, the primals first:
+
+| Alloy | Hardness | Toughness | Enchantability | Stands out for |
+|---|---|---|---|---|
+| Thaumium | 14 | 60 | 22 | The alloy of Thaumaturge's own items |
+| Aerialite | 7 | 22 | 24 | Lighter than most |
+| Chthonium | 18 | 83 | 14 | Highest melting point and service temperature |
+| Cindersteel | 10 | 27 | 20 | Glows |
+| Thalassium | 5 | 36 | 18 | Soft, low friction |
+| Eunomium | 16 | 51 | 30 | High enchantability |
+| Lysium | 5 | 17 | 8 | Soft, brittle, corrodes easily |
+| Organon | 21 | 93 | 24 | Hardest |
+| Adamantium | 17 | 135 | 22 | Best electrical conductor, very tough |
+| Ferinium | 12 | 140 | 26 | Joint toughest |
+| Aegis | 14 | 140 | 14 | Joint toughest, high yield strength |
+| Rotium | 16 | 68 | 25 | Highest yield strength, low friction |
+| Goetium | 10 | 32 | 36 | Highest enchantability |
+| Kinesis | 11 | 38 | 27 | Lowest friction |
+| Desmos | 8 | 97 | 18 | Highest friction |
+| Dawnsteel | 8 | 25 | 22 | Brightest glow |
+| Rimeiron | 8 | 22 | 14 | Lowest melting point and service temperature |
+| Necrium | 8 | 79 | 6 | Lowest enchantability |
+| Miasma | 7 | 25 | 22 | Most toxic, corrodes fastest |
 
 ### Foods
 

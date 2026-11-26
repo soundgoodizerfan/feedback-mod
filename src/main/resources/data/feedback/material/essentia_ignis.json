@@ -1,0 +1,64 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumaturge"
+    }
+  ],
+  "color": "#f06a1c",
+  "kind": "crystal",
+  "hardness": 80,
+  "density": 2.4,
+  "thermal": {
+    "expansion": 8e-06,
+    "melting_point": 650,
+    "cooling_rate": 2.62,
+    "conductivity": 0.0035,
+    "service_temperature": 600,
+    "specific_heat": 0.5,
+    "latent_heat_fusion": 90.0,
+    "boiling_point": 2900,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 650
+  },
+  "mechanical": {
+    "toughness": 0.8,
+    "friction": 0.5,
+    "abrasiveness": 0.5,
+    "yield_strength": 4.0
+  },
+  "molten": {
+    "viscosity": 2000.0,
+    "density": 2.04,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.15
+  },
+  "luminance": 12,
+  "exclude": [
+    "dust"
+  ],
+  "enchantability": 20,
+  "attuning": {
+    "temperature": 600,
+    "lock": 540,
+    "coercive": 0.2,
+    "loop_width": 0.5,
+    "lag": 2,
+    "cold": true
+  },
+  "electrical": {
+    "insulation": "ehv",
+    "piezo_coupling": 0.4,
+    "rectifying": 0.3
+  },
+  "corrosion_resistance": 0.9,
+  "toxicity": 0.0,
+  "accepts": {
+    "crystal": [
+      "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:ignis\"}]",
+      "thaumaturge:crystal_ignis"
+    ]
+  }
+}

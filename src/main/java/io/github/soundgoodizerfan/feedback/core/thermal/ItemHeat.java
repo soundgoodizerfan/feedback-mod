@@ -74,7 +74,7 @@ public final class ItemHeat {
     public static TuRate coolingRate(ItemStack stack) {
         if (stack.getItem() instanceof Cooling c)
             return c.coolingRate(stack);
-        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(stack.getItem())
+        return io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(stack)
                 .map(l -> l.material().looseCooling()).orElse(ThermalTuning.ITEM_COOLING_TU_PER_TICK);
     }
 
@@ -97,6 +97,10 @@ public final class ItemHeat {
 
     /** What this stack is at right now, having cooled since it was stamped. */
     public static Tu get(ItemStack stack, Level level) {
+        // A stack still in its heater has no stamp yet; its holder's screen says what it is at.
+        Tu live = LiveHeat.of(stack, level);
+        if (live != null)
+            return live;
         // The component is a Float, and reading it boxes. That is the wire format's doing rather
         // than this package's, and it is a far bigger allocation than any unit wrapper.
         Float stamped = stack.get(FDataComponents.TEMPERATURE.get());
@@ -143,9 +147,13 @@ public final class ItemHeat {
         set(stack, new Tu(Math.max(AmbientTable.at(level).value(), get(stack, level).value() - amount)), level);
     }
 
+    /** Whether this stack has a temperature of its own to read: stamped, or (on the client) shown by the heater holding it. */
+    public static boolean tracked(ItemStack stack, Level level) {
+        return stack.has(FDataComponents.TEMPERATURE.get()) || LiveHeat.of(stack, level) != null;
+    }
+
     public static boolean isHot(ItemStack stack, Level level) {
-        return stack.has(FDataComponents.TEMPERATURE.get())
-                && get(stack, level).value() > ThermalTuning.WARM_TU.value();
+        return tracked(stack, level) && get(stack, level).value() > ThermalTuning.WARM_TU.value();
     }
 
     /**

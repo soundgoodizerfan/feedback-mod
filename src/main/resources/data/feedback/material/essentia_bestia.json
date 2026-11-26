@@ -1,0 +1,63 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumaturge"
+    }
+  ],
+  "color": "#916014",
+  "kind": "crystal",
+  "hardness": 92,
+  "density": 1.2,
+  "thermal": {
+    "expansion": 8e-06,
+    "melting_point": 1175,
+    "cooling_rate": 2.62,
+    "conductivity": 0.001475,
+    "service_temperature": 1000,
+    "specific_heat": 1.113,
+    "latent_heat_fusion": 205.0,
+    "boiling_point": 2900,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1175
+  },
+  "mechanical": {
+    "toughness": 9.0,
+    "friction": 0.75,
+    "abrasiveness": 0.425,
+    "yield_strength": 7.25
+  },
+  "molten": {
+    "viscosity": 85020.0,
+    "density": 1.02,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.1925
+  },
+  "luminance": 2,
+  "exclude": [
+    "dust"
+  ],
+  "enchantability": 26,
+  "attuning": {
+    "temperature": 388,
+    "lock": 349,
+    "coercive": 0.4375,
+    "loop_width": 0.4375,
+    "lag": 5,
+    "cold": true
+  },
+  "electrical": {
+    "insulation": "ehv",
+    "piezo_coupling": 0.675,
+    "rectifying": 0.1125
+  },
+  "corrosion_resistance": 0.9,
+  "toxicity": 0.0,
+  "accepts": {
+    "crystal": [
+      "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:bestia\"}]"
+    ]
+  }
+}

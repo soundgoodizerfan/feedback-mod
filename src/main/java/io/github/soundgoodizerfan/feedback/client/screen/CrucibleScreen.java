@@ -51,7 +51,8 @@ public class CrucibleScreen extends SkinnedScreen<CrucibleMenu> {
         int tu = menu.temperatureTu();
         for (int slot = 0; slot < menu.size(); slot++)
             if (FormTint.glowing(menu.getSlot(slot).getItem()))
-                HeatGlow.embers(specks, CrucibleMenu.slotX(slot, menu.size()), CrucibleMenu.slotY(slot, menu.size()), tu);
+                HeatGlow.embers(specks, CrucibleMenu.slotX(slot, menu.size()), CrucibleMenu.slotY(slot, menu.size()),
+                        menu.getSlot(slot).getItem());
         if (menu.tankMb() > 0 && tu >= 480) {
             int h = Math.round(CrucibleMenu.GAUGE_H * (float) (menu.tankMb() / (double) menu.tankCapacity()));
             HeatGlow.bubble(specks, CrucibleMenu.TANK_X, CrucibleMenu.GAUGE_Y + CrucibleMenu.GAUGE_H - h, CrucibleMenu.TANK_W, h,
@@ -72,6 +73,7 @@ public class CrucibleScreen extends SkinnedScreen<CrucibleMenu> {
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        menu.showHeat(minecraft.level);
         skin.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
         float tu = menu.temperatureTu();
         // The chamber's own light, drawn first so it bleeds past the gauges' edge.
@@ -81,7 +83,7 @@ public class CrucibleScreen extends SkinnedScreen<CrucibleMenu> {
             int sx = leftPos + CrucibleMenu.slotX(slot, menu.size()), sy = topPos + CrucibleMenu.slotY(slot, menu.size());
             skin.slot(graphics, sx, sy);
             if (FormTint.glowing(menu.getSlot(slot).getItem()))
-                HeatGlow.slot(graphics, sx, sy, tu);
+                HeatGlow.slot(graphics, sx, sy, menu.getSlot(slot).getItem());
         }
 
         int band = band();

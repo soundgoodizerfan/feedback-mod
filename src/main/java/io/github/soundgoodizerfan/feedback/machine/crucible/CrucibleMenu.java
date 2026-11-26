@@ -5,6 +5,8 @@ package io.github.soundgoodizerfan.feedback.machine.crucible;
 import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.core.thermal.LiveHeat;
+import net.minecraft.world.level.Level;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,19 +34,22 @@ public class CrucibleMenu extends AbstractContainerMenu {
 
     private final Container container;
     private final ContainerData data;
+    /** Each charge slot's temperature (see {@link LiveHeat}). */
+    private final ContainerData slotHeat;
 
     private final int size;
     private final int tankCapacity;
 
     /** The client's menu for a built crucible: {@code slots} charge slots and a tank of {@code tankMb}, as the server sent them. */
     public static CrucibleMenu sized(int id, Inventory inventory, int slots, int tankMb) {
-        return new CrucibleMenu(FMenus.CRUCIBLE.get(), id, inventory, new SimpleContainer(slots), new SimpleContainerData(3), tankMb);
+        return new CrucibleMenu(FMenus.CRUCIBLE.get(), id, inventory, new SimpleContainer(slots), new SimpleContainerData(3),
+                new SimpleContainerData(slots), tankMb);
     }
 
     /** The arc hearth's menu: the same screen with more slots and a deeper tank. */
     public static CrucibleMenu arcHearth(int id, Inventory inventory) {
         return new CrucibleMenu(FMenus.ARC_HEARTH.get(), id, inventory, new SimpleContainer(MachineTuning.ARC_CHARGE_SLOTS),
-                new SimpleContainerData(3), VesselTuning.ARC_TANK_MB);
+                new SimpleContainerData(3), new SimpleContainerData(MachineTuning.ARC_CHARGE_SLOTS), VesselTuning.ARC_TANK_MB);
     }
 
     public CrucibleMenu(MenuType<?> type, int id, Inventory inventory, CrucibleBlockEntity crucible) {
@@ -65,10 +70,11 @@ public class CrucibleMenu extends AbstractContainerMenu {
             public int getCount() {
                 return 3;
             }
-        }, crucible.getTank().getCapacity());
+        }, LiveHeat.readings(crucible, crucible.getContents().size()), crucible.getTank().getCapacity());
     }
 
-    private CrucibleMenu(MenuType<?> type, int id, Inventory inventory, Container container, ContainerData data, int tankCapacity) {
+    private CrucibleMenu(MenuType<?> type, int id, Inventory inventory, Container container, ContainerData data, ContainerData slotHeat,
+            int tankCapacity) {
         super(type, id);
         this.container = container;
         this.data = data;
@@ -81,7 +87,14 @@ public class CrucibleMenu extends AbstractContainerMenu {
                 addSlot(new Slot(inventory, column + row * 9 + 9, 8 + column * 18, INV_Y + row * 18));
         for (int column = 0; column < 9; column++)
             addSlot(new Slot(inventory, column, 8 + column * 18, INV_Y + 58));
+        this.slotHeat = slotHeat;
         addDataSlots(data);
+        addDataSlots(slotHeat);
+    }
+
+    /** Client: note what each charge is at against the stacks about to be drawn. */
+    public void showHeat(Level level) {
+        LiveHeat.show(slots, slotHeat, level);
     }
 
     /** Slots sit in one row when there are few, in rows of three when there are many. */

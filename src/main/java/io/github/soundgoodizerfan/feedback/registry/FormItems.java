@@ -65,7 +65,7 @@ public final class FormItems {
     private FormItems() {}
 
     /**
-     * The load conditions of the conditional material that a registry path ({@code thaumium_lean_pipe}) is a form of, for datagen to
+     * The load conditions of the conditional material that a registry path ({@code thaumium_aer_pipe}) is a form of, for datagen to
      * stamp on what it writes; null for an unconditional one. Recorded when the materials are read, before the filter drops them.
      */
     public static com.google.gson.JsonArray conditionsOf(String registryPath) {

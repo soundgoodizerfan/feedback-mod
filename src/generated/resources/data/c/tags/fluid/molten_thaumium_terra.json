@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_terra",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_terra_flowing",
+      "required": false
+    }
+  ]
+}

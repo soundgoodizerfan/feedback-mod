@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_praecantatio",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_praecantatio_flowing",
+      "required": false
+    }
+  ]
+}

@@ -64,7 +64,7 @@ public class WhiskerBlockEntity extends SparkDetectorBlockEntity implements io.g
 
     /** The material's rectifying figure for {@code stack}, or 0 if it is not a rectifying crystal. */
     public static float rectifying(ItemStack stack) {
-        return Material.find(MaterialTable.get().materials(), stack.getItem())
+        return Material.find(MaterialTable.get().materials(), stack)
                 .map(f -> f.material().electrical().rectifying().orElse(0f)).orElse(0f);
     }
 

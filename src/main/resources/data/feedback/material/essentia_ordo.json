@@ -1,0 +1,64 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumaturge"
+    }
+  ],
+  "color": "#dedcea",
+  "kind": "crystal",
+  "hardness": 130,
+  "density": 3.1,
+  "thermal": {
+    "expansion": 8e-06,
+    "melting_point": 1500,
+    "cooling_rate": 2.62,
+    "conductivity": 0.0028,
+    "service_temperature": 1000,
+    "specific_heat": 0.7,
+    "latent_heat_fusion": 200.0,
+    "boiling_point": 2900,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 1500
+  },
+  "mechanical": {
+    "toughness": 2.0,
+    "friction": 0.3,
+    "abrasiveness": 0.45,
+    "yield_strength": 9.0
+  },
+  "molten": {
+    "viscosity": 40000.0,
+    "density": 2.63,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.4
+  },
+  "luminance": 4,
+  "exclude": [
+    "dust"
+  ],
+  "enchantability": 30,
+  "attuning": {
+    "temperature": 450,
+    "lock": 405,
+    "coercive": 0.8,
+    "loop_width": 0.15,
+    "lag": 8,
+    "cold": true
+  },
+  "electrical": {
+    "insulation": "ehv",
+    "piezo_coupling": 1.0,
+    "rectifying": 0.05
+  },
+  "corrosion_resistance": 1.0,
+  "toxicity": 0.0,
+  "accepts": {
+    "crystal": [
+      "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:ordo\"}]",
+      "thaumaturge:crystal_ordo"
+    ]
+  }
+}

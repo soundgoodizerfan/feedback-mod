@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_essentia_vinculum",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_essentia_vinculum_flowing",
+      "required": false
+    }
+  ]
+}

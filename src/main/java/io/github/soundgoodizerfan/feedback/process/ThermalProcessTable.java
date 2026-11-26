@@ -202,10 +202,11 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
             if (melt.isEmpty() || fluid.isEmpty())
                 return;
             // Scrap and swarf are the metal again, in the volume their form type names.
-            for (String form : List.of("ingot", "scrap", "swarf", "dust")) {
+            // A crystal is only ever another mod's item (an essentia crystal), named under accepts.
+            for (String form : List.of("ingot", "scrap", "swarf", "dust", "crystal")) {
                 var item = material.items(id).get(form);
-                if (item == null
-                        || authored.stream().anyMatch(p -> p.inputs().size() == 1 && p.inputs().get(0).test(new ItemStack(item))))
+                if (item == null && !(form.equals("crystal") && material.accepts().containsKey(form))
+                        || item != null && authored.stream().anyMatch(p -> p.inputs().size() == 1 && p.inputs().get(0).test(new ItemStack(item))))
                     continue;
                 // By material and form, not by our item: another mod's ingot tagged c:ingots/<material> melts as ours does.
                 out.add(new ThermalProcess(List.of(new MaterialIngredient(Optional.of(form), Optional.empty(), Optional.empty(),

@@ -24,7 +24,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -57,7 +56,7 @@ public class FuelCategory implements IRecipeCategory<FuelCategory.Card> {
     public static List<Card> cards(Map<ResourceLocation, Material> materials) {
         List<Card> out = new ArrayList<>();
         materials.forEach((id, m) -> {
-            if (m.combustion().flatMap(c -> c.flameTemperature()).isPresent() && (!m.items(id).isEmpty() || !m.foreignItems(id).isEmpty() || liquid(id) != null))
+            if (m.combustion().flatMap(c -> c.flameTemperature()).isPresent() && (!m.shownStacks(id).isEmpty() || liquid(id) != null))
                 out.add(new Card(id, m));
         });
         return out;
@@ -96,12 +95,11 @@ public class FuelCategory implements IRecipeCategory<FuelCategory.Card> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Card card, IFocusGroup focuses) {
-        List<Item> items = new ArrayList<>(card.material().items(card.id()).values());
         // Another mod's tallow burns as tallow: its items fuel the card too.
-        items.addAll(card.material().foreignItems(card.id()));
+        List<ItemStack> items = card.material().shownStacks(card.id());
         var slot = builder.addInputSlot(WIDTH - 19, 1).setStandardSlotBackground();
         if (!items.isEmpty())
-            slot.addItemStacks(items.stream().map(ItemStack::new).toList());
+            slot.addItemStacks(items);
         var fluid = liquid(card.id());
         if (fluid != null)
             slot.addFluidStack(fluid, FTuning.BUCKET_MB);

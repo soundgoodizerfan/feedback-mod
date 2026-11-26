@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "feedback:molten_thaumium_desiderium",
+      "required": false
+    },
+    {
+      "id": "feedback:molten_thaumium_desiderium_flowing",
+      "required": false
+    }
+  ]
+}
