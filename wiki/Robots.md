@@ -123,6 +123,10 @@ Switches (a *Switch* card turns them on and off):
 | Descend | Sinks while on |
 | Remember this place | Stores where the robot is in the chosen place, as it comes on |
 | Choose next place | Steps the chosen place to the next one, as it comes on |
+| Claim chosen slot | Claims the chosen board slot and keeps the claim while on |
+| Mark my slot done | Marks the robot's claimed slot done, as it comes on |
+| Post a haul in chosen slot | Posts the chosen slot free, with the figure set to the cargo stacks carried, as it comes on |
+| Choose next slot | Steps the chosen board slot to the next one, as it comes on |
 
 Readings (an *Input* card reads them):
 
@@ -146,6 +150,17 @@ Readings (an *Input* card reads them):
 | Blocks to the chosen place | Distance to the chosen place |
 | At the chosen place | Whether the robot is within a block or so of it |
 | Places remembered | How many places its brain can hold |
+| Chosen board slot | Which [Job Board](Job_Board.md) slot is chosen |
+| Chosen slot state | 0 free, 1 mine, 2 claimed by another, 3 done |
+| Chosen slot figure | The figure held in the chosen slot |
+| A job board hears me | Whether a board hears this robot |
+| Dock ahead is free | Whether a dock or reel in front has live current and no robot on it |
+
+### Fleets
+
+A robot with a radio part shares work through a [Job Board](Job_Board.md). A program can read the chosen slot (*Chosen board slot*, *Chosen slot state*, *Chosen slot figure*), claim it with *Claim chosen slot*, mark it done, post a haul, or step to the next slot. A claim lasts only while *Claim* stays on. Without a radio part, or when no board hears it, every board channel reads 0. The chosen slot is kept when the robot is picked up.
+
+*Dock ahead is free* tells a robot whether the dock or reel in front is powered and unoccupied, so a fleet queues for a charge instead of piling onto one pad.
 
 ### Using the held item
 
@@ -171,6 +186,8 @@ A [Robot Dock](#robot-dock) charges the robot standing on it, and a [Tether Reel
 ### Server limits
 
 The server holds a limit on robots per chunk, robots per dimension and chunks kept loaded by robots, set in `feedback-server.toml`.
+
+The same file sets a budget of program steps per tick (120 by default). When more robots are due a step than the budget allows, the extra ones wait and step in multiples, shown as *slowed x2* up to *x6* in Jade and in the empty-hand readout. A robot goes back to full speed when it gets its turn. Movement and work are not slowed.
 
 ## Robot Beacon
 
@@ -209,7 +226,7 @@ Join the dock to an electrical line and stand a robot on it. The robot's [Batter
 
 ### Reading it
 
-A robot reads *Dock ahead* when a dock is the block in front, so a program can drive onto it to recharge. A [Tether Reel](Tether_Reel.md) charges a robot that stays away from the pad.
+A robot reads *Dock ahead* when a dock is the block in front, so a program can drive onto it to recharge, and *Dock ahead is free* when that dock has live current and no robot on it. Jade shows a dock or reel as free or occupied. A [Tether Reel](Tether_Reel.md) charges a robot that stays away from the pad.
 
 ## Robot Arm
 
@@ -245,4 +262,4 @@ It acts only while its line feeds it.
 
 ## Tips and automation
 
-Read *Breakable ahead* and *Battery charge* to decide when to dig and when to stop before the battery runs flat. Read *Dock ahead* to know when a charging point is in front, and *Beacon near* to know when the position has been corrected.
+Read *Breakable ahead* and *Battery charge* to decide when to dig and when to stop before the battery runs flat. Read *Dock ahead* to know when a charging point is in front, *Dock ahead is free* to know it is unoccupied, and *Beacon near* to know when the position has been corrected.
