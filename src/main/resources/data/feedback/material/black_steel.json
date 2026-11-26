@@ -1,0 +1,88 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ],
+  "fastener": 3,
+  "color": "#33363d",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 22,
+  "density": 7.9,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 1450,
+    "boiling_point": 2860,
+    "cooling_rate": 1.4,
+    "conductivity": 0.0115,
+    "oxidation_temperature": 600,
+    "anneal_temperature": 720,
+    "service_temperature": 600,
+    "specific_heat": 0.49,
+    "latent_heat_fusion": 247,
+    "latent_heat_vaporisation": 6090
+  },
+  "mechanical": {
+    "toughness": 80,
+    "ductility": 5,
+    "work_hardening": 1,
+    "yield_strength": 18,
+    "friction": 0.6,
+    "abrasiveness": 0.36
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 7.11,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 770,
+    "reflectivity": 0.2
+  },
+  "electrical": {
+    "conductivity": 0.09,
+    "drop": 0.556,
+    "electrode_potential": -0.4
+  },
+  "ampacity": 0.35,
+  "corrosion_resistance": 0.7,
+  "forms": {
+    "ingot": "cataclysm:black_steel_ingot",
+    "nugget": "cataclysm:black_steel_nugget",
+    "block": "cataclysm:black_steel_block"
+  },
+  "enchantability": 10,
+  "attuning": {
+    "temperature": 720,
+    "lock": 518,
+    "coercive": 0.35,
+    "loop_width": 0.2,
+    "lag": 9
+  },
+  "toxicity": 0,
+  "accepts": {
+    "sword": [
+      "cataclysm:black_steel_sword"
+    ],
+    "pickaxe": [
+      "cataclysm:black_steel_pickaxe"
+    ],
+    "axe": [
+      "cataclysm:black_steel_axe"
+    ],
+    "shovel": [
+      "cataclysm:black_steel_shovel"
+    ],
+    "hoe": [
+      "cataclysm:black_steel_hoe"
+    ],
+    "tool": [
+      "cataclysm:black_steel_targe"
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "deeperdarker"
+    }
+  ],
+  "exclude": [],
+  "kind": "crystal",
+  "traits": [
+    "gemstone"
+  ],
+  "color": "#6ee7f0",
+  "hardness": 70,
+  "density": 2.8,
+  "xp_store": {
+    "top_level": 40,
+    "capacitance": 600,
+    "conductance": 8,
+    "leak": 0
+  },
+  "thermal": {
+    "expansion": 8e-06,
+    "melting_point": 1500,
+    "boiling_point": 2800,
+    "cooling_rate": 2.0,
+    "conductivity": 0.00075,
+    "oxidation_temperature": 1500,
+    "service_temperature": 900,
+    "specific_heat": 0.8,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 5000
+  },
+  "mechanical": {
+    "toughness": 1.5,
+    "friction": 0.4,
+    "abrasiveness": 0.55,
+    "yield_strength": 3
+  },
+  "molten": {
+    "viscosity": 100,
+    "density": 2.5,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.4
+  },
+  "electrical": {
+    "insulation": "hv"
+  },
+  "corrosion_resistance": 1,
+  "enchantability": 18,
+  "toxicity": 0.2,
+  "forms": {
+    "gem": "deeperdarker:soul_crystal",
+    "dust": "deeperdarker:soul_dust"
+  }
+}

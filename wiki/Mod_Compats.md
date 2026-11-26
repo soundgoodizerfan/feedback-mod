@@ -23,6 +23,10 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [Xaero's Minimap](#xaeros-minimap) | Optional | Survey Meter readings pin to the map |
 | [Applied Energistics 2](#applied-energistics-2) | Optional | Certus Quartz and Fluix crystals and dusts count as materials |
 | [Artifacts](#artifacts) | Optional | Engineering Table recipes for its items |
+| [Cataclysm](#cataclysm) | Optional | Black Steel, Ancient Metal, Witherite, Ignitium and Cursium count as materials |
+| [Born in Chaos](#born-in-chaos) | Optional | Dark Metal counts as a material |
+| [Thaumic Bases](#thaumic-bases) | Optional | Thauminite counts as a material |
+| [Deeper and Darker](#deeper-and-darker) | Optional | Resonarium and Soul Crystal count as materials |
 | [Other mods](#other-mods) | Optional | Fluid tags and shared biome and stone tags |
 
 ## Sable, Dimensional Sable and Sable Scaling
@@ -383,6 +387,69 @@ Every recipe needs one [treatise](Treatise.md) volume held:
 | Experience III | Everlasting Beef, Warp Drive |
 
 Night Vision Goggles, the Universal Attractor, the Helium Flamingo and the Warp Drive each also take a [circuit](Basic_Electronic_Circuit.md). The Eternal Steak is built from an Everlasting Beef.
+
+## Materials from other mods
+
+[Cataclysm](#cataclysm), [Born in Chaos](#born-in-chaos), [Thaumic Bases](#thaumic-bases) and [Deeper and Darker](#deeper-and-darker) each bring materials that exist only with that mod installed.
+
+- The mod's own ingots, nuggets, blocks, plates, gems and dusts of a material, where it has them, count as that material in every process. Using one opens the material's stats card in JEI, whose item box lists it.
+- Feedback adds other forms of the material. Each metal gets the [forms](Materials.md#forms) the mod lacks, such as wire, rods and machined parts.
+- Black Steel, Thauminite and Resonarium gear from these mods (swords, pickaxes, axes, shovels, hoes, helmets, chestplates, leggings and boots) is converted on the spot into the modular item of that kind in that material, like vanilla tools (see [Old vanilla tools](Tools_and_Weapons.md#old-vanilla-tools)). Other mods' recipes that ask for one of these items accept the converted item.
+- A [perk](Material_Perks.md) listed for a material comes with any weapon part made of it.
+- **Quality** is the metal's [fastener quality](Fasteners.md#quality).
+
+## Cataclysm
+
+**Optional.** With Cataclysm installed, five metals exist:
+
+| Metal | Hardness | Toughness | Yield strength | Density | Melts at (Tu) | Enchantability | Quality | Perk |
+|---|---|---|---|---|---|---|---|---|
+| **Black Steel** | 22 | 80 | 18 | 7.9 | 1450 | 10 | 3 | none |
+| **Ancient Metal** | 18 | 90 | 12 | 8.6 | 1100 | 20 | 3 | none |
+| **Cursium** | 70 | 30 | 35 | 3.0 | 2000 | 28 | 4 | Featherlight, Chill |
+| **Witherite** | 90 | 40 | 40 | 8.0 | 2400 | 12 | 4 | Radiant |
+| **Ignitium** | 110 | 35 | 60 | 6.5 | 3000 | 15 | 5 | Fire aspect |
+
+- Black Steel is **magnetic**.
+- Ancient Metal, Cursium and Ignitium resist corrosion completely.
+- Witherite is the best electrical conductor of the five. Its Radiant perk comes without [radioactivity](Radiation.md).
+- Ignitium's Fire aspect burns a bare hand holding an Ignitium part, with a flame of **1400 Tu** ([why](Material_Perks.md#why-fire-aspect-burns-you)).
+- The Black Steel sword and tools convert to modular items. The Black Steel Targe counts as Black Steel and stays a targe.
+- Cataclysm's Cursium and Ignitium gear, the Ignitium elytra chestplate among it, stays Cataclysm's own items with their own abilities.
+
+## Born in Chaos
+
+**Optional.** With Born in Chaos installed, one metal exists:
+
+| Metal | Hardness | Toughness | Yield strength | Density | Melts at (Tu) | Enchantability | Quality | Perk |
+|---|---|---|---|---|---|---|---|---|
+| **Dark Metal** | 40 | 25 | 22 | 9.0 | 1800 | 14 | 3 | Smite |
+
+The Dark Metal armor and the Sharpened Dark Metal Sword stay Born in Chaos's own items with their own abilities.
+
+## Thaumic Bases
+
+**Optional.** With Thaumic Bases installed, one metal exists:
+
+| Metal | Hardness | Toughness | Yield strength | Density | Melts at (Tu) | Enchantability | Quality | Perk |
+|---|---|---|---|---|---|---|---|---|
+| **Thauminite** | 20 | 55 | 13 | 6.8 | 1550 | 26 | 3 | none |
+
+Thauminite is **magnetic**. It is [thaumium](#thaumium-and-aspect-alloys) with a little Praecantatio and Terra essentia. Its tools and armor convert to modular items; its shears count as Thauminite and stay shears.
+
+## Deeper and Darker
+
+**Optional.** With Deeper and Darker installed, two materials exist:
+
+| Material | What it is | Hardness | Toughness | Density | Melts at (Tu) | Enchantability | Perk |
+|---|---|---|---|---|---|---|---|
+| **Resonarium** | A piezo composite | 25 | 20 | 3.5 | 1300 | 16 | Ring |
+| **Soul Crystal** | A brittle gem that holds experience | 70 | 1.5 | 2.8 | 1500 | 18 | none |
+
+Both insulate to **HV**.
+
+- The Resonarium Plate is Resonarium's plate, and Feedback adds its ingot, rod and block. It has a piezo coupling of **1.4**. Resonarium tools and armor convert to modular items.
+- The Soul Crystal and Soul Dust items are Soul Crystal's gem and dust, and Feedback adds its crystal plate. It is an [Experience](Experience.md) material: an XP Container vial of it has a top level of **40**, higher than echo shard's, and holds more points. Three of either item in a row make three XP Wire, which moves experience faster than echo shard wire and leaks none.
 
 ## Energy Fitting
 

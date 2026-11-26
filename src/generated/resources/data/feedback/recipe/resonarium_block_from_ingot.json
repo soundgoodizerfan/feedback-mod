@@ -1,0 +1,43 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "deeperdarker"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:resonarium_ingot"
+    },
+    {
+      "item": "feedback:resonarium_ingot"
+    },
+    {
+      "item": "feedback:resonarium_ingot"
+    },
+    {
+      "item": "feedback:resonarium_ingot"
+    },
+    {
+      "item": "feedback:resonarium_ingot"
+    },
+    {
+      "item": "feedback:resonarium_ingot"
+    },
+    {
+      "item": "feedback:resonarium_ingot"
+    },
+    {
+      "item": "feedback:resonarium_ingot"
+    },
+    {
+      "item": "feedback:resonarium_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:resonarium_block"
+  }
+}

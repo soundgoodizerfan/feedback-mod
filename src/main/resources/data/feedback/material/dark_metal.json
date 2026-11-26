@@ -1,0 +1,70 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "born_in_chaos_v1"
+    }
+  ],
+  "fastener": 3,
+  "color": "#3a2f45",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 40,
+  "density": 9.0,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 1800,
+    "boiling_point": 3200,
+    "cooling_rate": 1.5,
+    "conductivity": 0.01,
+    "oxidation_temperature": 1000,
+    "anneal_temperature": 800,
+    "service_temperature": 900,
+    "specific_heat": 0.42,
+    "latent_heat_fusion": 230,
+    "latent_heat_vaporisation": 5500
+  },
+  "mechanical": {
+    "toughness": 25,
+    "ductility": 3,
+    "work_hardening": 1,
+    "yield_strength": 22,
+    "friction": 0.6,
+    "abrasiveness": 0.48
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 8.1,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": false,
+    "reflectivity": 0.15
+  },
+  "electrical": {
+    "conductivity": 0.08,
+    "drop": 0.625,
+    "electrode_potential": 0
+  },
+  "ampacity": 0.3,
+  "corrosion_resistance": 0.8,
+  "forms": {
+    "ingot": "born_in_chaos_v1:dark_metal_ingot",
+    "nugget": "born_in_chaos_v1:dark_metal_nugget",
+    "block": "born_in_chaos_v1:dark_metal_block"
+  },
+  "enchantability": 14,
+  "attuning": {
+    "temperature": 800,
+    "lock": 576,
+    "coercive": 0.35,
+    "loop_width": 0.2,
+    "lag": 9
+  },
+  "toxicity": 0.5,
+  "perks": {
+    "smite": 1
+  }
+}

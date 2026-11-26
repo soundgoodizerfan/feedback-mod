@@ -1,0 +1,106 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumicbases"
+    }
+  ],
+  "fastener": 3,
+  "color": "#6f5fb8",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 20,
+  "density": 6.8,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 1550,
+    "boiling_point": 2862,
+    "cooling_rate": 1.6,
+    "conductivity": 0.016,
+    "oxidation_temperature": 600,
+    "anneal_temperature": 690,
+    "service_temperature": 520,
+    "specific_heat": 0.47,
+    "latent_heat_fusion": 250,
+    "latent_heat_vaporisation": 6090
+  },
+  "mechanical": {
+    "toughness": 55,
+    "ductility": 7,
+    "work_hardening": 1,
+    "yield_strength": 13,
+    "friction": 0.6,
+    "abrasiveness": 0.34
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 6.12,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 770,
+    "reflectivity": 0.65
+  },
+  "electrical": {
+    "conductivity": 0.14,
+    "drop": 0.357,
+    "electrode_potential": -0.4
+  },
+  "ampacity": 0.29,
+  "corrosion_resistance": 0.6,
+  "forms": {
+    "ingot": "thaumicbases:thauminite_ingot",
+    "nugget": "thaumicbases:nuggetthauminite",
+    "plate": "thaumicbases:thauminite_plate",
+    "block": "thaumicbases:blockthauminite"
+  },
+  "enchantability": 26,
+  "attuning": {
+    "temperature": 700,
+    "lock": 520,
+    "coercive": 0.35,
+    "loop_width": 0.22,
+    "lag": 8
+  },
+  "toxicity": 0,
+  "accepts": {
+    "sword": [
+      "thaumicbases:thauminitesword"
+    ],
+    "pickaxe": [
+      "thaumicbases:thauminitepickaxe"
+    ],
+    "axe": [
+      "thaumicbases:thauminiteaxe"
+    ],
+    "shovel": [
+      "thaumicbases:thauminiteshovel"
+    ],
+    "hoe": [
+      "thaumicbases:thauminitehoe"
+    ],
+    "tool": [
+      "thaumicbases:thauminiteshears"
+    ],
+    "helmet": [
+      "thaumicbases:thauminitehelmet"
+    ],
+    "chestplate": [
+      "thaumicbases:thauminitechest"
+    ],
+    "leggings": [
+      "thaumicbases:thauminitelegs"
+    ],
+    "boots": [
+      "thaumicbases:thauminiteboots"
+    ]
+  },
+  "composition": {
+    "feedback:thaumium": 0.94,
+    "feedback:essentia_praecantatio": 0.03,
+    "feedback:essentia_terra": 0.03
+  }
+}

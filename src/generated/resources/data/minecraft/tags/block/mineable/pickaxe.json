@@ -13,6 +13,10 @@
     "feedback:amber_pipe",
     "feedback:amethyst_bronze_block",
     "feedback:amethyst_bronze_pipe",
+    {
+      "id": "feedback:ancient_metal_pipe",
+      "required": false
+    },
     "feedback:antimony_block",
     "feedback:antimony_pipe",
     "feedback:aramid_block",
@@ -41,6 +45,10 @@
     "feedback:bismuth_pipe",
     "feedback:bitumen_block",
     "feedback:bitumen_pipe",
+    {
+      "id": "feedback:black_steel_pipe",
+      "required": false
+    },
     "feedback:borax_deepslate_ore",
     "feedback:borax_loose_rock",
     "feedback:borax_ore",
@@ -91,6 +99,14 @@
     "feedback:cuprite_ore",
     "feedback:cupronickel_block",
     "feedback:cupronickel_pipe",
+    {
+      "id": "feedback:cursium_pipe",
+      "required": false
+    },
+    {
+      "id": "feedback:dark_metal_pipe",
+      "required": false
+    },
     "feedback:diamond_loose_rock",
     "feedback:dolomite_deepslate_ore",
     "feedback:dolomite_loose_rock",
@@ -126,6 +142,10 @@
     "feedback:hematite_ore",
     "feedback:high_speed_steel_block",
     "feedback:high_speed_steel_pipe",
+    {
+      "id": "feedback:ignitium_pipe",
+      "required": false
+    },
     "feedback:ilmenite_deepslate_ore",
     "feedback:ilmenite_loose_rock",
     "feedback:ilmenite_ore",
@@ -216,6 +236,10 @@
     "feedback:rabbit_hide_block",
     "feedback:redstone_chromium_block",
     "feedback:redstone_chromium_pipe",
+    {
+      "id": "feedback:resonarium_block",
+      "required": false
+    },
     "feedback:ruby_deepslate_ore",
     "feedback:ruby_loose_rock",
     "feedback:ruby_ore",
@@ -253,6 +277,10 @@
     "feedback:synthetic_rubber_block",
     "feedback:synthetic_rubber_pipe",
     "feedback:tempered_steel_pipe",
+    {
+      "id": "feedback:thauminite_pipe",
+      "required": false
+    },
     {
       "id": "feedback:thaumium_pipe",
       "required": false
@@ -589,6 +617,10 @@
     "feedback:vanadinite_ore",
     "feedback:vanadium_block",
     "feedback:vanadium_pipe",
+    {
+      "id": "feedback:witherite_pipe",
+      "required": false
+    },
     "feedback:wolframite_deepslate_ore",
     "feedback:wolframite_loose_rock",
     "feedback:wolframite_ore",
@@ -618,6 +650,10 @@
     "feedback:amber_pipe",
     "feedback:amethyst_bronze_block",
     "feedback:amethyst_bronze_pipe",
+    {
+      "id": "feedback:ancient_metal_pipe",
+      "required": false
+    },
     "feedback:annealing_furnace",
     "feedback:antimony_block",
     "feedback:antimony_pipe",
@@ -662,6 +698,10 @@
     "feedback:bitumen_block",
     "feedback:bitumen_pipe",
     "feedback:black_sand",
+    {
+      "id": "feedback:black_steel_pipe",
+      "required": false
+    },
     "feedback:blast_furnace",
     "feedback:bleached_soil",
     "feedback:block_camera",
@@ -753,8 +793,16 @@
     "feedback:cuprite_ore",
     "feedback:cupronickel_block",
     "feedback:cupronickel_pipe",
+    {
+      "id": "feedback:cursium_pipe",
+      "required": false
+    },
     "feedback:damper",
     "feedback:dark_cell",
+    {
+      "id": "feedback:dark_metal_pipe",
+      "required": false
+    },
     "feedback:data_port",
     "feedback:data_sensor",
     "feedback:debug_shelf",
@@ -872,6 +920,10 @@
     "feedback:high_speed_steel_pipe",
     "feedback:hopper",
     "feedback:hydride_bed",
+    {
+      "id": "feedback:ignitium_pipe",
+      "required": false
+    },
     "feedback:ilmenite_deepslate_ore",
     "feedback:ilmenite_loose_rock",
     "feedback:ilmenite_ore",
@@ -1037,6 +1089,10 @@
     "feedback:relay",
     "feedback:reloading_press",
     "feedback:research_table",
+    {
+      "id": "feedback:resonarium_block",
+      "required": false
+    },
     "feedback:ring_gear",
     "feedback:ripeness_probe",
     "feedback:robot_arm",
@@ -1117,6 +1173,10 @@
     "feedback:tarnished_soil",
     "feedback:tempered_steel_pipe",
     "feedback:tension_gauge",
+    {
+      "id": "feedback:thauminite_pipe",
+      "required": false
+    },
     {
       "id": "feedback:thaumium_aer_block",
       "required": false
@@ -1485,6 +1545,10 @@
     "feedback:wide_tube",
     "feedback:winch",
     "feedback:wire_drawer",
+    {
+      "id": "feedback:witherite_pipe",
+      "required": false
+    },
     "feedback:wolframite_deepslate_ore",
     "feedback:wolframite_loose_rock",
     "feedback:wolframite_ore",

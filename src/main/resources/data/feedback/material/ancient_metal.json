@@ -1,0 +1,67 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ],
+  "fastener": 3,
+  "color": "#b08d57",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 18,
+  "density": 8.6,
+  "thermal": {
+    "expansion": 1.7e-05,
+    "melting_point": 1100,
+    "boiling_point": 2400,
+    "cooling_rate": 1.55,
+    "conductivity": 0.014,
+    "oxidation_temperature": 1100,
+    "anneal_temperature": 600,
+    "service_temperature": 500,
+    "specific_heat": 0.38,
+    "latent_heat_fusion": 205,
+    "latent_heat_vaporisation": 5000
+  },
+  "mechanical": {
+    "toughness": 90,
+    "ductility": 12,
+    "work_hardening": 1,
+    "yield_strength": 12,
+    "friction": 0.6,
+    "abrasiveness": 0.28
+  },
+  "molten": {
+    "viscosity": 4,
+    "density": 7.74,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": false,
+    "reflectivity": 0.55
+  },
+  "electrical": {
+    "conductivity": 0.15,
+    "drop": 0.333,
+    "electrode_potential": 0
+  },
+  "ampacity": 0.37,
+  "corrosion_resistance": 1.0,
+  "forms": {
+    "ingot": "cataclysm:ancient_metal_ingot",
+    "nugget": "cataclysm:ancient_metal_nugget",
+    "block": "cataclysm:ancient_metal_block"
+  },
+  "enchantability": 20,
+  "attuning": {
+    "temperature": 600,
+    "lock": 432,
+    "coercive": 0.35,
+    "loop_width": 0.2,
+    "lag": 9
+  },
+  "toxicity": 0
+}

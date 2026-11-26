@@ -1,0 +1,72 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ],
+  "fastener": 5,
+  "color": "#e8741c",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 110,
+  "density": 6.5,
+  "thermal": {
+    "expansion": 5e-06,
+    "melting_point": 3000,
+    "boiling_point": 4800,
+    "cooling_rate": 1.9,
+    "conductivity": 0.03,
+    "oxidation_temperature": 3000,
+    "anneal_temperature": 1400,
+    "service_temperature": 2800,
+    "specific_heat": 0.45,
+    "latent_heat_fusion": 300,
+    "latent_heat_vaporisation": 6500
+  },
+  "mechanical": {
+    "toughness": 35,
+    "ductility": 3,
+    "work_hardening": 1,
+    "yield_strength": 60,
+    "friction": 0.6,
+    "abrasiveness": 0.65
+  },
+  "molten": {
+    "viscosity": 8,
+    "density": 5.85,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": false,
+    "reflectivity": 0.5
+  },
+  "electrical": {
+    "conductivity": 0.1,
+    "drop": 0.5,
+    "electrode_potential": 0
+  },
+  "ampacity": 0.35,
+  "corrosion_resistance": 1.0,
+  "forms": {
+    "ingot": "cataclysm:ignitium_ingot",
+    "block": "cataclysm:ignitium_block"
+  },
+  "enchantability": 15,
+  "attuning": {
+    "temperature": 1400,
+    "lock": 1008,
+    "coercive": 0.35,
+    "loop_width": 0.2,
+    "lag": 9
+  },
+  "toxicity": 0,
+  "perks": {
+    "fire_aspect": 1
+  },
+  "combustion": {
+    "flame_temperature": 1400
+  }
+}

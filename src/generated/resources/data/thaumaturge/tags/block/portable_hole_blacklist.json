@@ -6,6 +6,10 @@
     "feedback:aluminium_pipe",
     "feedback:amber_pipe",
     "feedback:amethyst_bronze_pipe",
+    {
+      "id": "feedback:ancient_metal_pipe",
+      "required": false
+    },
     "feedback:annealing_furnace",
     "feedback:antimony_pipe",
     "feedback:anvil",
@@ -29,6 +33,10 @@
     "feedback:bimetallic_strip",
     "feedback:bismuth_pipe",
     "feedback:bitumen_pipe",
+    {
+      "id": "feedback:black_steel_pipe",
+      "required": false
+    },
     "feedback:blast_furnace",
     "feedback:block_camera",
     "feedback:boiler",
@@ -77,8 +85,16 @@
     "feedback:crystal_holder",
     "feedback:culture_dish",
     "feedback:cupronickel_pipe",
+    {
+      "id": "feedback:cursium_pipe",
+      "required": false
+    },
     "feedback:damper",
     "feedback:dark_cell",
+    {
+      "id": "feedback:dark_metal_pipe",
+      "required": false
+    },
     "feedback:data_port",
     "feedback:data_sensor",
     "feedback:demolition_charge",
@@ -147,6 +163,10 @@
     "feedback:high_speed_steel_pipe",
     "feedback:hydride_bed",
     "feedback:ice_box",
+    {
+      "id": "feedback:ignitium_pipe",
+      "required": false
+    },
     "feedback:improved_furnace",
     "feedback:indium_pipe",
     "feedback:induction_coil",
@@ -277,6 +297,10 @@
     "feedback:synthetic_rubber_pipe",
     "feedback:tempered_steel_pipe",
     "feedback:tension_gauge",
+    {
+      "id": "feedback:thauminite_pipe",
+      "required": false
+    },
     {
       "id": "feedback:thaumium_aer_pipe",
       "required": false
@@ -472,6 +496,10 @@
     "feedback:wide_tube",
     "feedback:winch",
     "feedback:wire_drawer",
+    {
+      "id": "feedback:witherite_pipe",
+      "required": false
+    },
     "feedback:woods_metal_pipe",
     "feedback:woodworking_table",
     "feedback:wrought_iron_pipe",

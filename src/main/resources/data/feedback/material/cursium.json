@@ -1,0 +1,70 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "cataclysm"
+    }
+  ],
+  "fastener": 4,
+  "color": "#5fd0c4",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 70,
+  "density": 3.0,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 2000,
+    "boiling_point": 3400,
+    "cooling_rate": 1.8,
+    "conductivity": 0.006,
+    "oxidation_temperature": 2000,
+    "anneal_temperature": 900,
+    "service_temperature": 1200,
+    "specific_heat": 0.7,
+    "latent_heat_fusion": 200,
+    "latent_heat_vaporisation": 4500
+  },
+  "mechanical": {
+    "toughness": 30,
+    "ductility": 3,
+    "work_hardening": 1,
+    "yield_strength": 35,
+    "friction": 0.6,
+    "abrasiveness": 0.55
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 2.7,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": false,
+    "reflectivity": 0.7
+  },
+  "electrical": {
+    "conductivity": 0.05,
+    "drop": 1.0,
+    "electrode_potential": 0
+  },
+  "ampacity": 0.2,
+  "corrosion_resistance": 1.0,
+  "forms": {
+    "ingot": "cataclysm:cursium_ingot",
+    "block": "cataclysm:cursium_block"
+  },
+  "enchantability": 28,
+  "attuning": {
+    "temperature": 900,
+    "lock": 648,
+    "coercive": 0.35,
+    "loop_width": 0.2,
+    "lag": 9
+  },
+  "toxicity": 0.5,
+  "perks": {
+    "featherlight": 1,
+    "chill": 1
+  }
+}

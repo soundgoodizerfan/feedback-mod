@@ -1,0 +1,84 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "deeperdarker"
+    }
+  ],
+  "fastener": 2,
+  "color": "#2fb5a8",
+  "kind": "composite",
+  "traits": [
+    "rollable"
+  ],
+  "hardness": 25,
+  "density": 3.5,
+  "thermal": {
+    "expansion": 8e-06,
+    "melting_point": 1300,
+    "boiling_point": 2600,
+    "cooling_rate": 1.9,
+    "conductivity": 0.0006,
+    "oxidation_temperature": 700,
+    "service_temperature": 500,
+    "specific_heat": 0.75,
+    "latent_heat_fusion": 220,
+    "latent_heat_vaporisation": 4000
+  },
+  "mechanical": {
+    "toughness": 20,
+    "yield_strength": 12,
+    "friction": 0.5,
+    "abrasiveness": 0.4
+  },
+  "molten": {
+    "viscosity": 200,
+    "density": 3.1,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.3
+  },
+  "electrical": {
+    "insulation": "hv",
+    "piezo_coupling": 1.4
+  },
+  "corrosion_resistance": 0.85,
+  "enchantability": 16,
+  "toxicity": 0,
+  "perks": {
+    "ring": 1
+  },
+  "forms": {
+    "plate": "deeperdarker:resonarium_plate"
+  },
+  "accepts": {
+    "sword": [
+      "deeperdarker:resonarium_sword"
+    ],
+    "pickaxe": [
+      "deeperdarker:resonarium_pickaxe"
+    ],
+    "axe": [
+      "deeperdarker:resonarium_axe"
+    ],
+    "shovel": [
+      "deeperdarker:resonarium_shovel"
+    ],
+    "hoe": [
+      "deeperdarker:resonarium_hoe"
+    ],
+    "helmet": [
+      "deeperdarker:resonarium_helmet"
+    ],
+    "chestplate": [
+      "deeperdarker:resonarium_chestplate"
+    ],
+    "leggings": [
+      "deeperdarker:resonarium_leggings"
+    ],
+    "boots": [
+      "deeperdarker:resonarium_boots"
+    ]
+  }
+}
