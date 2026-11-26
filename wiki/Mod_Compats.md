@@ -20,6 +20,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [Other mods' foods](#other-mods-foods) | Optional | Any food from another mod keeps and spoils like Feedback food |
 | [Inventory Sorter and Inventory Profiles Next](#inventory-sorter-and-inventory-profiles-next) | Optional | Sorting skips screens whose slots are roles |
 | [Simple Voice Chat](#simple-voice-chat) | Optional | Carries the [Radio Set](Radio_Set.md)'s voice |
+| [LambDynamicLights](#lambdynamiclights) | Optional | Glowing hot items light the area while held or dropped |
 | [Xaero's Minimap](#xaeros-minimap) | Optional | Survey Meter readings pin to the map |
 | [Applied Energistics 2](#applied-energistics-2) | Optional | Certus Quartz and Fluix crystals and dusts count as materials |
 | [Artifacts](#artifacts) | Optional | Engineering Table recipes for its items |
@@ -362,6 +363,10 @@ Food that differs in cook or moisture state does not merge in a sort.
 ## Simple Voice Chat
 
 **Optional.** With Simple Voice Chat installed on the server and for players, holding the talk key on a [Radio Set](Radio_Set.md) sends your voice to everyone holding a set on the same band, and replaces your proximity voice while you talk. Without it a set still tunes, and carries no voice.
+
+## LambDynamicLights
+
+**Optional.** With LambDynamicLights installed, a glowing hot item (see [Glowing](Heat.md#glowing)) lights the area around it while a player, villager, humanoid mob or armor stand holds it in a hand or wears it in any equipment slot, and while it lies on the ground as a dropped item. The light level follows the item's temperature, the same levels a glowing hot block gives. It dims as the item cools and goes dark when it is cold. The light has no color.
 
 ## Xaero's Minimap
 

@@ -57,6 +57,27 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// LambDynamicLights' API classes, for compat/lambdynlights only. The mod's jar carries its NeoForge build, which carries the API jar: both
+// are unpacked into build/ and compileOnly keeps them out of our jar (nothing of it ships with Feedback).
+configurations { ldlMod { canBeConsumed = false } }
+def ldlApiJar = layout.buildDirectory.file('ldl/lambdynlights-api.jar')
+def extractLdlApi = tasks.register('extractLdlApi') {
+    inputs.files(configurations.ldlMod)
+    outputs.file(ldlApiJar)
+    doLast {
+        def pull = { File zip, String pattern, File out ->
+            new java.util.zip.ZipFile(zip).withCloseable { z ->
+                def entry = z.entries().find { it.name ==~ pattern }
+                out.parentFile.mkdirs()
+                out.bytes = z.getInputStream(entry).bytes
+            }
+        }
+        def inner = new File(temporaryDir, 'inner.jar')
+        pull(configurations.ldlMod.singleFile, 'META-INF/jars/.*-neoforge\\.jar', inner)
+        pull(inner, 'META-INF/jars/lambdynamiclights-api-.*\\.jar', ldlApiJar.get().asFile)
+    }
+}
+
 // Thaumaturge's API classes, for compat/thaumaturge/api only. Thaumaturge is not published and its licence is all rights reserved, so the
 // classes are compiled locally from its source (scripts/build_thaumaturge_api.sh) into libs/thaumaturge-api.jar, which is never committed and
 // compileOnly keeps out of our jar: nothing of Thaumaturge ships with Feedback. Without the jar that one package is left out of the build and the
@@ -146,6 +167,13 @@ dependencies {
     // loaded behind a ModList check, so nothing touches its classes when it is absent.
     compileOnly "maven.modrinth:legendary-survival-overhaul:${lso_version}"
     devMods "maven.modrinth:legendary-survival-overhaul:${lso_version}"
+
+    // LambDynamicLights -- optional (Lambda License, read for design only; see THIRD-PARTY-LICENSES.md). Its legacy entity handler API
+    // (`DynamicLightHandlers`, static, no entrypoint) is the compile dependency; compileOnly keeps it out of the jar and our bridge class is
+    // only loaded behind a ModList check, so nothing touches its classes when it is absent.
+    ldlMod "maven.modrinth:lambdynamiclights:${lambdynlights_version}"
+    compileOnly files(ldlApiJar) { builtBy extractLdlApi }
+    devMods "maven.modrinth:lambdynamiclights:${lambdynlights_version}"
 
     // Better Combat -- a required mod (all rights reserved: never jarJar'd, never copied; players install it).
     // We use its animation player, upswing gearing, and sounds; its attack rules are not ours.
