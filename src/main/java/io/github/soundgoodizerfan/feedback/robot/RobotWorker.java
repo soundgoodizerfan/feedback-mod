@@ -126,6 +126,7 @@ public final class RobotWorker {
             case ITEM_AHEAD -> items(b.level(), ahead).isEmpty() ? 0f : 1f;
             case CARGO_FULL -> cargoFull(b.cargo()) ? 1f : 0f;
             case DOCK_AHEAD -> b.level().isLoaded(ahead) && b.level().getBlockState(ahead).is(FTags.ROBOT_DOCKS) ? 1f : 0f;
+            case DOCK_FREE -> b.level().isLoaded(ahead) && b.level().getBlockEntity(ahead) instanceof RobotDockBlockEntity d && d.isFree() ? 1f : 0f;
             // a number as the brain gives it: wobbled by its noise, a robot with no brain most
             case RANGE_AHEAD -> spec.sensor().equals(RobotSpec.RANGEFINDER) ? spec.senseJitter(range(b, scan), b.level().random) : 0f;
             case HARDNESS_AHEAD -> spec.sensor().equals(RobotSpec.PROBE) ? spec.senseJitter(hardness(b, ahead), b.level().random) : 0f;

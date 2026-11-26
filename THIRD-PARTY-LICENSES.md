@@ -603,6 +603,8 @@ and a fake player per drone (one shared per level here).
 
 **Read a fourth time (`1.21` branch, `824ad514e`) for the Network app and the program text form (2026-11-17): read, nothing taken yet.** Its Remote layout (a versioned list of widgets, each bound to a node or channel address, with the server checking the sender) is noted as an idea for a later remote-control panel; nothing in the Network app or the text form uses it.
 
+**Read a fifth time (`1.21`, `824ad514e`) for fleet coordination (roadmap MP5).** **Taken (design only, no code or assets):** a per-level claim map with auto-expiry and refresh-on-work (`DroneClaimManager`), a claim-aware dock filter, a fixed step cadence, a per-search work cap, shared named variables as the sharing path. **Rejected:** anonymous claims, per-goal claim opt-in, automatic dock-seeking, teleporting when stuck, an admin kill switch as the only lag control, owner gating.
+
 **Read a second time, for `PressureVesselBlockEntity` (`TODO.md` §5e as of `50b93c6`) — user-directed rather than
 surveyed, since `Pu` had no prior implementation to weigh options against.** `IAirHandler`'s
 `pressure = air / volume` (an amount over a fixed volume, computed on read rather than stored) and

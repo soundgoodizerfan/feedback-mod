@@ -24,5 +24,9 @@ public final class RobotConfig {
             .comment("Most chunks all robots together may hold loaded through a chunk-loading part; further robots halt when their chunk unloads.")
             .defineInRange("robotLoadedChunks", 16, 0, 1024);
 
+    public static final ModConfigSpec.IntValue STEP_BUDGET = B
+            .comment("Most robot program steps the whole server runs in one tick; a robot past it waits a tick and shows as slowed. Movement and work are not limited.")
+            .defineInRange("stepBudgetPerTick", 120, 1, 100000);
+
     public static final ModConfigSpec SPEC = B.build();
 }

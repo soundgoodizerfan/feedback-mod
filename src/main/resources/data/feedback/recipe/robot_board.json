@@ -1,0 +1,18 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "W": { "item": "feedback:copper_wire" },
+    "E": { "tag": "feedback:circuits" },
+    "P": { "item": "feedback:steel_plate" }
+  },
+  "pattern": [
+    " W ",
+    "PEP",
+    "PPP"
+  ],
+  "result": { "count": 1, "id": "feedback:robot_board" },
+  "tool": [ { "ability": "feedback:driver", "wear": 1 } ],
+  "fasteners": { "count": 2, "floor": 1, "forms": [ "screw" ] },
+  "school": "robotics:2",
+  "carries_circuit": true
+}

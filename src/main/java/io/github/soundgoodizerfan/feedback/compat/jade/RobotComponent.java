@@ -30,6 +30,8 @@ public class RobotComponent implements IEntityComponentProvider {
                 : "jade.feedback.robot.no_battery").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable(data.getBoolean(RobotServerData.PROGRAM) ? "robot.feedback.program" : "robot.feedback.no_program")
                 .withStyle(ChatFormatting.GRAY));
+        if (data.getInt(RobotServerData.SLOW) > 1)
+            tooltip.add(Component.translatable("robot.feedback.slowed", data.getInt(RobotServerData.SLOW)).withStyle(ChatFormatting.GRAY));
         if (data.getBoolean(RobotServerData.TETHER))
             tooltip.add(Component.translatable("jade.feedback.robot.tethered").withStyle(ChatFormatting.GRAY));
     }

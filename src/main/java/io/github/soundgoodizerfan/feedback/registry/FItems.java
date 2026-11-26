@@ -400,6 +400,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> ESSENTIA_ADAPTER = ITEMS.registerSimpleBlockItem(FBlocks.ESSENTIA_ADAPTER);
     public static final DeferredItem<BlockItem> ROBOT_DOCK = ITEMS.registerSimpleBlockItem(FBlocks.ROBOT_DOCK);
     public static final DeferredItem<BlockItem> ROBOT_MAST = ITEMS.registerSimpleBlockItem(FBlocks.ROBOT_MAST);
+    public static final DeferredItem<BlockItem> ROBOT_BOARD = ITEMS.registerSimpleBlockItem(FBlocks.ROBOT_BOARD);
     public static final DeferredItem<BlockItem> ROBOT_ARM = ITEMS.registerSimpleBlockItem(FBlocks.ROBOT_ARM);
     public static final DeferredItem<BlockItem> ROBOT_BEACON = ITEMS.registerSimpleBlockItem(FBlocks.ROBOT_BEACON);
     public static final DeferredItem<BlockItem> ROBOT_REEL = ITEMS.registerSimpleBlockItem(FBlocks.ROBOT_REEL);

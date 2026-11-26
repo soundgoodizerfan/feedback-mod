@@ -91,8 +91,8 @@ public class RobotMastBlockEntity extends ElectricNode implements ChannelSource,
             jammed = false;
             return;
         }
-        boolean shielded = shielded();
-        jammed = (!shielded && noisy(worldPosition)) || noisy(robot.blockPosition());
+        boolean shielded = shielded(level, worldPosition);
+        jammed = (!shielded && noisy(level, worldPosition, scan)) || noisy(level, robot.blockPosition(), scan);
     }
 
     /** Runs each tick: the moment the link is lost the robot lets go of every action, whether or not a Controller writes again. */
@@ -104,15 +104,17 @@ public class RobotMastBlockEntity extends ElectricNode implements ChannelSource,
         heard = now;
     }
 
-    private boolean shielded() {
+    /** Whether four or more of a base block's neighbours shield it from noise (shared with the job board). */
+    static boolean shielded(net.minecraft.world.level.Level level, BlockPos pos) {
         int shields = 0;
         for (Direction d : Direction.values())
-            if (level.getBlockState(worldPosition.relative(d)).is(FTags.RADIO_SHIELDS))
+            if (level.getBlockState(pos.relative(d)).is(FTags.RADIO_SHIELDS))
                 shields++;
         return shields >= 4;
     }
 
-    private boolean noisy(BlockPos at) {
+    /** Whether a noise block stands within {@link RobotTuning#RADIO_NOISE_RANGE} of {@code at}; {@code scan} is the caller's scratch position. */
+    static boolean noisy(net.minecraft.world.level.Level level, BlockPos at, BlockPos.MutableBlockPos scan) {
         int r = RobotTuning.RADIO_NOISE_RANGE;
         for (int dx = -r; dx <= r; dx++)
             for (int dy = -r; dy <= r; dy++)

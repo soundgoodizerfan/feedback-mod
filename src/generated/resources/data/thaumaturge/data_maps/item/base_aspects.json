@@ -41588,6 +41588,28 @@
         "aspect": "thaumaturge:lux"
       }
     ],
+    "feedback:robot_board": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 31,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 20,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 30,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
     "feedback:robot_chassis": [
       {
         "amount": 4,

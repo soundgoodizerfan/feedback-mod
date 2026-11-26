@@ -1098,6 +1098,7 @@
     "feedback:ripeness_probe",
     "feedback:robot_arm",
     "feedback:robot_beacon",
+    "feedback:robot_board",
     "feedback:robot_dock",
     "feedback:robot_mast",
     "feedback:robot_reel",

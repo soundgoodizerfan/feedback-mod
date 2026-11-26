@@ -16,7 +16,7 @@ public class RobotServerData implements IServerDataProvider<EntityAccessor> {
 
     public static final RobotServerData INSTANCE = new RobotServerData();
 
-    static final String CHARGE = "RobotCharge", BATTERY = "RobotBattery", PROGRAM = "RobotProgram", TETHER = "RobotTether", DOING = "RobotDoing";
+    static final String CHARGE = "RobotCharge", BATTERY = "RobotBattery", PROGRAM = "RobotProgram", TETHER = "RobotTether", DOING = "RobotDoing", SLOW = "RobotSlow";
 
     @Override
     public void appendServerData(CompoundTag data, EntityAccessor accessor) {
@@ -27,6 +27,7 @@ public class RobotServerData implements IServerDataProvider<EntityAccessor> {
         data.putBoolean(BATTERY, robot.batteryState() != null);
         data.putBoolean(PROGRAM, !robot.core().getItem(0).isEmpty());
         data.putBoolean(TETHER, robot.tether() != null);
+        data.putInt(SLOW, robot.slowed());
         if (robot.doing() != null)
             data.putString(DOING, robot.doing().langKey());
     }

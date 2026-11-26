@@ -50,6 +50,12 @@ public final class RobotTuning {
     /** The amps a radio mast asks of its line, the blocks it reaches per amp delivered, the most it reaches per band step, and how far from either end noise is heard. */
     public static final float MAST_AMPS = 1f, RADIO_BLOCKS_PER_AMP = 20f, RADIO_BAND_CEILING = 48f;
     public static final int RADIO_NOISE_RANGE = 4;
+    /**
+     * Placeholder. A job board: the amps it asks of its line, the amps it needs to hear one robot (its bandwidth), the game ticks a claim
+     * lives without a refresh, and the slots it holds.
+     */
+    public static final float BOARD_AMPS = 0.5f, BOARD_AMPS_PER_ROBOT = 0.5f;
+    public static final int BOARD_CLAIM_TICKS = 600, BOARD_SLOTS = 16;
     /** Slots of cargo a robot carries. */
     public static final int CARGO = 9;
 }

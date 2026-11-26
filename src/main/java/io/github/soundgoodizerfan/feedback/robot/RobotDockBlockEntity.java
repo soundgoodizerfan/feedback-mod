@@ -43,6 +43,11 @@ public class RobotDockBlockEntity extends ElectricNode {
         return battery == null ? 0f : BatteryStack.wantedAmps(battery, getBand(), getPacketEu());
     }
 
+    /** Whether the line gives it current and no robot stands on it (a dock) or hangs from it (a reel), as of the last scan. */
+    public boolean isFree() {
+        return isLive() && (served == null || served.isRemoved());
+    }
+
     public void tickServer() {
         if (level == null)
             return;

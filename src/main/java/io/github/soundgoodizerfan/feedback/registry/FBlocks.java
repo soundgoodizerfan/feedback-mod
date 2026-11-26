@@ -932,6 +932,11 @@ public class FBlocks {
             BLOCKS.register("robot_mast", () -> new io.github.soundgoodizerfan.feedback.robot.RobotMastBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(1.0f).sound(SoundType.COPPER).noOcclusion()));
 
+    /** The job board a fleet shares over radio; see {@code robot/RobotBoardBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.robot.RobotBoardBlock> ROBOT_BOARD =
+            BLOCKS.register("robot_board", () -> new io.github.soundgoodizerfan.feedback.robot.RobotBoardBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(1.5f).sound(SoundType.COPPER)));
+
     /** A robot arm on a mount, run off a line; see {@code robot/RobotArmBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.robot.RobotArmBlock> ROBOT_ARM =
             BLOCKS.register("robot_arm", () -> new io.github.soundgoodizerfan.feedback.robot.RobotArmBlock(

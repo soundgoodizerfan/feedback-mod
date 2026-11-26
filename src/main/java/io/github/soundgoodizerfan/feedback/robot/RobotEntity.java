@@ -80,6 +80,9 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
     private final boolean[] placeSet = new boolean[io.github.soundgoodizerfan.feedback.process.ProcessTuning.CIRCUIT_MEMORY_MAX];
     private final float[] placeX = new float[placeSet.length], placeZ = new float[placeSet.length];
     private int placeAt;
+    /** The job-board slot it has chosen, the one it holds a claim on (-1: none), and how many steps' worth of waiting the step budget has cost it. */
+    private int slot, claimedSlot = -1, slow = 1;
+    private boolean waiting;
     private final BlockPos.MutableBlockPos scan = new BlockPos.MutableBlockPos();
     /** The reel this robot is tied to, or null; it may roam {@link RobotTuning#TETHER_LENGTH} blocks from it. */
     @Nullable
@@ -261,6 +264,10 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
             case POS_Z -> (float) (getZ() - (originZ + 0.5)) + errZ;
             case ALTITUDE -> (float) (getY() - originY);
             case HEADING -> spec.sensor().equals(RobotSpec.INERTIAL) ? facing().get2DDataValue() : 0f;
+            case SLOT -> board() != null ? slot : 0f;
+            case SLOT_STATE -> board() instanceof RobotBoardBlockEntity b ? b.stateFor(this, slot) : 0f;
+            case SLOT_VALUE -> board() instanceof RobotBoardBlockEntity b ? b.valueOf(slot) : 0f;
+            case BOARD_HEARD -> board() != null ? 1f : 0f;
             case PLACES -> placeCount();
             case PLACE_DX -> placeSet[placeAt] ? placeX[placeAt] - readX() : 0f;
             case PLACE_DZ -> placeSet[placeAt] ? placeZ[placeAt] - readZ() : 0f;
@@ -282,6 +289,47 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
             remember();
         else if (value && !was && c == RobotChannel.NEXT_PLACE && spec.places() > 0)
             placeAt = (placeAt + 1) % Math.min(placeSet.length, spec.places());
+        // the board switches act once as they come on, and only where a board hears this robot
+        else if (value && !was && c == RobotChannel.NEXT_SLOT) {
+            releaseHeld();
+            slot = (slot + 1) % RobotTuning.BOARD_SLOTS;
+        } else if (value && !was && c == RobotChannel.DONE) {
+            if (board() instanceof RobotBoardBlockEntity b)
+                b.done(this, claimedSlot >= 0 ? claimedSlot : slot);
+            claimedSlot = -1;
+        } else if (value && !was && c == RobotChannel.POST && board() instanceof RobotBoardBlockEntity b) {
+            int stacks = 0;
+            for (int i = 0; i < cargo.getContainerSize(); i++)
+                if (!cargo.getItem(i).isEmpty())
+                    stacks++;
+            b.post(this, slot, stacks);
+        }
+    }
+
+    /** The job board that hears this robot, or null; a robot with no radio part is heard by none. */
+    @Nullable
+    private RobotBoardBlockEntity board() {
+        return spec.radio() ? RobotBoardBlockEntity.hearing(level(), this) : null;
+    }
+
+    private void releaseHeld() {
+        if (claimedSlot >= 0 && board() instanceof RobotBoardBlockEntity b)
+            b.release(this, claimedSlot);
+        claimedSlot = -1;
+    }
+
+    /** Each step: while CLAIM is on the chosen slot is claimed or refreshed; off, the claim is let go (a done slot stays done). */
+    private void boardStep() {
+        if (on[RobotChannel.CLAIM.ordinal()]) {
+            if (board() instanceof RobotBoardBlockEntity b && b.claim(this, slot))
+                claimedSlot = slot;
+        } else
+            releaseHeld();
+    }
+
+    /** How many steps' worth of time its program step is stretched to by the server's step budget (1: not at all). */
+    public int slowed() {
+        return slow;
     }
 
     private float readX() {
@@ -413,12 +461,26 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
         pendingEu += spec.heaterEu();
         if (leash != null && spec.leashes())
             pendingEu += RobotTuning.EU_LEASH_PER_TICK;
-        if (tickCount % RobotTuning.STEP_TICKS == 0) {
+        boolean stepTick = tickCount % RobotTuning.STEP_TICKS == 0;
+        if (stepTick)
             flush();
-            if (powered()) {
+        // the program step asks the server's budget; refused, it keeps its state and asks again next tick (claims run on game time)
+        if ((stepTick || waiting) && powered()) {
+            if (RobotBudget.grant(level())) {
                 core.tickServer();
                 applySwitch();
+                boardStep();
+                slow = 1;
+                waiting = false;
+            } else {
+                waiting = true;
+                slow = Math.min(6, slow + 1);
             }
+        } else if (waiting) {
+            waiting = false;
+            slow = 1;
+        }
+        if (stepTick) {
             holdChunk(powered());
             syncLeash();
             if (tickCount % (RobotTuning.STEP_TICKS * 5) == 0) {
@@ -584,8 +646,9 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
             return InteractionResult.CONSUME;
         }
         if (held.isEmpty() && !battery.isEmpty() && !player.isShiftKeyDown()) {
-            player.displayClientMessage(Component.translatable("robot.feedback.status", Math.round(chargeShare() * 100),
-                    Component.translatable(core.getItem(0).isEmpty() ? "robot.feedback.no_program" : "robot.feedback.program")), true);
+            var status = Component.translatable("robot.feedback.status", Math.round(chargeShare() * 100),
+                    Component.translatable(core.getItem(0).isEmpty() ? "robot.feedback.no_program" : "robot.feedback.program"));
+            player.displayClientMessage(slow > 1 ? status.append(Component.literal(", ")).append(Component.translatable("robot.feedback.slowed", slow)) : status, true);
             return InteractionResult.CONSUME;
         }
         if (held.isEmpty() && battery.isEmpty()) {
@@ -655,6 +718,7 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
         if (leash != null)
             t.putUUID("Leash", leash);
         t.putInt("PlaceAt", placeAt);
+        t.putInt("Slot", slot);
         for (int i = 0; i < placeSet.length; i++)
             if (placeSet[i]) {
                 t.putFloat("PlaceX" + i, placeX[i]);
@@ -678,6 +742,7 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
         errZ = t.getFloat("ErrZ");
         leash = t.hasUUID("Leash") ? t.getUUID("Leash") : null;
         placeAt = Math.max(0, Math.min(placeSet.length - 1, t.getInt("PlaceAt")));
+        slot = Math.max(0, Math.min(RobotTuning.BOARD_SLOTS - 1, t.getInt("Slot")));
         for (int i = 0; i < placeSet.length; i++) {
             placeSet[i] = t.contains("PlaceX" + i);
             placeX[i] = t.getFloat("PlaceX" + i);

@@ -253,6 +253,7 @@
     "feedback:ring_gear",
     "feedback:ripeness_probe",
     "feedback:robot_arm",
+    "feedback:robot_board",
     "feedback:robot_dock",
     "feedback:robot_mast",
     "feedback:robot_reel",

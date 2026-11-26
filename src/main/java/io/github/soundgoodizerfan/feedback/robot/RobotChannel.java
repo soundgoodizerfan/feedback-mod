@@ -74,7 +74,25 @@ public enum RobotChannel {
     /** The chosen place is within a block and a half. */
     AT_PLACE(false, true),
     /** How many places it holds. */
-    PLACES(false, false);
+    PLACES(false, false),
+    /** The slot of a job board it has chosen, 0 to 15; 0 when no board hears it. The board senses and switches below do nothing for a robot with no radio part or none a board hears. */
+    SLOT(false, false),
+    /** The chosen slot: 0 free, 1 claimed by this robot, 2 claimed by another, 3 done. */
+    SLOT_STATE(false, false),
+    /** The figure posted in the chosen slot (the haul a robot posted, a Controller's own number). */
+    SLOT_VALUE(false, false),
+    /** A job board hears this robot: it is in range, has a radio part and is among the robots the board's bandwidth reaches. */
+    BOARD_HEARD(false, true),
+    /** The dock or reel ahead is powered and nothing stands on it or hangs from it. */
+    DOCK_FREE(false, true),
+    /** Claim the chosen slot while on, when it is free or already this robot's; the claim is refreshed each step and let go when the switch goes off, unless the slot is done. */
+    CLAIM(true, true),
+    /** Mark the claimed slot done, once each time the switch comes on; the figure stays. */
+    DONE(true, true),
+    /** Post the chosen slot as a free job whose figure is the number of cargo stacks carried, once each time the switch comes on. */
+    POST(true, true),
+    /** Choose the next slot (wraps 15 to 0), once each time the switch comes on. */
+    NEXT_SLOT(true, true);
 
     private final boolean actuator;
     private final boolean bool;
