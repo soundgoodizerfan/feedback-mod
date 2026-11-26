@@ -23,6 +23,10 @@ Villagers who are farmers plant and harvest the mod's [crops](Crops.md) (not ric
 
 A [Block Camera](Block_Camera.md) beside a road can report a player carrying Bad Omen, and the raid comes to the village center when a village is within 64 blocks.
 
+## House chests
+
+About 1 chest in 6 in a village house, workshop or temple holds a [blueprint](Blueprint_Table.md) of a random type's starting design: any tool, weapon, armor piece, machine part or similar, but never a gun, dish, face or suit module. Open it at the Blueprint Table, change it and print it. Villagers sell more blueprints (see [Villagers](Villagers.md#blueprints)).
+
 ## Guilds
 
 A guild forms among villagers of one profession who work close together. It posts a bigger daily order and shares experience between members.

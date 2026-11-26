@@ -141,7 +141,7 @@ The steel lines need standing 10. The list is sorted by profession, then level.
 
 ### Blueprints
 
-Some professions sell a **blueprint**, one per day each, at a high price. A line stays locked until your standing with the villager and its trade level are both high enough. A blueprint is a copyable design: open it at the [Blueprint Table](Blueprint_Table.md), change it and print it again. Guns and the crossbow can only be made from a blueprint.
+Some professions sell a **blueprint**, one per day each, at a high price. A line stays locked until your standing with the villager and its trade level are both high enough. A blueprint is a copyable design: open it at the [Blueprint Table](Blueprint_Table.md), change it and print it again. Guns and the crossbow can only be made from a blueprint. Blueprints for other types also turn up in [village chests](Villages.md#house-chests).
 
 | Profession | Blueprint | Price (emeralds) | Level | Standing |
 | --- | --- | --- | --- | --- |
