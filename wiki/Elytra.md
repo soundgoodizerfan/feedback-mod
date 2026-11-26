@@ -17,3 +17,5 @@ S   S
 ```
 
 S is a [Shulker Shell](Vanilla_Changes.md#shulker) and M is a Phantom Membrane. Gliding works as in vanilla, but a firework rocket used while gliding does nothing and stays in your hand.
+
+A wing lifts by the air under it. In thin air, such as the End's, a glide sinks faster the thinner the air is, so there it is a controlled descent rather than a free glide.

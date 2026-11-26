@@ -318,6 +318,9 @@ public final class VehicleTuning {
     /** Invented. Air thinner than this share of the overworld's gives an air-breathing thruster nothing to burn. */
     public static final float THRUSTER_MIN_AIR_DENSITY = 0.05f;
 
+    /** Placeholder. Extra sink (blocks per tick) a gliding wing takes in air of no density at all, scaled by the missing share of the suit's reference density. */
+    public static final float ELYTRA_THIN_AIR_SINK = 0.06f;
+
     /** Placeholder. The flight sensor's resolutions: altitude in blocks, airspeed in blocks per second, attitude in degrees. */
     public static final float FLIGHT_ALTITUDE_RESOLUTION = 1f, FLIGHT_AIRSPEED_RESOLUTION = 0.5f, FLIGHT_ATTITUDE_RESOLUTION = 2f,
             FLIGHT_CLIMB_RESOLUTION = 0.5f, FLIGHT_DENSITY_RESOLUTION = 0.05f, FLIGHT_POSITION_RESOLUTION = 4f;
