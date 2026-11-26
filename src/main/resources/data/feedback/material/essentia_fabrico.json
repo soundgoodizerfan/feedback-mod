@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:fabrico\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_fabrico",
+    "heading": 71,
+    "reach": 0.5
   }
 }

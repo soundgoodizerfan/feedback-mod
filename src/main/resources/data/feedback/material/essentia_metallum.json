@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:metallum\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_metallum",
+    "heading": 323,
+    "reach": 0.5
   }
 }

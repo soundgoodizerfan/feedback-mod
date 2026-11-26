@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:vinculum\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_vinculum",
+    "heading": 338,
+    "reach": 0.5
   }
 }

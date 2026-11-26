@@ -58,5 +58,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:tenebrae\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_tenebrae",
+    "heading": 199,
+    "reach": 0.5
   }
 }

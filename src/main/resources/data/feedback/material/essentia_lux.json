@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:lux\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_lux",
+    "heading": 79,
+    "reach": 0.5
   }
 }

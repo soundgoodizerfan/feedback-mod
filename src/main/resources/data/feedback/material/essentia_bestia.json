@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:bestia\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_bestia",
+    "heading": 95,
+    "reach": 0.5
   }
 }

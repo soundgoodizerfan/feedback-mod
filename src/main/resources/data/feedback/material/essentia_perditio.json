@@ -59,5 +59,10 @@
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:perditio\"}]",
       "thaumaturge:crystal_perditio"
     ]
+  },
+  "potion": {
+    "family": "essentia_perditio",
+    "heading": 230,
+    "reach": 0.5
   }
 }

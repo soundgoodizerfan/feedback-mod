@@ -59,5 +59,10 @@
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:aqua\"}]",
       "thaumaturge:crystal_aqua"
     ]
+  },
+  "potion": {
+    "family": "essentia_aqua",
+    "heading": 270,
+    "reach": 0.5
   }
 }

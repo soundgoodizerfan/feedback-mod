@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:volatus\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_volatus",
+    "heading": 52,
+    "reach": 0.5
   }
 }

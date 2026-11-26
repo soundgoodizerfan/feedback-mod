@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:auram\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_auram",
+    "heading": 330,
+    "reach": 0.5
   }
 }

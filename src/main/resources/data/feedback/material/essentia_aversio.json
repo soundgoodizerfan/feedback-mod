@@ -58,5 +58,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:aversio\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_aversio",
+    "heading": 219,
+    "reach": 0.5
   }
 }

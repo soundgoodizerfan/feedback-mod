@@ -60,5 +60,10 @@
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:aer\"}]",
       "thaumaturge:crystal_aer"
     ]
+  },
+  "potion": {
+    "family": "essentia_aer",
+    "heading": 155,
+    "reach": 0.5
   }
 }

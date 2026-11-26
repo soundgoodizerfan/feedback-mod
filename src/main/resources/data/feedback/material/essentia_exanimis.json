@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:exanimis\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_exanimis",
+    "heading": 214,
+    "reach": 0.5
   }
 }

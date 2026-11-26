@@ -58,5 +58,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:victus\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_victus",
+    "heading": 18,
+    "reach": 0.5
   }
 }

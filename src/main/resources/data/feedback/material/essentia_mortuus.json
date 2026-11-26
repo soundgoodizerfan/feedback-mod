@@ -58,5 +58,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:mortuus\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_mortuus",
+    "heading": 243,
+    "reach": 0.5
   }
 }

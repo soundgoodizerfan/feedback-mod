@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:praecantatio\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_praecantatio",
+    "heading": 302,
+    "reach": 0.5
   }
 }

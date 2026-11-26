@@ -60,5 +60,10 @@
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:ignis\"}]",
       "thaumaturge:crystal_ignis"
     ]
+  },
+  "potion": {
+    "family": "essentia_ignis",
+    "heading": 348,
+    "reach": 0.5
   }
 }

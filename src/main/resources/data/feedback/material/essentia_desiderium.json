@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:desiderium\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_desiderium",
+    "heading": 105,
+    "reach": 0.5
   }
 }

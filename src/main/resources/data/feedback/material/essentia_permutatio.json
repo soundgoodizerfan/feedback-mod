@@ -59,5 +59,10 @@
     "crystal": [
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:permutatio\"}]"
     ]
+  },
+  "potion": {
+    "family": "essentia_permutatio",
+    "heading": 231,
+    "reach": 0.5
   }
 }

@@ -60,5 +60,10 @@
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:vitium\"}]",
       "thaumaturge:crystal_vitium"
     ]
+  },
+  "potion": {
+    "family": "essentia_vitium",
+    "heading": 230,
+    "reach": 0.5
   }
 }

@@ -60,5 +60,10 @@
       "thaumaturge:essentia_crystal[thaumaturge:crystal_aspect={\"aspect\":\"thaumaturge:ordo\"}]",
       "thaumaturge:crystal_ordo"
     ]
+  },
+  "potion": {
+    "family": "essentia_ordo",
+    "heading": 271,
+    "reach": 0.5
   }
 }
