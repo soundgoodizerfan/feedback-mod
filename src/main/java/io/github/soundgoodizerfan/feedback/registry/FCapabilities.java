@@ -64,6 +64,7 @@ public class FCapabilities {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.POWER_CUTTER.get(),
                 (cutter, side) -> new io.github.soundgoodizerfan.feedback.machine.cutter.CutterItemHandler(cutter));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.POWER_CUTTER.get(), (cutter, side) -> cutter.waterPort());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.FUSION_CHAMBER.get(), (chamber, side) -> chamber.port());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.AUTO_ENGINEER.get(),
                 (engineer, side) -> new io.github.soundgoodizerfan.feedback.machine.engineer.EngineerItemHandler(engineer));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.MECHANICAL_HAMMER.get(),

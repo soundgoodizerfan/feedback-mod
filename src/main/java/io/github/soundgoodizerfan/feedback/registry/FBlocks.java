@@ -533,6 +533,13 @@ public class FBlocks {
                     .strength(4.0f)
                     .sound(SoundType.METAL)));
 
+    /** A held plasma loop: hydrogen to helium and heat, held by an EHV field. See {@code FusionChamberBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.fusion.FusionChamberBlock> FUSION_CHAMBER = BLOCKS.register("fusion_chamber",
+            () -> new io.github.soundgoodizerfan.feedback.machine.fusion.FusionChamberBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .strength(6.0f)
+                    .sound(SoundType.METAL)));
+
     /** A seat for a Nether Star that heats the vessel it faces and cannot be turned off. See {@code StarBurnerBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.starburner.StarBurnerBlock> STAR_BURNER = BLOCKS.register("star_burner",
             () -> new io.github.soundgoodizerfan.feedback.machine.starburner.StarBurnerBlock(BlockBehaviour.Properties.of()

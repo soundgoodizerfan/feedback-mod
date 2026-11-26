@@ -1,0 +1,21 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "T": { "item": "feedback:tungsten_carbide_plate" },
+    "W": { "item": "feedback:copper_wire" }
+  },
+  "pattern": [
+    "TWT",
+    "W W",
+    "TWT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:fusion_chamber"
+  },
+  "tool": [
+    { "ability": "feedback:driver", "wear": 1 }
+  ],
+  "fasteners": { "count": 4, "floor": 2, "forms": ["machine_bolt"] },
+  "school": "nuclear:1"
+}

@@ -26,3 +26,7 @@ Breaking the burner drops the star.
 A seated star heats the vessel at a constant temperature above the arc's cap, enough to melt [tungsten](Tungsten.md). It needs no cable, fuel or power, and nothing dims it: the heat stays until the star is taken out or spent. The vessel climbs toward that temperature as it does under any fire.
 
 The star decays very slowly, about 20 hours of loaded time. When it is spent the burner goes cold and is empty.
+
+## See also
+
+- [Fusion Chamber](Fusion_Chamber.md): a Star Burner set beside it supplies the heat that lights it.

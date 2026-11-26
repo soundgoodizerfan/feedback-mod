@@ -305,6 +305,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> ARC_HEARTH = ITEMS.registerSimpleBlockItem(FBlocks.ARC_HEARTH);
     public static final DeferredItem<BlockItem> ARC_HEAD = ITEMS.registerSimpleBlockItem(FBlocks.ARC_HEAD);
     public static final DeferredItem<BlockItem> STAR_BURNER = ITEMS.registerSimpleBlockItem(FBlocks.STAR_BURNER);
+    public static final DeferredItem<BlockItem> FUSION_CHAMBER = ITEMS.registerSimpleBlockItem(FBlocks.FUSION_CHAMBER);
     /** A rod of a conducting material that carries the arc; consumed by nature. See {@code ElectrodeItem}. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem> ARC_ELECTRODE = ITEMS.register("arc_electrode",
             () -> new io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));

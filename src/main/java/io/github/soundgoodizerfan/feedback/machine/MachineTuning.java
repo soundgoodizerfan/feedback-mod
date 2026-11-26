@@ -716,6 +716,14 @@ public final class MachineTuning {
     public static final io.github.soundgoodizerfan.feedback.core.unit.Tu STAR_BURNER_TU = new io.github.soundgoodizerfan.feedback.core.unit.Tu(3800f);
     public static final long STAR_BURNER_LIFE_TICKS = 1_440_000L;
 
+    /** Placeholder [OPEN]. Fusion chamber: tank size (mB), the temperature something beside it must reach to light it, the plasma's temperature when held and the most heat it gives on (Tu), how slowly the plasma follows its target (Work per Tu), hydrogen burned a tick (mB) and helium made per mB of it, the field's draw (A) and the share of it that holds the plasma, the wall's wear a tick with the field lost and the blast when it is gone. */
+    public static final int FUSION_TANK_MB = 4000;
+    public static final io.github.soundgoodizerfan.feedback.core.unit.Tu FUSION_IGNITION_TU = new io.github.soundgoodizerfan.feedback.core.unit.Tu(3700f),
+            FUSION_PLASMA_TU = new io.github.soundgoodizerfan.feedback.core.unit.Tu(9000f),
+            FUSION_OUTPUT_TU = new io.github.soundgoodizerfan.feedback.core.unit.Tu(4500f);
+    public static final float FUSION_PLASMA_MASS = 200f, FUSION_BURN_MB_PER_TICK = 2f, FUSION_HELIUM_PER_HYDROGEN = 0.25f,
+            FUSION_FIELD_AMPS = 12f, FUSION_HOLD_SHARE = 0.9f, FUSION_WALL_WEAR_PER_TICK = 0.0008f, FUSION_BURST_POWER = 6f;
+
     /** Placeholder [OPEN]. A control surface's full deflection, in radians (about 29 degrees); the arm's force limit is the driver's (STEER_ARM_SU). */
     public static final float SURFACE_MAX_ANGLE = 0.5f;
 }
