@@ -302,6 +302,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.HudReadoutPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.FoodClockPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.FoodClockPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.FoodClockPayload::handle)
                 .playToServer(ProgrammerCommitPayload.TYPE, ProgrammerCommitPayload.STREAM_CODEC,
                         ProgrammerCommitPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerActionPayload.TYPE,

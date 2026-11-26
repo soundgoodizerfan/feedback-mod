@@ -190,7 +190,7 @@ public final class Cooking {
     public static FoodState fresh(Entry entry, Level level) {
         FoodState s = state(ItemStack.EMPTY, entry);
         return new FoodState(s.cook(), s.moisture(), s.pathogen(), s.toxin(), 0f, 0f,
-                level.getGameTime() / ProcessTuning.FOOD_STAMP_BUCKET * ProcessTuning.FOOD_STAMP_BUCKET, AmbientTable.at(level).value(), 0f, 0f);
+                FoodClock.now(level) / ProcessTuning.FOOD_STAMP_BUCKET * ProcessTuning.FOOD_STAMP_BUCKET, AmbientTable.at(level).value(), 0f, 0f);
     }
 
     /**
@@ -202,7 +202,7 @@ public final class Cooking {
      */
     public static FoodState current(ItemStack stack, Entry entry, Level level, float envTu) {
         FoodState s = state(stack, entry);
-        long now = level.getGameTime();
+        long now = FoodClock.now(level);
         if (s.stamp() <= 0L || now <= s.stamp())
             return s.stamp() <= 0L ? new FoodState(s.cook(), s.moisture(), s.pathogen(), s.toxin(), s.charred(), s.rot(), now, envTu, s.smoke(), s.salt()) : s;
         float temp = Mth.clamp((s.envTu() + envTu) * 0.5f / ThermalTuning.AMBIENT_TU.value(), 0f, 1.5f);
@@ -241,7 +241,7 @@ public final class Cooking {
      */
     public static boolean frozen(ItemStack stack, Level level) {
         FoodState s = stack.get(FDataComponents.FOOD_STATE.get());
-        return s != null && s.stamp() > 0L && s.envTu() <= ProcessTuning.FROZEN_AT.value() && level.getGameTime() - s.stamp() < ProcessTuning.FROZEN_THAW_TICKS;
+        return s != null && s.stamp() > 0L && s.envTu() <= ProcessTuning.FROZEN_AT.value() && FoodClock.now(level) - s.stamp() < ProcessTuning.FROZEN_THAW_TICKS;
     }
 
     /** 0 fresh, 1 going off, 2 rotten. */
@@ -309,7 +309,7 @@ public final class Cooking {
         if (vesselSmoke > 0f && t > FTuning.FOOD_COOK_TU.value() && t < entry.charTemperature().value())
             smoke = Math.min(1f, smoke + vesselSmoke * ProcessTuning.SMOKE_DEPOSIT_PER_TICK);
 
-        FoodState after = new FoodState(cook, moisture, pathogen, before.toxin(), charred, before.rot(), level.getGameTime(), ambient, smoke, before.salt());
+        FoodState after = new FoodState(cook, moisture, pathogen, before.toxin(), charred, before.rot(), FoodClock.now(level), ambient, smoke, before.salt());
         boolean done = before.cook() < 1f && cook >= 1f && entry.cooked().isPresent() && stack.getItem() != entry.cooked().get();
         // A pie cooked through: baked again from its cooked parts, which writes its state and eating figures itself.
         if (before.cook() < 1f && cook >= 1f && stack.has(FDataComponents.DISH_FIGURES.get())) {

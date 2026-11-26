@@ -996,7 +996,7 @@ public class SkillTreeScreen extends Screen {
                 Component.translatableWithFallback("trait.feedback." + tr, tr)).getString(), cw), x, y + 40, SKIN.dim(), false));
     }
 
-    /** The plate's right side: the description's first sentence, no box, no scroll; the whole text is the hover tip. */
+    /** The plate's right side: the whole description, no box, no scroll; the hover tip repeats it where the plate is too short. */
     private void description(GuiGraphics g, String move) {
         Component d = move == null ? Component.empty()
                 : Component.translatableWithFallback("skill.feedback.move." + move + ".desc", "");
@@ -1004,10 +1004,10 @@ public class SkillTreeScreen extends Screen {
         String full = d.getString();
         if (full.isEmpty())
             return;
-        int cut = full.indexOf(". ");
-        Component first = cut < 0 ? d : Component.literal(full.substring(0, cut + 1));
         int x = DESC_X, w = Math.max(120, width - DESC_RIGHT - x), y = height - INFO_H + 9;
-        for (var line : font.split(first, w - 8).stream().limit(4).toList()) {
+        for (var line : font.split(d, w - 8)) {
+            if (y > height - 10)
+                break;
             g.drawString(font, line, x, y, SKIN.dim(), false);
             y += 10;
         }
