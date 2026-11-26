@@ -1,6 +1,6 @@
 # Nuclear Fuel
 
-The rods that go into the Fuel Channels of a [Fission Reactor](Fission_Reactor.md): the Fuel Rod, the Enriched Fuel Rod, the Thorium Fuel Rod, the Breeder Rod and the Spent Fuel Rod they become.
+The rods that go into the Fuel Channels of a [Fission Reactor](Fission_Reactor.md): the Fuel Rod, the Enriched Fuel Rod, the Thorium Fuel Rod, the Plutonium Fuel Rod, the Breeder Rod and the Spent Fuel Rod they become.
 
 ## Crafting
 
@@ -24,7 +24,17 @@ S T S
 
 S is a Stainless Steel Plate, T is a Thorium Ingot and U is a Uranium Ingot.
 
-Every rod is crafted at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row, holding Nuclear Treatise I: Reactors and Fuel ([Treatise](Treatise.md)). The rods are radioactive from the moment they are made ([Radiation](Radiation.md)); the Fuel Rod is the stronger. A clad rod is a finished assembly: it cannot serve as the material of a tool, gun or any other modular part.
+**Plutonium Fuel Rod**
+
+```
+S P S
+S P S
+S P S
+```
+
+S is a Stainless Steel Plate and P is a Plutonium Ingot.
+
+Every rod is crafted at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row, holding Nuclear Treatise I: Reactors and Fuel ([Treatise](Treatise.md)). The rods are radioactive from the moment they are made ([Radiation](Radiation.md)). A clad rod is a finished assembly: it cannot serve as the material of a tool, gun or any other modular part.
 
 ## Fuel Rod
 
@@ -45,6 +55,10 @@ S U S
 ```
 S is a Stainless Steel Plate and U is an Enriched Uranium ingot.
 
+## Plutonium Fuel Rod
+
+[Plutonium](Materials.md#plutonium) clad in stainless steel. It is the strongest fuel rod, stronger than the Enriched Fuel Rod, and its plutonium comes from [reprocessed spent rods](#reprocessing). Plutonium is toxic as well as radioactive.
+
 ## Breeder Rod
 
 Depleted uranium around thorium. It breeds fissile fuel faster than a Thorium Fuel Rod, but only in a hard spectrum: a [moderator](Fission_Reactor.md#how-it-works) or a flowing coolant channel touching its cell softens the neutrons and leaves it with a small part of that breeding. Put it among control rods and bare channels.
@@ -58,7 +72,12 @@ S is a Stainless Steel Plate, D is a Depleted Uranium ingot and T is a Thorium I
 
 ## Reprocessing
 
-A spent rod can be dissolved in hydrofluoric acid at a warm temperature (the recipe and its window are in JEI) to recover nuggets of enriched uranium, which go back into new rods.
+A spent rod can be dissolved in a thermal vessel, and two acids give two products (amounts and temperature windows are in JEI):
+
+- **Hydrofluoric acid**, hot (150 to 260 Tu): recovers nuggets of enriched uranium, which go back into [Enriched Fuel Rods](#enriched-fuel-rod).
+- **Hydrochloric acid**, 500 mB at a mild heat (60 to 110 Tu): dissolves the rod into 3 plutonium nuggets, which cast into ingots for [Plutonium Fuel Rods](#plutonium-fuel-rod).
+
+A reactor that burns uranium rods can in this way feed itself with plutonium rods from its own spent fuel.
 
 ## Spent Fuel Rod
 

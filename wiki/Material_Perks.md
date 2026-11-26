@@ -20,7 +20,7 @@ A weapon's tooltip lists its perks in gold. All numbers are per level.
 | Ice, blue ice, snow, liquid air, liquid oxygen | **Chill** | builds freezing on the target (about 3.5 seconds of powder-snow chill) if it can freeze |
 | Sculk | **Siphon** | a melee kill drops 3 extra experience |
 | Ender pearl | **Blink** | a melee kill within 6 blocks steps you into the victim's place |
-| Uranium, thorium, uraninite, monazite, uranium glass, fuel rod, enriched fuel rod, breeder rod, thorium fuel rod, spent fuel rod | **Radiant** | a struck target withers for 3 seconds and glows for 5 (and the part is [radioactive](Radiation.md)) |
+| Uranium, thorium, plutonium, uraninite, monazite, uranium glass, fuel rod, enriched fuel rod, breeder rod, thorium fuel rod, plutonium fuel rod, spent fuel rod | **Radiant** | a struck target withers for 3 seconds and glows for 5 (and the part is [radioactive](Radiation.md)) |
 | Breeze rod, feather down, phantom membrane, aluminum foam, silica aerogel | **Featherlight** | the swing feels **40% less** of that part's mass (never below a fifth). The real mass is unchanged, so a [balance scale](Instruments.md#balance-scale) still reads it in full; the weapon swings quicker |
 
 Not every material suits every part role.

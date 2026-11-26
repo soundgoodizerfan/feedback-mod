@@ -76,6 +76,7 @@ Fifteen of these metals have their own page: see [Metals](Metals.md).
 | Electrum | 5 | 15.9 | 3 | 1040 Tu | Gold and silver. Soft and dense; conducts well. |
 | Amethyst Bronze | 12.5 | 7.4 | 12 | 1000 Tu | A mixture of bronze with a little amethyst. The best conductor of XP, at a conductance of 4 ([Experience](Experience.md)). |
 | Uranium | 20 | 19.1 | 10 | 1132 Tu | **Radioactive.** Nearly as dense as gold and tungsten. See [Uranium](#uranium). |
+| Plutonium | 26 | 19.8 | 12 | 640 Tu | **Radioactive** and toxic; made from spent fuel, no ore. See [Plutonium](#plutonium). |
 | [Osmium](Heavy_Core.md) | 39 | 22.59 | 30 | 3033 Tu | The densest metal. Its only forms are powder, sponge, compact and the [Heavy Core](Heavy_Core.md). |
 | [Iridium](#iridium-and-rhenium) | 18 | 22.56 | 20 | 2446 Tu | Nearly as dense as osmium, and it stands 2300 Tu. Its only forms are powder, sponge, compact and slug. |
 | [Rhenium](#iridium-and-rhenium) | 25 | 21.02 | 15 | 3186 Tu | Stands 2500 Tu. Its only forms are powder, sponge, compact and slug. |
@@ -255,6 +256,12 @@ Uraninite melts into uranium (1132 Tu) like any ore, and molten uranium casts in
 - It is the fuel of the [Fission Reactor](Fission_Reactor.md): clad in stainless steel it becomes a [Fuel Rod](Nuclear_Fuel.md#fuel-rod).
 
 See [Radiation](Radiation.md) before carrying any of it.
+
+## Plutonium
+
+A silvery, very dense heavy metal (19.8) that is radioactive and toxic. It has no ore: it is made by dissolving a [Spent Fuel Rod](Nuclear_Fuel.md#reprocessing) in hydrochloric acid, which gives plutonium nuggets. It melts at 640 Tu, far lower than uranium, and casts into ingots like any metal. It makes every metal form except lumps and ore. It is **radiant** like uranium.
+
+Clad in stainless steel it becomes the [Plutonium Fuel Rod](Nuclear_Fuel.md#plutonium-fuel-rod), the strongest fuel rod. See [Radiation](Radiation.md) before carrying any of it.
 
 ## Thorium
 
