@@ -100,6 +100,10 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
     private boolean panning;
 
     private AbstractWidget typePicker;
+    /** The Anvil's Repair tab's name box, and the item it was last filled for (a new item refills it, without sending). */
+    private net.minecraft.client.gui.components.EditBox nameBox;
+    private ItemStack named = ItemStack.EMPTY;
+    private boolean filling;
     private final float[] bars = new float[3], against = new float[3];
 
     public BenchScreen(PartBenchMenu menu, Inventory inventory, Component title) {
@@ -218,6 +222,23 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
             typePicker.visible = false;
         }
         axis.init(this::addWidget);
+        nameBox = null;
+        if (st == Station.ANVIL) {
+            nameBox = new net.minecraft.client.gui.components.EditBox(font, leftPos + PartBenchMenu.TRIM_X + 2, topPos + PartBenchMenu.CENTRE_Y - 24,
+                    2 * PartBenchMenu.TRIM_GAP + 12, 10, Component.translatable("gui.feedback.bench.repair.name"));
+            nameBox.setBordered(false);
+            nameBox.setMaxLength(50);
+            nameBox.setTextColor(skin.ink());
+            nameBox.setHint(Component.translatable("gui.feedback.bench.repair.name").append(" ✎"));
+            nameBox.setResponder(text -> {
+                if (!filling)
+                    net.neoforged.neoforge.network.PacketDistributor.sendToServer(
+                            new io.github.soundgoodizerfan.feedback.net.BenchNamePayload(menu.containerId, text));
+            });
+            nameBox.visible = false;
+            named = ItemStack.EMPTY;
+            addRenderableWidget(nameBox);
+        }
         if (blueprint != null) {
             printButton = addRenderableWidget(blueprint.printButton(leftPos, topPos));
             printButton.visible = false;
@@ -278,6 +299,20 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         if (shingle != null)
             shingle.tick();
         seatInventory();
+        if (nameBox != null) {
+            boolean on = menu.repairTab();
+            nameBox.visible = on;
+            nameBox.active = on;
+            ItemStack item = menu.centreStack();
+            if (!ItemStack.isSameItemSameComponents(item, named)) {
+                named = item.copy();
+                filling = true;
+                nameBox.setValue(item.isEmpty() ? "" : item.getHoverName().getString());
+                filling = false;
+            }
+            if (!on)
+                nameBox.setFocused(false);
+        }
         if (printButton != null)
             printButton.visible = drafting();
         if (drafting()) {
@@ -694,6 +729,11 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         return drafting() && blueprint.charTyped(c, modifiers) || super.charTyped(c, modifiers);
     }
 
+    @Override
+    protected boolean typing() {
+        return nameBox != null && nameBox.isFocused() || super.typing();
+    }
+
     /** Whether typing filters the fan: the stock fan is up and nothing is being played. */
     private boolean searchable() {
         return level() != null && !drafting() && settled() && !busy() && menu.centre(level()) == PartBenchMenu.Centre.STOCK;
@@ -773,6 +813,13 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
                 int mx = leftPos + PartBenchMenu.TRIM_X + k * PartBenchMenu.TRIM_GAP + 8 + PartBenchMenu.TRIM_GAP / 2;
                 g.drawString(font, "+", mx - font.width("+") / 2, topPos + PartBenchMenu.CENTRE_Y + 4, skin.dim(), false);
             }
+        }
+        if (menu.repairTab()) {
+            // The item and what mends it share one plaque joined by a plus; the name box sits above it.
+            int px = leftPos + PartBenchMenu.TRIM_X - 12, py = topPos + PartBenchMenu.CENTRE_Y - 12;
+            skin.plaque(g, px, py, PartBenchMenu.TRIM_GAP + 16 + 24, 40);
+            g.drawString(font, "+", leftPos + PartBenchMenu.TRIM_X + 8 + PartBenchMenu.TRIM_GAP / 2 - font.width("+") / 2, topPos + PartBenchMenu.CENTRE_Y + 4, skin.dim(), false);
+            skin.plaque(g, leftPos + PartBenchMenu.TRIM_X - 12, topPos + PartBenchMenu.CENTRE_Y - 30, 2 * PartBenchMenu.TRIM_GAP + 16 + 24, 18);
         }
         for (int i = 0; i < menu.inv(); i++) {
             Slot s = menu.getSlot(i);
@@ -897,6 +944,10 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
             caption(g, Component.translatable("gui.feedback.tool_table.smith.1"), PartBenchMenu.TRIM_X + PartBenchMenu.TRIM_GAP, PartBenchMenu.CENTRE_Y, true);
             caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), PartBenchMenu.TRIM_X + 2 * PartBenchMenu.TRIM_GAP, PartBenchMenu.CENTRE_Y, true);
         }
+        if (menu.repairTab()) {
+            caption(g, Component.translatable("gui.feedback.bench.repair.item"), PartBenchMenu.TRIM_X, PartBenchMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.bench.repair.material"), PartBenchMenu.TRIM_X + PartBenchMenu.TRIM_GAP, PartBenchMenu.CENTRE_Y, true);
+        }
         caption(g, Component.translatable("gui.feedback.tool_table.result"), PartBenchMenu.OUT_X, PartBenchMenu.OUT_Y, true);
         // The one line: what the pointer is on, or what to do next.
         Component line = line();
@@ -941,6 +992,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
             case PART -> fan.isEmpty() ? Component.translatable(menu.cutTab() ? "gui.feedback.bench.parts_tab" : "gui.feedback.bench.nothing_fits") : Component.empty();
             case TOOL -> fan.isEmpty() && menu.cutTab() ? Component.translatable("gui.feedback.bench.parts_tab") : Component.empty();
             case TEMPLATE -> Component.translatable("gui.feedback.tool_table.status.put_smith");
+            case REPAIR -> menu.centreStack().isEmpty() ? Component.translatable("gui.feedback.tool_table.status.put_repair") : Component.empty();
             default -> Component.empty();
         };
     }

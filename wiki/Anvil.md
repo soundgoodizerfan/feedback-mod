@@ -1,6 +1,6 @@
 # Anvil
 
-A vanilla block. Feedback keeps the block and makes it the [Smithing Table](Smithing_Table.md)'s upgrade: it shapes metal the same way and also **forges**.
+A vanilla block. Feedback keeps the block and makes it the [Smithing Table](Smithing_Table.md)'s upgrade: it shapes metal the same way, **forges**, and **repairs and renames** items.
 
 ## What vanilla does
 
@@ -18,13 +18,24 @@ W is a Wrought Iron Plate and S is a [Smithing Table](Smithing_Table.md). The to
 
 ## What Feedback does
 
-The Anvil has the same screen as the Smithing Table: the **Forge** and **Trim** tabs, and a [Hammer](Hammer.md) in the hammer slot. See the [Smithing Table](Smithing_Table.md) for it. Metal with a hot-working window is shaped here only while it is inside that window, as at the Smithing Table; a Hearth beside the Anvil keeps it there. On top of that it makes the **forged** variants of a part, played as a rhythm. Vanilla's repair, rename and combine do not exist here; every damage stage of a placed or generated vanilla anvil is this block.
+The Anvil has the same screen as the Smithing Table: the **Forge** and **Trim** tabs plus a **Repair** tab, and a [Hammer](Hammer.md) in the hammer slot. See the [Smithing Table](Smithing_Table.md) for it. Metal with a hot-working window is shaped here only while it is inside that window, as at the Smithing Table; a Hearth beside the Anvil keeps it there. On top of that it makes the **forged** variants of a part, played as a rhythm. Every damage stage of a placed or generated vanilla anvil is this block.
 
 The Anvil has vanilla's shape and turns to face the way you place it. A [Hearth](Hearth.md) set beside the Anvil, level with it or one block above, keeps its stock in its forging window while you play, and the rhythm allows for it. The Smithing Table is not reheated.
 
 ## Forging
 
 A forged variant is played in the Anvil's screen: put the stock in the center and click the variant in the fan. **Tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to the ring. A metronome clicks the tempo and counts four beats in. Each blow flashes Clean, Loose or Miss and shakes the panel, heavy blows and clean strikes the most; a harder metal plays slower. The stock cools while you play: notes struck out of its window are dead. A sloppy run leaves **flaws** that take a share of the edge's toughness and durability. Players who learned Cadence ([Onslaught](Skills.md#onslaught)) see tempo pips under the beat: clean blows in a row light them, and each lit pip makes the next blows land a little more Work. The screen is a cold cast-iron panel with polished-steel trim, and the bench rings like an anvil. The pattern is played around the stock on the bench; nothing covers the screen. A driven [Mechanical Hammer](Mechanical_Hammer.md#forging-at-a-bench) with a head seated, standing against the Anvil, plays the notes of the [Hammer Cam](Mechanical_Hammer.md#the-hammer-cam) seated in it for you.
+
+## Repair tab
+
+Put the item in the first slot and the mending stuff in the second. The name box sits above them and the result shows on the right. A [Hammer](Hammer.md) in the hammer slot is required and loses a point for each act. Repairing costs no experience.
+
+- **Rename:** type a name in the box. Clearing the box removes the name. Renaming is free and works on any item.
+- **Modular items** are mended with stock of the material the wearing part is made of, as at the [Engineering Table](Engineering_Table.md#repair-tab). The fewest pieces that make the item whole are used. Hafted tools mend face by face, and a gun barrel mends its bore wear.
+- **Other damaged items** (from other mods, for example) take the repair material the item itself names, each piece restoring a quarter of its maximum durability, or a second damaged copy of the same item: the two durabilities add, plus 12% of the maximum.
+- An item with no repair material can only be renamed.
+
+Enchantments are not merged.
 
 ## Shingling
 

@@ -269,6 +269,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.DockNamePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.DockNamePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.DockNamePayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.BenchNamePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.BenchNamePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.BenchNamePayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.StoreRequestPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.StoreRequestPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.StoreRequestPayload::handle)

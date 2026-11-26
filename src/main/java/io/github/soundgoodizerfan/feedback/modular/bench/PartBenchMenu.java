@@ -80,9 +80,9 @@ public class PartBenchMenu extends AbstractContainerMenu {
     public static final int OUT = 0, HAMMER = 1, ASM = 2, STOCK = ASM + ModularAssembly.DISH_SLOTS,
             TOOL = STOCK + PartBenchBlockEntity.STOCK_SLOTS, PLAN = TOOL + 1, EXTRA = PLAN + 1;
     /** What the bench is doing, set from the centre: stock shapes, a dish being assembled, a dish being finished ({@link #MODE_PREPARE}, both at the Prep Table), a smithing template. */
-    public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_PREPARE = 2, MODE_SMITH = 4;
+    public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_PREPARE = 2, MODE_SMITH = 4, MODE_REPAIR = 5;
     /** What the centre slot holds; {@code PART} and {@code TOOL} are a dish's container and the dish itself, at the Prep Table only. */
-    public enum Centre { EMPTY, STOCK, PART, TOOL, TEMPLATE, BLOOM, FILE }
+    public enum Centre { EMPTY, STOCK, PART, TOOL, TEMPLATE, BLOOM, FILE, REPAIR }
     /**
      * Button ids. {@code PICK + n} chooses shape n, {@code CUT + n} cut n, {@code FIT + s} fits what lies in menu slot s (at the Prep Table),
      * {@code SHAPE + n} shapes option n from the stock slot and fits it, {@code OFF + k} takes off fitted food k,
@@ -111,7 +111,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
 
     /** Whether the stock slot for slot {@code i + 1} of the picked part is on show: not on the other tabs, and only while the picked shape has that many slots. */
     private java.util.function.BooleanSupplier extraShown(int i) {
-        return () -> !trim() && !cutTab() && !blueprintTab() && extraSlots(player.level()) > i;
+        return () -> !trim() && !repairTab() && !cutTab() && !blueprintTab() && extraSlots(player.level()) > i;
     }
 
     private final Container table;
@@ -147,6 +147,9 @@ public class PartBenchMenu extends AbstractContainerMenu {
     private int seen;
     /** The centre's item when the choice was made, so a new thing in the centre clears it. */
     private net.minecraft.world.item.Item centreWas = net.minecraft.world.item.Items.AIR;
+    /** The Repair tab's typed name (null: none typed) and the item it was typed for, so a new item starts unnamed. */
+    private String rename;
+    private ItemStack renameFor = ItemStack.EMPTY;
 
     /** Any of the benches: the Prep Table's and the part-making stations' menus are this class with their {@code kind}. */
     protected PartBenchMenu(net.minecraft.world.inventory.MenuType<?> type, ModularAssembly.Kind kind, int id, Inventory inventory, Container table, BlockPos pos) {
@@ -194,14 +197,15 @@ public class PartBenchMenu extends AbstractContainerMenu {
                     i == 0 && dish ? () -> !trim() && !cutTab() && !blueprintTab()
                             : i < MAX_EXTRA_SLOTS && !dish ? extraShown(i) : () -> false, 64, s -> true));
         // The centre: stock, a part, a tool, or at the Prep Table a food or a dish.
-        addSlot(new TableSlot(PartBenchBlockEntity.TOOL, CENTRE_X, CENTRE_Y, () -> !trim() && !blueprintTab(), 64, s -> true));
+        addSlot(new TableSlot(PartBenchBlockEntity.TOOL, CENTRE_X, CENTRE_Y, () -> !trim() && !repairTab() && !blueprintTab(), 64, s -> true));
         // The seasoning slot, at the Prep Table only: what a finish pours onto the dish.
         addSlot(new TableSlot(PartBenchBlockEntity.PLAN, PLAN_X, PLAN_Y, () -> dish && !trim() && !blueprintTab(), 1,
                 s -> dish && isSeasoning(player.level(), s)));
         if (station.smiths()) {
             // The vanilla smithing table, on the Trim tab: template, base and addition in a row (the same containers the centre and stock slot use).
-            addSlot(new TableSlot(PartBenchBlockEntity.TOOL, TRIM_X, CENTRE_Y, this::trim, 64, s -> true));
-            addSlot(new TableSlot(PartBenchBlockEntity.STOCK, TRIM_X + TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
+            // The Repair tab uses the first two: the item, then what mends it.
+            addSlot(new TableSlot(PartBenchBlockEntity.TOOL, TRIM_X, CENTRE_Y, () -> trim() || repairTab(), 64, s -> true));
+            addSlot(new TableSlot(PartBenchBlockEntity.STOCK, TRIM_X + TRIM_GAP, CENTRE_Y, () -> trim() || repairTab(), 64, s -> true));
             addSlot(new TableSlot(PartBenchBlockEntity.STOCK + 1, TRIM_X + 2 * TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
         }
         if (dish) {
@@ -402,6 +406,8 @@ public class PartBenchMenu extends AbstractContainerMenu {
     public Centre centre(Level level) {
         if (trim())
             return Centre.TEMPLATE;
+        if (repairTab())
+            return Centre.REPAIR;
         ItemStack c = centreStack();
         if (c.isEmpty())
             return Centre.EMPTY;
@@ -448,6 +454,30 @@ public class PartBenchMenu extends AbstractContainerMenu {
     /** The smithing table's Trim tab: vanilla smithing, template in the first slot, no fan. */
     public boolean trim() {
         return tabId().equals("trim");
+    }
+
+    /** The Anvil's Repair tab: mend and rename the item in the first slot ({@link AnvilRepair}), no fan. */
+    public boolean repairTab() {
+        return tabId().equals("repair");
+    }
+
+    /** What the name box says to set on the item: null until the player types ({@link #rename}), when the item keeps its name. */
+    public String renamed() {
+        return rename;
+    }
+
+    /** The name typed on the Repair tab (server side), kept until the item in the slot changes or the tab does. */
+    public void rename(String typed) {
+        if (!repairTab())
+            return;
+        rename = net.minecraft.util.StringUtil.filterText(typed);
+        if (rename.length() > AnvilRepair.NAME_MAX)
+            rename = rename.substring(0, AnvilRepair.NAME_MAX);
+        refresh(true);
+    }
+
+    private AnvilRepair.Made repaired(Level level) {
+        return AnvilRepair.make(centreStack(), table.getItem(PartBenchBlockEntity.STOCK), rename, ClientMaterials.on(level), types(level));
     }
 
     /** The stonecutter's Cut tab or the woodworking table's Saw tab: the vanilla cuts instead of the shapes. */
@@ -787,6 +817,8 @@ public class PartBenchMenu extends AbstractContainerMenu {
         Centre c = centre(level);
         if (c == Centre.TEMPLATE)
             return smithed(level);
+        if (c == Centre.REPAIR)
+            return hasHammer() && !ClientMaterials.on(level).isEmpty() ? repaired(level).out() : ItemStack.EMPTY;
         if (c == Centre.EMPTY || c == Centre.BLOOM)
             return ItemStack.EMPTY;
         if (cutting()) {
@@ -816,6 +848,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
             case PART -> MODE_ASSEMBLE;
             case TOOL -> MODE_PREPARE;
             case TEMPLATE -> MODE_SMITH;
+            case REPAIR -> MODE_REPAIR;
             default -> MODE_PART;
         };
     }
@@ -829,6 +862,10 @@ public class PartBenchMenu extends AbstractContainerMenu {
             centreWas = now;
             pick.set(-1);
             forging = -1;
+        }
+        if (!ItemStack.isSameItemSameComponents(centreStack(), renameFor)) {
+            renameFor = centreStack().copy();
+            rename = null;
         }
         mode.set(modeOf(level));
         ItemStack out = preview(level);
@@ -844,6 +881,16 @@ public class PartBenchMenu extends AbstractContainerMenu {
         if (player.level().isClientSide || !(player instanceof ServerPlayer server))
             return;
         Level level = server.level();
+        if (mode.get() == MODE_REPAIR) {
+            AnvilRepair.Made made = repaired(level);
+            table.setItem(PartBenchBlockEntity.TOOL, ItemStack.EMPTY);
+            table.removeItem(PartBenchBlockEntity.STOCK, made.used());
+            rename = null;
+            level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.8f, 1f);
+            wearHammer();
+            refresh(true);
+            return;
+        }
         if (smithing()) {
             table.removeItem(PartBenchBlockEntity.TOOL, 1);
             table.removeItem(PartBenchBlockEntity.STOCK, 1);
@@ -1138,6 +1185,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
             // A new tab starts clean: no shape chosen, and the addition slot of the Trim tab goes back to the player.
             pick.set(-1);
             forging = -1;
+            rename = null;
             if (!trim())
                 server.getInventory().placeItemBackInInventory(table.removeItemNoUpdate(PartBenchBlockEntity.STOCK + 1));
             table.setChanged();
@@ -1714,7 +1762,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
             if (blueprintTab() && held.is(io.github.soundgoodizerfan.feedback.registry.FTags.BLUEPRINT_PAPER))
                 return moveItemStackTo(held, EXTRA, EXTRA + 1, false) ? moved : ItemStack.EMPTY;
             boolean plan = dish && isSeasoning(player.level(), held);
-            if (trim() ? !moveItemStackTo(held, EXTRA, EXTRA + 3, false)
+            if (trim() || repairTab() ? !moveItemStackTo(held, EXTRA, EXTRA + (repairTab() ? 2 : 3), false)
                     : !(plan && moveItemStackTo(held, PLAN, PLAN + 1, false))
                     && !moveItemStackTo(held, TOOL, TOOL + 1, false) && !moveItemStackTo(held, STOCK, STOCK + (station.smiths() ? 2 : 1), false))
                 return ItemStack.EMPTY;

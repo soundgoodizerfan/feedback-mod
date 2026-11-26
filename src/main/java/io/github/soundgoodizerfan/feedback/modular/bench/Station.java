@@ -29,7 +29,7 @@ public enum Station implements StringRepresentable {
     /** The stock filter of the Prep Table's menu: any stock, any shape. Not a block of its own. */
     TOOL("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
     SMITHING("FORGE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
-    ANVIL("ANVIL", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
+    ANVIL("ANVIL", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim"), tab("repair")), Panel.FORGE),
     WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe", List.of(tab("parts"), tab("saw"))),
     STONECUTTING("STONE", "saw", "gui.feedback.tool_table.saw", List.of(tab("parts"), tab("cut"))),
     PREP("BRICK", "knife", "gui.feedback.prep_table.knife", List.of(tab("prep"), tab("blueprint")), Panel.FORGE, Panel.PREP),
