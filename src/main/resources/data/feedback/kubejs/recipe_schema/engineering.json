@@ -1,0 +1,74 @@
+{
+	"keys": [
+		{
+			"name": "result",
+			"role": "output",
+			"type": "item_stack"
+		},
+		{
+			"name": "pattern",
+			"type": {
+				"type": "list",
+				"component": "string"
+			}
+		},
+		{
+			"name": "key",
+			"role": "input",
+			"type": {
+				"type": "pattern",
+				"component": "optional_ingredient"
+			}
+		},
+		{
+			"name": "school",
+			"role": "other",
+			"type": "string",
+			"optional": true
+		},
+		{
+			"name": "minigame",
+			"role": "other",
+			"type": "string",
+			"optional": true
+		},
+		{
+			"name": "fit_order",
+			"role": "other",
+			"type": {
+				"type": "list",
+				"component": "string"
+			},
+			"optional": true
+		},
+		{
+			"name": "carries_circuit",
+			"role": "other",
+			"type": "boolean",
+			"optional": true
+		},
+		{
+			"name": "made_of",
+			"role": "other",
+			"type": "boolean",
+			"optional": true
+		},
+		{
+			"name": "cuts_motes",
+			"role": "other",
+			"type": "boolean",
+			"optional": true
+		}
+	],
+	"unique": ["result"],
+	"constructors": [
+		{
+			"keys": ["result", "pattern", "key"]
+		}
+	],
+	"post_processors": [
+		{
+			"type": "kubejs:key_pattern_cleanup"
+		}
+	]
+}

@@ -423,6 +423,11 @@ by id) and the yield-ladder idea (an instrument improves yield and unlocks nothi
 circuit tier = voltage tier, the wafer/boule chain, SMD multipliers, the cleanroom gate, the
 flat-fluid solder tax. No code copied.
 
+
+### Taken: how a native KubeJS integration is shaped (2026-11-26, branch `1.21`, commit `ddc74f1`)
+
+Read for design only; nothing copied, no assets. Taken as design: KubeJS as an optional soft dependency, its plugin discovered by a text file, KubeJS types kept in one isolated package, and a recipe schema declared per recipe type. Rejected: a startup registry event and Java material builders (Feedback materials are reloadable datapack JSON, so scripts write them with KubeJS's own data generator), Java class bindings (they would expose machine internals), and custom recipe components (Feedback recipes are plain codec JSON). Feedback ships its schema as KubeJS's data-only `kubejs/recipe_schema` JSON, so no plugin class and no compile dependency exist at all.
+
 ## MrCrayfish's Furniture Mod: Refurbished
 
 Read for the data-link system's node/connection graph and select-then-connect tool

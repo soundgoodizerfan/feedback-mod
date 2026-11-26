@@ -23,6 +23,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [LambDynamicLights](#lambdynamiclights) | Optional | Glowing hot items light the area while held or dropped |
 | [Xaero's Minimap](#xaeros-minimap) | Optional | Survey Meter readings pin to the map |
 | [Applied Energistics 2](#applied-energistics-2) | Optional | Certus Quartz and Fluix crystals and dusts count as materials |
+| [KubeJS](#kubejs) | Optional | Scripts add Engineering Table recipes and materials |
 | [Artifacts](#artifacts) | Optional | Engineering Table recipes for its items |
 | [Cataclysm](#cataclysm) | Optional | Black Steel, Ancient Metal, Witherite, Ignitium and Cursium count as materials |
 | [Born in Chaos](#born-in-chaos) | Optional | Dark Metal counts as a material |
@@ -384,6 +385,30 @@ Food that differs in cook or moisture state does not merge in a sort.
 Certus Quartz and Fluix crystals and dusts count as their material. Their blocks, buds and ores do not. Using one opens the material's stats card in JEI, whose item box lists it. Without Applied Energistics 2, neither material exists.
 
 AE2's own fluid cells already hold Feedback's fluids and gases. Feedback adds nothing for AE2 network storage: it is not part of Feedback's own logistics.
+
+## KubeJS
+
+With KubeJS installed, a pack's server scripts can add [Engineering Table](Engineering_Table.md) recipes and materials.
+
+A shaped Engineering Table recipe is one call: the result, the pattern rows and a key from letters to ingredients.
+
+```js
+ServerEvents.recipes(event => {
+  event.recipes.feedback.engineering('minecraft:stick', ['A', 'A'], {A: 'minecraft:oak_planks'})
+})
+```
+
+The recipe also takes these optional keys: `school`, `minigame`, `fit_order`, `carries_circuit`, `made_of` and `cuts_motes`. A recipe that asks for a hand tool or fasteners, and a shapeless recipe, is written with `event.custom({type: 'feedback:engineering', ...})`, using the same JSON as a datapack recipe.
+
+A material is a data file. A script writes one before the mods load, in the same format as the mod's own material files, and every material needs every figure:
+
+```js
+ServerEvents.generateData('before_mods', event => {
+  event.json('feedback:material/my_metal', {})
+})
+```
+
+The shaped recipes the [Crafting Table](Crafting_Table.md) makes from parts are built in and cannot be scripted.
 
 ## Artifacts
 
