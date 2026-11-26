@@ -915,7 +915,8 @@ public final class ModularBake {
         boolean armour = type.family() == ModularType.Family.ARMOUR;
         Part setPart = design.parts().stream().filter(p -> type.roles().get(p.role()).set()).findFirst().orElse(null);
         // Armour studs cover a share of the plate by how many there are; a tip is the whole edge.
-        float studs = setPart == null ? 0 : Math.min(ModularTuning.STUD_MAX, setPart.count() * ModularTuning.STUD_SHARE);
+        float studs = setPart == null ? 0 : Math.min(ModularTuning.STUD_MAX,
+                (armour ? io.github.soundgoodizerfan.feedback.modular.trait.Studded.count(type.roles().get(setPart.role()), setPart) : setPart.count()) * ModularTuning.STUD_SHARE);
         Zone zone = section(mix(withEdge(zone(edge, null, 1f, 1f), edge, type.roles().get(type.wearRole()), wearPart, materials), edge,
                 setPart == null ? null : by.get(setPart.role()), armour ? studs : 1f, armour ? studs : ModularTuning.TIP_SHARE),
                 type.roles().get(type.wearRole()).section(wearPart)
@@ -1076,8 +1077,12 @@ public final class ModularBake {
                             float c = Math.max(competence(pm), pm.mechanical().crushEnergy().map(e -> e / ModularTuning.CRUSH_ENERGY_PER_COMPETENCE).orElse(0f));
                             // A shear-thickening lining (slime) is soft slowly and stiffens against a fast blow: the gain in its viscosity at speed is competence a blow meets.
                             c += pm.molten().shearThickening().orElse(0f) * ModularTuning.SHEAR_LINING_COMPETENCE;
-                            points += type.armourMax() * ModularTuning.LINING_SHARE * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);
+                            // A thicker lining pads more (and weighs more, through its volume): the role's thickness axis against its default.
+                            var thick = r.axesFor(p).get("thickness");
+                            float pad = thick == null ? 1f : (float) Math.pow(r.axis(p, "thickness") / thick.def(), ModularTuning.LINING_THICKNESS_EXPONENT);
+                            points += type.armourMax() * ModularTuning.LINING_SHARE * pad * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);
                         }
+                        case "studs" -> pierce += ModularTuning.STUD_PIERCE * io.github.soundgoodizerfan.feedback.modular.trait.Studded.count(r, p);
                         case "battery_bay" -> {
                             float c = competence(pm);
                             points += type.armourMax() * ModularTuning.BAY_ARMOUR_SHARE * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);

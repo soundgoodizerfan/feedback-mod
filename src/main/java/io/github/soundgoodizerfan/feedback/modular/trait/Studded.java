@@ -20,6 +20,14 @@ public final class Studded implements ModularTrait {
 
     private static boolean reflecting;
 
+    /**
+     * Studs set in a part: its items times the cells of stock in each at the spacing the plate was made to (closer spacing sets more),
+     * at least one for any part.
+     */
+    public static int count(io.github.soundgoodizerfan.feedback.modular.type.ModularType.Role role, ModularDesign.Part studs) {
+        return Math.max(1, Math.round(studs.count() * role.cells(studs) * role.volumeScale(studs)));
+    }
+
     @Override
     public void onWornHurt(LivingIncomingDamageEvent event, LivingEntity wearer, ItemStack piece, Params params) {
         if (reflecting || event.getSource().is(DamageTypeTags.IS_PROJECTILE) || event.getSource().is(DamageTypeTags.IS_FALL)
@@ -27,9 +35,10 @@ public final class Studded implements ModularTrait {
             return;
         ModularDesign design = ModularStacks.design(piece);
         ModularDesign.Part studs = design == null ? null : design.part("T");
-        if (studs == null)
+        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known(design.type());
+        if (studs == null || type == null)
             return;
-        float damage = Math.min(params.get("max", 3f), params.get("per_stud", 1f) * studs.count());
+        float damage = Math.min(params.get("max", 3f), params.get("per_stud", 1f) * count(type.roles().get("T"), studs));
         reflecting = true;
         try {
             attacker.hurt(wearer.damageSources().thorns(wearer), damage);

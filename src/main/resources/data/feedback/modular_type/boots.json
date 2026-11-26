@@ -183,24 +183,40 @@
       "name": "underlayer",
       "class": "housing",
       "forms": [
-        "@loose",
-        "ball",
-        "@cord",
-        "@mat",
-        "@skin"
+        "armour_lining"
       ],
       "traits": [
         "stuffing"
       ],
       "litres": 0.02,
-      "layer": 1
+      "layer": 1,
+      "part": {
+        "item": "feedback:armour_lining",
+        "cells": 1,
+        "stock": [
+          "@loose",
+          "ball",
+          "@cord",
+          "@mat",
+          "@skin"
+        ]
+      },
+      "axes": {
+        "thickness": {
+          "min": 2,
+          "max": 20,
+          "unit": "mm",
+          "default": 6,
+          "step": 0.5,
+          "scales": true
+        }
+      }
     },
     "T": {
       "name": "studs",
       "class": "working_face",
       "forms": [
-        "nugget",
-        "@gem"
+        "armour_studs"
       ],
       "litres": 0.01,
       "bulk": 2,
@@ -211,7 +227,26 @@
         "max": 3,
         "wear": 1
       },
-      "traits": []
+      "traits": [],
+      "part": {
+        "item": "feedback:armour_studs",
+        "cells": 1,
+        "stock": [
+          "nugget",
+          "@gem"
+        ]
+      },
+      "axes": {
+        "spacing": {
+          "min": 2,
+          "max": 8,
+          "unit": "cm",
+          "default": 4,
+          "step": 0.5,
+          "scales": true,
+          "inverse": true
+        }
+      }
     },
     "S": {
       "name": "servo",

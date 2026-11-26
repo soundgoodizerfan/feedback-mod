@@ -11210,5 +11210,13 @@
   "screen.feedback.filter.band.small": "Small",
   "screen.feedback.filter.band.mid_size": "Mid",
   "screen.feedback.filter.band.large": "Large",
-  "screen.feedback.dock.filter_on": "Filter %s"
+  "screen.feedback.dock.filter_on": "Filter %s",
+  "item.feedback.armour_studs": "Stud Plate",
+  "form.feedback.armour_studs": "%s Stud Plate",
+  "modular.feedback.desc.part.armour_studs": "A strip of rivets for the outside of armor. Set closer together they stop more thrusts and bite whoever strikes the wearer, and take more stock and weigh more.",
+  "item.feedback.armour_lining": "Armor Lining",
+  "form.feedback.armour_lining": "%s Armor Lining",
+  "modular.feedback.desc.part.armour_lining": "The padding worn under the plate. A thicker lining takes more of a blow and weighs more.",
+  "modular.feedback.axis.spacing": "Stud spacing",
+  "modular.feedback.axis.spacing.tip": "How far apart the studs sit. Closer studs are more of them: they stop more thrusts and bite harder, and take more stock and weigh more."
 }

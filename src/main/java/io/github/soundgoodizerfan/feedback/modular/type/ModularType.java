@@ -582,7 +582,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             float scale = 1f;
             for (Map.Entry<String, Axis> a : axesFor(made).entrySet())
                 if (a.getValue().scales() && a.getValue().def() > 0f)
-                    scale *= a.getValue().clamp(made.axis(a.getKey(), a.getValue().def())) / a.getValue().def();
+                    scale *= a.getValue().scaleAt(made.axis(a.getKey(), a.getValue().def()));
             return scale;
         }
 
@@ -596,7 +596,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             float scale = 1f;
             for (Map.Entry<String, Axis> a : axesFor(variant).entrySet())
                 if (a.getValue().scales() && a.getValue().def() > 0f)
-                    scale *= a.getValue().clamp(values.getOrDefault(a.getKey(), a.getValue().def())) / a.getValue().def();
+                    scale *= a.getValue().scaleAt(values.getOrDefault(a.getKey(), a.getValue().def()));
             return scale;
         }
 
@@ -718,12 +718,13 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param when for a figure that exists only on some shapes: the shape param ({@code gears}) that must reach {@code atLeast}.
      * @param scales whether the part's volume (and so its stock, mass and cost) follows this axis in proportion to {@code value / default}.
      * @param variants the shapes of the part this axis belongs to (empty: every shape); one resolver, {@link Role#axesFor}, feeds the board, the bench and the bake.
+     * @param inverse for a measure of spacing: the part's volume follows {@code default / value} instead, so closer is more (a stud plate's studs).
      * @param bands  named ranges of the value, ascending by {@code max} (the last may leave it out to run to the axis's end). A band is a label
      *               for a range, never a switch the player picks: it feeds names and tooltips, and may carry a trait and params where physics
      *               has no model ({@link Band}).
      */
     public record Axis(float min, float max, String unit, float def, float step, String when, float atLeast, boolean scales, List<Band> bands,
-                       List<String> variants) {
+                       List<String> variants, boolean inverse) {
         static final Codec<Axis> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.fieldOf("min").forGetter(Axis::min),
                 Codec.FLOAT.fieldOf("max").forGetter(Axis::max),
@@ -734,8 +735,15 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.FLOAT.optionalFieldOf("at_least", 0f).forGetter(Axis::atLeast),
                 Codec.BOOL.optionalFieldOf("scales", false).forGetter(Axis::scales),
                 Band.CODEC.listOf().optionalFieldOf("bands", List.of()).forGetter(Axis::bands),
-                Codec.STRING.listOf().optionalFieldOf("variants", List.of()).forGetter(Axis::variants)
+                Codec.STRING.listOf().optionalFieldOf("variants", List.of()).forGetter(Axis::variants),
+                Codec.BOOL.optionalFieldOf("inverse", false).forGetter(Axis::inverse)
         ).apply(instance, Axis::new));
+
+        /** What a part's volume is multiplied by at {@code value}: {@code value / default}, or {@code default / value} for an inverse axis. */
+        public float scaleAt(float value) {
+            float v = clamp(value);
+            return inverse ? def / Math.max(v, 1e-3f) : v / def;
+        }
 
         /** Whether the axis belongs to a part shaped in {@code variant}. */
         public boolean applies(String variant) {

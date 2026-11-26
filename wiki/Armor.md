@@ -17,7 +17,7 @@ Stock is ingots, plates, leather, gems or chain, all the same material. A metal 
 
 ## Lining and studs
 
-Put the piece in the item slot of the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab) and the **lining** (any stuffing material: leather, wool; see [What a Part Slot Takes](What_a_Part_Slot_Takes.md#uses)) for a little extra protection, and/or **studs** (a pair) in the attachment slots, one stack of stock to a slot, and press **Apply**:
+Shape the parts at a part bench like a plate: an **Armor Lining** (stuffing stock: leather, wool; see [What a Part Slot Takes](What_a_Part_Slot_Takes.md#uses)) for a little extra protection, and a **Stud Plate** (gem, shard or nugget stock). Then put the piece in the item slot of the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab), the lining and/or studs in the attachment slots, and press **Apply**:
 
 | On the piece | Gives |
 | --- | --- |
@@ -26,13 +26,15 @@ Put the piece in the item slot of the Engineering Table's [Fit tab](Engineering_
 | studs | studded |
 | lining, studs | lined and studded |
 
-A soft foam such as aluminum foam pads by what it absorbs as it is crushed, so a lining of it protects about as well as a hard metal one. A lining of slime balls is soft under a slow push and stiffens against a fast blow, so it protects well for something so soft. Chestplates, helmets, leggings and boots take it; gloves do not.
+The lining has a **thickness** axis (2 to 20 mm, aimed at 6): a thicker pad protects more, with less extra for each added millimeter, and weighs more. A soft foam such as aluminum foam pads by what it absorbs as it is crushed, so a lining of it protects about as well as a hard metal one. A lining of slime balls is soft under a slow push and stiffens against a fast blow, so it protects well for something so soft. Chestplates, helmets, leggings and boots take it; gloves do not.
 
 To take a lining or studs off, take the piece apart on the Repair tab and fit the rest again; a plain piece is worn as it is.
 
 ### Studs
 
-**Studs** are gems, shards or nuggets set into the plate (on any plate; diamond studs in steel plate). Each stud covers a tenth of the piece, up to half, and that share takes the stud's hardness, toughness and wear. Four diamond studs in a steel chestplate lift it from steel's 6.7 points to about 7.2 and keep steel's toughness, where a whole diamond plate is 7.5 points and glass. Studs add a little mass and nothing else. Armor takes no tip: a plate has no edge.
+**Studs** are gems, shards or nuggets made into a Stud Plate and set into the plate (on any plate; diamond studs in steel plate). Each stud covers a tenth of the piece, up to half, and that share takes the stud's hardness, toughness and wear. Four diamond studs in a steel chestplate lift it from steel's 6.7 points to about 7.2 and keep steel's toughness, where a whole diamond plate is 7.5 points and glass. Armor takes no tip: a plate has no edge.
+
+The Stud Plate has a **spacing** axis (2 to 8 cm, aimed at 4). Closer spacing sets more studs in the plate: more pierce resistance and a harder bite on whoever strikes the wearer in melee, at the cost of more stock and more mass. Wider spacing sets fewer.
 
 ## Fittings
 
