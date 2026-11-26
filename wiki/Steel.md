@@ -4,7 +4,7 @@ Steel is iron with carbon: harder and stronger than iron, and the metal of boile
 
 ## Making it
 
-Steel is not a mixture of melts. Put a **Wrought Iron Ingot** and **Charcoal** in a [Crucible](Crucible.md) and hold it between **1350 and 1410 Tu**; above 1470 Tu the batch spoils to Burnt Iron. Cast iron with charcoal gives steel too. The full path, with the failure points, is [Guide: Making Steel](Guide_Making_Steel.md).
+Steel is not a mixture of melts. Put an **Iron Ingot** (cast iron) and **Charcoal** in a [Crucible](Crucible.md) and hold it between **1350 and 1410 Tu**; above 1470 Tu the batch spoils to Burnt Iron. A **Wrought Iron Ingot** with charcoal also gives steel, slowly, between **1000 and 1250 Tu**, best near 1100, spoiling above 1400. The full path, with the failure points, is [Guide: Making Steel](Guide_Making_Steel.md).
 
 Molten steel is the base of [stainless steel](Stainless_Steel.md), manganese steel and high-speed steel ([Casting](Casting.md#alloys)).
 

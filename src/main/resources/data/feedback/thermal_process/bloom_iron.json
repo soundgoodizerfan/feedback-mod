@@ -36,6 +36,6 @@
   },
   "spoil_temperature": 1400,
   "spoiled": {
-    "id": "feedback:cast_iron"
+    "id": "minecraft:iron_ingot"
   }
 }

@@ -115,7 +115,7 @@ The [Gap](The_Gap.md#salvage) holds asteroids of iron, pentlandite, sperrylite, 
 
 Same tools, same drops. Coal ore gives coal, iron ore raw iron, copper ore several raw copper, gold ore raw gold, lapis ore a handful of lapis, redstone ore a few redstone dust, diamond ore a diamond, emerald ore an emerald, nether gold ore a few gold nuggets and nether quartz ore a quartz. Fortune gives more, and Silk Touch gives the ore block itself. Coal, lapis, diamond, emerald and the Nether's two also drop a little experience, and redstone too. Redstone ore lights up and glows when you touch or mine it, as before.
 
-What a mined ore is worth as metal depends on how far you process it; the raw rock gives the least ([Ore Processing](Ore_Processing.md)). Iron ore does not smelt to an ingot ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)).
+What a mined ore is worth as metal depends on how far you process it; the raw rock gives the least ([Ore Processing](Ore_Processing.md)). Iron ore smelts to an Iron Ingot only with charcoal at a high heat ([Iron](Iron.md#getting-it)).
 
 Iron, copper and lapis want at least a stone pickaxe; gold, redstone, diamond and emerald want an iron one; coal and the Nether's two take any pickaxe.
 

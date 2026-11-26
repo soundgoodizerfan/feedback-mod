@@ -1,6 +1,6 @@
 # Guide: Making Wrought Iron
 
-A path from iron ore to wrought iron, the soft tough iron that plates, rods and most machine parts are made of. Iron ore, raw iron and vanilla's [iron ore](Vanilla_Changes.md#iron-ore) do not smelt to an ingot in any furnace or crucible: the ore first becomes a spongy **Iron Bloom** full of slag, and the slag is hammered out.
+A path from iron ore to wrought iron, the soft tough iron that plates, rods and most machine parts are made of. Smelted hot, iron ore gives an Iron Ingot, which is brittle cast iron. Wrought iron comes by a gentler route: the ore first becomes a spongy **Iron Bloom** full of slag, and the slag is hammered out. An Iron Ingot can also be puddled into a clean bloom.
 
 ## What you need
 
@@ -12,7 +12,7 @@ A path from iron ore to wrought iron, the soft tough iron that plates, rods and 
 ## The route
 
 1. **Make a bloom.** Put the iron ore and a piece of charcoal in the vessel and hold it between **1000 and 1350 Tu**, fastest near 1200. The batch takes a while, and a temperature that climbs too fast stalls it. The result is an **Iron Bloom**. Its tooltip says how much slag is left in it: *Clean*, *a little*, *plenty* or *packed*; a bloom from ore is packed.
-2. **Do not overheat it.** Above **1400 Tu** the iron takes up carbon instead and becomes **cast iron**. Melting bare ore without charcoal gives **molten cast iron** the same way.
+2. **Do not overheat it.** Above **1400 Tu** the iron takes up carbon instead and the batch spoils into an **Iron Ingot** (cast iron). Raw iron, crushed ore, concentrate or dust with charcoal held between **1420 and 1650 Tu** smelts to the same Iron Ingot on purpose, best near 1500. Melting bare ore without charcoal gives **molten cast iron**.
 3. **Hammer the slag out**, hot. Either [shingle it by hand](#shingling-at-the-anvil) or put it under the Mechanical Hammer ([below](#under-the-mechanical-hammer)). A good job gives a **Wrought Iron Ingot** and a lump of **Bloomery Slag**.
 4. **Reuse the slag.** Bloomery Slag still holds iron. Crush it and melt the grains for pig iron ([Ore Processing](Ore_Processing.md)).
 
@@ -43,12 +43,12 @@ Put a hot bloom on the anvil of a [Mechanical Hammer](Mechanical_Hammer.md) and 
 
 ## Puddling
 
-A cast iron batch becomes a bloom with little slag in the [Puddling Furnace](Puddling_Furnace.md), which a shaft stirs. That bloom needs far less shingling.
+An Iron Ingot with an oxidizer becomes a bloom with little slag in the [Puddling Furnace](Puddling_Furnace.md), which a shaft stirs. That bloom needs far less shingling.
 
 ## Related ore steps
 
 - **Hematite** roasts to **magnetite** of the same form (lump, crushed, concentrate or dust) with charcoal between **600 and 800 Tu**; above 1000 it burns to Burnt Iron. Magnetite answers a [magnet](Electromagnet.md#separating-ore).
 - **Limonite** dehydrates to **hematite** of the same form between **300 and 600 Tu**.
-- **Iron loose rock** on the surface drops cast iron nuggets.
+- **Iron loose rock** on the surface drops Iron Nuggets.
 
 After this: [Guide: Making Steel](Guide_Making_Steel.md).

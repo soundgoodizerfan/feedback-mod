@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_block": {
+    "has_nugget": {
       "conditions": {
         "items": [
           {
-            "items": "feedback:cast_iron_block"
+            "items": "feedback:iron_nugget"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "feedback:cast_iron_ingot_from_block"
+        "recipe": "feedback:iron_ingot_from_nugget"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_block"
+      "has_nugget"
     ]
   ],
   "rewards": {
     "recipes": [
-      "feedback:cast_iron_ingot_from_block"
+      "feedback:iron_ingot_from_nugget"
     ]
   }
 }

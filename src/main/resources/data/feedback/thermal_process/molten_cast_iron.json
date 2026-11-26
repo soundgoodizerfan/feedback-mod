@@ -1,7 +1,7 @@
 {
   "inputs": [
     [
-      { "item": "feedback:cast_iron" }
+      { "item": "minecraft:iron_ingot" }
     ]
   ],
   "min_temperature": 1200,

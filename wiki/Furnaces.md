@@ -26,7 +26,7 @@ Fuel works like in a [Firebox](Firebox.md): each fuel has its own flame temperat
 
 ## Vanilla recipes
 
-Every vanilla (and modded) smelting, smoking and blasting recipe still works, in every furnace, except ore into metal: iron ore, raw iron and vanilla's [iron ore](Vanilla_Changes.md#iron-ore) do not smelt to an ingot in any vessel ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). **How fast** depends on how hot the furnace is:
+Every vanilla (and modded) smelting, smoking and blasting recipe still works, in every furnace, except ore into metal: iron ore and raw iron smelt to an ingot only with charcoal, between 1420 and 1650 Tu ([Vanilla Changes](Vanilla_Changes.md#iron-ore)). **How fast** depends on how hot the furnace is:
 
 - **Metal and ore** recipes don't progress at all below **800 Tu**, and go fastest around 1000 (blasting recipes around 1400). A furnace burning only logs (760 Tu) **can't smelt ore**; coal or charcoal can.
 - A smelting, blasting or other cooking recipe (not smoking) whose result is a form of a metal with a molten fluid pours that molten metal instead of an item, at the metal's melting point: 2 ingots give 288 mB.

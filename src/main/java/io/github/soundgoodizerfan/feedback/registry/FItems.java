@@ -620,12 +620,6 @@ public class FItems {
     /** Tempering's result -- brittle no longer. See {@code data/feedback/thermal_process/tempered_steel.json}. */
     public static final DeferredItem<Item> TEMPERED_STEEL = ITEMS.registerSimpleItem("tempered_steel");
 
-    /** What molten iron casts into by default now -- see {@code data/feedback/thermal_process/
-     * cast_iron.json} for how it becomes {@link #STEEL_INGOT} instead of {@code minecraft:iron_ingot}
-     * being the direct steelmaking input, an alternate, slower-to-set-up-but-cheaper-per-batch
-     * route than the original iron_ingot+charcoal recipe, which is left untouched. */
-    public static final DeferredItem<Item> CAST_IRON = ITEMS.registerSimpleItem("cast_iron");
-
     // Tin and zinc: no ore, no worldgen yet -- see TODO.md. Registered as plain raw ingots so
     // bronze and brass's alloy chemistry exists and can be pointed at a real ore later without
     // touching a single recipe.

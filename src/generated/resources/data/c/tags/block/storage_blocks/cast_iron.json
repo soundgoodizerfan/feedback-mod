@@ -1,5 +1,8 @@
 {
   "values": [
-    "feedback:cast_iron_block"
+    {
+      "id": "minecraft:iron_block",
+      "required": false
+    }
   ]
 }

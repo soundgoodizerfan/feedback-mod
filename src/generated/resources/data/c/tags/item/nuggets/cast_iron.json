@@ -1,5 +1,8 @@
 {
   "values": [
-    "feedback:cast_iron_nugget"
+    {
+      "id": "minecraft:iron_nugget",
+      "required": false
+    }
   ]
 }

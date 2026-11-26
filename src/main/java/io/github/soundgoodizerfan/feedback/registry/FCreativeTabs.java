@@ -236,7 +236,7 @@ public class FCreativeTabs {
 
     /** Metals, alloys and ceramics as ingots and stock, base metal then alloy, cast then worked. */
     private static final List<DeferredItem<?>> STOCK = of(FItems.TIN_INGOT, FItems.ZINC_INGOT, FItems.LEAD_INGOT,
-            FItems.SILVER_INGOT, FItems.BRONZE_INGOT, FItems.BRASS_INGOT, FItems.CAST_IRON, FItems.STEEL_INGOT,
+            FItems.SILVER_INGOT, FItems.BRONZE_INGOT, FItems.BRASS_INGOT, FItems.STEEL_INGOT,
             FItems.TEMPERED_STEEL, FItems.HARDENED_STEEL, FItems.GROUND_HARDENED_STEEL, FItems.CAST_NETHERITE_INGOT,
             FItems.GLASS_INGOT, FItems.QUARTZ_GLASS_INGOT, FItems.COPPER_TUBING, FItems.GLASS_TUBING,
             FItems.CERAMIC, FItems.GLAZED_CERAMIC, FItems.TAINT_GLAZE, FItems.FIREBRICK);

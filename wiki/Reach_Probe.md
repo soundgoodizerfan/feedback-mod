@@ -10,7 +10,7 @@ A probe that links to a machine and keeps its reach: the hottest it runs, the pr
   S
 ```
 
-N is a Wrought Iron Nugget, W is [Copper Wire](Wire_Drawer.md) and S is a Stick.
+N is an Iron Nugget, W is [Copper Wire](Wire_Drawer.md) and S is a Stick.
 
 ## Using it
 

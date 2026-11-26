@@ -21,9 +21,9 @@
     "latent_heat_vaporisation": 6090
   },
   "mechanical": {
-    "toughness": 15,
+    "toughness": 25,
     "ductility": 0,
-    "yield_strength": 10,
+    "yield_strength": 14,
     "friction": 0.5,
     "abrasiveness": 0.37,
     "work_hardening": 2
@@ -46,7 +46,9 @@
   "ampacity": 0.235,
   "corrosion_resistance": 0.35,
   "forms": {
-    "ingot": "feedback:cast_iron"
+    "ingot": "minecraft:iron_ingot",
+    "nugget": "minecraft:iron_nugget",
+    "block": "minecraft:iron_block"
   },
   "exclude": [
     "plate",

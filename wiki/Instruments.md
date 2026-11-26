@@ -80,7 +80,7 @@ I   I
 I I I
 ```
 
-R is a Stick and I is a Wrought Iron Ingot.
+R is a Stick and I is a Wrought Iron Plate.
 
 Carry it anywhere in your inventory. Every modular item's tooltip gains a line like *"Balance scale: 3.4 Mu"*. Mass matters because a heavier head hits harder and swings slower, and because a head that is too heavy for its handle works the joint loose.
 
@@ -243,7 +243,7 @@ W W W
 N G N
 ```
 
-W is [Copper Wire](Wire_Drawer.md), N is a Wrought Iron Nugget and G is a Glass Pane.
+W is [Copper Wire](Wire_Drawer.md), N is an Iron Nugget and G is a Glass Pane.
 
 - **Right-click** any electrical block to read the current on the card, e.g. *1.00 A*, in steps of **0.25 A**.
 - On a **machine**, it shows what the machine is getting next to what it wants, e.g. *"0.50 of 1.00 A"*: the quickest way to tell a starved machine from one that is simply weak.

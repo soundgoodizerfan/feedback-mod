@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    { "type": "feedback:material", "material": "feedback:wrought_iron", "forms": ["ingot", "nugget", "scrap", "swarf", "dust"] },
+    { "item": "minecraft:charcoal" }
+  ],
+  "min_temperature": 1000,
+  "optimal_temperature": 1100,
+  "max_temperature": 1250,
+  "required_tpu": 600,
+  "max_rate": 3,
+  "result": { "id": "feedback:steel_ingot" },
+  "spoil_temperature": 1400,
+  "spoiled": { "id": "feedback:burnt_iron" }
+}

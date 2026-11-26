@@ -8,12 +8,12 @@ Check JEI's *Thermal process* page for **Steel Ingot** for the exact figures; th
 
 - A **[Crucible](Crucible.md)** on a **[Firebox](Firebox.md)**. A **small** crucible climbs too fast on a full fire; a **large** one stays in the band (see below).
 - **Charcoal** to burn, and a **[Powered Bellows](Powered_Bellows.md)** on the firebox. Charcoal alone isn't hot enough.
-- A **Wrought Iron Ingot** ([how to make it](Guide_Making_Wrought_Iron.md)) and a piece of **Charcoal** to put *in* the crucible.
+- An **Iron Ingot** (cast iron; nugget, scrap, swarf or dust also work) and a piece of **Charcoal** to put *in* the crucible. Smelt it from ore ([Other routes](#other-routes)). A **Wrought Iron Ingot** also works, on a [slower, cooler band](#other-routes).
 - Ideally a **[Thermometer](Instruments.md#thermometer)**.
 
 ## The process
 
-Put the iron ingot and the charcoal into the crucible, then get the crucible into steel's band and keep it there:
+Put the iron and the charcoal into the crucible, then get the crucible into steel's band and keep it there:
 
 | | |
 | --- | --- |
@@ -41,7 +41,8 @@ What that means in practice:
 
 ## Other routes
 
-- **Cast Iron + Charcoal** also makes steel, in a shorter hold. Cast iron comes from a **Wrought Iron Ingot + Coal** held at a lower, wider band (check JEI), or straight from melting iron ore ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Cast iron as dust or swarf holds for less than an ingot: a finer form carburizes sooner.
+- **Iron Ingot from ore.** Raw iron, crushed ore, concentrate or dust with charcoal, held between **1420 and 1650 Tu**, fastest near 1500, spoiling to Burnt Iron above 1750, gives the Iron Ingot ([Iron](Iron.md#getting-it)).
+- **Wrought iron to steel.** A Wrought Iron Ingot (nugget, scrap, swarf or dust) with charcoal held between **1000 and 1250 Tu**, fastest near 1100, spoiling to Burnt Iron above 1400, gives steel more slowly ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Dust or swarf holds for less than an ingot: a finer form carburizes sooner.
 - **Four Steel Swarf** (from [drilling](Drill_Press.md), [turning](Lathe.md) or [grinding](Grinding_Wheel.md) steel) can be melted back into a steel ingot in the same band, with an even shorter hold. Nothing has to go to waste.
 
 ## After steel

@@ -1,6 +1,6 @@
 # Puddling Furnace
 
-A furnace with a stirring rod, turned by a shaft into its back. It turns cast iron into a clean **Iron Bloom** with little slag in it. See [Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md).
+A furnace with a stirring rod, turned by a shaft into its back. It turns an Iron Ingot (cast iron) into a clean **Iron Bloom** with little slag in it. See [Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md).
 
 ## Crafting
 
@@ -14,7 +14,7 @@ B is any brick, S is a [Shaft](Shaft.md), F is a [Furnace](Furnaces.md), R is a 
 
 ## Using it
 
-It is a furnace in every way except the stirring: nine slots, a fuel slot, a heat gauge, a sealed body. Put in **cast iron** and an oxidizer: **hematite, magnetite, limonite** (lump, crushed, concentrate or dust) or **Burnt Iron**. Run a [Shaft](Shaft.md) into the **back** of the furnace, opposite the door. It adds a load of **60 Su** to the shaft.
+It is a furnace in every way except the stirring: nine slots, a fuel slot, a heat gauge, a sealed body. Put in an **Iron Ingot** and an oxidizer: **hematite, magnetite, limonite** (lump, crushed, concentrate or dust) or **Burnt Iron**. Run a [Shaft](Shaft.md) into the **back** of the furnace, opposite the door. It adds a load of **60 Su** to the shaft.
 
 - Hold it between **1250 and 1450 Tu**, fastest near 1350.
 - Keep the shaft between **20 and 60 RPM**. Slower or faster and the charge crusts: progress stops.

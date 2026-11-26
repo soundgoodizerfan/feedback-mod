@@ -21,8 +21,8 @@ Fifteen of these metals have their own page: see [Metals](Metals.md).
 | Brass | 8 | 8.5 | 6 | 930 Tu | 65% copper, 35% zinc. Good cartridge cases. |
 | Bronze | 10 | 8.8 | 10 | 1000 Tu | 90% copper, 10% tin. |
 | Iron | 8 | 7.87 | 7.5 | 1538 Tu | **Magnetic.** Pure iron. Softer and weaker than wrought iron. Moves between **900 and 1500 Tu**. |
-| Wrought Iron | 10 | 7.8 | 10 | 1500 Tu | **Magnetic.** Vanilla's iron: soft, tough. Moves between **900 and 1500 Tu**. Made by hammering the slag out of a bloom ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). |
-| Cast Iron | 20 | 7.2 | 10 | 1200 Tu | **Magnetic.** Too brittle for plates, rods or wire; good for steelmaking. |
+| Wrought Iron | 10 | 7.8 | 10 | 1500 Tu | **Magnetic.** Soft, tough. Its own Wrought Iron Ingot, Nugget and Block, plates and rods, and vanilla's iron tools and armor, horse armor, Iron Bars, Door and Trapdoor, chain, anvil, bucket, shears, cauldron, hopper, heavy weighted pressure plate and chainmail. Moves between **900 and 1500 Tu**. Made by hammering the slag out of a bloom ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). |
+| Cast Iron | 20 | 7.2 | 10 | 1200 Tu | **Magnetic.** Carbon-rich iron: the vanilla Iron Ingot, Nugget and Block. Smelted straight from ore ([Iron](Iron.md#getting-it)). Too brittle for plates, rods or wire; good for steelmaking. |
 | Steel | 15 | 7.85 | 12 | 1450 Tu | **Magnetic.** Only moves between **900 and 1100 Tu**. See [Guide: Making Steel](Guide_Making_Steel.md). |
 | Hardened Steel | 69 | 7.85 | 75 | 1450 Tu | **Magnetic.** No blow moves it; only a drill bit, a lathe bit or the [Grinding Wheel](Grinding_Wheel.md) cuts it. |
 | Tempered Steel | 44 | 7.85 | 55 | 1450 Tu | **Magnetic.** [Tempered](Guide_Heat_Treatment.md#tempering) hardened steel: tough again. Worked cold, never hot. Springs, blades, gun parts. |
@@ -563,7 +563,7 @@ Dust reacts and melts faster than a lump or ingot of the same material. A finer 
 
 ## Where to find them
 
-Copper and gold come from vanilla's ores. Iron ore, raw iron and the iron minerals hematite, limonite and magnetite ([Ore Deposits](Ore_Deposits.md)) melt to **cast iron**; **wrought iron** comes from an Iron Bloom ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Guide_Making_Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
+Copper and gold come from vanilla's ores. Iron ore, raw iron and the iron minerals hematite, limonite and magnetite ([Ore Deposits](Ore_Deposits.md)) smelt to **cast iron** (the Iron Ingot); **wrought iron** comes from an Iron Bloom ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Guide_Making_Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
 
 Tin, zinc and lead are ores in the ground. **Silver** comes from **argentite**, which fills its own silver lode ([Ore Deposits](Ore_Deposits.md)) and shows up in a thin scatter through galena veins. Argentite gives silver by roasting and leaching ([Ore Processing](Ore_Processing.md)). Silver comes as ingots, nuggets and blocks.
 

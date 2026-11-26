@@ -1,7 +1,7 @@
 {
   "values": [
     {
-      "id": "feedback:cast_iron",
+      "id": "minecraft:iron_ingot",
       "required": false
     }
   ]

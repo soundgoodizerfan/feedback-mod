@@ -11,7 +11,7 @@ Put meltable things in a hot crucible and they melt into its tank once they reac
 | Copper ore, raw copper | Molten Copper |
 | Gold ore, raw gold | Molten Gold |
 | Iron ore, raw iron, Hematite, Limonite, Magnetite | Molten Cast Iron (see [Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md) for wrought iron) |
-| Cast Iron | Molten Cast Iron |
+| Iron Ingot (cast iron) | Molten Cast Iron |
 | Tin, Zinc or Lead Ingot | Molten Tin / Zinc / Lead |
 | Sand or Red Sand | Molten Glass |
 | Nether Quartz | Molten Quartz Glass (casts into a Quartz Glass ingot) |

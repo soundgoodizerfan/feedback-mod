@@ -56,7 +56,13 @@ The mortar is kept. A spent rod heated anywhere between 700 Tu and 1100 Tu (any 
 
 **What vanilla does:** Iron Ore and Deepslate Iron Ore drop Raw Iron. Raw Iron, or the ore block itself, smelts to an Iron Ingot in a furnace or blast furnace.
 
-**What Feedback does:** the ores are found and mined as in vanilla and drop Raw Iron ([Ore Deposits](Ore_Deposits.md#mining-them)). Raw Iron and iron ore do not smelt to an ingot in any [furnace](Furnaces.md) or [crucible](Crucible.md). Held in the bloom window with charcoal, the ore becomes an Iron Bloom that is hammered into a Wrought Iron Ingot ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Bare, or too hot, it melts to molten cast iron, the start of [steel](Guide_Making_Steel.md). Raw iron also takes the [ore processing](Ore_Processing.md) stages like any other ore. Feedback's own iron minerals (hematite, magnetite, limonite) follow the same route ([Materials](Materials.md#ore-minerals)).
+**What Feedback does:** the ores are found and mined as in vanilla and drop Raw Iron ([Ore Deposits](Ore_Deposits.md#mining-them)). Raw Iron smelts to an Iron Ingot only with charcoal in a [crucible](Crucible.md) or [furnace](Furnaces.md) held between 1420 and 1650 Tu. The Iron Ingot is cast iron, the start of [steel](Guide_Making_Steel.md). Held lower in the bloom window, the ore becomes an Iron Bloom that is hammered into a Wrought Iron Ingot ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Bare, it melts to molten cast iron. Raw iron also takes the [ore processing](Ore_Processing.md) stages like any other ore. Feedback's own iron minerals (hematite, magnetite, limonite) follow the same route ([Materials](Materials.md#ore-minerals)).
+
+## Iron items
+
+**What vanilla does:** the Iron Ingot, Nugget and Block, and everything made of iron, are one plain iron.
+
+**What Feedback does:** the Iron Ingot, Nugget and Block are **cast iron**: hard and brittle, easy to smelt from ore, and the feed for [steel](Guide_Making_Steel.md). Iron tools, armor and horse armor, Iron Bars, Door and Trapdoor, chain, anvil, bucket, shears, cauldron, hopper, heavy weighted pressure plate and chainmail are **wrought iron**, the soft tough iron that has its own Wrought Iron Ingot, Nugget and Block ([Materials](Materials.md#the-metals)).
 
 ## Redstone Lamp
 

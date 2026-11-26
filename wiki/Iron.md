@@ -5,7 +5,7 @@ Iron is the pure metal: magnetic, strong for its weight and cheap, and softer th
 ## Getting it
 
 - **Ore.** Iron Ore lies in the Overworld at y 80 to 384, y -24 to 56 and y -64 to 72. Hematite, limonite and magnetite are iron minerals ([Ores](Ores.md)).
-- **No direct smelting.** Iron ore, raw iron and vanilla's iron ore do not smelt to an ingot in any furnace or crucible. They give cast iron, or a slag-filled bloom that is hammered into wrought iron ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Pure iron arrives as nuggets from roasting pyrite and chalcopyrite and from precipitation ([Ore Processing](Ore_Processing.md)).
+- **Smelting.** Raw iron, crushed ore, concentrate or dust with charcoal in a crucible between **1420 and 1650 Tu** gives an **Iron Ingot**, which is [cast iron](Materials.md#the-metals): hard and brittle. Held lower, the ore becomes a slag-filled bloom that is hammered into wrought iron ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Pure iron arrives as nuggets from roasting pyrite and chalcopyrite and from precipitation ([Ore Processing](Ore_Processing.md)).
 - **Working window.** Iron only moves under the hammer between **900 and 1500 Tu** ([Metalworking](Metalworking.md)).
 
 ## Figures

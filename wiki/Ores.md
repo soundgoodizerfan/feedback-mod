@@ -41,4 +41,4 @@ The share is the part of the ore that is that metal. Depths are y levels. A prov
 | Wolframite | Tungsten (60%) | Overworld, y -56 to 8, tin belt; the Nether, y 10 to 117, hot Nether belt |
 | Zinc | Zinc (100%) | Overworld, y -32 to 48, sulfide belt |
 
-Iron ores carry iron as cast iron ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Monazite and uraninite are [radioactive](Radiation.md).
+Iron ores carry iron as cast iron, the Iron Ingot ([Guide: Making Wrought Iron](Guide_Making_Wrought_Iron.md)). Monazite and uraninite are [radioactive](Radiation.md).
