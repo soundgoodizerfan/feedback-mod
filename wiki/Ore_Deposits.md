@@ -97,6 +97,10 @@ Gems grow in veins of their own, each marked by a loose rock. Mined, the ore blo
 - **Tourmaline** in the Overworld between y 16 and 128, in the narrowest veins.
 - **Ruby** in the Nether, between y 10 and 117, in the netherrack.
 
+## Beyond the Overworld
+
+The [Gap](The_Gap.md#salvage) holds asteroids of iron, pentlandite, sperrylite, osmiridium and rare beryl. The crystal world has frequent amethyst geodes ([The Gap](The_Gap.md#the-crystal-world-by-rocket)).
+
 ## Crystals and clay
 
 - **Galena** and **Pyrite** are crystal veins in stone, in the middle and lower depths. Both rectify, which is why a cat's whisker detector wants one. Galena also melts down to lead. Galena veins hold a thin scatter of argentite, the silver ore.

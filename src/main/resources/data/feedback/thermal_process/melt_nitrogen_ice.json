@@ -1,0 +1,14 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:nitrogen_ice"
+    }
+  ],
+  "min_temperature": -210,
+  "optimal_temperature": -205,
+  "required_tpu": 0,
+  "result_fluid": {
+    "id": "feedback:nitrogen",
+    "amount": 1000
+  }
+}

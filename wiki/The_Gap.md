@@ -22,7 +22,7 @@ The acid-cloud world is a second point in the Gap along its own fixed bearing, t
 
 The world has a yellow-green sky and fog, acid-green water and rain, and no mobs. The air is thick: density 3.0 at the ground, thinning with height to zero near the top of the build height (y 316). It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 90 Tu. Terrain is shaped like the Overworld's. Flying up out of the thick air returns the craft to the Gap just short of the planet, shrunk again.
 
-Its crust is rich in osmiridium, from y 20 to 90 ([Ores](Ores.md)).
+Its crust is rich in osmiridium, from y 20 to 90 ([Ores](Ores.md)), the platinum-group ore.
 
 ## The frozen moon by rocket
 
@@ -30,11 +30,21 @@ The frozen moon is a point in the Gap along its own fixed bearing, the pale blue
 
 The world has no weather, and its water freezes. The air is very thin: density 0.15 at the ground, thinning with height to zero at y 220. It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is -150 Tu. Flying up out of the air returns the craft to the Gap just short of the moon, shrunk again.
 
+The ground carries **Nitrogen Ice**, mined with a pickaxe. Melted in a vessel held cold, about -205 Tu, a block gives 1000 mB of [nitrogen](Chemicals.md#nitrogen). The moon has no liquid seas.
+
 ## The crystal world by rocket
 
 The crystal world is a point in the Gap along its own fixed bearing, the violet disc in the sky. A craft that gets within its capture sphere while heading toward it arrives in the crystal world at full size, high up, coming in fast and descending. A craft that misses coasts on. The planet grows in the sky as the craft closes on it.
 
-The world lies under a violet haze, with amethyst geodes in the ground. The air is thin: density 0.8 at the ground, thinning with height to zero at y 300. It holds some oxygen, a share of 0.4, but too little to breathe unaided, so a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 15 Tu. Flying up out of the air returns the craft to the Gap just short of the planet, shrunk again.
+The world lies under a violet haze, with frequent amethyst geodes in the ground. Amethyst is the crystal of [experience](Experience.md). The air is thin: density 0.8 at the ground, thinning with height to zero at y 300. It holds some oxygen, a share of 0.4, but too little to breathe unaided, so a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 15 Tu. Flying up out of the air returns the craft to the Gap just short of the planet, shrunk again.
+
+## Salvage
+
+Sparse **asteroids** drift in the Gap: tuff with veins of iron, pentlandite (nickel), sperrylite and osmiridium (platinum-group) and, rarely, beryl ore. Rare **derelict wrecks** with iron hulls hold a chest of iron, aluminum, copper and lead ingots, coal and redstone. Like everything else in the Gap they are scaled bodies, the right size beside a craft. They appear around players and not near the Gap's origin point, about 160 blocks across; each place is rolled once.
+
+## Vacuum refining
+
+A Thermal Vessel standing where the air has no oxygen (the Gap, the End) runs airless. Fine metal dust melts with no oxide loss, and airless processes such as charcoal making and sintering run without a sealed chamber. In free fall, [lead-aluminum alloy](Casting.md#free-fall-casting) resolves from a melt.
 
 ## Coming back
 

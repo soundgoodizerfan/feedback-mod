@@ -109,6 +109,8 @@ public final class Joint {
     private Kind kind = Kind.HINGE;
     /** A linkage: it ties a body that already existed to the joint's own, instead of holding one the joint made. Putting it back only lets it go. */
     private boolean linked;
+    /** Holds a body that was already there (docked), not one this joint assembled from blocks: it is let go, never put back as blocks. */
+    private boolean docked;
     /** The cone (ball) or spring band (slider) the player chose: an index into {@link MachineTuning#BALL_CONE_RAD} or {@link FTuning#SUSPENSION_HZ}. */
     private int variant = 1;
     /** Reach either side of rest of a slider or piston, blocks. */
@@ -803,8 +805,17 @@ public final class Joint {
         joint = null;
     }
 
+    public boolean docked() {
+        return docked;
+    }
+
+    public void setDocked(boolean docked) {
+        this.docked = docked;
+    }
+
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
+        tag.putBoolean("Docked", docked);
         tag.putUUID("Body", body);
         tag.putString("Kind", kind.name());
         tag.putBoolean("Linked", linked);
@@ -832,6 +843,7 @@ public final class Joint {
         if (tag.contains("Kind"))
             j.kind = parseKind(tag.getString("Kind"));
         j.linked = tag.getBoolean("Linked");
+        j.docked = tag.getBoolean("Docked");
         j.variant = Math.clamp(tag.getInt("Variant"), 0, 4);
         j.condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1;
         j.pad = tag.contains("Pad") ? tag.getFloat("Pad") : 1;

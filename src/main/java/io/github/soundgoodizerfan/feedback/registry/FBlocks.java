@@ -683,6 +683,15 @@ public class FBlocks {
                     .strength(1.0f)
                     .sound(SoundType.GRAVEL)));
 
+    /** The frozen moon's surface: nitrogen ice (as on Triton and Pluto), mined whole and melted in a cold vessel into liquid nitrogen. */
+    public static final DeferredBlock<Block> NITROGEN_ICE = BLOCKS.register("nitrogen_ice",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE)
+                    .strength(1.5f)
+                    .friction(0.98f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.GLASS)));
+
     // Salt crust left on shallow ocean floors where sea water evaporated over sand; disk feature, ocean biomes only.
     public static final DeferredBlock<Block> SALT_DEPOSIT = BLOCKS.register("salt_deposit",
             () -> new Block(BlockBehaviour.Properties.of()

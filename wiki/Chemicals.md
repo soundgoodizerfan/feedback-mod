@@ -75,6 +75,8 @@ Air is split into its parts in two ways.
 
 The inert part of air. It is the feed for ammonia, and the protective atmosphere for sintering ([Kiln](Furnaces.md#sintering), [Arc Hearth](Arc_Furnace.md#sintering-under-gas)).
 
+Frozen moon ground carries [Nitrogen Ice](The_Gap.md#the-frozen-moon-by-rocket), which melts to nitrogen in a cold vessel.
+
 ## Argon
 
 An inert gas from the last cold cut of air. It does the work of nitrogen as a sintering atmosphere, and takes much less of it: 150 mB in the [Arc Hearth](Arc_Furnace.md#sintering-under-gas) against 300 mB of nitrogen.

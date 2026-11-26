@@ -40,6 +40,12 @@ I is a Wrought Iron Plate, B is a [Rotary Bearing](Rotary_Bearing.md) and R is a
 
 Placed against a world block, it anchors the build to that block.
 
+### Docking
+
+With nothing in front of its face, but another body touching the cell in front of it, **use it with an empty hand** to dock: the joint holds that body as it stands, rigid, at the pose it has. The message reads *"Docked: it holds the body in front of it"*. A craft made fast to a station or to a second craft this way flies as one with it. The docked body is never turned back into blocks.
+
+**Use the joint again** to let go; the message reads *"Let go"* and a small spring kick parts the two bodies. A Release channel set to one half or more ([Staging](#staging)) lets go the same way. A docked joint is kept when the world is saved and holds again on reload.
+
 ### Staging
 
 Link a Locked Joint to a Controller with a [Data Connector](Data_Connector.md) and it has a **Release** channel. When a card sets the channel to one half or more, the joint lets go: a spring pushes the two bodies apart along the joint's front, an equal push on each, and the held body flies free as a body of its own. The joint is empty again and can be assembled anew. Put one between a [Thruster](Thruster.md) stage and the rest of a rocket to drop the spent stage in flight.

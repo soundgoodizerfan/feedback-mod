@@ -67,6 +67,7 @@ Fifteen of these metals have their own page: see [Metals](Metals.md).
 | Alnico | 44 | 7.3 | 8 | 1500 Tu | **Magnetic** below **890 Tu**. Iron, cobalt, nickel and aluminum. |
 | Redstone-Chromium | 29 | 4.5 | 15 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
 | Duralumin | 13.5 | 2.78 | 16 | 640 Tu | Aluminum hardened with a little copper, magnesium and manganese. Light and strong. |
+| Lead-Aluminum Alloy | 2.2 | 3.56 | 20 | 660 Tu | Aluminum with a little lead, a low-friction bearing metal (grip friction 0.25). Made only in free fall ([Casting](Casting.md#free-fall-casting)). |
 | Aluminium Foam | 0.5 | 0.4 | 0.25 | 640 Tu | **Porous**, lighter than any wood; it gives under a blow and absorbs it (**10** crush energy per liter, shown on its JEI page), so as an armor lining it pads about as well as plain iron. 97 to 99.5% aluminum, 0.5 to 3% titanium, alloyed in the crucible ([Casting and Alloys](Casting.md)). |
 | Nichrome | 17.5 | 8.4 | 15.5 | 1400 Tu | Nickel and chromium. Stands 1150 Tu and barely corrodes; a poor conductor. |
 | Wood's Metal | 1 | 9.58 | 1 | 70 Tu | Bismuth, lead, tin and cadmium. Melts in hot water. Toxic. |
@@ -549,7 +550,7 @@ Dust is the finest form: a material ground or shattered to grains. Nearly every 
 
 Dust reacts and melts faster than a lump or ingot of the same material. A finer form shortens the hold of any reaction that takes more than one form (roasting pyrite, carburizing cast iron to steel), and JEI's thermal card shows the hold for the form on display. It also has costs:
 
-- **Metal dust burns off.** Dust melted in an open vessel above the metal's oxidation temperature loses part of its metal to oxide; the finer the dust, the more. A sealed vessel loses none.
+- **Metal dust burns off.** Dust melted in an open vessel above the metal's oxidation temperature loses part of its metal to oxide; the finer the dust, the more. A sealed vessel loses none, and so does a vessel standing where the air has no oxygen ([The Gap](The_Gap.md#vacuum-refining)).
 - **Toxic dust throws a fume.** A batch of a toxic dust that finishes in an open vessel lets a [fume cloud](Hazards.md#fume-clouds) go.
 - **Combustible dust flashes.** Fine dust of a fuel such as coal or sulfur in an open vessel at or above its ignition temperature flashes: the stack is lost and the air above the vessel catches fire.
 

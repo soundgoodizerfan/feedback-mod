@@ -679,6 +679,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> GALENA_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GALENA_ORE);
     public static final DeferredItem<BlockItem> PYRITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.PYRITE_ORE);
     public static final DeferredItem<BlockItem> KAOLINITE_DEPOSIT = ITEMS.registerSimpleBlockItem(FBlocks.KAOLINITE_DEPOSIT);
+    public static final DeferredItem<BlockItem> NITROGEN_ICE = ITEMS.registerSimpleBlockItem(FBlocks.NITROGEN_ICE);
     public static final DeferredItem<BlockItem> SALT_DEPOSIT = ITEMS.registerSimpleBlockItem(FBlocks.SALT_DEPOSIT);
     public static final DeferredItem<BlockItem> COPPER_FLOWER = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_FLOWER);
     public static final DeferredItem<BlockItem> ZINC_VIOLET = ITEMS.registerSimpleBlockItem(FBlocks.ZINC_VIOLET);

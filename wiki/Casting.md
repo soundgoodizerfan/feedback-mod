@@ -147,6 +147,7 @@ Melt two metals into the **same crucible or furnace** in the right proportions a
 | **Bell metal** | about 78% copper, 22% tin |
 | **Shakudo** | about 96% copper, 4% gold |
 | **Galinstan** | about 68% gallium, 21.5% indium, 10% tin |
+| **Lead-aluminum alloy** | about 90% aluminum, 10% lead (86 to 94% aluminum; **only in free fall**, see below) |
 | **Redstone-chromium** | about 1 part chromium to 1 part molten redstone (each 40 to 60%) |
 
 The ratio has some leeway, but not much. If the mix is **off**, the tank looks **empty**. The metal is still in there, but it isn't anything with a name, so nothing pours. **Add more of whichever metal is short** to bring it back into range.
@@ -158,6 +159,10 @@ JEI's *Mixing* card lists every alloy with the share of each metal it needs, and
 ### Solids stirred into a melt
 
 Some mixtures carry a **dispersed solid**: a part that does not melt at the pour. For amethyst bronze it is amethyst. Put the stock into a vessel that already holds the melt and it joins as a suspended solid. It counts by volume toward the alloy's window, fills the tank like any melt and leaves with the melt when you pour. JEI's *Mixing* card marks such a part "(solid, stirred in)".
+
+### Free-fall casting
+
+Lead-aluminum alloy resolves only in a vessel standing in the [Gap](The_Gap.md#living-in-it). On the ground the heavier lead sinks out of the aluminum and the melt resolves to nothing, as an off-ratio mix does; where nothing sinks the two stay mixed. JEI's *Mixing* card notes "Only in free fall".
 
 ### Liquid metals
 

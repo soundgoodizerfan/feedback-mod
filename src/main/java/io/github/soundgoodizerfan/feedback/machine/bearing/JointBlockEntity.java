@@ -77,7 +77,13 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
 
     /** Assembles, or puts back. Returns the message key (under {@code message.feedback.rotary_bearing.}). */
     public String toggle(ServerLevel level) {
-        return joint == null ? assemble(level) : disassemble(level, facing());
+        if (joint == null)
+            return assemble(level);
+        if (joint.docked()) {
+            release(level);
+            return "undocked";
+        }
+        return disassemble(level, facing());
     }
 
     private Vector3d anchor() {
@@ -90,7 +96,7 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
         Direction f = facing();
         BlockPos front = worldPosition.relative(f), host = worldPosition.relative(f.getOpposite());
         if (level.getBlockState(front).isAir())
-            return "empty";
+            return dock(level, f);
         var gathered = SubLevelAssemblyHelper.gatherConnectedBlocks(front, level, FTuning.ROTARY_BEARING_MAX_BLOCKS,
                 (a, aState, to, toState, direction) -> !to.equals(worldPosition) && !to.equals(host));
         if (gathered.assemblyState() == SubLevelAssemblyHelper.GatherResult.State.NO_BLOCKS)
@@ -110,6 +116,32 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
         joint = Joint.of(block().kind(), getBlockState().getValue(JointBlock.VARIANT), made, anchor(), f, front, parent);
         setChanged();
         return "assembled";
+    }
+
+    /**
+     * Docking: a locked joint with no block in front of it, but another body touching the cell in front, joins that body as it stands
+     * (a rigid hold at the pose it has now) and is let go again by the same use or the Release channel. Only the locked kind docks.
+     */
+    private String dock(ServerLevel level, Direction f) {
+        if (block().kind() != Joint.Kind.LOCKED)
+            return "empty";
+        ServerSubLevel parent = Joint.parentOf(level, worldPosition);
+        Vector3d probe = new Vector3d(worldPosition.getX() + 0.5 + f.getStepX(), worldPosition.getY() + 0.5 + f.getStepY(), worldPosition.getZ() + 0.5 + f.getStepZ());
+        if (parent != null)
+            parent.logicalPose().transformPosition(probe);
+        for (ServerSubLevel other : ServerSubLevelContainer.getContainer(level).getAllSubLevels()) {
+            if (other == parent || other.isRemoved())
+                continue;
+            Vector3d local = other.logicalPose().transformPositionInverse(new Vector3d(probe), new Vector3d());
+            BlockPos at = BlockPos.containing(local.x, local.y, local.z);
+            if (!level.getBlockState(at).isAir() && other.getPlot().getBoundingBox().contains(at.getX(), at.getY(), at.getZ())) {
+                joint = Joint.of(block().kind(), getBlockState().getValue(JointBlock.VARIANT), other, anchor(), f, worldPosition.relative(f), parent);
+                joint.setDocked(true);
+                setChanged();
+                return "docked";
+            }
+        }
+        return "empty";
     }
 
     /** Puts the body back at the nearest quarter turn about {@code f}'s axis; its blocks and their states turn with it. */
@@ -176,7 +208,8 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
         ServerSubLevel held = joint.held(level);
         ServerSubLevel parent = Joint.parentOf(level, worldPosition);
         if (held != null) {
-            Vector3d dir = new Vector3d(lastFacing.getStepX(), lastFacing.getStepY(), lastFacing.getStepZ());
+            Direction face = facing();
+            Vector3d dir = new Vector3d(face.getStepX(), face.getStepY(), face.getStepZ());
             if (parent != null)
                 parent.logicalPose().transformNormal(dir);
             Vector3d impulse = dir.mul(held.getMassTracker().getMass() * MachineTuning.STAGE_KICK_SPEED);
@@ -195,7 +228,7 @@ public class JointBlockEntity extends BlockEntity implements Analog, DataNode {
         if (joint != null) {
             boolean broken = !BlockMoves.active() && level instanceof ServerLevel && lastFacing != null && level.isLoaded(worldPosition)
                     && !(level.getBlockState(worldPosition).getBlock() instanceof JointBlock);
-            if (!broken || !"disassembled".equals(disassemble((ServerLevel) level, lastFacing)))
+            if (joint.docked() || !broken || !"disassembled".equals(disassemble((ServerLevel) level, lastFacing)))
                 joint.letGo();
         }
         super.setRemoved();
