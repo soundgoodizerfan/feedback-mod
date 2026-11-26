@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "R": {
+      "item": "minecraft:rabbit_foot"
+    },
+    "B": {
+      "item": "minecraft:bone"
+    },
+    "W": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "BRB",
+    " W "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:superstitious_hat"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "mechanical:1"
+}

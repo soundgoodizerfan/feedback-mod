@@ -1,0 +1,47 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "L": {
+      "tag": "c:leathers"
+    },
+    "P": {
+      "type": "feedback:material",
+      "form": "plate"
+    },
+    "N": {
+      "type": "feedback:material",
+      "form": "nugget",
+      "property": "hardness",
+      "min": 15
+    }
+  },
+  "pattern": [
+    "L L",
+    "P P",
+    "N N"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:steadfast_spikes"
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "mechanical:1"
+}

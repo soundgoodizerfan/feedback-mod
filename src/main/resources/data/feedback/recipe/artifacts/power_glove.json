@@ -1,0 +1,45 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "P": {
+      "type": "feedback:material",
+      "form": "plate",
+      "property": "density",
+      "min": 10
+    },
+    "L": {
+      "tag": "c:leathers"
+    },
+    "D": {
+      "item": "feedback:piston"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "LDL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:power_glove"
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "mechanical:2"
+}

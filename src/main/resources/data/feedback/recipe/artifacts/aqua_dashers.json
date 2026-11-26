@@ -1,0 +1,42 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "L": {
+      "tag": "c:leathers"
+    },
+    "F": {
+      "type": "feedback:material",
+      "form": "plate",
+      "property": "density",
+      "max": 3
+    }
+  },
+  "pattern": [
+    "L L",
+    "F F"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:aqua_dashers"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "mechanical:2"
+}

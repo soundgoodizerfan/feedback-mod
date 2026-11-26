@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "S": {
+      "tag": "c:strings"
+    },
+    "V": {
+      "item": "feedback:vial_body"
+    },
+    "P": {
+      "type": "feedback:material",
+      "form": "coil_spring"
+    }
+  },
+  "pattern": [
+    "S S",
+    " V ",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:panic_necklace"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "chemical:1"
+}

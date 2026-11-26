@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "E": {
+      "item": "minecraft:golden_apple"
+    }
+  },
+  "pattern": [
+    "A A",
+    "AEA",
+    " A "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:crystal_heart"
+  },
+  "tool": [
+    {
+      "ability": "feedback:file",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "experience:2"
+}

@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "R": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "S": {
+      "tag": "c:strings"
+    },
+    "L": {
+      "tag": "c:leathers"
+    }
+  },
+  "pattern": [
+    "RSR",
+    "SLS",
+    "RSR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:snowshoes"
+  },
+  "tool": [
+    {
+      "ability": "feedback:saw",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "mechanical:1"
+}

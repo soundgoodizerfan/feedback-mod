@@ -1,0 +1,46 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "T": {
+      "item": "feedback:glass_tubing"
+    },
+    "V": {
+      "item": "feedback:air_valve"
+    },
+    "L": {
+      "tag": "c:leathers"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "pattern": [
+    "T  ",
+    "TV ",
+    "LG "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:snorkel"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 1,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "mechanical:1"
+}

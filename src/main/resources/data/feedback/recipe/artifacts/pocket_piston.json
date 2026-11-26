@@ -1,0 +1,45 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "P": {
+      "type": "feedback:material",
+      "form": "plate"
+    },
+    "D": {
+      "item": "feedback:piston"
+    },
+    "S": {
+      "type": "feedback:material",
+      "form": "coil_spring"
+    }
+  },
+  "pattern": [
+    "P",
+    "D",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:pocket_piston"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "mechanical:1"
+}

@@ -1,0 +1,39 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "L": {
+      "tag": "c:leathers"
+    },
+    "K": {
+      "item": "feedback:ceramic"
+    },
+    "O": {
+      "item": "minecraft:warped_fungus"
+    }
+  },
+  "pattern": [
+    "L L",
+    "KOK"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:strider_shoes"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "materials:1"
+}

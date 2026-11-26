@@ -1,0 +1,53 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "A": {
+      "item": "feedback:ender_anchor"
+    },
+    "X": {
+      "item": "feedback:xp_wire"
+    },
+    "C": {
+      "tag": "feedback:circuits"
+    },
+    "P": {
+      "type": "feedback:material",
+      "form": "plate",
+      "property": "hardness",
+      "min": 15
+    }
+  },
+  "pattern": [
+    "PXP",
+    "ECE",
+    "PAP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:warp_drive"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 4,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "experience:3",
+  "carries_circuit": true
+}

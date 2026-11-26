@@ -1,0 +1,47 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "S": {
+      "tag": "c:strings"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "W": {
+      "type": "feedback:material",
+      "form": "fine_wire"
+    },
+    "C": {
+      "item": "feedback:condenser"
+    }
+  },
+  "pattern": [
+    "S S",
+    "WQW",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:shock_pendant"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 1,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "electrical:2"
+}

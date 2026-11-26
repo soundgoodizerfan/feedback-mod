@@ -1,0 +1,50 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "P": {
+      "type": "feedback:material",
+      "form": "rod",
+      "property": "hardness",
+      "min": 10
+    },
+    "M": {
+      "item": "feedback:electromagnet"
+    },
+    "C": {
+      "tag": "feedback:circuits"
+    },
+    "B": {
+      "item": "feedback:galvanic_cell"
+    }
+  },
+  "pattern": [
+    "P P",
+    "MCM",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:universal_attractor"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "electrical:3",
+  "carries_circuit": true
+}

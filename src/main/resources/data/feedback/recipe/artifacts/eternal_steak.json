@@ -1,0 +1,44 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "H": {
+      "item": "feedback:heating_coil"
+    },
+    "B": {
+      "item": "artifacts:everlasting_beef"
+    },
+    "P": {
+      "type": "feedback:material",
+      "form": "plate"
+    }
+  },
+  "pattern": [
+    "H",
+    "B",
+    "P"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:eternal_steak"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 1,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "experience:2"
+}

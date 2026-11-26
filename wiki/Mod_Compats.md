@@ -22,6 +22,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [Simple Voice Chat](#simple-voice-chat) | Optional | Carries the [Radio Set](Radio_Set.md)'s voice |
 | [Xaero's Minimap](#xaeros-minimap) | Optional | Survey Meter readings pin to the map |
 | [Applied Energistics 2](#applied-energistics-2) | Optional | Certus Quartz and Fluix crystals and dusts count as materials |
+| [Artifacts](#artifacts) | Optional | Engineering Table recipes for its items |
 | [Other mods](#other-mods) | Optional | Fluid tags and shared biome and stone tags |
 
 ## Sable, Dimensional Sable and Sable Scaling
@@ -362,6 +363,26 @@ Any food from another mod (an item that is edible and is not from Minecraft or F
 Certus Quartz and Fluix crystals and dusts count as their material. Their blocks, buds and ores do not. Using one opens the material's stats card in JEI, whose item box lists it. Without Applied Energistics 2, neither material exists.
 
 AE2's own fluid cells already hold Feedback's fluids and gases. Feedback adds nothing for AE2 network storage: it is not part of Feedback's own logistics.
+
+## Artifacts
+
+**Optional.** With Artifacts installed, each of its 48 items (everything but the Mimic Spawn Egg) has an [Engineering Table](Engineering_Table.md#engineering-recipes) recipe. Crafting is a second route: the items also turn up as loot, as Artifacts places them. JEI shows each recipe with its hand tool, [fasteners](Fasteners.md) and treatise. A recipe that spends fasteners takes screws.
+
+Every recipe needs one [treatise](Treatise.md) volume held:
+
+| Treatise volume | Items |
+|---|---|
+| Mechanical I | Angler's Hat, Bunny Hoppers, Cowboy Hat, Feral Claws, Flippers, Kitty Slippers, Lucky Scarf, Novelty Drinking Hat, Plastic Drinking Hat, Pocket Piston, Rooted Boots, Running Shoes, Snorkel, Snowshoes, Steadfast Spikes, Superstitious Hat, Thorn Pendant, Umbrella, Villager Hat, Whoopee Cushion |
+| Mechanical II | Aqua-Dashers, Digging Claws, Fire Gauntlet, Power Glove |
+| Chemical I | Antidote Vessel, Cloud in a Bottle, Flame Pendant, Onion Ring, Panic Necklace |
+| Materials I | Charm of Sinking, Cross Necklace, Obsidian Skull, Strider Shoes |
+| Electrical II | Pickaxe Heater, Shock Pendant |
+| Electrical III | Helium Flamingo, Night Vision Goggles, Universal Attractor |
+| Experience I | Golden Hook |
+| Experience II | Charm of Shrinking, Chorus Totem, Crystal Heart, Eternal Steak, Scarf of Invisibility, Vampiric Glove, Withered Bracelet |
+| Experience III | Everlasting Beef, Warp Drive |
+
+Night Vision Goggles, the Universal Attractor, the Helium Flamingo and the Warp Drive each also take a [circuit](Basic_Electronic_Circuit.md). The Eternal Steak is built from an Everlasting Beef.
 
 ## Energy Fitting
 

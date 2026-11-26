@@ -1,0 +1,46 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "F": {
+      "item": "feedback:filter_cartridge"
+    },
+    "V": {
+      "item": "minecraft:glass_bottle"
+    },
+    "P": {
+      "item": "feedback:glass_tubing"
+    },
+    "C": {
+      "item": "minecraft:honeycomb"
+    }
+  },
+  "pattern": [
+    "PFP",
+    " V ",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:antidote_vessel"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 1,
+    "floor": 1,
+    "forms": [
+      "screw"
+    ]
+  },
+  "school": "chemical:1"
+}

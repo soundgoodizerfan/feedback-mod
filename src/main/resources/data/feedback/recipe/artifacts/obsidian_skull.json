@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "K": {
+      "item": "minecraft:bone"
+    },
+    "M": {
+      "item": "minecraft:magma_cream"
+    }
+  },
+  "pattern": [
+    " O ",
+    "OKO",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:obsidian_skull"
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "materials:1"
+}

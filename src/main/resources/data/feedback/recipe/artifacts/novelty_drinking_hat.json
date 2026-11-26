@@ -1,0 +1,42 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "V": {
+      "item": "feedback:vial_body"
+    },
+    "T": {
+      "item": "feedback:glass_tubing"
+    },
+    "P": {
+      "tag": "feedback:polymers"
+    },
+    "D": {
+      "tag": "c:dyes"
+    }
+  },
+  "pattern": [
+    "VTV",
+    "DPD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:novelty_drinking_hat"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "mechanical:1"
+}

@@ -1,0 +1,42 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "P": {
+      "tag": "feedback:polymers"
+    },
+    "R": {
+      "type": "feedback:material",
+      "form": "coil_spring"
+    },
+    "N": {
+      "type": "feedback:material",
+      "form": "foil"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PRP",
+    " N "
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:whoopee_cushion"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "mechanical:1"
+}

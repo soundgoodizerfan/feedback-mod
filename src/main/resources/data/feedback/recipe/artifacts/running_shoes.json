@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "artifacts"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "L": {
+      "tag": "c:leathers"
+    },
+    "S": {
+      "type": "feedback:material",
+      "form": "coil_spring"
+    },
+    "P": {
+      "tag": "feedback:polymers"
+    }
+  },
+  "pattern": [
+    "L L",
+    "SPS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "artifacts:running_shoes"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "mechanical:1"
+}
