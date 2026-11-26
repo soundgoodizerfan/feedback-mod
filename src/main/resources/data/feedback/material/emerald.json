@@ -4,12 +4,13 @@
   "refractive_index": 1.58,
   "abundance": 2.2,
   "traits": [
-    "transparent"
+    "transparent",
+    "gemstone"
   ],
   "hardness": 147,
   "density": 2.76,
   "thermal": {
-    "expansion": 2.6e-6,
+    "expansion": 2.6e-06,
     "melting_point": 1650,
     "cooling_rate": 2.21,
     "conductivity": 0.00125,
@@ -42,5 +43,9 @@
     "viscosity": 100,
     "density": 2.48,
     "shear_thickening": 0
-  }
+  },
+  "electrical": {
+    "insulation": "hv"
+  },
+  "phosphor": true
 }

@@ -9,12 +9,13 @@
   "kind": "crystal",
   "refractive_index": 1.55,
   "traits": [
-    "transparent"
+    "transparent",
+    "gemstone"
   ],
   "hardness": 108,
   "density": 2.65,
   "thermal": {
-    "expansion": 1.2e-5,
+    "expansion": 1.2e-05,
     "melting_point": 1650,
     "cooling_rate": 2.62,
     "conductivity": 0.00175,
@@ -54,5 +55,7 @@
     "density": 2.38,
     "shear_thickening": 0
   },
-  "perks": {"echo": 1}
+  "perks": {
+    "echo": 1
+  }
 }
