@@ -1,0 +1,8 @@
+{
+  "from": "raw",
+  "to": "plate",
+  "operation": "grind",
+  "base": 4,
+  "slope": 0.4,
+  "kinds": ["ceramic"]
+}

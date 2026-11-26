@@ -1,5 +1,8 @@
 {
   "kind": "ceramic",
+  "traits": [
+    "rollable"
+  ],
   "exclude": [
     "dust",
     "shard",

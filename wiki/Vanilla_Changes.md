@@ -68,7 +68,7 @@ The mortar is kept. A spent rod heated anywhere between 700 Tu and 1100 Tu (any 
 
 **What vanilla does:** a shulker drops a shell, which crafts into a shulker box.
 
-**What Feedback does:** the shell is a ceramic, light, tough and heat-resistant, so it is a material like any other. Five shells and three phantom membranes craft an [Elytra](Elytra.md). Shulker boxes stay out of the [Ender Port](Ender_Port.md#using-it) system: a shulker box or Shulker Shell beside a port blocks pairing, and a shulker box never crosses a port.
+**What Feedback does:** the shell is a ceramic, light, tough and heat-resistant, so it is a material like any other. Five shells and three phantom membranes craft an [Elytra](Elytra.md). A shell can also be ground flat on the [Grinding Wheel](Grinding_Wheel.md) into a Shulker Shell Plate, which any part that takes plate stock accepts: light, tough and heat resistant. Shulker boxes stay out of the [Ender Port](Ender_Port.md#using-it) system: a shulker box or Shulker Shell beside a port blocks pairing, and a shulker box never crosses a port.
 
 ## Water
 

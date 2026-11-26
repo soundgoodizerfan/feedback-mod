@@ -43104,6 +43104,16 @@
         "aspect": "thaumaturge:terra"
       }
     ],
+    "feedback:shulker_shell_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:shuttle_head": [
       {
         "amount": 2,
