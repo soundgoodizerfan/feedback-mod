@@ -9,6 +9,10 @@
       "required": false
     },
     {
+      "id": "feedback:star_burner",
+      "required": false
+    },
+    {
       "id": "feedback:induction_coil",
       "required": false
     },

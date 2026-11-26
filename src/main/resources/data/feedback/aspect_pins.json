@@ -115,6 +115,7 @@
     "feedback:crucible": [{"aspect":"thaumaturge:ignis","amount":7},{"aspect":"thaumaturge:alkimia","amount":4},{"aspect":"thaumaturge:terra","amount":2}],
     "feedback:arc_hearth": [{"aspect":"thaumaturge:ignis","amount":8},{"aspect":"thaumaturge:potentia","amount":6},{"aspect":"thaumaturge:machina","amount":4}],
     "feedback:arc_head": [{"aspect":"thaumaturge:potentia","amount":7},{"aspect":"thaumaturge:ignis","amount":4},{"aspect":"thaumaturge:instrumentum","amount":3}],
+    "feedback:star_burner": [{"aspect":"thaumaturge:ignis","amount":10},{"aspect":"thaumaturge:potentia","amount":8},{"aspect":"thaumaturge:machina","amount":2}],
     "feedback:furnace": [{"aspect":"thaumaturge:ignis","amount":5},{"aspect":"thaumaturge:terra","amount":3},{"aspect":"thaumaturge:machina","amount":1}],
     "feedback:smoker": [{"aspect":"thaumaturge:ignis","amount":4},{"aspect":"thaumaturge:aer","amount":3},{"aspect":"thaumaturge:terra","amount":2}],
     "feedback:blast_furnace": [{"aspect":"thaumaturge:ignis","amount":7},{"aspect":"thaumaturge:aer","amount":3},{"aspect":"thaumaturge:machina","amount":3},{"aspect":"thaumaturge:metallum","amount":2}],

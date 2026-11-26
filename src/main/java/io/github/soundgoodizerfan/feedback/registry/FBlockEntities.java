@@ -243,6 +243,10 @@ public class FBlockEntities {
                     .of(CrucibleBlockEntity::new, FBlocks.CRUCIBLE.get(), FBlocks.ARC_HEARTH.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.starburner.StarBurnerBlockEntity>> STAR_BURNER =
+            BLOCK_ENTITIES.register("star_burner", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.starburner.StarBurnerBlockEntity::new, FBlocks.STAR_BURNER.get())
+                    .build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlockEntity>> ARC_HEAD =
             BLOCK_ENTITIES.register("arc_head", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlockEntity::new, FBlocks.ARC_HEAD.get())

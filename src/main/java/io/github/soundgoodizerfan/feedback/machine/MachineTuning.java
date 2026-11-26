@@ -712,6 +712,10 @@ public final class MachineTuning {
 
     public static final float ESSENTIA_VENT_FLUX_PER_ESSENTIA = 0.25f;
 
+    /** Placeholder [OPEN]. A seated Nether Star's constant heat (above the arc's cap, enough to melt tungsten) and how many loaded ticks it burns before it is spent (about 20 hours). */
+    public static final io.github.soundgoodizerfan.feedback.core.unit.Tu STAR_BURNER_TU = new io.github.soundgoodizerfan.feedback.core.unit.Tu(3800f);
+    public static final long STAR_BURNER_LIFE_TICKS = 1_440_000L;
+
     /** Placeholder [OPEN]. A control surface's full deflection, in radians (about 29 degrees); the arm's force limit is the driver's (STEER_ARM_SU). */
     public static final float SURFACE_MAX_ANGLE = 0.5f;
 }

@@ -1,6 +1,6 @@
 # Crucible
 
-An open pot that sits over a [Firebox](Firebox.md) (or lava), or beside a [Heating Coil](Heating_Coil.md), [Induction Coil](Induction.md#induction-coil) or [Arc Head](Arc_Furnace.md#the-arc-head). It's where you make steel, melt metal and mix alloys, and it's the one hot vessel you can **measure and automate**.
+An open pot that sits over a [Firebox](Firebox.md) (or lava), or beside a [Heating Coil](Heating_Coil.md), [Induction Coil](Induction.md#induction-coil) or [Arc Head](Arc_Furnace.md#the-arc-head) or [Star Burner](Star_Burner.md). It's where you make steel, melt metal and mix alloys, and it's the one hot vessel you can **measure and automate**.
 
 ## Building it
 

@@ -533,6 +533,13 @@ public class FBlocks {
                     .strength(4.0f)
                     .sound(SoundType.METAL)));
 
+    /** A seat for a Nether Star that heats the vessel it faces and cannot be turned off. See {@code StarBurnerBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.starburner.StarBurnerBlock> STAR_BURNER = BLOCKS.register("star_burner",
+            () -> new io.github.soundgoodizerfan.feedback.machine.starburner.StarBurnerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_YELLOW)
+                    .strength(5.0f)
+                    .sound(SoundType.METAL)));
+
     /** An EHV sink that cuts what is fed to it, with a swappable head and a recipe data stick. See {@code PowerCutterBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlock> POWER_CUTTER = BLOCKS.register("power_cutter",
             () -> new io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlock(BlockBehaviour.Properties.of()
