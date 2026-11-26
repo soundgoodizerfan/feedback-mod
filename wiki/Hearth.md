@@ -13,7 +13,7 @@ B is any brick and I is any iron ingot.
 
 ## Using it
 
-Set it **on top of a [Firebox](Firebox.md)** (or any fire below it, lava included) and put an **Anvil against one of its sides**. Light the fire. The pan warms toward the flame and never passes it: open to the air it settles at about **nine tenths** of the fire's heat (a 760 Tu log fire gives a pan near 680 Tu), and a [Bellows](Powered_Bellows.md) on the firebox raises it as it raises any vessel.
+Set it **on top of a [Firebox](Firebox.md)** (or any fire below it, lava included) and put an **Anvil against one of its sides**, level with the pan or one block lower (the Anvil on the ground beside the Firebox). Light the fire. The pan warms toward the flame and never passes it: open to the air it settles at about **nine tenths** of the fire's heat (a 760 Tu log fire gives a pan near 680 Tu), and a [Bellows](Powered_Bellows.md) on the firebox raises it as it raises any vessel.
 
 While the pan is hot, hot-working stock lying in the Anvil's cells (steel and the like) is pulled toward the pan's heat, **3% of the gap each tick**, so cold stock warms quickly and warm stock barely at all. Stock also cools at its own material's rate (about 1.4 Tu a tick for steel), so it settles about **45 to 50 Tu under the pan** and never over it. The pan is a middling mass (between the small and large [crucible](Crucible.md)): it takes a while to come up, and holds through a cold piece being laid on it. Planks, stone and other cold-worked stock are not heated. A Smithing Table beside the pan is not reheated, so stock for it comes hot from a heater. The forging rhythm on the Anvil allows for the pan's heat.
 

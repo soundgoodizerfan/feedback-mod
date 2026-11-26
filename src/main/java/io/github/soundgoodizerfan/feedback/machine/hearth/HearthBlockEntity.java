@@ -128,9 +128,11 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
      */
     public static float holdBeside(Level level, BlockPos table) {
         float best = 0f;
+        // Beside the anvil, or beside and one up (a Hearth on a ground-level firebox, the anvil on the ground next to it).
         for (Direction side : Direction.Plane.HORIZONTAL)
-            if (level.getBlockEntity(table.relative(side)) instanceof HearthBlockEntity hearth && hearth.temperature > ThermalTuning.WARM_TU.value())
-                best = Math.max(best, hearth.temperature - ThermalTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() / ThermalTuning.HEARTH_STOCK_GRIP);
+            for (BlockPos at : new BlockPos[] { table.relative(side), table.relative(side).above() })
+                if (level.getBlockEntity(at) instanceof HearthBlockEntity hearth && hearth.temperature > ThermalTuning.WARM_TU.value())
+                    best = Math.max(best, hearth.temperature - ThermalTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() / ThermalTuning.HEARTH_STOCK_GRIP);
         return best;
     }
 
@@ -139,12 +141,13 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
         if (materials.isEmpty())
             return;
         for (Direction side : Direction.Plane.HORIZONTAL)
-            if (level.getBlockEntity(worldPosition.relative(side)) instanceof PartBenchBlockEntity table
-                    && table.getBlockState().getBlock() instanceof StationBlock b && b.station == Station.ANVIL) {
-                // The centre slot (TOOL) is the stock the anvil forges; the side stock cells are the rest.
-                reheat(table.getItem(PartBenchBlockEntity.TOOL), materials);
-                for (int i = 0; i < PartBenchBlockEntity.STOCK_SLOTS; i++)
-                    reheat(table.getItem(PartBenchBlockEntity.STOCK + i), materials);
+            for (BlockPos at : new BlockPos[] { worldPosition.relative(side), worldPosition.relative(side).below() })
+                if (level.getBlockEntity(at) instanceof PartBenchBlockEntity table
+                        && table.getBlockState().getBlock() instanceof StationBlock b && b.station == Station.ANVIL) {
+                    // The centre slot (TOOL) is the stock the anvil forges; the side stock cells are the rest.
+                    reheat(table.getItem(PartBenchBlockEntity.TOOL), materials);
+                    for (int i = 0; i < PartBenchBlockEntity.STOCK_SLOTS; i++)
+                        reheat(table.getItem(PartBenchBlockEntity.STOCK + i), materials);
             }
     }
 
@@ -156,7 +159,8 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
             return;
         float now = ItemHeat.get(stock, level).value();
         if (temperature > now)
-            ItemHeat.set(stock, new Tu(now + ThermalTuning.HEARTH_STOCK_GRIP * (temperature - now)), level);
+            // At least just over WARM_TU: ItemHeat.set clears a stamp at or under it, so from ambient the first grip step (about 54 Tu) was wiped every tick.
+            ItemHeat.set(stock, new Tu(Math.max(now + ThermalTuning.HEARTH_STOCK_GRIP * (temperature - now), ThermalTuning.WARM_TU.value() + 1f)), level);
         scale(stock, what.get().material());
     }
 
