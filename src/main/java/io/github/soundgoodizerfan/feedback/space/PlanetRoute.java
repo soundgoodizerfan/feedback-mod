@@ -18,7 +18,7 @@ import org.joml.Vector3d;
  * The rocket route to a destination planet that is a dimension of its own (the acid-cloud world, the frozen moon, the crystal world), built as
  * {@link EndRoute} is: the planet is a point in the Gap, the Gap's origin point plus {@code distance} along a fixed bearing (the one the sky draws it on). A
  * body that gets inside {@code capture} of it, heading toward it, is taken to the planet's dimension at full size, high above it, coming in fast and
- * descending; a body that leaves the planet's air upward comes back to the Gap just short of the point, scaled again. No rim: a craft that misses coasts on.
+ * descending; a body that leaves the planet's air upward comes back to the Gap just short of the point, scaled again. A craft that misses coasts on until the Gap's rim ({@link GapRim}) brings it to rest.
  */
 public record PlanetRoute(String id, ResourceKey<Level> dimension, float yawDeg, float pitchDeg, double distance, double capture, double arriveY,
                           double offsetShare, double descentDeg, double returnClearance) {

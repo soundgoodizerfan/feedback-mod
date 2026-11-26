@@ -12,13 +12,13 @@ A craft that enters the Gap shrinks to a hundredth of its size, with everything 
 
 ## The End by rocket
 
-The End is a point in the Gap along a fixed bearing, the gas giant in the sky (see below), about 120 blocks from the Gap's origin point (x 0, z 0). A craft that comes within 15 blocks of it while heading toward it arrives in the End at full size, over the main island, coming in fast and descending. A craft that misses has no rim to stop it and coasts on. A [Bearing Sensor](Bearing_Sensor.md) reads the turn and the distance to the End.
+The End is a point in the Gap along a fixed bearing, the gas giant in the sky (see below), about 120 blocks from the Gap's origin point (x 0, z 0). A craft that comes within 15 blocks of it while heading toward it arrives in the End at full size, over the main island, coming in fast and descending. A craft that misses drifts on toward the [rim](#the-rim). A [Bearing Sensor](Bearing_Sensor.md) reads the turn and the distance to the End.
 
 The End's air is very thin and holds no oxygen, and is gone above y 320. A [thruster](Thruster.md) that carries its own oxidizer works there; an air-breathing one does not. A [Vacuum Dryer](Potion_Salts.md#vacuum-dryer) set in the End draws its chamber down with no shaft turning. Leaving upward out of the End's air, as in the Overworld climb, returns the craft to the Gap just short of the End, shrunk again.
 
 ## The acid-cloud world by rocket
 
-The acid-cloud world is a second point in the Gap along its own fixed bearing, the ochre planet in the sky, farther from the origin than the End. A craft that gets within its capture sphere while heading toward it arrives in the acid-cloud world at full size, high up, coming in fast and descending. A craft that misses coasts on. The planet grows in the sky as the craft closes on it.
+The acid-cloud world is a second point in the Gap along its own fixed bearing, the ochre planet in the sky, farther from the origin than the End. A craft that gets within its capture sphere while heading toward it arrives in the acid-cloud world at full size, high up, coming in fast and descending. A craft that misses drifts on toward the [rim](#the-rim). The planet grows in the sky as the craft closes on it.
 
 The world has a yellow-green sky and fog, acid-green water and rain, and no mobs. The air is thick: density 3.0 at the ground, thinning with height to zero near the top of the build height (y 316). It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 90 Tu. Terrain is shaped like the Overworld's. Flying up out of the thick air returns the craft to the Gap just short of the planet, shrunk again.
 
@@ -28,7 +28,7 @@ The rain eats a hull. Every few seconds, exposed blocks of a metal with a **corr
 
 ## The frozen moon by rocket
 
-The frozen moon is a point in the Gap along its own fixed bearing, the pale blue-white disc in the sky. A craft that gets within its capture sphere while heading toward it arrives on the moon at full size, high up, coming in fast and descending. A craft that misses coasts on. The moon grows in the sky as the craft closes on it.
+The frozen moon is a point in the Gap along its own fixed bearing, the pale blue-white disc in the sky. A craft that gets within its capture sphere while heading toward it arrives on the moon at full size, high up, coming in fast and descending. A craft that misses drifts on toward the [rim](#the-rim). The moon grows in the sky as the craft closes on it.
 
 The world has no weather, and its water freezes. The air is very thin: density 0.15 at the ground, thinning with height to zero at y 220. It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is -150 Tu. Flying up out of the air returns the craft to the Gap just short of the moon, shrunk again.
 
@@ -36,9 +36,13 @@ The ground carries **Nitrogen Ice**, mined with a pickaxe. Melted in a vessel he
 
 ## The crystal world by rocket
 
-The crystal world is a point in the Gap along its own fixed bearing, the violet disc in the sky. A craft that gets within its capture sphere while heading toward it arrives in the crystal world at full size, high up, coming in fast and descending. A craft that misses coasts on. The planet grows in the sky as the craft closes on it.
+The crystal world is a point in the Gap along its own fixed bearing, the violet disc in the sky. A craft that gets within its capture sphere while heading toward it arrives in the crystal world at full size, high up, coming in fast and descending. A craft that misses drifts on toward the [rim](#the-rim). The planet grows in the sky as the craft closes on it.
 
 The world lies under a violet haze, with frequent amethyst geodes in the ground. Amethyst is the crystal of [experience](Experience.md). The air is thin: density 0.8 at the ground, thinning with height to zero at y 300. It holds some oxygen, a share of 0.4, but too little to breathe unaided, so a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 15 Tu. Flying up out of the air returns the craft to the Gap just short of the planet, shrunk again.
+
+## The rim
+
+The Gap has an edge. Beyond about **1100 blocks** from its origin point, past the farthest planet, a body feels drag that grows the farther out it is, until it drifts to rest. A craft that overshoots every destination is left intact where it stopped, a derelict. Another craft can fly out to it and recover it, with whatever is aboard.
 
 ## Salvage
 

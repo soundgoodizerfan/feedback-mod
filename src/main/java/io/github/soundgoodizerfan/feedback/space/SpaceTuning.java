@@ -57,6 +57,8 @@ public final class SpaceTuning {
     public static final double IMPACT_BREAK_FALL_BLOCKS = 10, IMPACT_BRITTLE_HARDNESS = 0.6;
     /** Placeholder [OPEN]. Acid rain: how often (ticks) a body is looked at, how many random blocks of it each time, and the most chance an exposed block of the least resistant metal is eaten. */
     public static final int ACID_SAMPLE_TICKS = 100, ACID_SAMPLES = 16;
+    /** Placeholder [OPEN]. The Gap's rim: blocks from its origin point (past the farthest planet and its capture sphere) beyond which a body feels drag, and the most of its velocity that drag takes each physics step. */
+    public static final double GAP_RIM_BLOCKS = 1100, GAP_RIM_DRAG_MAX = 0.05;
     public static final float ACID_ERODE_CHANCE = 0.3f;
     /** Ticks the crossing overlay takes to clear. */
     public static final int FADE_TICKS = 60;

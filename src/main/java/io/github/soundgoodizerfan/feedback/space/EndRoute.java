@@ -11,8 +11,8 @@ import org.joml.Vector3d;
  * The rocket route to the End (docs/specs/feedback_space_spec.md 4.5). The End is a point in the Gap: the Gap's origin point
  * ({@code 0, ENTRY_Y, 0}) plus {@link SpaceTuning#END_DISTANCE} along a fixed bearing. A body that gets inside
  * {@link SpaceTuning#END_CAPTURE_RADIUS} of it, heading toward it, is taken to the End at full size, over the main island, coming in
- * fast and descending; a body that leaves the End's air upward comes back to the Gap just short of the point, scaled again. There is no
- * rim: a craft that misses coasts on.
+ * fast and descending; a body that leaves the End's air upward comes back to the Gap just short of the point, scaled again. A craft that
+ * misses coasts on until the Gap's rim ({@link GapRim}) brings it to rest.
  */
 public final class EndRoute {
     private EndRoute() {
