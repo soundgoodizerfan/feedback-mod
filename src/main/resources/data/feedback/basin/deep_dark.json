@@ -1,0 +1,17 @@
+{
+  "kind": "deep_dark",
+  "fluid": "feedback:echo_crude",
+  "radius": 24,
+  "thickness": 8,
+  "min_y": -52,
+  "max_y": -20,
+  "weight": 1,
+  "dimension_filter": ["minecraft:overworld"],
+  "biomes": "feedback:echo_oil_bearing",
+  "volume_mb": 500000,
+  "drive_pu": 70,
+  "pressure_exponent": 0.8,
+  "crude": { "density": 0.97, "sulfur": 0.01, "light_fraction": 0.12, "xp": 0.5 },
+  "grade_spread": 0.0,
+  "indicator": "feedback:echo_seep"
+}

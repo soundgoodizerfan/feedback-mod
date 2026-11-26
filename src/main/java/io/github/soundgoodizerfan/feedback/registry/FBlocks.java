@@ -1404,6 +1404,14 @@ public class FBlocks {
                     .noCollission()
                     .noOcclusion()
                     .randomTicks()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.geology.EchoSeepBlock> ECHO_SEEP = BLOCKS.register("echo_seep",
+            () -> new io.github.soundgoodizerfan.feedback.geology.EchoSeepBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN)
+                    .strength(0.2f)
+                    .sound(SoundType.SCULK)
+                    .noCollission()
+                    .noOcclusion()
+                    .randomTicks()));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.geology.SoulSeepBlock> SOUL_SEEP = BLOCKS.register("soul_seep",
             () -> new io.github.soundgoodizerfan.feedback.geology.SoulSeepBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BROWN)

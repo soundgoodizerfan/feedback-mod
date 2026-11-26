@@ -5,7 +5,7 @@
   "required_tpu": 0,
   "phase": {
     "liquid": {
-      "fluid": "feedback:crude_oil"
+      "tag": "feedback:crudes"
     },
     "gas": {
       "fluid": "feedback:naphtha_vapour"

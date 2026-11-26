@@ -95,7 +95,11 @@ public class SurveyMeterItem extends Item implements Instrument {
                 long n = Math.round((site.radius() + r - Math.hypot(dx, dz)) * ItemTuning.SURVEY_OIL_PER_BLOCK);
                 if (n > 0 && (best == null || n > best[0])) {
                     best = new long[]{n, dx * n, (site.centre().getY() - centre.getY()) * n, dz * n};
-                    bestKey = site.basin().fluid().getPath().equals("soul_oil") ? "feedback.survey.soul_oil" : "feedback.survey.oil";
+                    bestKey = switch (site.basin().fluid().getPath()) {
+                        case "soul_oil" -> "feedback.survey.soul_oil";
+                        case "echo_crude" -> "feedback.survey.echo_crude";
+                        default -> "feedback.survey.oil";
+                    };
                 }
             }
             if (best != null)

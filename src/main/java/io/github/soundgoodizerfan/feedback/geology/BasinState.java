@@ -133,7 +133,7 @@ public class BasinState extends SavedData {
             String id = e.getString("id");
             state.entries.put(id, state.new Entry(id, new BlockPos(e.getInt("x"), e.getInt("y"), e.getInt("z")),
                     e.getInt("r"), e.getInt("v0"), e.getInt("v"), e.getFloat("p0"), e.getFloat("k"),
-                    new CrudeGrade(e.getFloat("density"), e.getFloat("sulfur"), e.getFloat("light")),
+                    new CrudeGrade(e.getFloat("density"), e.getFloat("sulfur"), e.getFloat("light"), e.getFloat("xp")),
                     e.contains("fluid") ? e.getString("fluid") : "feedback:crude_oil"));
         }
         return state;
@@ -156,6 +156,7 @@ public class BasinState extends SavedData {
             e.putFloat("density", b.grade.density());
             e.putFloat("sulfur", b.grade.sulfur());
             e.putFloat("light", b.grade.lightFraction());
+            e.putFloat("xp", b.grade.xp());
             e.putString("fluid", b.fluid);
             list.add(e);
         }

@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "scooped=false": { "model": "feedback:block/echo_seep" },
+    "scooped=true": { "model": "feedback:block/echo_seep" }
+  }
+}

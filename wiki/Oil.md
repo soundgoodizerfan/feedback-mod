@@ -1,6 +1,6 @@
 # Oil
 
-Black, flammable and underground. Crude oil is found in **oil basins** and refined in a [Fractionating Column](Fractionating_Column.md) into naphtha, kerosene and diesel. The Nether's counterpart is **soul oil**, found in basins under soul sand valleys or cooked from soul sand in a [Reactor](Reactor.md).
+Black, flammable and underground. Crude oil is found in **oil basins** and refined in a [Fractionating Column](Fractionating_Column.md) into naphtha, kerosene and diesel. Deep under the Overworld lies **echo crude**, and the Nether's counterpart is **soul oil**, found in basins under soul sand valleys or cooked from soul sand in a [Reactor](Reactor.md).
 
 ## Crude oil
 
@@ -25,6 +25,26 @@ Crude is one fluid, but every drop carries a **grade**: its density, its sulfur 
 
 - **Grades blend by mass** when crudes mix in a tank or a pipe. A tank never filters by grade; whatever you take out is the blend.
 - A column reads the grade it is fed and never asks where it came from. More light fraction means more of every cut.
+
+### Echo crude
+
+Deep under the Overworld, in the Deep Dark below **y -20**, lie rare **echo crude basins**: circles of oil-soaked rock about 24 blocks across the radius.
+
+- **Echo Seeps** are the sign, on the floors of deep dark caves. A **Copper Bucket** used on one scoops a little echo crude.
+- A [Survey Meter](Instruments.md#survey-meter) lists **Echo crude basin** with a rough size and a bearing, as for crude.
+- A derrick and wellhead draw it like any crude ([Getting oil out of the ground](#getting-oil-out-of-the-ground)).
+
+Echo crude is dense (**0.97**) with a small light fraction, so it gives less naphtha, kerosene and diesel than a typical crude. It carries **stored experience** in the fluid itself. The [column](Fractionating_Column.md#echo-crude) leaves the experience in the heavy bottoms, and heating the bottoms releases it into the vessel's bank for a [Smelter Tap](Experience.md#taps) to drain.
+
+#### The crude rings under the lift
+
+Lifting echo crude fast makes it ring, and sculk hears it. A wellhead turns it at a speed set by the shaft's RPM held back by the [flywheel](Flywheel.md) mass on that shaft; above about **30 RPM** effective speed, strain builds. Jade shows each stage.
+
+1. **Ringing.** "The crude is ringing under the lift." The well makes vibrations that sculk sensors hear, and sculk grows over the ground around it.
+2. **Shrieking.** Jade warns that the crude is shrieking. Sculk sensors and sculk shriekers appear around the well, so a vanilla warden can answer.
+3. **Burst.** The well blows out in an explosion that grows with the casing depth.
+
+Slowing the lift, or adding flywheel mass to the shaft, brings every stage back down. A [Pump](Pump.md) moving echo crude rings too. See [Hazards](Hazards.md).
 
 ### Products
 

@@ -653,6 +653,8 @@ public final class VesselTuning {
 
     /** Invented. Points a vessel banks from vanilla cooking recipes before it stops banking; a Smelter Tap drains the bank a second at a time. */
     public static final float VESSEL_XP_BANK_MAX = 400f;
+    /** Tu a held crude that carries experience gives it up at, and the share of its points per mB a tick lets go. Placeholders. */
+    public static final float XP_RELEASE_TU = 200f, XP_RELEASE_PER_TICK = 0.002f;
 
     /** Invented. What a hot metal bath cools by per mB that boils off it, in Tu. */
     public static final float METAL_BOIL_COOLING_TU_PER_MB = 0.05f;

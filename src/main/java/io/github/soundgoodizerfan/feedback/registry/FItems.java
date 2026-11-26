@@ -508,6 +508,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> MAGMA_HEAD = ITEMS.registerSimpleBlockItem(FBlocks.MAGMA_HEAD);
     public static final DeferredItem<BlockItem> SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SEEP);
     public static final DeferredItem<BlockItem> SOUL_SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_SEEP);
+    public static final DeferredItem<BlockItem> ECHO_SEEP = ITEMS.registerSimpleBlockItem(FBlocks.ECHO_SEEP);
     public static final DeferredItem<BlockItem> CASTING_BASIN = ITEMS.registerSimpleBlockItem(FBlocks.CASTING_BASIN);
     /** Its material (and so its hardness) is stamped on it, as on any tool head. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.derrick.DerrickBitItem> DERRICK_BIT = ITEMS.register("derrick_bit",

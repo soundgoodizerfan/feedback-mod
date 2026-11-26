@@ -79,6 +79,7 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> DIESEL_VAPOUR = petroType("diesel_vapour", -3, 100, 400);
 
     public static final DeferredHolder<FluidType, FluidType> SOUL_OIL = petroType("soul_oil", 900, 4000, 300);
+    public static final DeferredHolder<FluidType, FluidType> ECHO_CRUDE = petroType("echo_crude", 970, 6000, 300);
     public static final DeferredHolder<FluidType, FluidType> POLYETHYLENE_MELT = petroType("polyethylene_melt", 900, 4000, 300);
     public static final DeferredHolder<FluidType, FluidType> SOUL_RESIN_MELT = petroType("soul_resin_melt", 900, 4000, 300);
     public static final DeferredHolder<FluidType, FluidType> ETHYLENE = petroType("ethylene", -2, 100, 300);

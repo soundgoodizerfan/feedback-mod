@@ -61,6 +61,10 @@ The sharper the tray the less it flows. Vapor a tray cannot take rides up to the
 
 A tray hotter than **420 Tu** cokes up, faster for a heavier feed and faster the hotter it runs. Coke lowers both what the tray holds back and what it can take, down to nothing. Running correctly never cokes a tray: only running it too hot does. Clear it with steam through the reboiler (once the reboiler is cooler than 420 Tu).
 
+## Echo crude
+
+The reboiler takes [echo crude](Oil.md#echo-crude) like any crude and distils it through the same cuts, with a smaller share of them. The stored experience stays behind and concentrates in the heavy bottoms. Drain the bottoms into a vessel and heat it above about **200 Tu**: the bottoms release their experience into the vessel's bank. A [Smelter Tap](Experience.md#taps) on the vessel drains the bank into an XP run; a full bank spills as orbs.
+
 ## The top of the column
 
 Whatever rises past the top tray goes into whatever sits above it, if that takes it. If nothing does, it escapes as flammable vapor. See [Oil](Oil.md#fire).

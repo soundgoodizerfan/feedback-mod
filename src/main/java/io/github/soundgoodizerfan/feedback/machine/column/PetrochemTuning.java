@@ -202,6 +202,16 @@ public final class PetrochemTuning {
 
     public static final float WELLHEAD_BLOWOUT_POWER = 3f;
 
+    /**
+     * Invented. Echo crude under a turning lift (the Deep Dark): the effective RPM it starts to ring at and the one it strains fastest at, the share
+     * of full strain a tick adds at that speed and takes off when slower, the strain a shriek starts at, the RPM an inertia unit on the shaft holds
+     * back, the blocks sculk is grown over round the well, the chance a spread of sculk at the shriek stage raises a sensor or shrieker, and the
+     * extra blast power per block of casing at a burst.
+     */
+    public static final float ECHO_RING_RPM = 30f, ECHO_FULL_RPM = 90f, ECHO_STRAIN_RISE = 0.002f, ECHO_STRAIN_FALL = 0.003f,
+            ECHO_SHRIEK_STRAIN = 0.35f, ECHO_DAMP_PER_INERTIA = 0.01f, ECHO_SHRIEKER_CHANCE = 0.3f, ECHO_BURST_POWER_PER_BLOCK = 0.15f;
+    public static final int ECHO_SPREAD_REACH = 4;
+
 
     // --- the fractionating column (spec 6.4, 6.5): invented ----------------------------------------
 

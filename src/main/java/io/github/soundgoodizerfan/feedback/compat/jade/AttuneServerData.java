@@ -16,13 +16,15 @@ public class AttuneServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final AttuneServerData INSTANCE = new AttuneServerData();
 
-    static final String DRAW = "AttuneDraw";
+    static final String DRAW = "AttuneDraw", ECHO = "EchoStage";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
         var be = accessor.getBlockEntity();
         if (be == null || be.getLevel() == null)
             return;
+        if (be instanceof io.github.soundgoodizerfan.feedback.machine.derrick.WellheadBlockEntity well && well.echoStage() > 0)
+            data.putInt(ECHO, well.echoStage());
         int last = MachineKinds.lastDraw(be, be.getLevel().getGameTime());
         if (last >= 0)
             data.putInt(DRAW, last);

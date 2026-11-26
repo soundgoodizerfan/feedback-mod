@@ -163,11 +163,37 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
         int moved = amount > 0 ? push(server, amount) : 0;
         lastMoved = moved;
 
+        if (basin.grade().xp() > 0f && echo(server))
+            return;
+
         float sustainable = PetrochemTuning.WELLHEAD_SUSTAINABLE_MB_PER_PU * Math.max(p, PetrochemTuning.WELLHEAD_FLOOR_PU);
         if (moved > sustainable)
             cone = Math.min(1f, cone + (moved - sustainable) / sustainable * PetrochemTuning.WELLHEAD_CONE_RISE);
         else
             cone = Math.max(0f, cone - PetrochemTuning.WELLHEAD_CONE_RECOVER);
+    }
+
+    /** The echo crude's ringing under the lift: not saved, a restart finds the well quiet. See {@link EchoHazard}. */
+    private float strain;
+    private int echoStage;
+
+    /** The stage the well's echo crude is at, for Jade ({@link EchoHazard}'s QUIET to BURST). */
+    public int echoStage() {
+        return echoStage;
+    }
+
+    /** One tick of echo crude's ringing; returns true if it burst. */
+    private boolean echo(ServerLevel server) {
+        float effective = EchoHazard.effectiveRpm(getRpm().value(), getNetwork() == null ? 0f : getNetwork().runInertia());
+        strain = EchoHazard.strain(strain, effective);
+        echoStage = EchoHazard.stage(strain, effective);
+        if (echoStage == EchoHazard.BURST) {
+            blowOut(server, PetrochemTuning.WELLHEAD_BLOWOUT_POWER + PetrochemTuning.ECHO_BURST_POWER_PER_BLOCK * depth);
+            return true;
+        }
+        if (server.getGameTime() % 20 == 0)
+            EchoHazard.act(server, worldPosition, echoStage);
+        return false;
     }
 
     /** The load follows the lift; the network only hears about it when it moves. */
@@ -183,8 +209,9 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
     /** Offers up to {@code amount} mB to the neighbours; draws from the basin only what they take. */
     private int push(ServerLevel server, int amount) {
         var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(basin.fluid());
-        // Only crude carries a grade; another fluid (soul oil) is the same everywhere.
-        FluidStack offer = fluid == FFluids.CRUDE_OIL.get()
+        // Only crude (and the Deep Dark's echo crude) carries a grade; another fluid (soul oil) is the same everywhere.
+        FluidStack offer = fluid.builtInRegistryHolder().is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.FLUID,
+                io.github.soundgoodizerfan.feedback.Feedback.id("crudes")))
                 ? CrudeGrade.stamp(new FluidStack(fluid, amount), coned(basin.grade()))
                 : new FluidStack(fluid, amount);
         int moved = 0;
@@ -213,7 +240,7 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
         if (cone <= 0f)
             return g;
         return new CrudeGrade(g.density() * (1f + 0.1f * cone), Math.min(1f, g.sulfur() * (1f + cone)),
-                g.lightFraction() * (1f - cone * PetrochemTuning.WELLHEAD_CONE_STRIP));
+                g.lightFraction() * (1f - cone * PetrochemTuning.WELLHEAD_CONE_STRIP), g.xp());
     }
 
     // --- hazard ----------------------------------------------------------------------------
@@ -237,9 +264,13 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
 
     /** Wrecks the wellhead and vents crude over the ground; the hole stays and can be drilled again. */
     private void blowOut(ServerLevel server) {
+        blowOut(server, PetrochemTuning.WELLHEAD_BLOWOUT_POWER);
+    }
+
+    private void blowOut(ServerLevel server, float power) {
         BlockPos pos = worldPosition;
         int spill = basin == null ? 0 : basin.draw(PetrochemTuning.WELLHEAD_BLOWOUT_SPILL_MB);
-        server.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, PetrochemTuning.WELLHEAD_BLOWOUT_POWER,
+        server.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, power,
                 Level.ExplosionInteraction.BLOCK);
         server.sendParticles(ParticleTypes.SQUID_INK, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 80, 0.4, 1.2,
                 0.4, 0.4);

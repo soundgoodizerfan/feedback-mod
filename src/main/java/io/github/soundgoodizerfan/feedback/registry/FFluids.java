@@ -160,6 +160,11 @@ public final class FFluids {
             FLUIDS.register("soul_oil", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.SOUL_OIL, FFluids.SOUL_OIL, FFluids.SOUL_OIL_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> SOUL_OIL_FLOWING =
             FLUIDS.register("soul_oil_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.SOUL_OIL, FFluids.SOUL_OIL, FFluids.SOUL_OIL_FLOWING)));
+    /** The Deep Dark's sculk-infused crude: dense, graded like crude, and carrying experience as {@link io.github.soundgoodizerfan.feedback.geology.CrudeGrade#xp()}. */
+    public static final DeferredHolder<Fluid, Fluid> ECHO_CRUDE =
+            FLUIDS.register("echo_crude", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.ECHO_CRUDE, FFluids.ECHO_CRUDE, FFluids.ECHO_CRUDE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ECHO_CRUDE_FLOWING =
+            FLUIDS.register("echo_crude_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.ECHO_CRUDE, FFluids.ECHO_CRUDE, FFluids.ECHO_CRUDE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> POLYETHYLENE_MELT =
             FLUIDS.register("polyethylene_melt", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.POLYETHYLENE_MELT, FFluids.POLYETHYLENE_MELT, FFluids.POLYETHYLENE_MELT_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> POLYETHYLENE_MELT_FLOWING =

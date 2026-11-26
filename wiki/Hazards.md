@@ -149,3 +149,7 @@ A [brewed](Brewing_Stand.md) ward lets only a fraction of one kind of hazard thr
 ## When you're away
 
 Blocks keep living while you're gone. A crucible over a lit [Firebox](Firebox.md) in a chunk you walked away from **burns its fuel and cools** across the time you were away. When you come back it's where it would have been, not frozen as you left it. See [Heat](Heat.md#while-youre-away).
+
+## Ringing crude
+
+A wellhead lifting [echo crude](Oil.md#the-crude-rings-under-the-lift) faster than about 30 RPM effective speed makes the crude ring, then shriek, then burst. Sculk hears the first two stages and answers; the burst is an explosion that grows with the casing depth. Slowing the lift or adding [flywheel](Flywheel.md) mass reverses it.

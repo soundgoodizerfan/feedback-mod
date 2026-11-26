@@ -20,22 +20,30 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * @param density       Mu per mB (water is 1): heavy crude is dense and pumps poorly.
  * @param sulfur        mass fraction, 0 to 1: sour crude fouls catalyst and its fumes are toxic.
  * @param lightFraction mass fraction that distils off light, 0 to 1: more naphtha, lower flash point.
+ * @param xp            experience points held per mB, a sculk-infused crude's stored XP (0 for every other crude): it stays when the lights boil off, so
+ *                      the heavy bottoms concentrate it, and a hot vessel releases it ({@code ThermalVesselCore}).
  */
-public record CrudeGrade(float density, float sulfur, float lightFraction) {
+public record CrudeGrade(float density, float sulfur, float lightFraction, float xp) {
 
     public static final CrudeGrade DEFAULT = new CrudeGrade(0.85f, 0.01f, 0.30f);
     /** What a seep gives: the volatile fraction has evaporated (spec 3.4). */
     public static final CrudeGrade WEATHERED = new CrudeGrade(0.93f, 0.02f, 0.05f);
 
+    /** A crude that holds no experience. */
+    public CrudeGrade(float density, float sulfur, float lightFraction) {
+        this(density, sulfur, lightFraction, 0f);
+    }
+
     public static final Codec<CrudeGrade> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.FLOAT.fieldOf("density").forGetter(CrudeGrade::density),
             Codec.FLOAT.fieldOf("sulfur").forGetter(CrudeGrade::sulfur),
-            Codec.FLOAT.fieldOf("light_fraction").forGetter(CrudeGrade::lightFraction)
+            Codec.FLOAT.fieldOf("light_fraction").forGetter(CrudeGrade::lightFraction),
+            Codec.FLOAT.optionalFieldOf("xp", 0f).forGetter(CrudeGrade::xp)
     ).apply(i, CrudeGrade::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CrudeGrade> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, CrudeGrade::density, ByteBufCodecs.FLOAT, CrudeGrade::sulfur,
-            ByteBufCodecs.FLOAT, CrudeGrade::lightFraction, CrudeGrade::new);
+            ByteBufCodecs.FLOAT, CrudeGrade::lightFraction, ByteBufCodecs.FLOAT, CrudeGrade::xp, CrudeGrade::new);
 
     /** The stamp on {@code stack}, or {@link #DEFAULT} if it has none. */
     public static CrudeGrade of(FluidStack stack) {
@@ -52,7 +60,15 @@ public record CrudeGrade(float density, float sulfur, float lightFraction) {
 
     /** This grade after {@code amount} of {@code before} mB left as vapour, {@code lights} being the light fraction going in: the lights drawn off are no longer in the feed. */
     public CrudeGrade withLightsDrawn(float lights, int before, int amount) {
-        return new CrudeGrade(density, sulfur, Math.max(0f, (lights * before - amount) / (before - amount)));
+        // The experience stays in the liquid that is left, so each mB of it holds more.
+        return new CrudeGrade(density, sulfur, Math.max(0f, (lights * before - amount) / (before - amount)), xp * before / (before - amount));
+    }
+
+    /** This grade with {@code released} points per mB of its experience let go. */
+    public CrudeGrade withXpReleased(float released) {
+        float left = xp - released;
+        // Snap a trace to nothing, so a drained crude stops counting as one that carries experience.
+        return new CrudeGrade(density, sulfur, lightFraction, left < 0.001f ? 0f : left);
     }
 
     /**
@@ -66,6 +82,7 @@ public record CrudeGrade(float density, float sulfur, float lightFraction) {
         float massA = mbA * a.density, massB = mbB * b.density, mass = massA + massB;
         return new CrudeGrade((a.density * mbA + b.density * mbB) / total,
                 mass <= 0 ? a.sulfur : (a.sulfur * massA + b.sulfur * massB) / mass,
-                mass <= 0 ? a.lightFraction : (a.lightFraction * massA + b.lightFraction * massB) / mass);
+                mass <= 0 ? a.lightFraction : (a.lightFraction * massA + b.lightFraction * massB) / mass,
+                (a.xp * mbA + b.xp * mbB) / total);
     }
 }

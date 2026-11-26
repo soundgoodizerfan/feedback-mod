@@ -21,6 +21,9 @@ public class AttuneComponent implements IBlockComponentProvider {
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
         var data = accessor.getServerData();
+        if (data.contains(AttuneServerData.ECHO))
+            tooltip.add(Component.translatable("jade.feedback.echo." + data.getInt(AttuneServerData.ECHO))
+                    .withStyle(data.getInt(AttuneServerData.ECHO) == 1 ? ChatFormatting.YELLOW : ChatFormatting.RED));
         if (data.contains(AttuneServerData.DRAW))
             tooltip.add(Component.translatable("jade.feedback.attune." + data.getInt(AttuneServerData.DRAW))
                     .withStyle(data.getInt(AttuneServerData.DRAW) == 0 ? ChatFormatting.GREEN : ChatFormatting.GRAY));

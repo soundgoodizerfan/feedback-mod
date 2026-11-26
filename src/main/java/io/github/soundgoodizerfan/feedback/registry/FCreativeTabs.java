@@ -184,7 +184,7 @@ public class FCreativeTabs {
             FModular.GAS_TANK, FModular.PRESSURE_VESSEL, FItems.VALVE, FItems.THERMAL_VALVE, FItems.RELIEF_VALVE, FItems.AIR_INTAKE, FItems.RADIATOR_PANEL, FItems.AIR_VALVE,
             FItems.BELLOWS, FItems.DAMPER, FItems.FLARE, FItems.HYDRIDE_BED, FItems.SCRUBBING_BED, FItems.ESSENTIA_VENT, FItems.ESSENTIA_ADAPTER, FItems.CONDENSER, FItems.REBOILER,
             FModular.TRAY, FItems.REACTOR, FModular.GAS_CENTRIFUGE,
-            FItems.SEEP, FItems.SOUL_SEEP, FItems.DERRICK_BASE, FItems.DERRICK_CASING, FItems.DERRICK_BIT,
+            FItems.SEEP, FItems.SOUL_SEEP, FItems.ECHO_SEEP, FItems.DERRICK_BASE, FItems.DERRICK_CASING, FItems.DERRICK_BIT,
             FItems.WELLHEAD);
 
     /** Handling: hand-fed blocks, then belts, tubes and pods, then the ender ports. */

@@ -5,6 +5,7 @@
     "feedback:naphtha",
     "feedback:kerosene",
     "feedback:diesel",
-    "feedback:soul_oil"
+    "feedback:soul_oil",
+    "feedback:echo_crude"
   ]
 }

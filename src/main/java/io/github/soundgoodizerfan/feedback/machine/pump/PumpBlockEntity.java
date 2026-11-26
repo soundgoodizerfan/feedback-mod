@@ -144,10 +144,15 @@ public class PumpBlockEntity extends RotationNode implements io.github.soundgood
             if (stiff > io.github.soundgoodizerfan.feedback.core.FTuning.SHEAR_JAM_STIFFNESS)
                 misuse();
             int fits = offered.isEmpty() ? 0 : target.fill(offered, IFluidHandler.FluidAction.SIMULATE);
-            if (fits > 0)
+            if (fits > 0) {
                 target.fill(source.drain(offered.copyWithAmount(fits), IFluidHandler.FluidAction.EXECUTE),
                         IFluidHandler.FluidAction.EXECUTE);
-            else
+                // Sculk hears a pump moving echo crude (the Deep Dark's experience-bearing crude): a vibration and a little growth beside it.
+                if (level instanceof net.minecraft.server.level.ServerLevel server && level.getGameTime() % 20 == 0
+                        && io.github.soundgoodizerfan.feedback.geology.CrudeGrade.of(offered).xp() > 0f)
+                    io.github.soundgoodizerfan.feedback.machine.derrick.EchoHazard.act(server, worldPosition,
+                            io.github.soundgoodizerfan.feedback.machine.derrick.EchoHazard.RINGING);
+            } else
                 misuse();
             return;
         }

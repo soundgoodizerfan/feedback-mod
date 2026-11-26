@@ -700,6 +700,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         FluidStack held = tank.getFluid();
         if (held.isEmpty())
             return;
+        releaseXp(server, held);
         for (PhaseChange cut : ThermalProcessTable.get().phases()) {
             if (!cut.boils(held) || temperature < cut.boil().value())
                 continue;
@@ -720,6 +721,24 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
             vent(cut, amount, at);
             return;
         }
+    }
+
+    /**
+     * A crude that carries experience ({@link CrudeGrade#xp}, the Deep Dark's echo crude) held hot lets it go: a share of its points a tick goes into the
+     * bank a Smelter Tap drains. A bank already full spills the rest as orbs: heated too long with no tap, the experience is wasted on the floor.
+     */
+    private void releaseXp(net.minecraft.server.level.ServerLevel server, FluidStack held) {
+        CrudeGrade grade = CrudeGrade.of(held);
+        if (grade.xp() <= 0f || temperature < VesselTuning.XP_RELEASE_TU)
+            return;
+        float perMb = grade.xp() * VesselTuning.XP_RELEASE_PER_TICK;
+        float points = perMb * held.getAmount();
+        float kept = Math.min(points, VesselTuning.VESSEL_XP_BANK_MAX - bankedXp);
+        bankedXp += kept;
+        if (points - kept >= 1f)
+            net.minecraft.world.entity.ExperienceOrb.award(server, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), (int) (points - kept));
+        tank.getFluid().set(FDataComponents.CRUDE_GRADE.get(), grade.withXpReleased(perMb));
+        setChanged();
     }
 
     /**

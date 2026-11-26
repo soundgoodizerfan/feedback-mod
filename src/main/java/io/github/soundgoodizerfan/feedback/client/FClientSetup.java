@@ -288,6 +288,7 @@ public class FClientSetup {
         event.registerFluidType(waterTinted(0x99D9C27A), FFluidTypes.KEROSENE_VAPOUR.get());
         event.registerFluidType(waterTinted(0x99B8924A), FFluidTypes.DIESEL_VAPOUR.get());
         event.registerFluidType(waterTinted(0xFF2A1A3A), FFluidTypes.SOUL_OIL.get());
+        event.registerFluidType(waterTinted(0xFF123238), FFluidTypes.ECHO_CRUDE.get());
         event.registerFluidType(waterTinted(0xFFE6E6D8), FFluidTypes.POLYETHYLENE_MELT.get());
         event.registerFluidType(waterTinted(0xFF4A9A9A), FFluidTypes.SOUL_RESIN_MELT.get());
         event.registerFluidType(waterTinted(0x66DDE8EE), FFluidTypes.ETHYLENE.get());
