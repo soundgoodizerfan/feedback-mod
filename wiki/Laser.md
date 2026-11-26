@@ -18,7 +18,7 @@ The lens is the beam's exit, the tubes are the flash lamps that pump the crystal
 
 - **Place it facing the way you look.** The beam leaves the front face.
 - **Power it.** The laser is a sink on an [MV](Electricity.md#bands-and-amps) line. It draws a small standing current while it ranges and a full current while it fires. A line of a higher band cracks the crystal at once.
-- **Seat a crystal.** Right-click with a material that lases: ruby, or any other with the phosphor property. The one already there comes back. Sneak and right-click with an empty hand takes it out.
+- **Seat a crystal.** Right-click with a material that lases: ruby, emerald, or any other with the phosphor property. The one already there comes back. Sneak and right-click with an empty hand takes it out.
 - **Switch it on.** A [Controller](Controller.md) Switch card fires it, or a redstone signal beside it. Without either it only ranges.
 - **Right-click** empty-handed to read it: *no crystal*, *ranging*, *firing*, *firing hot* or *cooling*.
 

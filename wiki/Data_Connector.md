@@ -55,6 +55,8 @@ A link uses copper wire when it reaches and you have enough, otherwise redstone-
 
 Redstone-chromium wire quenches: if either end of a good line carries more than 3 links, the line goes dark for 10 seconds and then recovers undamaged. A reader with no working path reads 0.
 
+**Cold raises the limit.** A line laid in a dimension colder than the room carries more links before it quenches: the limit grows with every Tu the ambient sits below room temperature, up to three times the plain figure. A line on the frozen moon carries about two and a half times what the same wire carries at home.
+
 ## Fiber
 
 Two [Optical Terminals](Optical_Terminal.md) are joined only by **fiber**, never by wire. Link them as any two nodes: select one terminal, then the other. Fiber is the *Fiber* form of a glass or polymer, [drawn from a glass rod](Wire_Drawer.md#what-it-makes) at the Wire Drawer. Nodes reach a terminal with ordinary wire.

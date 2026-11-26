@@ -137,13 +137,14 @@ Not everything is metal. A few others matter for parts and protection:
 | Bamboo | 4 | 0.4 | 150 Tu | grips turned from a stalk |
 | Bone | 7 | 0.5 | 200 Tu | grips turned from a bone |
 | Leather | 1 | | 100 Tu | gloves |
-| Diamond | 981 | | | armor: nothing pierces it; can be [grown](#synthetic-diamond) |
+| Diamond | 981 | | | armor: nothing pierces it; insulates electrical lines; can be [grown](#synthetic-diamond) |
+| Emerald | 147 | | 990 Tu | transparent crystal; insulates electrical lines; lases in a [Laser](Laser.md) |
 | Feather Down | 1 | | | animal, fibrous; a very light, warm [bed](Bed.md) padding: see [below](#feather-down-and-rabbit-hide) |
 | Rabbit Hide | 1 | | 100 Tu | animal, fibrous; a warm, tough [bed](Bed.md) padding |
 | Ghast Bladder | 1 | | | animal; the skin of a bladder [gas cell](Gas_Cell.md) |
 | Collagen | 1 | | 55 Tu | adhesive; see [Collagen](#collagen) |
 | Coated Cloth | 0.5 | | | cloth coated in slime; the skin of a coated cloth [gas cell](Gas_Cell.md) |
-| Ruby | 200 | | 1400 Tu | transparent crystal; glows under current |
+| Ruby | 200 | | 1400 Tu | transparent crystal; glows under current; lases in a [Laser](Laser.md) |
 | Spinel | 140 | | 1243 Tu | transparent crystal; see [Spinel](#spinel) |
 | Jade | 65 | | 836 Tu | tough mineral |
 | Garnet | 120 | | 789 Tu | transparent crystal |
