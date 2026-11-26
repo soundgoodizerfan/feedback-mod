@@ -1,0 +1,56 @@
+{
+  "color": "#9c9a96",
+  "kind": "metal",
+  "hardness": 26,
+  "density": 19.8,
+  "thermal": {
+    "expansion": 4.67e-05,
+    "melting_point": 640,
+    "boiling_point": 3228,
+    "cooling_rate": 2.3,
+    "conductivity": 0.00168,
+    "oxidation_temperature": 150,
+    "anneal_temperature": 300,
+    "service_temperature": 250,
+    "specific_heat": 0.146,
+    "latent_heat_fusion": 16,
+    "latent_heat_vaporisation": 1270
+  },
+  "mechanical": {
+    "toughness": 20,
+    "ductility": 2,
+    "work_hardening": 1,
+    "yield_strength": 12,
+    "friction": 0.5,
+    "abrasiveness": 0.4
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 16.6,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "reflectivity": 0.6
+  },
+  "electrical": {
+    "drop": 0.833,
+    "electrode_potential": -2.0,
+    "conductivity": 0.012
+  },
+  "ampacity": 0.2,
+  "corrosion_resistance": 0.1,
+  "radioactivity": 2.0,
+  "neutron": {
+    "fissile": 2.2
+  },
+  "enchantability": 6,
+  "perks": {
+    "radiant": 1
+  },
+  "toxicity": 2.5,
+  "exclude": [
+    "lump",
+    "ore",
+    "deepslate_ore"
+  ]
+}

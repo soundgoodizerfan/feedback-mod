@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "feedback:plutonium_fuel_rod",
+      "required": false
+    }
+  ]
+}

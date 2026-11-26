@@ -521,6 +521,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.FUNCTION_CARD.get(), "function_card");
         info(registration, FModular.GAS_CENTRIFUGE.get(), "gas_centrifuge");
         info(registration, FItems.ENRICHED_FUEL_ROD.get(), "enriched_fuel_rod");
+        info(registration, FItems.PLUTONIUM_FUEL_ROD.get(), "plutonium_fuel_rod");
         info(registration, FItems.BREEDER_ROD.get(), "breeder_rod");
         info(registration, FItems.SPENT_FUEL_POOL.get(), "spent_fuel_pool");
         info(registration, FItems.COOLANT_PORT.get(), "coolant_port");

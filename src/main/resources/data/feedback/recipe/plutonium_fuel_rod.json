@@ -1,0 +1,31 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "U": {
+      "item": "feedback:plutonium_ingot"
+    },
+    "S": {
+      "item": "feedback:stainless_steel_plate"
+    }
+  },
+  "pattern": [
+    "SUS",
+    "SUS",
+    "SUS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:plutonium_fuel_rod"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "nuclear:1"
+}

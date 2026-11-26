@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T13:21:15.900882111	Block States: feedback
+// 1.21.1	2026-11-26T13:43:23.188753093	Block States: feedback
 0a87f2bb026369e040cdeed32dd5071ea4e35b44 assets/feedback/blockstates/alnico_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/alnico_pipe.json
 4a4a4f3dba74d39a8a934c2874f25fc8932a02e5 assets/feedback/blockstates/alumina_deepslate_ore.json
@@ -206,6 +206,9 @@ e272f4b02e87ddf7753a9d5b79f195e078d7a339 assets/feedback/blockstates/osmiridium_
 3b3e3f2a0c61bb98e89603730f41b5b29d256a68 assets/feedback/blockstates/phantom_ripstop_block.json
 5a1435526feefd86adf6f0544d9f1868e76387d0 assets/feedback/blockstates/platinum_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/platinum_pipe.json
+eefb74b41ada49a285f2ae787119ee3012570d04 assets/feedback/blockstates/plutonium_block.json
+50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/plutonium_fuel_rod_pipe.json
+50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/plutonium_pipe.json
 7886243071bdc45b89d7e7d3a530c7279bc9fdcb assets/feedback/blockstates/plywood_block.json
 2f2f9ac1df72044ea8d932ba3032161fec43b562 assets/feedback/blockstates/polyester_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/polyester_pipe.json
@@ -540,6 +543,7 @@ a7bc49b65068f3c835cd5ee5b0d3e704923b6ef3 assets/feedback/models/block/pentlandit
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/pewter_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/phantom_ripstop_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/platinum_block.json
+a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/plutonium_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/plywood_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/polyester_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/polyethylene_block.json
@@ -861,6 +865,9 @@ b3b9c22d441599906bf6bb973803fc23b05095c4 assets/feedback/models/item/pentlandite
 0cb52d607db641621251a6bc756e53f02f2d9cfa assets/feedback/models/item/phantom_ripstop_block.json
 66e184fa4d80e3fbcd389a343b11d189668c597e assets/feedback/models/item/platinum_block.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/platinum_pipe.json
+690fa716e7b7887fb4ce26b556f92397a51d5539 assets/feedback/models/item/plutonium_block.json
+220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/plutonium_fuel_rod_pipe.json
+220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/plutonium_pipe.json
 b5e93819aced927c018a8b44d25670b85b7311fc assets/feedback/models/item/plywood_block.json
 0bfa01408a01c0b58677ad47e0cb54fa816ff9b5 assets/feedback/models/item/polyester_block.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/polyester_pipe.json

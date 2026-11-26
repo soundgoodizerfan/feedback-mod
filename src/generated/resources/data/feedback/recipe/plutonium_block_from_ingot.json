@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:plutonium_ingot"
+    },
+    {
+      "item": "feedback:plutonium_ingot"
+    },
+    {
+      "item": "feedback:plutonium_ingot"
+    },
+    {
+      "item": "feedback:plutonium_ingot"
+    },
+    {
+      "item": "feedback:plutonium_ingot"
+    },
+    {
+      "item": "feedback:plutonium_ingot"
+    },
+    {
+      "item": "feedback:plutonium_ingot"
+    },
+    {
+      "item": "feedback:plutonium_ingot"
+    },
+    {
+      "item": "feedback:plutonium_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:plutonium_block"
+  }
+}

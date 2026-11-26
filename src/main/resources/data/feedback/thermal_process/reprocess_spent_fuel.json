@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:spent_fuel_rod"
+    }
+  ],
+  "min_temperature": 60,
+  "optimal_temperature": 90,
+  "max_temperature": 110,
+  "required_tpu": 400,
+  "result": {
+    "id": "feedback:plutonium_nugget",
+    "count": 3
+  },
+  "spoil_temperature": 130,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:hydrochloric_acid",
+        "mb": 500
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 2
+  }
+}

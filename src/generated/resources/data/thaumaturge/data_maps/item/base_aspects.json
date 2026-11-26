@@ -37828,6 +37828,892 @@
         "aspect": "thaumaturge:metallum"
       }
     ],
+    "feedback:plutonium_birdshot": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_block": [
+      {
+        "amount": 89,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 63,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 77,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_bullet": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_case": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_coil_spring": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_coin": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_cut_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_cut_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_cut_thread_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_drilled_plate": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_dust": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:plutonium_fine_wire": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_flat_nose_bullet": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_flechette": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_foil": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_birdshot": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_bullet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_case": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_coil_spring": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_coin": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_cut_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_cut_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_cut_thread_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_flat_nose_bullet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_flechette": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_grip": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_ground_ingot": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_hollow_point_bullet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_large_shot": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_pipe": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_pointed_bullet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_rivet": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_rolled_machine_bolt": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_rolled_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_rolled_thread_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_round_ball": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_screw": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_swarf": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_fuel_rod_welding_rod": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_grip": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_ground_ingot": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_hollow_point_bullet": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_ingot": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_large_shot": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_nugget": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_pipe": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_plate": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_pointed_bullet": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_rivet": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_rolled_machine_bolt": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_rolled_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_rolled_thread_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_round_ball": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_scrap": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_screw": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_swarf": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_turned_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_welding_rod": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:plutonium_wire": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 9,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:plywood_block": [
       {
         "amount": 35,

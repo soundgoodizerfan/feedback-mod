@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T13:21:15.928077513	Loot Tables
+// 1.21.1	2026-11-26T13:43:23.217014601	Loot Tables
 3ec2d8235a145e9ecd4bc49404e31bff70407cfb data/feedback/loot_table/blocks/alnico_block.json
 7ceaa2b8bfe1b647eb0a2c985f24c7b8138994b8 data/feedback/loot_table/blocks/alnico_pipe.json
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
@@ -206,6 +206,9 @@ d87263957e2eb5f9a124fb46ce884d52dc49a1b9 data/feedback/loot_table/blocks/pewter_
 faa375912f17b791d5110ae8965fcf90b0f6a89c data/feedback/loot_table/blocks/phantom_ripstop_block.json
 ffddb13caa79a5e62a250bd895df35d259d75409 data/feedback/loot_table/blocks/platinum_block.json
 e660e3c591440a55bf2d63e0bef01398c4e5f160 data/feedback/loot_table/blocks/platinum_pipe.json
+6e58adfe386e474006a841d64bf1fdfa5a64a91a data/feedback/loot_table/blocks/plutonium_block.json
+bd09800cb7157e53959dd80b56aeeb7fb47a905f data/feedback/loot_table/blocks/plutonium_fuel_rod_pipe.json
+e51f0bab6ddd4b2a608c330a752df160c685f60c data/feedback/loot_table/blocks/plutonium_pipe.json
 f548378e6e3b3749dd70fd68ce3b74a1d9fa98a0 data/feedback/loot_table/blocks/plywood_block.json
 a4597350e37171c8748f2adec494d1ddde1dcff2 data/feedback/loot_table/blocks/polyester_block.json
 b812f9f431657529a44b6407b89771b90f457c26 data/feedback/loot_table/blocks/polyester_pipe.json

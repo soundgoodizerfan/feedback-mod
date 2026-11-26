@@ -206,7 +206,7 @@ public class FCreativeTabs {
     private static final List<DeferredItem<?>> REACTORS = of(FItems.REACTOR_CORE, FItems.FUEL_CHANNEL,
             FItems.CONTROL_ASSEMBLY, FItems.SCRAM_TRIP, FItems.COOLANT_PORT, FItems.COOLANT_CHANNEL,
             FItems.NEUTRON_REFLECTOR, FItems.GRAPHITE_MODERATOR, FItems.SHOCK_CAPSULE, FItems.STAR_SEAT,
-            FItems.SPENT_FUEL_POOL, FItems.FUEL_ROD, FItems.THORIUM_FUEL_ROD, FItems.ENRICHED_FUEL_ROD,
+            FItems.SPENT_FUEL_POOL, FItems.FUEL_ROD, FItems.THORIUM_FUEL_ROD, FItems.ENRICHED_FUEL_ROD, FItems.PLUTONIUM_FUEL_ROD,
             FItems.BREEDER_ROD, FItems.SPENT_FUEL_ROD);
 
     // ---- Parts & Components ----

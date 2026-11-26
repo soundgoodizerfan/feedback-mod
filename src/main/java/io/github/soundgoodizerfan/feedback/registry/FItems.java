@@ -503,6 +503,7 @@ public class FItems {
     public static final DeferredItem<Item> FUEL_ROD = ITEMS.registerSimpleItem("fuel_rod");
     public static final DeferredItem<Item> THORIUM_FUEL_ROD = ITEMS.registerSimpleItem("thorium_fuel_rod");
     public static final DeferredItem<Item> ENRICHED_FUEL_ROD = ITEMS.registerSimpleItem("enriched_fuel_rod");
+    public static final DeferredItem<Item> PLUTONIUM_FUEL_ROD = ITEMS.registerSimpleItem("plutonium_fuel_rod");
     public static final DeferredItem<Item> BREEDER_ROD = ITEMS.registerSimpleItem("breeder_rod");
     public static final DeferredItem<Item> SPENT_FUEL_ROD = ITEMS.registerSimpleItem("spent_fuel_rod");
     /** A blaze rod that has given up its charge; a hot rod is the vanilla one. Never a percentage, two states. */
