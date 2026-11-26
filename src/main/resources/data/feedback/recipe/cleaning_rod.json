@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "W",
+    "R"
+  ],
+  "key": {
+    "W": { "item": "minecraft:white_wool" },
+    "R": { "item": "feedback:steel_rod" }
+  },
+  "result": {
+    "count": 1,
+    "id": "feedback:cleaning_rod"
+  }
+}

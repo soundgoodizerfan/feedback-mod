@@ -59,6 +59,25 @@ public final class GunHazard {
         return gun.getOrDefault(FWeapons.GUN_DAMAGE.get(), 0f);
     }
 
+    /** Whether a round is lodged in the bore. */
+    public static boolean lodged(ItemStack gun) {
+        return gun.getOrDefault(FWeapons.GUN_LODGED.get(), false);
+    }
+
+    /** Whether a round that makes {@code peak} in a chamber rated {@code rating} is too weak to leave the muzzle. */
+    public static boolean squib(float peak, float rating) {
+        return peak < rating * GunTuning.GUN_SQUIB_SHARE;
+    }
+
+    /** The round sticks in the bore: a dull thud, a wisp of smoke, and the gun says so; the next shot is the hazard. */
+    public static void lodge(ServerLevel level, net.minecraft.world.entity.LivingEntity shooter, ItemStack gun) {
+        gun.set(FWeapons.GUN_LODGED.get(), true);
+        level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(), SoundEvents.WOOD_HIT, SoundSource.PLAYERS, 0.8f, 0.6f);
+        level.sendParticles(ParticleTypes.SMOKE, shooter.getX(), shooter.getEyeY(), shooter.getZ(), 4, 0.1, 0.1, 0.1, 0.01);
+        if (shooter instanceof Player player)
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("gun.feedback.lodged"), true);
+    }
+
     public static boolean isSpent(ItemStack gun) {
         return damage(gun) >= 1f;
     }

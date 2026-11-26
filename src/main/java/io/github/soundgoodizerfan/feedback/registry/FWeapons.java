@@ -132,6 +132,13 @@ public class FWeapons {
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL)
                     .build());
 
+    /** A round too weak to leave the muzzle is lodged in the bore: the next shot into the obstructed barrel is the hazard, until a cleaning rod clears it. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> GUN_LODGED =
+            COMPONENTS.register("gun_lodged", () -> DataComponentType.<Boolean>builder()
+                    .persistent(com.mojang.serialization.Codec.BOOL)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL)
+                    .build());
+
     /** A fuse-control launcher's selected fuse mode ({@code SmartFuse.Mode} ordinal). Absent reads the round's own fuse. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FUSE_MODE =
             COMPONENTS.register("fuse_mode", () -> DataComponentType.<Integer>builder()

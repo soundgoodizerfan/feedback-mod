@@ -52,6 +52,8 @@ Each planet you resolve for the first time is written into your notes with a chi
 | Frozen moon | small pale blue disc; seas of liquid gas, cryogenic coolant |
 | Crystal world | violet disc with glints; geodes holding stored experience |
 
+Under each resolved planet a last line gives its transfer window, the time until the planet lines up with the stars: "Transfer window in N days" counts down in world days, and "Transfer window open" shows for a short stretch around the alignment. Planets with longer periods come around less often.
+
 A planet you have not seen shows a dark gray line, "An empty line, waiting for a planet."
 
 Because the tube length is its own axis, match it to the lenses: for a 300 mm objective and a 30 mm eyepiece, a 330 mm tube.

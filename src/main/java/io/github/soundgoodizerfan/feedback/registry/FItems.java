@@ -201,6 +201,9 @@ public class FItems {
     public static final DeferredItem<Item> CALIPERS =
             ITEMS.registerItem("calipers", CalipersItem::new, new Item.Properties().stacksTo(1));
 
+    public static final DeferredItem<Item> CLEANING_ROD =
+            ITEMS.registerItem("cleaning_rod", io.github.soundgoodizerfan.feedback.item.CleaningRodItem::new, new Item.Properties().stacksTo(1));
+
     public static final DeferredItem<Item> INTERFEROMETER =
             ITEMS.registerItem("interferometer", io.github.soundgoodizerfan.feedback.item.InterferometerItem::new, new Item.Properties().stacksTo(1));
 

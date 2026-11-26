@@ -8,7 +8,7 @@ There's no "9 mm round" item that you craft. A cartridge is made of up to three 
 
 You can also add a **payload** if you like. You put these together at the [Reloading Press](Reloading_Press.md), at whatever size (bore) you set the press to. A gun takes any cartridge that fits its bore, whoever made it and whatever it's made of.
 
-Hover over a cartridge to see what it is: size, case metal, bullet metal, what's in the charge and how much pressure it makes against what the case can hold. The tooltip also names the load: **light** (under 50% of the case's rating), **standard**, **heavy (+P)** (from 85%) or **over its case's rating** (shown red). Hold Shift for the thresholds. More powder in the press is a heavier load.
+Hover over a cartridge to see what it is: size, case metal, bullet metal, what's in the charge and how much pressure it makes against what the case can hold. The tooltip also names the load: **light** (under 50% of the case's rating), **standard**, **heavy (+P)** (from 85%) or **over its case's rating** (shown red). Hold Shift for the thresholds. More powder in the press is a heavier load. A load under a tenth of the gun's chamber rating [lodges in the bore](Guns.md#squibs).
 
 ## Cases
 

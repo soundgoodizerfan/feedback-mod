@@ -55,6 +55,21 @@ public final class SkyBodies {
         return new Vec3(-c * Math.sin(ra), c * Math.cos(ra), Math.sin(dec));
     }
 
+    /** The star-frame angle, degrees, at which a planet is lined up for a cheap transfer; the share of its period either side of that in which the window counts as open. */
+    public static final double WINDOW_DEG = 0.0, WINDOW_OPEN_SHARE = 0.04;
+
+    /**
+     * Days until {@code body}'s star-frame angle next reaches {@link #WINDOW_DEG}: its transfer window, from its period alone. 0 while it is within
+     * {@link #WINDOW_OPEN_SHARE} of a period either side of the alignment (the window is open).
+     */
+    public static double daysToWindow(Level level, Body body) {
+        double days = level.getDayTime() / 24000.0;
+        double angle = (body.ra0() + 360.0 * days / body.period()) % 360.0;
+        double toGo = ((WINDOW_DEG - angle) % 360.0 + 360.0) % 360.0;
+        double share = toGo / 360.0;
+        return share <= WINDOW_OPEN_SHARE || share >= 1.0 - WINDOW_OPEN_SHARE ? 0.0 : share * body.period();
+    }
+
     /** True when {@code body} stands above the horizon. */
     public static boolean up(Vec3 direction) {
         return direction.y > HORIZON;

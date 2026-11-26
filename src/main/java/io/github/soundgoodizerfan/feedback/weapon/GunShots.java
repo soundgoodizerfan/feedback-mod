@@ -401,6 +401,19 @@ public final class GunShots {
         float caseRating = design.layout().action() == GunLayout.Action.FLINTLOCK ? Float.MAX_VALUE
                 : round.caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
         float noise = 1 + (level.random.nextFloat() * 2 - 1) * GunTuning.GUN_HAZARD_NOISE;
+        if (!cookOff) {
+            // A bore with a round in it: the shot cannot leave and the barrel takes the pressure many times over; a round too weak to leave lodges.
+            if (GunHazard.lodged(gun)) {
+                gun.remove(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_LODGED.get());
+                GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value() * GunTuning.GUN_SQUIB_OBSTRUCTED_FACTOR,
+                        figures.chamberRating().value(), caseRating, noise));
+                return true;
+            }
+            if (GunHazard.squib(figures.peakPressure().value(), figures.chamberRating().value())) {
+                GunHazard.lodge(level, shooter, gun);
+                return true;
+            }
+        }
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
         GunCondition.afterShot(gun, figures, level, heat, round.boreWear(materials));

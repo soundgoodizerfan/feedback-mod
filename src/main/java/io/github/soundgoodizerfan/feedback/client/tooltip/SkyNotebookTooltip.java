@@ -32,6 +32,12 @@ public final class SkyNotebookTooltip {
             if (seen.contains(body.id())) {
                 event.getToolTip().add(Component.translatable("planet.feedback." + body.id()).withStyle(ChatFormatting.GOLD));
                 event.getToolTip().add(Component.translatable("tooltip.feedback.sky_notebook." + body.id()).withStyle(ChatFormatting.GRAY));
+                var level = Minecraft.getInstance().level;
+                if (level != null) {
+                    double wait = SkyBodies.daysToWindow(level, body);
+                    event.getToolTip().add(wait <= 0.0 ? Component.translatable("tooltip.feedback.sky_notebook.window_open").withStyle(ChatFormatting.GREEN)
+                            : Component.translatable("tooltip.feedback.sky_notebook.window", Math.round(wait)).withStyle(ChatFormatting.DARK_AQUA));
+                }
             } else
                 event.getToolTip().add(Component.translatable("tooltip.feedback.sky_notebook.blank").withStyle(ChatFormatting.DARK_GRAY));
         }

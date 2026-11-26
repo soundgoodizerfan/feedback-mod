@@ -255,6 +255,12 @@ None of this is random. If the tooltip and the HUD aren't red, a round can't hur
 
 To make a gun that holds more pressure: use a stronger metal, a thicker chamber wall, or a smaller bore. On a gun without a slide the receiver is a limit too (see [Gun Parts](Gun_Parts.md#the-chamber)).
 
+## Squibs
+
+A round that makes less than a tenth of the chamber's rating cannot push its bullet out. The shot is a dull thud and a wisp of smoke, the bullet **lodges in the bore**, and the gun says *"The round did not leave the barrel."* A lodged gun still takes the next round, but firing it is a shot into a stopped barrel: the chamber takes many times the pressure the round makes, so the [overpressure](#overpressure) damage and the hurt to you apply at that pressure, and no bullet leaves.
+
+A [Cleaning Rod](Cleaning_Rod.md) pushes the lodged round out. A light load in a high-rated chamber is how a squib happens.
+
 ## Test commands
 
 Operators can use `/feedback build` (the item built exactly to the held blueprint, a gun or any tool), `/feedback build parts`, `/feedback barrel`, `/feedback round` and `/feedback magazine`. They hand out items carrying data no recipe browser can show, for testing. They aren't a survival route.

@@ -238,6 +238,10 @@ public final class GunTuning {
     /** A load is light under this share of its case's pressure rating and heavy (+P) at or over the second; the powder count in the press sets it. */
     public static final float LOAD_LIGHT_SHARE = 0.5f, LOAD_HEAVY_SHARE = 0.85f;
 
+    /** Placeholder [OPEN]. A round whose peak pressure is under this share of the chamber's rating cannot push its bullet out and lodges (a squib); a shot into a lodged bore is read as this many times the pressure it makes, and the rod that clears it costs this many ticks of the hand. */
+    public static final float GUN_SQUIB_SHARE = 0.1f, GUN_SQUIB_OBSTRUCTED_FACTOR = 6f;
+    public static final int GUN_CLEAR_TICKS = 60;
+
     /** A bipod: ticks its legs take to come down and carry the gun, ticks to stow them, and the share of the view's turn left while they are out. */
     public static final int BIPOD_DEPLOY_TICKS = 20, BIPOD_FOLD_TICKS = 10;
     public static final float BIPOD_TURN_SHARE = 0.6f;
