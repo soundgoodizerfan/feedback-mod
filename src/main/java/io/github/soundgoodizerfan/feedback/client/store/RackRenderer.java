@@ -58,6 +58,19 @@ public class RackRenderer implements BlockEntityRenderer<RackBlockEntity> {
                 pose.popPose();
             }
         }
+        // A filtered rack wears the head that reads its property as a tag on the front of its upper deck.
+        var filter = rack.filter();
+        if (filter != null)
+            for (var e : io.github.soundgoodizerfan.feedback.registry.FLogistics.MODULE_ITEMS.entrySet())
+                if (e.getKey().dockProperty() == filter.property()) {
+                    pose.pushPose();
+                    pose.translate(0, 0.0, 0.51);
+                    pose.scale(0.25f, 0.25f, 0.25f);
+                    items.renderStatic(new ItemStack(e.getValue().get()), ItemDisplayContext.FIXED, lit, overlay, pose, buffers,
+                            rack.getLevel(), 9);
+                    pose.popPose();
+                    break;
+                }
         pose.popPose();
     }
 }

@@ -53,6 +53,8 @@ public final class StoreTuning {
     public static final float DESK_MIN_FEED = 0.5f;
     /** Longest name a dock takes. */
     public static final int DOCK_NAME_MAX = 32;
+    /** Loads an optical head or a screen reads on a dock before it wants wiping. */
+    public static final int HEAD_FOUL_LOADS = 64;
     /** Most retrievals a dock queues. */
     public static final int MAX_REQUESTS = 32;
 

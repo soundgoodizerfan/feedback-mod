@@ -4604,6 +4604,32 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:belt_module_thermo": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 22,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 13,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 14,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:vitreus"
+      }
+    ],
     "feedback:belt_module_weigher": [
       {
         "amount": 2,

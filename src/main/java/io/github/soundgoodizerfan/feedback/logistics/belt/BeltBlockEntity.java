@@ -287,7 +287,7 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, io.github.
     public void install(BeltModule m, Direction side) {
         module = m;
         face = side;
-        band = m == BeltModule.WEIGHER ? Band.HEAVY : Band.BRIGHT;
+        band = m == BeltModule.WEIGHER ? Band.HEAVY : m.banded() ? m == BeltModule.OPTICAL ? Band.BRIGHT : Band.first(m.property) : Band.BRIGHT;
         aperture = 0;
         engaged = true;
         dirt = 0;

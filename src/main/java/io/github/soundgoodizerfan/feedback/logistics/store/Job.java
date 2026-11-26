@@ -21,6 +21,8 @@ public final class Job {
     public final int planned;
     /** The id of the request a retrieval serves, 0 for storing. */
     public int request;
+    /** What the heads recorded of a storing load. */
+    public int marks;
     /** How many ride the carriage now. */
     public int load;
     public boolean returning;
@@ -51,6 +53,7 @@ public final class Job {
         tag.putInt("Planned", planned);
         tag.putInt("Load", load);
         tag.putInt("Request", request);
+        tag.putInt("Marks", marks);
         tag.putBoolean("Returning", returning);
         tag.putFloat("Progress", progress);
         return tag;
@@ -65,6 +68,7 @@ public final class Job {
         Job job = new Job(tag.getBoolean("Fetch"), cell, tag.getInt("Bay"), item, tag.getInt("Planned"));
         job.load = tag.getInt("Load");
         job.request = tag.getInt("Request");
+        job.marks = tag.getInt("Marks");
         job.returning = tag.getBoolean("Returning");
         job.progress = tag.getFloat("Progress");
         return job;

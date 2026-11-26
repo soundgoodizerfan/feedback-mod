@@ -1,0 +1,15 @@
+{
+  "type": "feedback:engineering",
+  "key": {
+    "L": { "item": "feedback:optical_glass_lens" },
+    "H": { "item": "feedback:photocell" },
+    "C": { "tag": "feedback:circuits" },
+    "P": { "item": "feedback:steel_plate" },
+    "W": { "item": "feedback:copper_wire" }
+  },
+  "pattern": [ "PLP", "WHW", " C " ],
+  "result": { "count": 1, "id": "feedback:belt_module_thermo" },
+  "tool": [ { "ability": "feedback:driver", "wear": 1 } ],
+  "fasteners": { "count": 3, "floor": 1, "forms": [ "screw" ] },
+  "school": "electrical:3"
+}

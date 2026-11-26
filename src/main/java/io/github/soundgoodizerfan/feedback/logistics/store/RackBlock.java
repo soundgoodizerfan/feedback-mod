@@ -4,6 +4,8 @@ package io.github.soundgoodizerfan.feedback.logistics.store;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.soundgoodizerfan.feedback.logistics.sort.Band;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -67,6 +69,22 @@ public class RackBlock extends Block implements EntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
+        // A reader head held to a rack sets its filter to the head's property: each use the next band, sneaking clears it.
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.logistics.belt.BeltModuleItem item
+                && item.module().dockProperty() != null && level.getBlockEntity(pos) instanceof RackBlockEntity rack) {
+            if (level.isClientSide)
+                return ItemInteractionResult.SUCCESS;
+            var property = item.module().dockProperty();
+            Band now = rack.filter();
+            Band next = player.isShiftKeyDown() ? null
+                    : now == null || now.property() != property ? Band.first(property) : now.next();
+            rack.setFilter(next);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, next == null
+                    ? Component.translatable("message.feedback.rack.filter_off")
+                    : Component.translatable("message.feedback.rack.filter", Component.translatable("feedback.sort.band." + next.key())));
+            level.playSound(null, pos, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.BLOCKS, 1f, 1f);
+            return ItemInteractionResult.CONSUME;
+        }
         if (!(stack.getItem() instanceof FittingItem fitting))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         int bay = bayAt(state, hit);

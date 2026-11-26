@@ -121,6 +121,13 @@ public final class LogisticsTuning {
     public static final float JET_DENSITY_PER_PU = 1.5f;
     /** Eu a powered module draws (amps at its band). */
     public static final int POWERED_AMPS = 1;
+
+    /** The hardness from which a scratch point blunts, and the most certain it can be there (0 on the cut, 1 safe). */
+    public static final float SCRATCH_BLUNT_FROM = 7f;
+    public static final float SCRATCH_BLUNT_CERTAINTY = 0.5f;
+    /** Friction a sticky surface adds to what a drag shoe reads, and the share of its temperature a shiny surface shows an optical thermometer. */
+    public static final float DRAG_STICKY_GAIN = 0.3f;
+    public static final float THERMO_SHINY_SHARE = 0.6f;
     /** Tu a fan strips from each cargo unit that passes. */
     public static final float FAN_COOL_TU = 120f;
     /** Tu a cold plate / cooler holds cargo at or above. */

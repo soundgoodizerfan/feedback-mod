@@ -1,6 +1,6 @@
 # Belt Modules
 
-Seventeen fittings that give a [Conveyor Belt](Conveyor_Belt.md) cell a job: loading, unloading, sorting, dropping, counting and conditioning cargo. A cell holds one module. This page lists them in the order a line needs them: moving cargo on and off, sorting, then conditioning. The output funnel, chute, diverter, splitter and gate also fit on the [Belt Head Roller](Conveyor_Belt.md#belt-head-roller) at the end of a run.
+Twenty-one fittings that give a [Conveyor Belt](Conveyor_Belt.md) cell a job: loading, unloading, sorting, dropping, counting and conditioning cargo. A cell holds one module. This page lists them in the order a line needs them: moving cargo on and off, sorting, then conditioning. The sorting modules other than the air jet also serve as [reader heads](Warehouse_Dock.md#reader-heads) on a Warehouse Dock, and set the filter of a [Pallet Rack](Pallet_Rack.md#filter). The output funnel, chute, diverter, splitter and gate also fit on the [Belt Head Roller](Conveyor_Belt.md#belt-head-roller) at the end of a run.
 
 ## Fitting and using
 
@@ -8,11 +8,11 @@ Seventeen fittings that give a [Conveyor Belt](Conveyor_Belt.md) cell a job: loa
 - **Sneak with an empty hand** to pull the module back out.
 - **Right-click the top** of a cell with an empty hand to take a unit of cargo off (the jam clear).
 - **Right-click a side** with an empty hand to wipe a fouled screen or a dirty optical reader, to cycle a reader's band or a screen's mesh, or to engage or release a gate, diverter, electromagnet or air jet.
-- A module that draws current ([Belt Electromagnet](#belt-electromagnet), [Belt Optical Reader](#belt-optical-reader), [Belt Weigher](#belt-weigher), [Belt Fan](#belt-fan), [Linear Motor Coil](#linear-motor-coil)) needs a wire against its cell and does nothing without it. Each draws 1 A at LV. See [Electricity](Electricity.md).
+- A module that draws current ([Belt Electromagnet](#belt-electromagnet), [Belt Optical Reader](#belt-optical-reader), [Belt Weigher](#belt-weigher), [Belt Heat Reader](#belt-heat-reader), [Belt Fan](#belt-fan), [Linear Motor Coil](#linear-motor-coil)) needs a wire against its cell and does nothing without it. Each draws 1 A at LV. See [Electricity](Electricity.md).
 
 ## Crafting
 
-The plain [Crafting Table](Crafting_Table.md) makes the funnels, chute, diverter, magnet, screen, air jet, hood and cooler. The gate, splitter, counter, fan, linear coil, electromagnet, optical reader and weigher are made at the [Engineering Table](Engineering_Table.md): each line below names the screws and the [treatise](Treatise.md) volume held, and every one wears the [screwdriver](Hand_Tools.md#screwdriver) a point.
+The plain [Crafting Table](Crafting_Table.md) makes the funnels, chute, diverter, magnet, screen, air jet, scratch reader, drag reader, spark reader, hood and cooler. The gate, splitter, counter, fan, linear coil, electromagnet, optical reader, weigher and heat reader are made at the [Engineering Table](Engineering_Table.md): each line below names the screws and the [treatise](Treatise.md) volume held, and every one wears the [screwdriver](Hand_Tools.md#screwdriver) a point.
 
 ## Moving cargo
 
@@ -61,13 +61,17 @@ A sorting module reads a property of the cargo, not its name, and sweeps cargo t
 | Belt Magnet | Pulled or ignored by a magnet | Misses cargo that is hot or made of a non-magnetic metal. Iron junk is pulled as readily as iron goods. |
 | Belt Electromagnet | Pulled or ignored | Same as the magnet but stronger, and can be released by hand or controller. |
 | Belt Optical Reader | Sheen: dull, mid, bright | Glowing-hot cargo reads bright, and a dirty head reads everything duller. |
-| Belt Weigher | Density bands and size bands | A stack blurs the reading because it weighs the pile. |
+| Belt Weigher | Density: light, mid or heavy | A stack blurs the reading because it weighs the pile. |
+| Belt Scratch Reader | Hardness: soft, mid or hard | Its point blunts on the hardest stuff and reads it poorly. |
+| Belt Drag Reader | Grip: slick, mid or grippy | A sticky piece reads grippier than it is. |
+| Belt Spark Reader | Kind of material | Alloys, coats and soft metals muddy the test. |
+| Belt Heat Reader | Heat: cold, warm or hot | A bright surface reads colder than it is. |
 | Belt Air Jet | Light cargo, blown off the belt | Misses damp or sticky cargo. |
 | Belt Screen | Weight, by a fine, medium or coarse mesh | Fines clog the mesh. |
 
-Near a band's edge a reading can be wrong; far from the edge it is right. JEI shows the band each material sorts as, under **Sorts as**.
+Near a band's edge a reading can be wrong; far from the edge it is right, apart from the [scratch reader](#belt-scratch-reader) on very hard stuff and the [spark reader](#belt-spark-reader). JEI shows the sheen, density, hardness and kind bands of each material under **Sorts as**.
 
-Cargo a reader cannot place at all (an item with no known material) is handled by the module's kind: the magnet and air jet let it pass on, and the electromagnet, optical reader and weigher send it to the side opposite the match.
+Cargo a reader cannot place at all (an item with no known material) is handled by the module's kind: the magnet, air jet, scratch reader, drag reader and spark reader let it pass on, and the electromagnet, optical reader, weigher and heat reader send it to the side opposite the match.
 
 ### Belt Magnet
 
@@ -91,7 +95,7 @@ Crafting: Optical Glass Lens + [Photocell](Sensors.md) + 2 Steel Plates + a [Bas
 
 ### Belt Weigher
 
-Reads the weight of passing cargo as density bands and size bands. Click to choose the band. Draws current.
+Weighs passing cargo and sweeps one density band (light, mid or heavy) to its side. Click to choose the band. Draws current.
 
 Crafting: Balance Scale + 2 Steel Plates + a [Basic Electronic Circuit](Basic_Electronic_Circuit.md). Engineering Table, screwdriver, 3 screws, Electrical Treatise III.
 
@@ -106,6 +110,30 @@ Crafting: Copper Tubing + [Powered Bellows](Powered_Bellows.md) + Wrought Iron P
 A mesh the cargo passes over. Units lighter than the aperture fall through. Click to choose fine, medium or coarse. Fines clog the mesh and blind it until it is wiped by hand.
 
 Crafting: 4 Wrought Iron Plates + 5 Wrought Iron Rods.
+
+### Belt Scratch Reader
+
+Drags a hard point over passing cargo and sweeps one hardness band (soft, mid or hard) to its side. Click to choose the band. The point blunts on very hard cargo, which it can misread even far from a band edge.
+
+Crafting: 2 Wrought Iron Plates + Wrought Iron Rod + Diamond.
+
+### Belt Drag Reader
+
+Drags a weighted shoe over passing cargo and sweeps one grip band (slick, mid or grippy) to its side. Click to choose the band. A sticky piece reads grippier than it is.
+
+Crafting: 2 Wrought Iron Rods + String + Wrought Iron Plate.
+
+### Belt Spark Reader
+
+Tests passing cargo by spark and flame and sweeps one kind to its side: metallic, stony, granular, organic, polymer or other. Click to choose the kind. The test works from a sample, so even a plain piece is now and then mistaken. Alloys, plated pieces, soft metals and [look-alikes](Tube_Station.md#sorting-by-kind) fool it more often.
+
+Crafting: 2 Wrought Iron Plates + Flint + Wrought Iron Rod.
+
+### Belt Heat Reader
+
+An optical thermometer that sweeps one heat band to its side: **cold** (up to 60 Tu), **warm** (above 60 Tu) or **hot** (200 Tu and over). Click to choose the band. A bright surface reads colder than it is. Draws current.
+
+Crafting: Optical Glass Lens + [Photocell](Sensors.md) + 2 Steel Plates + 2 Copper Wire + a [Basic Electronic Circuit](Basic_Electronic_Circuit.md). Engineering Table, screwdriver, 3 screws, Electrical Treatise III.
 
 ## Counting and conditioning
 

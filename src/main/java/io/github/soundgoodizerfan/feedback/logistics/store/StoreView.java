@@ -27,15 +27,18 @@ public record StoreView(boolean full, List<Line> stock, List<Queued> queue, List
 
     private static final StreamCodec<io.netty.buffer.ByteBuf, State> STATE = ByteBufCodecs.VAR_INT.map(i -> State.values()[i], State::ordinal);
 
-    /** How many of a stack one dock holds. */
-    public record Share(int source, int count) {
+    /** How many of a stack one dock holds, and the bands its heads recorded of them ({@link Marks}). */
+    public record Share(int source, int count, int marks) {
         static final StreamCodec<RegistryFriendlyByteBuf, Share> CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT, Share::source, ByteBufCodecs.VAR_INT, Share::count, Share::new);
+                ByteBufCodecs.VAR_INT, Share::source, ByteBufCodecs.VAR_INT, Share::count, ByteBufCodecs.VAR_INT, Share::marks,
+                Share::new);
     }
 
-    public record Line(ItemStack item, List<Share> shares) {
+    /** One stack: the mass of one in Mu, and who holds how many. */
+    public record Line(ItemStack item, float unitMass, List<Share> shares) {
         static final StreamCodec<RegistryFriendlyByteBuf, Line> CODEC = StreamCodec.composite(
-                ItemStack.STREAM_CODEC, Line::item, Share.CODEC.apply(ByteBufCodecs.list()), Line::shares, Line::new);
+                ItemStack.STREAM_CODEC, Line::item, ByteBufCodecs.FLOAT, Line::unitMass,
+                Share.CODEC.apply(ByteBufCodecs.list()), Line::shares, Line::new);
 
         public int count() {
             int n = 0;

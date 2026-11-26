@@ -53,7 +53,8 @@ public class DockMenu extends StoreMenu {
             return null;
         Map<ItemStack, StoreView.Line> stock = lines();
         for (Lot l : d.stock())
-            stock.put(l.item, new StoreView.Line(l.item, List.of(new StoreView.Share(0, l.count))));
+            stock.computeIfAbsent(l.item, k -> new StoreView.Line(l.item, Goods.unitMass(l.item), new ArrayList<>(1)))
+                    .shares().add(new StoreView.Share(0, l.count, l.marks));
         List<StoreView.Queued> queue = new ArrayList<>();
         for (DockBlockEntity.Request r : d.requests())
             queue.add(new StoreView.Queued(r.item, r.remaining, 0, r.order, r.id));

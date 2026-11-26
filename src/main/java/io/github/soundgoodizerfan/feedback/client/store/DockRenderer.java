@@ -34,8 +34,23 @@ public class DockRenderer implements BlockEntityRenderer<DockBlockEntity> {
 
     @Override
     public void render(DockBlockEntity dock, float partialTick, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        if (dock.getLevel() == null)
+            return;
+        // Each fitted head stands on its face.
+        dock.heads().forEach((face, head) -> {
+            pose.pushPose();
+            pose.translate(0.5 + face.getStepX() * 0.53, 0.5 + face.getStepY() * 0.53, 0.5 + face.getStepZ() * 0.53);
+            pose.mulPose(face.getRotation());
+            pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90f));
+            pose.scale(0.5f, 0.5f, 0.5f);
+            Minecraft.getInstance().getItemRenderer().renderStatic(
+                    new ItemStack(io.github.soundgoodizerfan.feedback.registry.FLogistics.MODULE_ITEMS.get(head.module).get()),
+                    ItemDisplayContext.FIXED, LevelRenderer.getLightColor(dock.getLevel(), dock.getBlockPos().relative(face)),
+                    OverlayTexture.NO_OVERLAY, pose, buffers, dock.getLevel(), face.ordinal());
+            pose.popPose();
+        });
         Job job = dock.job();
-        if (job == null || dock.getLevel() == null)
+        if (job == null)
             return;
         Direction along = dock.getBlockState().getValue(DockBlock.FACING).getOpposite();
         Aisle.Cell cell = job.cell;

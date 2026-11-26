@@ -11,6 +11,8 @@ public final class Lot {
 
     public final ItemStack item;
     public int count;
+    /** What the dock's heads recorded of these goods at intake ({@link Marks}). */
+    public int marks;
 
     public Lot(ItemStack item, int count) {
         this.item = item.copyWithCount(1);
@@ -29,6 +31,7 @@ public final class Lot {
         CompoundTag tag = new CompoundTag();
         tag.put("Item", item.save(registries));
         tag.putInt("Count", count);
+        tag.putInt("Marks", marks);
         return tag;
     }
 
@@ -37,6 +40,10 @@ public final class Lot {
     public static Lot load(CompoundTag tag, HolderLookup.Provider registries) {
         ItemStack item = ItemStack.parseOptional(registries, tag.getCompound("Item"));
         int count = tag.getInt("Count");
-        return item.isEmpty() || count <= 0 ? null : new Lot(item, count);
+        if (item.isEmpty() || count <= 0)
+            return null;
+        Lot lot = new Lot(item, count);
+        lot.marks = tag.getInt("Marks");
+        return lot;
     }
 }

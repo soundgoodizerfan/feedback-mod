@@ -50,7 +50,7 @@ final class BeltModules {
                     yield BeltRun.Action.TAKEN;
                 yield sweep(level, pos, a.getOpposite(), c);
             }
-            case MAGNET, ELECTROMAGNET, OPTICAL, WEIGHER -> {
+            case MAGNET, ELECTROMAGNET, OPTICAL, WEIGHER, SCRATCH, DRAG, SPARK, THERMO -> {
                 if (!be.engaged() || !live)
                     yield BeltRun.Action.CONTINUE;
                 Band band = m == BeltModule.MAGNET || m == BeltModule.ELECTROMAGNET ? Band.PULLED : be.band();

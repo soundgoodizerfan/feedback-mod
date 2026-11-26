@@ -57,6 +57,15 @@ P P P
 
 P is a Wrought Iron Plate and R is a Wrought Iron Rod. This makes the **Parts Bin Fitting**. The bay holds up to **8** kinds of pieces that each weigh **0.2 Mu** or less.
 
+## Filter
+
+A filtered rack takes only goods recorded in one band of one property by the dock's [reader heads](Warehouse_Dock.md#reader-heads). The filter covers all eight bays.
+
+- **Use a reader module on the rack** to filter by the property it reads. Each use steps to the next band of that property. The module stays in your hand.
+- **Sneak and use a reader module** to clear the filter.
+
+Any module that [fits a dock as a head](Warehouse_Dock.md#reader-heads) works, and needs no power for this. Goods with no record for the property are refused. Stock already on the shelves stays there. [Jade](Mod_Compats.md#jade) shows the band the rack takes.
+
 ## Hot loads
 
 A load set down hotter than the shelf stands wears the shelves, more the further it is over. Wear lowers the bay strength, down to a quarter of it at worst. The tooltip shows the rack's condition. Stock already on the shelves stays there.
@@ -67,4 +76,4 @@ A rack whose frame burns catches fire and spreads it like wood. When it catches,
 
 ## Breaking and moving it
 
-A broken rack keeps its stock and fittings. An item holding stock is marked **Loaded: its stock comes with it**. The stock adds to the item's weight. If the item itself is destroyed, the stock spills where it lay. A rack with stock or fittings on it cannot be worked on or taken apart at the Engineering Table: empty the bays and take the fittings out first.
+A broken rack keeps its stock, fittings and filter. An item holding stock is marked **Loaded: its stock comes with it**. The stock adds to the item's weight. If the item itself is destroyed, the stock spills where it lay. A rack with stock, fittings or a filter on it cannot be worked on or taken apart at the Engineering Table: empty the bays, take the fittings out and clear the filter first.

@@ -20,7 +20,7 @@ public class StoreServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final StoreServerData INSTANCE = new StoreServerData();
 
-    static final String BAYS = "StoreBays", WORN = "StoreWorn", STATE = "StoreState";
+    static final String BAYS = "StoreBays", WORN = "StoreWorn", STATE = "StoreState", FILTER = "StoreFilter", FOULED = "StoreFouled";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -31,8 +31,11 @@ public class StoreServerData implements IServerDataProvider<BlockAccessor> {
                     used++;
             data.putInt(BAYS, used);
             data.putBoolean(WORN, rack.condition() < 1f);
+            if (rack.filter() != null)
+                data.putString(FILTER, rack.filter().key());
         } else if (accessor.getBlockEntity() instanceof DockBlockEntity dock) {
             data.putString(STATE, dock.state().name().toLowerCase(Locale.ROOT));
+            data.putBoolean(FOULED, dock.heads().values().stream().anyMatch(h -> h.wipeable()));
         } else if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.logistics.store.DeskBlockEntity desk
                 && desk.down() != null) {
             data.putString(STATE, desk.down().name().toLowerCase(Locale.ROOT));

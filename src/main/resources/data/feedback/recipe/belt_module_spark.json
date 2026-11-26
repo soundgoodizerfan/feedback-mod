@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": { "item": "feedback:wrought_iron_plate" },
+    "R": { "item": "feedback:wrought_iron_rod" },
+    "F": { "item": "minecraft:flint" }
+  },
+  "pattern": [ "PFP", " R " ],
+  "result": { "count": 1, "id": "feedback:belt_module_spark" }
+}

@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
  */
 public final class RackStock {
 
-    public static final String BAYS = "Bays", MASS = "Mass";
+    public static final String BAYS = "Bays", MASS = "Mass", FILTER = "Filter";
 
     private RackStock() {
     }

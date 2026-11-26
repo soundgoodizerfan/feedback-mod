@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": { "item": "feedback:wrought_iron_plate" },
+    "R": { "item": "feedback:wrought_iron_rod" },
+    "D": { "tag": "c:gems/diamond" }
+  },
+  "pattern": [ "PRP", " D " ],
+  "result": { "count": 1, "id": "feedback:belt_module_scratch" }
+}

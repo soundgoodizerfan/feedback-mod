@@ -29,6 +29,11 @@ public class StoreComponent implements IBlockComponentProvider {
             if (data.getBoolean(StoreServerData.WORN))
                 tooltip.add(Component.translatable("jade.feedback.rack.worn").withStyle(ChatFormatting.YELLOW));
         }
+        if (data.contains(StoreServerData.FILTER))
+            tooltip.add(Component.translatable("message.feedback.rack.filter",
+                    Component.translatable("feedback.sort.band." + data.getString(StoreServerData.FILTER))).withStyle(ChatFormatting.GRAY));
+        if (data.getBoolean(StoreServerData.FOULED))
+            tooltip.add(Component.translatable("jade.feedback.dock.fouled").withStyle(ChatFormatting.YELLOW));
         if (data.contains(StoreServerData.STATE))
             tooltip.add(Component.translatable("screen.feedback.dock.state." + data.getString(StoreServerData.STATE))
                     .withStyle(ChatFormatting.GRAY));

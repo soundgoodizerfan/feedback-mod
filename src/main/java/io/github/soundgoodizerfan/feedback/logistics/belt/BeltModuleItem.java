@@ -22,6 +22,14 @@ public class BeltModuleItem extends Item {
         return module;
     }
 
+    /** A sneaking use still reaches a warehouse rack, whose filter it clears. */
+    @Override
+    public boolean doesSneakBypassUse(net.minecraft.world.item.ItemStack stack, net.minecraft.world.level.LevelReader level, BlockPos pos,
+            net.minecraft.world.entity.player.Player player) {
+        return module.dockProperty() != null
+                && level.getBlockState(pos).getBlock() instanceof io.github.soundgoodizerfan.feedback.logistics.store.RackBlock;
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockPos pos = context.getClickedPos();

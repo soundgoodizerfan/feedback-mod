@@ -9,6 +9,9 @@ import java.util.Locale;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;
 import io.github.soundgoodizerfan.feedback.client.gui.SkinnedScreen;
+import io.github.soundgoodizerfan.feedback.logistics.sort.Band;
+import io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty;
+import io.github.soundgoodizerfan.feedback.logistics.store.Marks;
 import io.github.soundgoodizerfan.feedback.logistics.store.StoreMenu;
 import io.github.soundgoodizerfan.feedback.logistics.store.StoreTuning;
 import io.github.soundgoodizerfan.feedback.logistics.store.StoreView;
@@ -33,6 +36,8 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
     private static final int LIST_X = 12, LIST_Y = 42, LIST_W = 188;
     private static final int QUEUE_X = 208, QUEUE_W = 88;
     private static final int STATUS_Y = LIST_Y + ROWS * ROW + 26;
+    /** The filter sheet: one row per property, its bands as chips, then the two least amounts. */
+    private static final int SHEET_W = QUEUE_X + QUEUE_W - LIST_X, CHIP_X = 54, CHIP_W = 38, CHIP_H = 13, MIN_Y = 8 * CHIP_H + 4;
     /** Most docks a tooltip lists before it counts the rest. */
     private static final int LISTED = 12;
 
@@ -49,6 +54,12 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
     private int filtered = -1;
     private String filteredBy = "";
     private int namedAt;
+    /** Whether the filter sheet covers the lists, the picked bands ({@link Marks}) and the least count and mass asked. */
+    private boolean filtering;
+    private net.minecraft.client.gui.components.Button filterButton;
+    private int pickedBands;
+    private EditBox minCount, minMass;
+    private String minCountText = "", minMassText = "";
 
     private StoreScreen(M menu, Inventory inventory, Component title, boolean desk) {
         super(menu, inventory, title, GuiSkin.WOOD);
@@ -93,6 +104,84 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
                 if (ItemStack.isSameItemSameComponents(line.item(), picked))
                     amount.setValue(Integer.toString(line.count()));
         }, leftPos + LIST_X + 114, y, 36, 14));
+        filterButton = addRenderableWidget(GuiStyle.button(skin, filterLabel(), b -> {
+            filtering = !filtering;
+            minCount.visible = minMass.visible = filtering;
+        }, leftPos + LIST_X + 154, y, 52, 14));
+        minCount = least(leftPos + LIST_X + CHIP_X + 20, minCountText, "screen.feedback.filter.count");
+        minMass = least(leftPos + LIST_X + CHIP_X + 130, minMassText, "screen.feedback.filter.mass");
+    }
+
+    private EditBox least(int x, String value, String name) {
+        EditBox box = new EditBox(font, x, topPos + LIST_Y + MIN_Y, 44, 12, Component.translatable(name));
+        box.setFilter(t -> t.matches("\\d{0,6}"));
+        box.setValue(value);
+        box.visible = filtering;
+        box.setResponder(t -> {
+            minCountText = minCount == null ? "" : minCount.getValue();
+            minMassText = minMass == null ? "" : minMass.getValue();
+            filtered = -1;
+        });
+        return addRenderableWidget(box);
+    }
+
+    /** The filter button's face, with how many filters are narrowing the list while any are. */
+    private Component filterLabel() {
+        int on = Integer.bitCount(pickedBands) + (number(minCountText) > 0 ? 1 : 0) + (number(minMassText) > 0 ? 1 : 0);
+        return on == 0 ? Component.translatable("screen.feedback.dock.filter") : Component.translatable("screen.feedback.dock.filter_on", on);
+    }
+
+    private static int number(String text) {
+        return text.isEmpty() ? 0 : Integer.parseInt(text);
+    }
+
+    /** Whether some dock's share of the line passes the picked bands, and the whole line the least amounts. */
+    private boolean passes(StoreView.Line line) {
+        int count = line.count();
+        if (count < number(minCountText) || count * line.unitMass() < number(minMassText))
+            return false;
+        for (StoreView.Share share : line.shares())
+            if (Marks.passes(share.marks(), pickedBands))
+                return true;
+        return false;
+    }
+
+    /** The band whose chip is under the pointer on the filter sheet, or null. */
+    private Band chipAt(double mouseX, double mouseY) {
+        double dx = mouseX - leftPos - LIST_X - CHIP_X, dy = mouseY - topPos - LIST_Y - 1;
+        if (dx < 0 || dy < 0)
+            return null;
+        int row = (int) (dy / CHIP_H), column = (int) (dx / CHIP_W);
+        if (row >= SortProperty.values().length)
+            return null;
+        int n = 0;
+        for (Band band : Band.values())
+            if (band.property() == SortProperty.values()[row] && n++ == column)
+                return band;
+        return null;
+    }
+
+    private void drawSheet(GuiGraphics g, int mouseX, int mouseY) {
+        int x = leftPos + LIST_X, y = topPos + LIST_Y;
+        skin.inset(g, x, y, SHEET_W, ROWS * ROW);
+        Band over = chipAt(mouseX, mouseY);
+        for (SortProperty p : SortProperty.values()) {
+            int ry = y + 1 + p.ordinal() * CHIP_H;
+            g.drawString(font, Component.translatable("screen.feedback.filter." + p.name().toLowerCase(Locale.ROOT)), x + 4, ry + 3,
+                    skin.dim(), false);
+            int column = 0;
+            for (Band band : Band.values()) {
+                if (band.property() != p)
+                    continue;
+                int cx = x + CHIP_X + column++ * CHIP_W;
+                boolean on = Marks.has(pickedBands, band);
+                skin.row(g, cx, ry, CHIP_W - 2, CHIP_H - 1, on, band == over);
+                GuiStyle.marquee(g, font, Component.translatable("screen.feedback.filter.band." + band.key()), cx + 2, ry + 2,
+                        CHIP_W - 5, on ? skin.ink() : skin.dim());
+            }
+        }
+        g.drawString(font, Component.translatable("screen.feedback.filter.count"), x + 4, y + MIN_Y + 2, skin.dim(), false);
+        g.drawString(font, Component.translatable("screen.feedback.filter.mass"), x + CHIP_X + 76, y + MIN_Y + 2, skin.dim(), false);
     }
 
     /** Sends the typed name if it differs from the dock's. */
@@ -138,9 +227,11 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
         if (menu.version() != filtered || !by.equals(filteredBy)) {
             filtered = menu.version();
             filteredBy = by;
+            if (filterButton != null)
+                filterButton.setMessage(filterLabel());
             shown.clear();
             for (StoreView.Line line : menu.stock())
-                if (line.item().getHoverName().getString().toLowerCase(Locale.ROOT).contains(by))
+                if (line.item().getHoverName().getString().toLowerCase(Locale.ROOT).contains(by) && passes(line))
                     shown.add(line);
             shown.sort((a, b) -> a.item().getHoverName().getString().compareToIgnoreCase(b.item().getHoverName().getString()));
         }
@@ -148,8 +239,10 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
         return shown;
     }
 
-    /** The list row under the pointer, 0 to ROWS-1, or -1. */
+    /** The list row under the pointer, 0 to ROWS-1, or -1; none while the filter sheet covers the lists. */
     private int rowAt(double mouseX, double mouseY, int x, int w) {
+        if (filtering)
+            return -1;
         double dx = mouseX - leftPos - x, dy = mouseY - topPos - LIST_Y;
         return dx >= 0 && dx < w && dy >= 0 && dy < ROWS * ROW ? (int) (dy / ROW) : -1;
     }
@@ -158,6 +251,10 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         int x = leftPos, y = topPos;
         skin.panel(g, x, y, imageWidth, imageHeight);
+        if (filtering) {
+            drawSheet(g, mouseX, mouseY);
+            return;
+        }
         skin.inset(g, x + LIST_X, y + LIST_Y, LIST_W, ROWS * ROW);
         skin.inset(g, x + QUEUE_X, y + LIST_Y, QUEUE_W, ROWS * ROW);
         List<StoreView.Line> lines = shown();
@@ -236,11 +333,15 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
             }
             List<Component> text = new ArrayList<>();
             text.add(line.item().getHoverName());
-            for (int i = 0; i < line.shares().size() && i < LISTED; i++)
-                text.add(Component.translatable("screen.feedback.desk.share", sourceName(line.shares().get(i).source()),
-                        line.shares().get(i).count()).withStyle(net.minecraft.ChatFormatting.GRAY));
-            if (line.shares().size() > LISTED)
-                text.add(Component.translatable("screen.feedback.desk.more", line.shares().size() - LISTED));
+            // One row a dock, however many differently recorded lots it holds.
+            java.util.Map<Integer, Integer> held = new java.util.LinkedHashMap<>();
+            for (StoreView.Share share : line.shares())
+                held.merge(share.source(), share.count(), Integer::sum);
+            held.entrySet().stream().limit(LISTED).forEach(e -> text.add(Component
+                    .translatable("screen.feedback.desk.share", sourceName(e.getKey()), e.getValue())
+                    .withStyle(net.minecraft.ChatFormatting.GRAY)));
+            if (held.size() > LISTED)
+                text.add(Component.translatable("screen.feedback.desk.more", held.size() - LISTED));
             g.renderComponentTooltip(font, text, mouseX, mouseY);
             return;
         }
@@ -273,6 +374,13 @@ public class StoreScreen<M extends StoreMenu> extends SkinnedScreen<M> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (settled() && !closing()) {
+            Band chip = filtering ? chipAt(mouseX, mouseY) : null;
+            if (chip != null) {
+                pickedBands ^= Marks.bit(chip);
+                filtered = -1;
+                GuiSkin.play(skin.click(), 1f);
+                return true;
+            }
             int row = rowAt(mouseX, mouseY, LIST_X, LIST_W);
             List<StoreView.Line> lines = shown();
             if (row >= 0 && scroll + row < lines.size()) {

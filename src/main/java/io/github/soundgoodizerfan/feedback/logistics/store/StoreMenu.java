@@ -98,7 +98,7 @@ public abstract class StoreMenu extends AbstractContainerMenu {
         if (sent != null)
             for (Map.Entry<ItemStack, StoreView.Line> e : sent.stock.entrySet())
                 if (!now.stock.containsKey(e.getKey()))
-                    changed.add(new StoreView.Line(e.getValue().item(), List.of()));
+                    changed.add(new StoreView.Line(e.getValue().item(), 0f, List.of()));
         if (sent != null && changed.isEmpty() && sent.state == now.state && sent.sources.equals(now.sources) && same(sent.queue, now.queue))
             return;
         PacketDistributor.sendToPlayer(sp, new StoreViewPayload(containerId,

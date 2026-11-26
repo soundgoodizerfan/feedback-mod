@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.logistics.store;
 
+import io.github.soundgoodizerfan.feedback.logistics.sort.Band;
 import io.github.soundgoodizerfan.feedback.modular.bake.FigureStore;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
@@ -40,6 +41,25 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
     @Override
     public FigureStore figures() {
         return figures;
+    }
+
+    /** The only goods this rack takes: those recorded in this band, or null for any. */
+    @Nullable
+    private Band filter;
+
+    @Nullable
+    public Band filter() {
+        return filter;
+    }
+
+    void setFilter(@Nullable Band to) {
+        filter = to;
+        changed();
+    }
+
+    /** Whether goods recorded as {@code marks} may be set down here. */
+    public boolean takes(int marks) {
+        return filter == null || Marks.has(marks, filter);
     }
 
     public Bay bay(int i) {
@@ -134,8 +154,19 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
             bays[i].load(i < list.size() ? list.getCompound(i) : new CompoundTag(), registries);
     }
 
-    /** Whether a broken rack has anything of its own to keep: stock, or a fitting in any bay. */
+    private void writeFilter(CompoundTag tag) {
+        if (filter != null)
+            tag.putInt(RackStock.FILTER, filter.ordinal());
+    }
+
+    private void readFilter(CompoundTag tag) {
+        filter = tag.contains(RackStock.FILTER) ? Band.byOrdinal(tag.getInt(RackStock.FILTER)) : null;
+    }
+
+    /** Whether a broken rack has anything of its own to keep: stock, a fitting in any bay, or a filter. */
     private boolean carries() {
+        if (filter != null)
+            return true;
         for (Bay b : bays)
             if (!b.empty() || b.fitting != Fitting.PALLET)
                 return true;
@@ -147,8 +178,10 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
         super.applyImplicitComponents(input);
         figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
         CompoundTag stock = input.get(FDataComponents.RACK_STOCK.get());
-        if (stock != null && level != null)
+        if (stock != null && level != null) {
             readBays(stock.getList(RackStock.BAYS, Tag.TAG_COMPOUND), level.registryAccess());
+            readFilter(stock);
+        }
     }
 
     @Override
@@ -163,6 +196,7 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
         for (Bay b : bays)
             mass += b.mass();
         stock.putFloat(RackStock.MASS, mass);
+        writeFilter(stock);
         components.set(FDataComponents.RACK_STOCK.get(), stock);
     }
 
@@ -171,6 +205,7 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
         super.saveAdditional(tag, registries);
         figures.save(tag, registries);
         tag.put(RackStock.BAYS, writeBays(registries));
+        writeFilter(tag);
     }
 
     @Override
@@ -178,6 +213,7 @@ public class RackBlockEntity extends BlockEntity implements io.github.soundgoodi
         super.loadAdditional(tag, registries);
         figures.load(tag, registries);
         readBays(tag.getList(RackStock.BAYS, Tag.TAG_COMPOUND), registries);
+        readFilter(tag);
     }
 
     @Override

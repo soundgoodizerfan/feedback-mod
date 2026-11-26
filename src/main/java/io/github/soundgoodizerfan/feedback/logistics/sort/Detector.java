@@ -21,7 +21,15 @@ public enum Detector {
     /** A spectrometer behind the spark and flame test of a multi-stage station: a kind test with the muddle narrowed. */
     ASSAY(0.6f),
     /** A fine, hand-cut check (thermal read, kind): the baseline. */
-    PLAIN(1.0f);
+    PLAIN(1.0f),
+    /** A hard point scratching the surface; it blunts, and blurs, on the hardest stuff. */
+    SCRATCH(0.9f),
+    /** A shoe measuring drag; a sticky surface reads grippier. */
+    DRAG(1.0f),
+    /** A grinding wheel and a flame. */
+    SPARK(1.0f),
+    /** An optical thermometer, which a shiny surface fools low. */
+    THERMO(0.7f);
 
     public final float noise;
 

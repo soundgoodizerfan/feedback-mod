@@ -27,6 +27,7 @@ With no working circuit or no current the desk is dark: it lists nothing and tak
 **Right-click** the desk to open it.
 
 - The list on the left shows each distinct stack with its total across the docks. Type in **Search** to narrow it by name. Hover a line to see how many each dock holds.
+- **Filter** opens the same [Filter sheet](Warehouse_Dock.md#filter-sheet) as a dock's. A stack is listed if the stock of at least one dock matches the picked bands; **Count** and **Mu** apply to the total across docks.
 - Click a line, set the **Amount** (64 to begin with; **All** fills in the whole count), then press **Fetch** or Enter.
 - **Queue**, on the right, lists the retrievals waiting at the docks. Hover one to see its dock and, for an order from a desk, the order number. Click it to drop it from that dock's queue.
 - The top corner shows the number of docks. Hover the status line to see how each dock is doing, in the words of the [dock's status line](Warehouse_Dock.md#the-screen).

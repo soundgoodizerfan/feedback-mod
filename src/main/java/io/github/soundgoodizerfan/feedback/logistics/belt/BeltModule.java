@@ -32,7 +32,15 @@ public enum BeltModule {
     /** A cover over the cell: rain and fluid above no longer wet the band. */
     HOOD(false, false, null, null, null),
     /** A coil replacing a roller: while powered it drives the run at a fixed speed, shaft or none. */
-    LINEAR(true, false, null, null, null);
+    LINEAR(true, false, null, null, null),
+    /** A hard point dragged over the cargo: tells soft from hard; blunt against the hardest. */
+    SCRATCH(false, true, Detector.SCRATCH, Gear.CRUDE, SortProperty.HARDNESS),
+    /** A weighted shoe the cargo drags under: tells slick from grippy; a sticky piece reads grippier than it is. */
+    DRAG(false, true, Detector.DRAG, Gear.CRUDE, SortProperty.FRICTION),
+    /** A grinding spark and flame test: tells kinds apart as plainly as the piece shows them. */
+    SPARK(false, true, Detector.SPARK, Gear.CRUDE, SortProperty.KIND),
+    /** An optical thermometer: tells cold, warm and hot; a bright surface reads colder than it is. */
+    THERMO(true, true, Detector.THERMO, Gear.OPTICAL, SortProperty.TEMPERATURE);
 
     public final boolean powered, sided;
     /** The head a sorting module reads with, or null. */
@@ -54,9 +62,17 @@ public enum BeltModule {
         return name().toLowerCase(Locale.ROOT);
     }
 
-    /** Whether a click on the placed module cycles its band (optical, weigher). */
+    /** Whether a click on the placed module cycles its band (every reader but the magnets and the jet). */
     public boolean banded() {
-        return this == OPTICAL || this == WEIGHER;
+        return this == OPTICAL || this == WEIGHER || this == SCRATCH || this == DRAG || this == SPARK || this == THERMO;
+    }
+
+    /**
+     * The property this module records as a warehouse dock's reader head, or null for one that is no head there. A screen
+     * reads size; the air jet needs its gas pipe and does not read for a dock.
+     */
+    public SortProperty dockProperty() {
+        return this == SCREEN ? SortProperty.SIZE : this == AIR_JET ? null : property;
     }
 
     /** Whether it reads cargo and sweeps matches to its side. */

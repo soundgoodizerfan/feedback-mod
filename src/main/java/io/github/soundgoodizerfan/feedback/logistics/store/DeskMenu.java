@@ -75,10 +75,10 @@ public class DeskMenu extends StoreMenu {
             for (Lot l : stocks.get(s)) {
                 StoreView.Line line = stock.get(l.item);
                 if (line == null) {
-                    line = new StoreView.Line(l.item, new ArrayList<>(1));
+                    line = new StoreView.Line(l.item, Goods.unitMass(l.item), new ArrayList<>(1));
                     stock.put(l.item, line);
                 }
-                line.shares().add(new StoreView.Share(s, l.count));
+                line.shares().add(new StoreView.Share(s, l.count, l.marks));
             }
             for (DockBlockEntity.Request r : dock.requests())
                 queue.add(new StoreView.Queued(r.item, r.remaining, s, r.order, r.id));

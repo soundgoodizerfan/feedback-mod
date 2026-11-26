@@ -50,13 +50,15 @@ public final class Bay {
         return null;
     }
 
-    /** Puts {@code n} of {@code stack} in; the caller has asked {@link #room}. */
-    public void add(ItemStack stack, int n) {
+    /** Puts {@code n} of {@code stack} in with the bands recorded for them; the caller has asked {@link #room}. */
+    public void add(ItemStack stack, int n, int marks) {
         Lot same = find(stack);
-        if (same == null)
-            lots.add(new Lot(stack, n));
-        else
-            same.count += n;
+        if (same == null) {
+            same = new Lot(stack, 0);
+            lots.add(same);
+        }
+        same.count += n;
+        same.marks = Marks.merge(same.marks, marks);
     }
 
     /** Takes up to {@code n} of {@code stack}, returning how many left. */

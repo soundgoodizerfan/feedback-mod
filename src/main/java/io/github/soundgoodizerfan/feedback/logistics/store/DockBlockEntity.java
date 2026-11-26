@@ -13,7 +13,17 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenCustomHashMap;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStackLinkedSet;
 
+import java.util.EnumMap;
+
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.logistics.belt.BeltModule;
+import io.github.soundgoodizerfan.feedback.logistics.sort.Band;
+import io.github.soundgoodizerfan.feedback.logistics.sort.Detector;
+import io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty;
+import io.github.soundgoodizerfan.feedback.logistics.sort.Sorter;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
@@ -50,7 +60,12 @@ import net.neoforged.neoforge.items.IItemHandler;
  * stock listed as a union over separate stores keyed on item plus components, and stock kept on a broken store's item.
  * Rejected: any container joining the list, an instant distance-free grid, channels, capacity tiers and autocrafting.
  */
-public class DockBlockEntity extends BlockEntity implements DataNode {
+public class DockBlockEntity extends ElectricNode {
+
+    /** Reader heads fitted on the sides and top. */
+    private final Map<Direction, Head> heads = new EnumMap<>(Direction.class);
+    /** Storing looks made: seeds the heads, so each load and each retry is read afresh. */
+    private int reads;
 
     /** A retrieval asked for: what, how many are still to fetch, and the desk order it is a share of (0 for the dock's own). */
     public static final class Request {
@@ -122,7 +137,10 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
         return level.isLoaded(pos) && level.getBlockEntity(pos) instanceof RackBlockEntity r ? r : null;
     }
 
-    /** Everything on the aisle's loaded racks, one lot per distinct stack; counted again only after something moved. Do not change it. */
+    /**
+     * Everything on the aisle's loaded racks, one lot per distinct stack and set of recorded bands; counted again only
+     * after something moved. Do not change it.
+     */
     public List<Lot> stock() {
         aisle();
         if (counted == null || countedAisle != aisleRead || countedStock != AisleChanges.stockGeneration()) {
@@ -156,25 +174,127 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
     @Override
     public boolean canLinkTo(DataNode other) {
         // A desk's own cap holds whichever end the link is started from.
-        return DataNode.super.canLinkTo(other) && (!(other instanceof DeskBlockEntity desk) || desk.canLinkTo(this));
+        return super.canLinkTo(other) && (!(other instanceof DeskBlockEntity desk) || desk.canLinkTo(this));
+    }
+
+    // --- reader heads -----------------------------------------------------------------------
+
+    public Map<Direction, Head> heads() {
+        return heads;
+    }
+
+    /** Whether a head may sit on {@code face}: not the front (output) nor the back (the shuttle head's). */
+    public boolean mounts(Direction face) {
+        Direction front = getBlockState().getValue(DockBlock.FACING);
+        return face != Direction.DOWN && face.getAxis() != front.getAxis();
+    }
+
+    void fit(Direction face, BeltModule module) {
+        heads.put(face, new Head(module));
+        headsChanged(true);
+    }
+
+    /** Wipes a fouled head, or with {@code pull} takes the head off and returns its module; null when nothing was done. */
+    @Nullable
+    Head tend(Direction face, boolean pull) {
+        Head head = heads.get(face);
+        if (head == null || !pull && !head.wipeable())
+            return null;
+        if (pull)
+            heads.remove(face);
+        else
+            head.used = 0;
+        headsChanged(pull);
+        return head;
+    }
+
+    private void headsChanged(boolean wiring) {
+        storeWait = 0;
+        sync(speed());
+        if (wiring && level != null && !level.isClientSide)
+            ElectricPropagator.reconnect(level, worldPosition);
+    }
+
+    /** What the heads record of {@code stack} as it is taken up. */
+    private int read(ItemStack stack) {
+        if (heads.isEmpty())
+            return 0;
+        long seed = (reads * 0x9E3779B97F4A7C15L) ^ ItemStack.hashItemAndComponents(stack);
+        // As a belt cell's module: at least half the wanted work has to arrive.
+        boolean powered = isLive() && ElectricRules.rate(getPacketEu(), getAmps(), getWantedAmps(), ratedBand()) >= StoreTuning.DESK_MIN_FEED;
+        // A head reads one piece, however many wait with it.
+        ItemStack piece = stack.copyWithCount(1);
+        int marks = 0;
+        for (SortProperty p : SortProperty.values()) {
+            // Of several heads on one property the quietest reads, and each of the others cuts its chance of being wrong.
+            Head best = null;
+            int checking = 0;
+            for (Head head : heads.values()) {
+                if (head.module.dockProperty() != p || head.fouled() || head.module.powered && !powered)
+                    continue;
+                checking++;
+                if (best == null || best.dirty() && !head.dirty()
+                        || best.dirty() == head.dirty() && detector(head).noise < detector(best).noise)
+                    best = head;
+            }
+            if (best == null)
+                continue;
+            Band band = Sorter.perceive(p, piece, level, detector(best), best.dirty(), seed + p.ordinal(), 1f / checking);
+            if (band != null)
+                marks |= Marks.bit(band);
+        }
+        return marks;
+    }
+
+    private static Detector detector(Head head) {
+        return head.module.detector == null ? Detector.PLAIN : head.module.detector;
+    }
+
+    // --- electric ---------------------------------------------------------------------------
+
+    @Override
+    public Role role() {
+        return Role.SINK;
+    }
+
+    @Override
+    public float wantedAmps() {
+        float amps = 0f;
+        for (Head head : heads.values())
+            amps += head.wantedAmps();
+        return amps;
+    }
+
+    @Override
+    public boolean conducting() {
+        return wantedAmps() > 0f;
     }
 
     private List<Lot> count(Set<BlockPos> skip) {
-        Map<ItemStack, Lot> out = new Object2ObjectLinkedOpenCustomHashMap<>(ItemStackLinkedSet.TYPE_AND_TAG);
+        // Goods recorded differently stay apart, so a property search never mixes one bay's readings with another's.
+        Map<ItemStack, List<Lot>> out = new Object2ObjectLinkedOpenCustomHashMap<>(ItemStackLinkedSet.TYPE_AND_TAG);
         for (Aisle.Cell cell : aisle().racks()) {
             RackBlockEntity rack = rackAt(cell.pos());
             if (rack == null || skip.contains(cell.pos()))
                 continue;
             for (int i = 0; i < StoreTuning.BAYS_PER_CELL; i++)
                 for (Lot lot : rack.bay(i).lots) {
-                    Lot sum = out.get(lot.item);
-                    if (sum == null)
-                        out.put(lot.item, new Lot(lot.item, lot.count));
-                    else
-                        sum.count += lot.count;
+                    List<Lot> same = out.computeIfAbsent(lot.item, k -> new ArrayList<>(1));
+                    Lot sum = null;
+                    for (Lot have : same)
+                        if (have.marks == lot.marks)
+                            sum = have;
+                    if (sum == null) {
+                        sum = new Lot(lot.item, 0);
+                        sum.marks = lot.marks;
+                        same.add(sum);
+                    }
+                    sum.count += lot.count;
                 }
         }
-        return new ArrayList<>(out.values());
+        List<Lot> all = new ArrayList<>();
+        out.values().forEach(all::addAll);
+        return all;
     }
 
     public List<Request> requests() {
@@ -388,10 +508,15 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
                 continue;
             noRoom = false;
             drain(intake, found.item, found.load);
+            reads++;
+            for (Head head : heads.values())
+                head.used++;
             begin(found);
             return;
         }
         noRoom = true;
+        // The next look reads the goods afresh, so one misread no rack accepts cannot hold them for good.
+        reads++;
         storeWait = StoreTuning.RETRY_TICKS;
     }
 
@@ -411,10 +536,12 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
         for (ItemStack s : intake)
             if (ItemStack.isSameItemSameComponents(s, stack))
                 waiting += s.getCount();
-        for (int pass = 0; pass < 2; pass++)
+        int marks = read(stack);
+        // A bay already holding it, then the nearest on a rack filtered for it, then the nearest unfiltered.
+        for (int pass = 0; pass < 3; pass++)
             for (Aisle.Cell cell : aisle().racks()) {
                 RackBlockEntity rack = rackAt(cell.pos());
-                if (rack == null)
+                if (rack == null || !rack.takes(marks) || pass == 1 && rack.filter() == null || pass == 2 && rack.filter() != null)
                     continue;
                 for (int i = 0; i < StoreTuning.BAYS_PER_CELL; i++) {
                     Bay bay = rack.bay(i);
@@ -426,6 +553,7 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
                         continue;
                     Job j = new Job(false, cell, i, stack, n);
                     j.load = n;
+                    j.marks = marks;
                     return j;
                 }
             }
@@ -451,10 +579,10 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
             if (job.load > 0)
                 rack.changed();
         } else {
-            int n = Math.min(job.load, bay.room(job.item, rack.rating()));
+            int n = rack.takes(job.marks) ? Math.min(job.load, bay.room(job.item, rack.rating())) : 0;
             if (n <= 0)
                 return;
-            bay.add(job.item, n);
+            bay.add(job.item, n, job.marks);
             job.load -= n;
             float over = ItemHeat.get(job.item, level).value() - rack.serviceTu();
             if (over > 0f)
@@ -666,6 +794,7 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
         if (job != null)
             tag.put("Job", job.save(registries));
         tag.putFloat("Speed", level == null ? 0f : speed());
+        writeHeads(tag);
         return tag;
     }
 
@@ -676,6 +805,12 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
     }
 
     // --- persistence ------------------------------------------------------------------------
+
+    private void writeHeads(CompoundTag tag) {
+        CompoundTag fitted = new CompoundTag();
+        heads.forEach((face, head) -> fitted.put(face.getName(), head.save()));
+        tag.put("Heads", fitted);
+    }
 
     private static ListTag write(List<ItemStack> stacks, HolderLookup.Provider registries) {
         ListTag list = new ListTag();
@@ -708,6 +843,8 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
             asked.add(one);
         }
         tag.put("Requests", asked);
+        writeHeads(tag);
+        tag.putInt("Reads", reads);
         if (job != null)
             tag.put("Job", job.save(registries));
         if (name != null)
@@ -719,6 +856,14 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         job = tag.contains("Job") ? Job.load(tag.getCompound("Job"), registries) : null;
+        heads.clear();
+        CompoundTag fitted = tag.getCompound("Heads");
+        for (Direction d : Direction.values()) {
+            Head head = fitted.contains(d.getName()) ? Head.load(fitted.getCompound(d.getName())) : null;
+            if (head != null)
+                heads.put(d, head);
+        }
+        reads = tag.getInt("Reads");
         if (tag.contains("Speed")) {
             clientSpeed = tag.getFloat("Speed");
             clientSince = level == null ? 0L : level.getGameTime();
@@ -749,27 +894,6 @@ public class DockBlockEntity extends BlockEntity implements DataNode {
         components.set(DataComponents.CUSTOM_NAME, name);
     }
 
-    // --- data node (a catalogue desk links to it) -------------------------------------------
-
-    @Override
-    public BlockPos getNodePos() {
-        return worldPosition;
-    }
-
-    @Override
-    public Direction getNodeSide() {
-        return null;
-    }
-
-    @Override
-    public Level getNodeLevel() {
-        return level;
-    }
-
-    @Override
-    public BlockEntity getNodeOwner() {
-        return this;
-    }
 
     @Override
     public void onLoad() {
