@@ -472,6 +472,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_BLADDER_ITEM.get(), "gas_cell");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_MEMBRANE_ITEM.get(), "gas_cell");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.CULTURE_DISH.get().asItem(), "culture_dish");
+        info(registration, FItems.SCULK_GROWER.get(), "sculk_grower");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.VENT_VALVE_ITEM.get(), "vent_valve");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.BALLAST_TANK_ITEM.get(), "ballast_tank");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_ITEM.get(), "transmission");
@@ -532,6 +533,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.SMELTER_TAP.get(), "smelter_tap");
         info(registration, FItems.DISENCHANT_STONE.get(), "disenchant_stone");
         info(registration, FItems.CRYSTAL_HOLDER.get(), "crystal_holder");
+        info(registration, FItems.CRYSTAL_BANK.get(), "crystal_bank");
         info(registration, FModular.BURNER.get(), "burner");
         info(registration, FModular.THRUSTER.get(), "thruster");
         info(registration, FModular.JET.get(), "jet");

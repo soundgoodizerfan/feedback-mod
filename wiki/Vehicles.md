@@ -102,6 +102,10 @@ A ball joint at the edge of its cone, a slider bottomed out or a piston that can
 
 **Sneak-click** an assembled joint voxel to read *"Joint sound, brake pad marked"*: each is said in words, **sound**, **marked**, **battered** or **spent**, worse as it wears. Clicking it with a full-size [Bearing](Bearing.md) renews both.
 
+## Attuned machines on board
+
+An attuned machine on a moving vehicle body works as it does on the ground. It draws from a Crystal Holder, Crystal Bank or XP wire riding on the same vehicle, and effects that act on the world act where the vehicle is. See [Paying for attunements](Enchanting_Table.md#paying-for-attunements).
+
 ## Wings
 
 Any voxel with nothing on either side along one axis and neighbors in its plane belongs to a **sheet**, and a sheet is a wing. A slab 1 to 4 voxel layers thick is a wing; a thicker slab stalls later and drags more. A column over 4 voxels thick is not a wing. Moving through air, a wing pushes the vehicle sideways to its own face (lift) and slows it (drag), both stronger the faster you go and the thinner the air. Lift grows as the sheet tilts into the wind, up to a stall angle; tilt past that and lift collapses while drag climbs, so a nose pitched too high mushes and sinks. Because the force acts at the sheet, a wing behind the center of mass steadies the nose and one off to a side rolls the vehicle. Wings work in air only. The sheets of a vehicle are found again about every 2 seconds, so a wing finished mid-flight starts to work after a short wait.

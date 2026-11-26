@@ -565,12 +565,18 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlockEntity>> CRYSTAL_HOLDER =
             BLOCK_ENTITIES.register("crystal_holder", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.xp.CrystalHolderBlockEntity::new, FBlocks.CRYSTAL_HOLDER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.CrystalBankBlockEntity>> CRYSTAL_BANK =
+            BLOCK_ENTITIES.register("crystal_bank", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.xp.CrystalBankBlockEntity::new, FBlocks.CRYSTAL_BANK.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.creeper.CreeperPenBlockEntity>> CREEPER_PEN =
             BLOCK_ENTITIES.register("creeper_pen", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.creeper.CreeperPenBlockEntity::new, FBlocks.CREEPER_PEN.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity>> CULTURE_DISH =
             BLOCK_ENTITIES.register("culture_dish", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity::new, FBlocks.CULTURE_DISH.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.SculkGrowerBlockEntity>> SCULK_GROWER =
+            BLOCK_ENTITIES.register("sculk_grower", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.sculk.SculkGrowerBlockEntity::new, FBlocks.SCULK_GROWER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlockEntity>> XP_TAP =
             BLOCK_ENTITIES.register("xp_tap", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlockEntity::new, FBlocks.ORB_ABSORBER.get(), FBlocks.ORE_TAP.get(),

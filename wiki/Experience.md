@@ -23,6 +23,19 @@ P P P
 ```
 P is a wrought iron plate, A is an amethyst shard.
 
+## Crystal Bank
+
+A block that seats up to four XP containers as one node on the run. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) and 4 screws, holding Experience Treatise II: Taps ([Treatise](Treatise.md)). Use a container on it to seat it in the next free slot, an empty hand to take the last one out. The XP stays in the containers.
+
+```
+H X H
+H X H
+P P P
+```
+H is a Crystal Holder, X is XP wire, P is a wrought iron plate.
+
+The run sees the bank as one node: the points of its containers add, and so do their capacities. It stands at the containers' common level, because the containers seated in it settle to one level; a fuller vial gives to an emptier one.
+
 ## XP wire
 
 Wire made of a material that conducts XP (paper, quartz, amethyst, lapis, sculk, echo shard). Holders and wires that touch form one network. Containers on it settle toward one shared level and the total points stay the same. How fast depends on the weakest wire: it moves its conductance in points a tick for every level of difference. A poor wire leaks part of what it carries as XP orbs at the wire; echo shard leaks none, sculk a little, paper the most. Two holders touching without wire settle at once.
@@ -110,13 +123,13 @@ G is a grindstone, A an amethyst shard, P a steel plate.
 
 An [Enchanting Table](Enchanting_Table.md) touching a Crystal Holder, XP wire or other node of a run pays a session out of the run when the run stands at level 5 or higher and holds the points. It spends the run's points before yours. A Creative XP Source pays without spending.
 
-An attuned machine touching a run draws from it the same way, at the level its effect needs; see [Paying for attunements](Enchanting_Table.md#paying-for-attunements).
+An attuned machine touching a run draws from it the same way, at the level its effect needs; see [Paying for attunements](Enchanting_Table.md#paying-for-attunements). A Crystal Bank counts as a Crystal Holder for this.
 
 Sneak-use a [Reservoir](Enchanting_Table.md) tool on any node of a run: the lower level gives to the higher, up to 20 points a use. A tool below the run's level draws from it; a tool above it gives back.
 
 ## Sculk
 
-A [Culture Dish](Sculk.md) is a node that grows its own sculk store from XP on the run; a Catalyst Tap feeds a run from deaths nearby, and Sculk Relays join runs across distance.
+A [Culture Dish](Sculk.md) is a node that grows its own sculk store from XP on the run, and a [Sculk Grower](Sculk.md#sculk-grower) beside it harvests it without a hand; a Catalyst Tap feeds a run from deaths nearby, and Sculk Relays join runs across distance.
 
 ## Where to see it
 

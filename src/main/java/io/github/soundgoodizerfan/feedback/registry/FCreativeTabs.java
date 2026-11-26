@@ -197,7 +197,7 @@ public class FCreativeTabs {
             FItems.ENDER_PORT, FItems.DATA_PORT, FItems.OPTICAL_TERMINAL, FItems.ENDER_ANCHOR);
 
     /** Cultures, taps and relays: the biological and mystical machines. */
-    private static final List<DeferredItem<?>> CULTURES = of(FItems.CULTURE_DISH, FItems.CULTURE_SEED,
+    private static final List<DeferredItem<?>> CULTURES = of(FItems.CULTURE_DISH, FItems.SCULK_GROWER, FItems.CULTURE_SEED,
             FItems.CREEPER_PEN, FItems.CREEPER_SAC, FItems.CREEPER_CHARGE, FItems.RELAY_ORGAN, FItems.ORB_ABSORBER,
             FItems.SCULK_RELAY, FItems.DISENCHANT_STONE, FItems.CATALYST_TAP, FItems.ORE_TAP, FItems.TRADE_TAP,
             FItems.SMELTER_TAP, FItems.ORE_PICKUP, FItems.TOKEN_READER, FItems.CHARGE_CELL, FItems.VESSEL_PORT, FModular.XP_CONTAINER);
@@ -225,7 +225,7 @@ public class FCreativeTabs {
     /** Machine tooling and linings: what wears or shields inside a machine. */
     private static final List<DeferredItem<?>> TOOLING = of(FItems.GRINDING_WHEEL,
             FItems.MAGMA_HEAD, FItems.REFRACTORY_LINING, FItems.INSULATION, FItems.STARTER, FItems.RADIATOR,
-            FItems.CRYSTAL_HOLDER, FItems.HEATSINK, FItems.BIMETALLIC_STRIP);
+            FItems.CRYSTAL_HOLDER, FItems.CRYSTAL_BANK, FItems.HEATSINK, FItems.BIMETALLIC_STRIP);
 
     /** Coils, then electrical components, passive to active. */
     private static final List<DeferredItem<?>> ELECTRICAL = of(FModular.HEATING_COIL,

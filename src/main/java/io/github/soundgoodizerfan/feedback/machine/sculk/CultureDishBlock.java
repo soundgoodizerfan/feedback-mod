@@ -75,20 +75,25 @@ public class CultureDishBlock extends Block implements EntityBlock {
         }
         if (stack.is(ItemTags.HOES) && dish.culture().isRipe()) {
             if (!level.isClientSide) {
-                boolean organ = dish.culture().organReady();
-                boolean bud = dish.harvest();
-                if (organ)
-                    Block.popResource(level, pos.above(), new ItemStack(FItems.RELAY_ORGAN.get()));
-                Block.popResource(level, pos.above(), new ItemStack(Items.SCULK, ElectricMachineTuning.CULTURE_HARVEST_BLOCKS));
-                Block.popResource(level, pos.above(), new ItemStack(Items.SCULK_VEIN, ElectricMachineTuning.CULTURE_HARVEST_VEINS));
-                Block.popResource(level, pos.above(), new ItemStack(Items.ECHO_SHARD, ElectricMachineTuning.CULTURE_HARVEST_SHARDS));
-                if (bud)
-                    Block.popResource(level, pos.above(), new ItemStack(FItems.CULTURE_SEED.get()));
+                harvest(level, pos, dish);
                 stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
             }
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    /** Harvests a ripe culture: its relay organ if ready, sculk, veins, echo shards and maybe a spare seed pop above the dish. A hoe and a Sculk Grower both do this. */
+    static void harvest(Level level, BlockPos pos, CultureDishBlockEntity dish) {
+        boolean organ = dish.culture().organReady();
+        boolean bud = dish.harvest();
+        if (organ)
+            Block.popResource(level, pos.above(), new ItemStack(FItems.RELAY_ORGAN.get()));
+        Block.popResource(level, pos.above(), new ItemStack(Items.SCULK, ElectricMachineTuning.CULTURE_HARVEST_BLOCKS));
+        Block.popResource(level, pos.above(), new ItemStack(Items.SCULK_VEIN, ElectricMachineTuning.CULTURE_HARVEST_VEINS));
+        Block.popResource(level, pos.above(), new ItemStack(Items.ECHO_SHARD, ElectricMachineTuning.CULTURE_HARVEST_SHARDS));
+        if (bud)
+            Block.popResource(level, pos.above(), new ItemStack(FItems.CULTURE_SEED.get()));
     }
 
     @Override

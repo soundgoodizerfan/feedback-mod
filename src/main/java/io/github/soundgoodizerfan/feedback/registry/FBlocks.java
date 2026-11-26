@@ -1204,11 +1204,25 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.AMETHYST)
                     .noOcclusion()));
+    /** Four XP containers wired as one node (roadmap X7). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.CrystalBankBlock> CRYSTAL_BANK = BLOCKS.register("crystal_bank",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.CrystalBankBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(2.5f)
+                    .sound(SoundType.AMETHYST)
+                    .noOcclusion()));
     /** The sculk culture (roadmap 6.8): a living dish on the XP wire, the death-eating tap, the relay and the vibration sensor. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlock> CULTURE_DISH = BLOCKS.register("culture_dish",
             () -> new io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_CYAN)
                     .strength(1.0f)
+                    .sound(SoundType.SCULK)
+                    .noOcclusion()));
+    /** A node that harvests a ripe Culture Dish beside it for experience from the run (roadmap X7). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.sculk.SculkGrowerBlock> SCULK_GROWER = BLOCKS.register("sculk_grower",
+            () -> new io.github.soundgoodizerfan.feedback.machine.sculk.SculkGrowerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN)
+                    .strength(1.5f)
                     .sound(SoundType.SCULK)
                     .noOcclusion()));
     /** The creeper pen (roadmap 6.6): a cage a leashed creeper is put into. */

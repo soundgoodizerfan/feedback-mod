@@ -420,6 +420,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> STEAM_TURBINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_TURBINE);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(FBlocks.CONDENSER);
     public static final DeferredItem<BlockItem> CRYSTAL_HOLDER = ITEMS.registerSimpleBlockItem(FBlocks.CRYSTAL_HOLDER);
+    public static final DeferredItem<BlockItem> CRYSTAL_BANK = ITEMS.registerSimpleBlockItem(FBlocks.CRYSTAL_BANK);
     public static final DeferredItem<BlockItem> ELECTROLYSER = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYSER);
     /** The warden's two drops, and the four sculk-culture blocks (roadmap 6.8). */
     public static final DeferredItem<Item> CULTURE_SEED = ITEMS.registerSimpleItem("culture_seed");
@@ -430,6 +431,7 @@ public class FItems {
     public static final DeferredItem<Item> CREEPER_CHARGE = ITEMS.registerSimpleItem("creeper_charge");
     public static final DeferredItem<Item> RELAY_ORGAN = ITEMS.registerSimpleItem("relay_organ");
     public static final DeferredItem<BlockItem> CULTURE_DISH = ITEMS.registerSimpleBlockItem(FBlocks.CULTURE_DISH);
+    public static final DeferredItem<BlockItem> SCULK_GROWER = ITEMS.registerSimpleBlockItem(FBlocks.SCULK_GROWER);
     public static final DeferredItem<BlockItem> CATALYST_TAP = ITEMS.registerSimpleBlockItem(FBlocks.CATALYST_TAP);
     public static final DeferredItem<BlockItem> ORB_ABSORBER = ITEMS.registerSimpleBlockItem(FBlocks.ORB_ABSORBER);
     public static final DeferredItem<BlockItem> ORE_TAP = ITEMS.registerSimpleBlockItem(FBlocks.ORE_TAP);

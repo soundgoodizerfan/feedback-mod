@@ -19,6 +19,19 @@ Made from glass, a sculk block and wrought iron plates. Use a Culture Seed on an
 - **Ripe.** A full culture is ripe. Use a hoe on a ripe dish to cut it: two sculk blocks, two sculk veins and an Echo Shard, and the culture falls back to a third of its size. A well-fed culture cut before it clots may also bud a spare Culture Seed. XP held above the smaller store spills out as orbs.
 - **Where to see it.** Jade names the dish's stage. With an [XP Meter](Instruments.md#xp-meter) carried it also shows mass, air and the store.
 
+## Sculk Grower
+
+A node on the [XP network](Experience.md) that harvests a ripe Culture Dish beside it without a hand. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) and 3 screws, holding Experience Treatise II: Taps ([Treatise](Treatise.md)).
+
+```
+  S
+X H X
+P P P
+```
+S is a sculk sensor, H is a hoe (any), X is XP wire, P is a wrought iron plate.
+
+It works in the dark, in ambient temperature between 10 and 30 Tu, once the run it sits on stands at level 10 or higher. Each harvest spends 20 points from the run. What comes out (the Relay Organ if it is ready, sculk, veins, Echo Shards, maybe a spare Culture Seed) pops above the dish, as with a hoe. The grower holds no XP of its own; the dish's growth sets the pace.
+
 ## Neglect
 
 | What is missing | What happens |

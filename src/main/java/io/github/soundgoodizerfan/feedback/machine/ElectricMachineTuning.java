@@ -649,6 +649,13 @@ public final class ElectricMachineTuning {
 
     public static final float CULTURE_SEED_CHANCE = 1f / 3f;
 
+    /**
+     * Invented. A Sculk Grower beside a ripe dish harvests it once the run it sits on pays this many points at this level or higher; ticks between looks.
+     * Dark and the ambient band as for a relay organ.
+     */
+    public static final int GROWER_XP = 20, GROWER_LOOK_TICKS = 40;
+    public static final float GROWER_LEVEL = 10f;
+
     /** Invented. A relay organ differentiates only in the dark (light level at the dish at most this) and between these ambient temperatures (Tu). */
     public static final int CULTURE_ORGAN_MAX_LIGHT = 3;
 

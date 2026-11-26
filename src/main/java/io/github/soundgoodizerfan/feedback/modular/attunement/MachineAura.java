@@ -60,6 +60,8 @@ public final class MachineAura {
     private static final int PERIOD = 40, WORK_EVERY = 5, RING_EVERY = 3;
     /** Chunks around a player that are read. */
     private static final int CHUNKS = 2;
+    /** Blocks from a player within which a vehicle body's machines are read. */
+    private static final double BODY_REACH = 48;
     /** Blocks an animal is drawn or driven from per level, and the most; blocks a hush reaches; blocks a ring is heard per level. */
     private static final double LURE_PER_LEVEL = 3, LURE_MAX = 12, HUSH_REACH = 8, RING_PER_LEVEL = 6;
     /** Blocks around a machine whose creatures an aura reaches; damage a level of bane does each read. Placeholder. */
@@ -118,6 +120,20 @@ public final class MachineAura {
                             chunk.getBlockEntities().forEach(seen::putIfAbsent);
                     }
             }
+            // A vehicle's blocks sit in a plot far from the world around it: read the bodies that are near a player too.
+            var bodies = dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer.getContainer(level);
+            if (bodies != null && !level.players().isEmpty())
+                for (var body : bodies.getAllSubLevels()) {
+                    if (body.isRemoved())
+                        continue;
+                    var at = body.logicalPose().position();
+                    boolean near = false;
+                    for (ServerPlayer p : level.players())
+                        near |= p.distanceToSqr(at.x(), at.y(), at.z()) <= BODY_REACH * BODY_REACH;
+                    if (near)
+                        for (var holder : body.getPlot().getLoadedChunks())
+                            holder.getChunk().getBlockEntities().forEach(seen::putIfAbsent);
+                }
             for (BlockEntity be : seen.values()) {
                 Map<String, Integer> levels = levelsOf(be);
                 if (!levels.isEmpty() || be instanceof Headed)
@@ -141,6 +157,8 @@ public final class MachineAura {
     private static void act(ServerLevel level, BlockEntity be, Map<String, Integer> levels, long period, Map<Long, List<BlockPos>> hush,
             java.util.Collection<BlockEntity> all) {
         BlockPos pos = be.getBlockPos();
+        // Where the machine stands in the world: the same block unless it rides a vehicle, whose blocks sit in a plot far from where it is.
+        BlockPos at = BlockPos.containing(dev.ryanhcode.sable.companion.SableCompanion.INSTANCE.projectOutOfSubLevel(level, Vec3.atCenterOf(pos)));
         int mend = levels.getOrDefault("mend", 0);
         if (mend > 0)
             mend(level, be, mend);
@@ -155,27 +173,27 @@ public final class MachineAura {
             return;
         int lure = levels.getOrDefault("lure", 0), scare = levels.getOrDefault("scare", 0);
         if (lure + scare > 0 && MachineKinds.draw(level, pos, lure >= scare ? "lure" : "scare", FIELD_XP))
-            draw(level, pos, lure, scare);
+            draw(level, at, lure, scare);
         int grow = levels.getOrDefault("grow", 0), reap = levels.getOrDefault("reap", 0);
         if (grow + reap > 0 && period % WORK_EVERY == 0 && MachineKinds.draw(level, pos, grow >= reap ? "grow" : "reap", FIELD_XP))
-            crops(level, pos, grow, reap);
+            crops(level, at, grow, reap);
         int ring = levels.getOrDefault("ring", 0);
         if (ring > 0 && period % RING_EVERY == 0 && MachineKinds.draw(level, pos, "ring", FIELD_XP)) {
-            level.gameEvent(null, GameEvent.EXPLODE, Vec3.atCenterOf(pos));
-            for (Mob mob : level.getEntitiesOfClass(Mob.class, new net.minecraft.world.phys.AABB(pos).inflate(RING_PER_LEVEL * ring),
+            level.gameEvent(null, GameEvent.EXPLODE, Vec3.atCenterOf(at));
+            for (Mob mob : level.getEntitiesOfClass(Mob.class, new net.minecraft.world.phys.AABB(at).inflate(RING_PER_LEVEL * ring),
                     m -> m instanceof Enemy && m.getTarget() == null))
-                mob.getNavigation().moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 1.0);
+                mob.getNavigation().moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 1.0);
         }
         if (levels.getOrDefault("hush", 0) > 0)
             for (int dx = -1; dx <= 1; dx++)
                 for (int dz = -1; dz <= 1; dz++)
-                    hush.computeIfAbsent(ChunkPos.asLong((pos.getX() >> 4) + dx, (pos.getZ() >> 4) + dz), k -> new ArrayList<>()).add(pos);
-        creatures(level, pos, levels);
+                    hush.computeIfAbsent(ChunkPos.asLong((at.getX() >> 4) + dx, (at.getZ() >> 4) + dz), k -> new ArrayList<>()).add(at);
+        creatures(level, at, levels);
         if (be instanceof Headed headed && !headed.getHead().isEmpty()) {
             // A seated head's own kinds are read every time: it can be swapped without the machine being rebuilt.
             Map<String, Integer> head = MachineKinds.levels(headed.getHead().get());
-            creatures(level, pos, head);
-            HungerKinds.aura(level, pos, head);
+            creatures(level, at, head);
+            HungerKinds.aura(level, at, head);
             if (head.containsKey("pack") || head.containsKey("lone")) {
                 int n = 0;
                 for (BlockEntity other : all)

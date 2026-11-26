@@ -186,7 +186,7 @@ These act on the world near a running machine, every 2 seconds or so. A machine 
 
 ### Paying for attunements
 
-Mend, Bait, Spook, Bloom, Reap, Ring, Bane and Heat on a crucible wall cost experience, drawn from a reservoir: first a **Reservoir** attunement on the machine itself, then any [XP wire or Crystal Holder run](Experience.md#drawing-from-a-run) touching the machine. A player standing near pays nothing. Each effect needs the run to stand at a minimum level, shown here by effect:
+Mend, Bait, Spook, Bloom, Reap, Ring, Bane and Heat on a crucible wall cost experience, drawn from a reservoir: first a **Reservoir** attunement on the machine itself, then any [XP wire, Crystal Holder or Crystal Bank run](Experience.md#drawing-from-a-run) touching the machine. A player standing near pays nothing. Each effect needs the run to stand at a minimum level, shown here by effect:
 
 | Effect | Run level |
 | --- | --- |
@@ -195,6 +195,8 @@ Mend, Bait, Spook, Bloom, Reap, Ring, Bane and Heat on a crucible wall cost expe
 | Heat (Crucible Shell) | 15 |
 
 Below that level, or with the run empty, the attunement is quiet and nothing is lost. A draw shows as a soft green glyph particle and a chime. Jade on the machine reads *Attunement drawing*, *Attunement quiet: no experience reaches it* or *Attunement quiet: the run stands too low*. Effects that only shape the figure, such as scaling, are free.
+
+An attuned machine on a moving [vehicle](Vehicles.md) body (an engine, a propeller and the like) works the same way: it draws from a Crystal Holder, Crystal Bank or XP wire riding on that vehicle, and the effects that act on the world (Bait, Spook, Bloom, Reap, Ring, Bane, wall Heat) act where the vehicle is.
 
 | Effect | In a machine | Parts |
 | --- | --- | --- |
@@ -311,6 +313,10 @@ A [Bed](Bed.md) takes effects on its **mattress** and its **frame**. A placed be
 | **Recall** | frame: a placed bed goes to your inventory when you break it, instead of dropping | **Anchor**: frame: a placed bed is slow to break |
 
 The frame also acts on its surroundings like a machine's frame: **Bait** and **Spook**, **Bane** and **Kin**, **Mark**, **Ring** and **Hush**, **Bloom** and **Reap**, **Grudge** and **Calm**, **Ground** and **Dowse** (see [Around the machine](#around-the-machine)). Bait, Bane, Mark, Bloom and Grudge also work from the mattress.
+
+## Worn Mend
+
+Mend on any worn piece is paid first by that piece's own Reservoir, then by a Reservoir attunement on any other piece you wear (a suit's XP reservoir, for one), then by your own experience.
 
 ## On a suit module
 

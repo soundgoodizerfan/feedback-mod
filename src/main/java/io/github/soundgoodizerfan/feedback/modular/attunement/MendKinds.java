@@ -52,9 +52,10 @@ public final class MendKinds {
             if (slot.getType() != EquipmentSlot.Type.ANIMAL_ARMOR)
                 carried.add(player.getItemBySlot(slot));
         carried.add(io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack.wornStack(player));
+        boolean reserved = carried.stream().anyMatch(s -> ReservoirKinds.stored(s) > 0);
         for (ItemStack stack : carried) {
             float boreWear = GunCondition.wear(stack);
-            if ((!stack.isDamaged() && boreWear <= 0f) || (player.totalExperience <= 0 && ReservoirKinds.stored(stack) <= 0))
+            if ((!stack.isDamaged() && boreWear <= 0f) || (player.totalExperience <= 0 && !reserved))
                 continue;
             int level = 0;
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack))
@@ -62,8 +63,9 @@ public final class MendKinds {
                     level += a.level();
             if (level == 0)
                 continue;
-            // The tool's own reservoir pays first (roster 15); the holder only when it is dry.
-            if (ReservoirKinds.take(stack, XP_COST) < XP_COST)
+            // The tool's own reservoir pays first (roster 15), then a reservoir on any other worn piece (a suit's: roadmap X7, the second bus
+            // of CB7); the holder only when all are dry.
+            if (ReservoirKinds.take(stack, XP_COST) < XP_COST && carried.stream().noneMatch(o -> o != stack && ReservoirKinds.take(o, XP_COST) >= XP_COST))
                 player.giveExperiencePoints(-XP_COST);
             stack.setDamageValue(Math.max(0, stack.getDamageValue() - level * REPAIR_PER_LEVEL));
             // A gun has no durability: its bore wear is what Mend closes.
