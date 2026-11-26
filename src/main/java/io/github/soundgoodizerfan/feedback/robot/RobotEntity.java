@@ -83,6 +83,8 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
     /** The job-board slot it has chosen, the one it holds a claim on (-1: none), and how many steps' worth of waiting the step budget has cost it. */
     private int slot, claimedSlot = -1, slow = 1;
     private boolean waiting;
+    /** Ticks in a row the step budget has refused this robot. */
+    private int waitedTicks;
     private final BlockPos.MutableBlockPos scan = new BlockPos.MutableBlockPos();
     /** The reel this robot is tied to, or null; it may roam {@link RobotTuning#TETHER_LENGTH} blocks from it. */
     @Nullable
@@ -466,18 +468,21 @@ public class RobotEntity extends Entity implements ControllerCore.Locals, RobotW
             flush();
         // the program step asks the server's budget; refused, it keeps its state and asks again next tick (claims run on game time)
         if ((stepTick || waiting) && powered()) {
-            if (RobotBudget.grant(level())) {
+            if (RobotBudget.grant(level(), waitedTicks)) {
                 core.tickServer();
                 applySwitch();
                 boardStep();
                 slow = 1;
                 waiting = false;
+                waitedTicks = 0;
             } else {
                 waiting = true;
+                waitedTicks++;
                 slow = Math.min(6, slow + 1);
             }
         } else if (waiting) {
             waiting = false;
+            waitedTicks = 0;
             slow = 1;
         }
         if (stepTick) {

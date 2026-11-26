@@ -17,14 +17,17 @@ public final class RobotBudget {
     private static long tick = -1;
     private static int left;
 
-    /** Whether one more program step may run in this tick. */
-    public static boolean grant(Level level) {
+    /** Ticks a refused robot waits before its step is granted whatever the budget (entity order would otherwise starve the robots last in line). */
+    public static final int STARVED_TICKS = 20;
+
+    /** Whether one more program step may run in this tick; {@code waited} is how many ticks in a row this robot has been refused. */
+    public static boolean grant(Level level, int waited) {
         long now = level.getGameTime();
         if (now != tick) {
             tick = now;
             left = RobotConfig.STEP_BUDGET.get();
         }
-        if (left <= 0)
+        if (left <= 0 && waited < STARVED_TICKS)
             return false;
         left--;
         return true;
