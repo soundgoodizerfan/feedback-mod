@@ -44,11 +44,11 @@
     "reflectivity": 0.3
   },
   "electrical": {
-    "conductivity": 0.6,
-    "drop": 0.083,
+    "conductivity": 0.9,
+    "drop": 0.056,
     "electrode_potential": 0
   },
-  "ampacity": 0.8,
+  "ampacity": 0.93,
   "corrosion_resistance": 0.95,
   "forms": {
     "ingot": "cataclysm:witherite_ingot",
