@@ -19,7 +19,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [EMI](#emi) | Optional | Shows Feedback's recipe cards through its JEI bridge |
 | [Other mods' foods](#other-mods-foods) | Optional | Any food from another mod keeps and spoils like Feedback food |
 | [Inventory Sorter and Inventory Profiles Next](#inventory-sorter-and-inventory-profiles-next) | Optional | Sorting skips screens whose slots are roles |
-| [Simple Voice Chat](#simple-voice-chat) | Optional | Carries the [Radio Set](Radio_Set.md)'s voice |
+| [Simple Voice Chat](#simple-voice-chat) | Optional | Adds voice to the [Radio Set](Radio_Set.md) |
 | [LambDynamicLights](#lambdynamiclights) | Optional | Glowing hot items light the area while held or dropped |
 | [Xaero's Minimap](#xaeros-minimap) | Optional | Survey Meter readings pin to the map |
 | [Applied Energistics 2](#applied-energistics-2) | Optional | Certus Quartz and Fluix crystals and dusts count as materials |
@@ -364,7 +364,7 @@ Food that differs in cook or moisture state does not merge in a sort.
 
 ## Simple Voice Chat
 
-**Optional.** With Simple Voice Chat installed on the server and for players, holding the talk key on a [Radio Set](Radio_Set.md) sends your voice to everyone holding a set on the same band, and replaces your proximity voice while you talk. Without it a set still tunes, and carries no voice.
+**Optional.** With Simple Voice Chat installed on the server and for players, holding the talk key on a [Radio Set](Radio_Set.md) sends your voice to everyone holding a set on the same band, and replaces your proximity voice while you talk. Without it a set still tunes and carries [room sound](Radio_Set.md#room-sound), and no voice.
 
 ## LambDynamicLights
 

@@ -1,6 +1,6 @@
 # Radio Set
 
-A hand-held radio. Hold the talk key and your voice reaches everyone else holding a set tuned to the same band, over distances far beyond proximity chat.
+A hand-held radio. Hold the talk key and the sounds around you, and your voice with Simple Voice Chat, reach everyone else holding a set tuned to the same band, over distances far beyond proximity chat.
 
 ## Crafting
 
@@ -15,7 +15,7 @@ W is [Copper Wire](Wire_Drawer.md), C is a [circuit](Basic_Electronic_Circuit.md
 
 - **Sneak and use** steps the band, 1 to 8, and back to 1 after 8. The band shows above the hotbar.
 - **Use with Copper Wire in the other hand** winds 100 mm of antenna onto the set and spends one wire. An antenna holds up to 2500 mm.
-- **Hold the talk key** (**.** (period) by default, rebindable under the *Feedback* category in Controls) while a set is in either hand to transmit. Your normal proximity voice is replaced while you talk.
+- **Hold the talk key** (**.** (period) by default, rebindable under the *Feedback* category in Controls) while a set is in either hand to transmit. While you talk the set's microphone also picks up the room (see [Room sound](#room-sound)).
 
 The tooltip shows the set's band and its antenna length in mm.
 
@@ -42,6 +42,10 @@ Only sets on the same band, in the same dimension, hear each other. A listener m
 
 Two well-tuned sets reach about 160 blocks. A badly tuned antenna at either end shortens the reach for both directions. Out to about two thirds of the reach the voice is clean; beyond that packets drop, more and more toward the edge, and the voice breaks up. Past the edge it is silent.
 
+## Room sound
+
+While you hold the talk key, the set's microphone hears game sounds made within 16 blocks of you: footsteps, doors, machines, mobs, block breaks. Everyone holding a set on the same band in the same dimension hears them as a quiet, slightly flat copy at their own ear. The link is the same as for voice: the louder the link, the louder the copy, and packets drop in patches near the edge of reach. A speaker relays at most four sounds a tick, so a noisy machine hall does not flood a listener. Music is not relayed. This needs no other mod.
+
 ## Voice chat
 
-The voice travels through [Simple Voice Chat](Mod_Compats.md#simple-voice-chat), which must be installed on the server and on the players. Without it the set still tunes and shows its band and antenna, and carries no voice.
+With [Simple Voice Chat](Mod_Compats.md#simple-voice-chat) installed on the server and on the players, your voice travels over the set as well, and replaces your proximity voice while you talk. Without it the set carries room sound only.

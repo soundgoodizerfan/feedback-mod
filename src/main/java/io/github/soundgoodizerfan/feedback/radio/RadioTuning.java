@@ -22,4 +22,7 @@ public final class RadioTuning {
     public static final float BASE_REACH_BLOCKS = 160f;
     /** Link quality (one at no distance, zero at the edge of reach) below which packets start to drop, and the share dropped at the very edge. */
     public static final float GARBLE_BELOW = 0.35f, DROP_AT_EDGE = 0.85f;
+    /** The microphone's hearing, blocks; the loudness a relayed sound keeps and its pitch (a little flat: the band is narrow); the sounds relayed per speaker per tick. */
+    public static final int HEAR_BLOCKS = 16, RELAY_PER_TICK = 4;
+    public static final float RELAY_VOLUME = 0.7f, RELAY_PITCH = 0.9f;
 }
