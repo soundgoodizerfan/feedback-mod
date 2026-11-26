@@ -3,11 +3,11 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "feedback:iron_block"
+      "item": "feedback:wrought_iron_block"
     }
   ],
   "result": {
     "count": 9,
-    "id": "feedback:iron_ingot"
+    "id": "feedback:wrought_iron_ingot"
   }
 }

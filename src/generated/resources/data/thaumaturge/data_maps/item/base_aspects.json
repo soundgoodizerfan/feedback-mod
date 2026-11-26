@@ -26724,20 +26724,6 @@
         "aspect": "thaumaturge:motus"
       }
     ],
-    "feedback:iron_block": [
-      {
-        "amount": 46,
-        "aspect": "thaumaturge:metallum"
-      },
-      {
-        "amount": 36,
-        "aspect": "thaumaturge:ordo"
-      },
-      {
-        "amount": 32,
-        "aspect": "thaumaturge:motus"
-      }
-    ],
     "feedback:iron_bloom": [
       {
         "amount": 4,
@@ -27188,20 +27174,6 @@
         "aspect": "thaumaturge:motus"
       }
     ],
-    "feedback:iron_ingot": [
-      {
-        "amount": 5,
-        "aspect": "thaumaturge:metallum"
-      },
-      {
-        "amount": 4,
-        "aspect": "thaumaturge:ordo"
-      },
-      {
-        "amount": 4,
-        "aspect": "thaumaturge:motus"
-      }
-    ],
     "feedback:iron_large_shot": [
       {
         "amount": 5,
@@ -27241,20 +27213,6 @@
       },
       {
         "amount": 4,
-        "aspect": "thaumaturge:motus"
-      }
-    ],
-    "feedback:iron_nugget": [
-      {
-        "amount": 1,
-        "aspect": "thaumaturge:metallum"
-      },
-      {
-        "amount": 1,
-        "aspect": "thaumaturge:ordo"
-      },
-      {
-        "amount": 1,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -79826,6 +79784,20 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:wrought_iron_block": [
+      {
+        "amount": 46,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 41,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 32,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:wrought_iron_bullet": [
       {
         "amount": 5,
@@ -80054,6 +80026,20 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:wrought_iron_ingot": [
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:wrought_iron_large_shot": [
       {
         "amount": 5,
@@ -80079,6 +80065,20 @@
       },
       {
         "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:wrought_iron_nugget": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:motus"
       }
     ],
@@ -81556,7 +81556,7 @@
         "aspect": "thaumaturge:metallum"
       },
       {
-        "amount": 41,
+        "amount": 36,
         "aspect": "thaumaturge:ordo"
       },
       {
@@ -81570,7 +81570,7 @@
         "aspect": "thaumaturge:metallum"
       },
       {
-        "amount": 5,
+        "amount": 4,
         "aspect": "thaumaturge:ordo"
       },
       {

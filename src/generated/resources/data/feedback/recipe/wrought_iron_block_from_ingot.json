@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:wrought_iron_ingot"
+    },
+    {
+      "item": "feedback:wrought_iron_ingot"
+    },
+    {
+      "item": "feedback:wrought_iron_ingot"
+    },
+    {
+      "item": "feedback:wrought_iron_ingot"
+    },
+    {
+      "item": "feedback:wrought_iron_ingot"
+    },
+    {
+      "item": "feedback:wrought_iron_ingot"
+    },
+    {
+      "item": "feedback:wrought_iron_ingot"
+    },
+    {
+      "item": "feedback:wrought_iron_ingot"
+    },
+    {
+      "item": "feedback:wrought_iron_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:wrought_iron_block"
+  }
+}

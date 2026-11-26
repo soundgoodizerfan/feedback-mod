@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T13:43:23.194637123	Item Models: feedback
+// 1.21.1	2026-11-26T17:20:24.665643593	Item Models: feedback
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/acacia_grip.json
 1cbe171cef7392663517643cbe471f06b808ce0b assets/feedback/models/item/acacia_shaving.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/alnico_birdshot.json
@@ -1666,10 +1666,8 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/iron_foil.j
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/iron_grip.json
 3508f976bea33c0c0db53857e13d1c2ca0abb57d assets/feedback/models/item/iron_ground_ingot.json
 c0d43c2f6da710e361b1d06f8ce409dc1e493dea assets/feedback/models/item/iron_hollow_point_bullet.json
-818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/iron_ingot.json
 8587d741223360dedeeecf4241cd6583b681317e assets/feedback/models/item/iron_large_shot.json
 34df19046ba3a048ce15c29330a27ddcd47edf29 assets/feedback/models/item/iron_machine_bolt.json
-0188e1e3b3b7fa5f82fd33bc4e8334fe69fbcb21 assets/feedback/models/item/iron_nugget.json
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/iron_plate.json
 fb06b5aefa4539926d784d9bd25e20da947ae459 assets/feedback/models/item/iron_pointed_bullet.json
 ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/iron_rivet.json
@@ -4877,8 +4875,10 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/wrought_iro
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/wrought_iron_grip.json
 3508f976bea33c0c0db53857e13d1c2ca0abb57d assets/feedback/models/item/wrought_iron_ground_ingot.json
 c0d43c2f6da710e361b1d06f8ce409dc1e493dea assets/feedback/models/item/wrought_iron_hollow_point_bullet.json
+818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/wrought_iron_ingot.json
 8587d741223360dedeeecf4241cd6583b681317e assets/feedback/models/item/wrought_iron_large_shot.json
 34df19046ba3a048ce15c29330a27ddcd47edf29 assets/feedback/models/item/wrought_iron_machine_bolt.json
+0188e1e3b3b7fa5f82fd33bc4e8334fe69fbcb21 assets/feedback/models/item/wrought_iron_nugget.json
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/wrought_iron_plate.json
 fb06b5aefa4539926d784d9bd25e20da947ae459 assets/feedback/models/item/wrought_iron_pointed_bullet.json
 ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/wrought_iron_rivet.json

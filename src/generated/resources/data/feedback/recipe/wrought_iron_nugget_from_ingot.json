@@ -3,11 +3,11 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "feedback:iron_ingot"
+      "item": "feedback:wrought_iron_ingot"
     }
   ],
   "result": {
     "count": 9,
-    "id": "feedback:iron_nugget"
+    "id": "feedback:wrought_iron_nugget"
   }
 }

@@ -61,7 +61,23 @@
     "ore": "feedback:iron_ore",
     "deepslate_ore": "feedback:deepslate_iron_ore",
     "raw": "minecraft:raw_iron",
-    "raw_block": "minecraft:raw_iron_block"
+    "raw_block": "minecraft:raw_iron_block",
+    "ingot": "minecraft:iron_ingot",
+    "nugget": "minecraft:iron_nugget",
+    "block": "minecraft:iron_block",
+    "bars": "minecraft:iron_bars",
+    "door": "minecraft:iron_door",
+    "trapdoor": "minecraft:iron_trapdoor",
+    "horse_armor": "minecraft:iron_horse_armor",
+    "sword": "minecraft:iron_sword",
+    "pickaxe": "minecraft:iron_pickaxe",
+    "axe": "minecraft:iron_axe",
+    "shovel": "minecraft:iron_shovel",
+    "hoe": "minecraft:iron_hoe",
+    "helmet": "minecraft:iron_helmet",
+    "chestplate": "minecraft:iron_chestplate",
+    "leggings": "minecraft:iron_leggings",
+    "boots": "minecraft:iron_boots"
   },
   "exclude": [
     "lump"
