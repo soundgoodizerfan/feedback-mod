@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": { "min": 3, "max": 6 },
+      "entries": [
+        { "type": "minecraft:item", "name": "minecraft:iron_ingot", "weight": 10,
+          "functions": [ { "function": "minecraft:set_count", "count": { "min": 2, "max": 9 } } ] },
+        { "type": "minecraft:item", "name": "feedback:aluminium_ingot", "weight": 8,
+          "functions": [ { "function": "minecraft:set_count", "count": { "min": 2, "max": 6 } } ] },
+        { "type": "minecraft:item", "name": "minecraft:copper_ingot", "weight": 6,
+          "functions": [ { "function": "minecraft:set_count", "count": { "min": 2, "max": 6 } } ] },
+        { "type": "minecraft:item", "name": "feedback:lead_ingot", "weight": 3,
+          "functions": [ { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } } ] },
+        { "type": "minecraft:item", "name": "minecraft:coal", "weight": 4,
+          "functions": [ { "function": "minecraft:set_count", "count": { "min": 2, "max": 8 } } ] },
+        { "type": "minecraft:item", "name": "minecraft:redstone", "weight": 3,
+          "functions": [ { "function": "minecraft:set_count", "count": { "min": 1, "max": 5 } } ] }
+      ]
+    }
+  ]
+}

@@ -123,9 +123,17 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         return 0f;
     }
 
-    /** Whether the process is held in a sealed chamber with no air blowing in (charcoal, sintering). */
+    /**
+     * Whether the process is held with no air to react with: a sealed chamber with no air blowing in (charcoal, sintering), or a vessel
+     * standing where there is no oxygen at all (the Gap, the End's thin air), where nothing grows oxide scale and fine metal does not burn off.
+     */
     protected boolean airlessRun() {
-        return false;
+        return noOxygenHere();
+    }
+
+    /** Whether the air where the vessel stands holds no oxygen (hard vacuum). */
+    protected boolean noOxygenHere() {
+        return level != null && !io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.oxygen(level);
     }
 
     /** The tank's size, in mB. Read while the base is constructed, so it names a constant and no field. */

@@ -209,7 +209,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
 
     @Override
     protected boolean airlessRun() {
-        return kind.sealed() && draught <= 0f;
+        return (kind.sealed() && draught <= 0f) || noOxygenHere();
     }
 
     /** What boils off a vessel's tank goes to its vapour tank, and past a full one out of the chamber. */
