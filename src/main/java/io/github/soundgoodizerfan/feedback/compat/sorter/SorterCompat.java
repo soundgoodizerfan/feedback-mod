@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.sorter;
 
-import java.util.List;
-
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.compat.MenuRoles;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,19 +24,12 @@ import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 @EventBusSubscriber(modid = Feedback.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class SorterCompat {
 
-    /** Menus whose slots are roles, not storage. */
-    static final List<String> ROLE_MENUS = List.of("engineering_table", "reloading_press", "blueprint_table", "research_table",
-            "material_probe", "enchanting", "casting_basin", "mixer", "brewing_stand", "station", "programmer", "prep_table",
-            "thermal_vessel", "arc_hearth", "crucible");
-
     private SorterCompat() {
     }
 
     @SubscribeEvent
     public static void onEnqueue(InterModEnqueueEvent event) {
-        for (String menu : ROLE_MENUS) {
-            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Feedback.MOD_ID, menu);
+        for (ResourceLocation id : MenuRoles.roleIds())
             InterModComms.sendTo("inventorysorter", "containerblacklist", () -> id);
-        }
     }
 }

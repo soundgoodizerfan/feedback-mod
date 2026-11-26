@@ -18,7 +18,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [Legendary Survival Overhaul](#legendary-survival-overhaul) | Optional | Body temperature and thirst follow Feedback's rooms, machines, armor, food and fluids |
 | [EMI](#emi) | Optional | Shows Feedback's recipe cards through its JEI bridge |
 | [Other mods' foods](#other-mods-foods) | Optional | Any food from another mod keeps and spoils like Feedback food |
-| [Inventory Sorter](#inventory-sorter) | Optional | Sorting skips screens whose slots are roles |
+| [Inventory Sorter and Inventory Profiles Next](#inventory-sorter-and-inventory-profiles-next) | Optional | Sorting skips screens whose slots are roles |
 | [Simple Voice Chat](#simple-voice-chat) | Optional | Carries the [Radio Set](Radio_Set.md)'s voice |
 | [Xaero's Minimap](#xaeros-minimap) | Optional | Survey Meter readings pin to the map |
 | [Applied Energistics 2](#applied-energistics-2) | Optional | Certus Quartz and Fluix crystals and dusts count as materials |
@@ -351,9 +351,13 @@ LSO's icon and its word states work as they do without Feedback. While you carry
 
 Any food from another mod (an item that is edible and is not from Minecraft or Feedback) keeps, spoils and feeds through the [Food](Food.md) state model. Its keeping figures come from its nutrition: a heartier food is drier, and a sweeter food holds more fat. It has no compounds and no perks, and cooking it yields nothing. A material file for the item overrides these figures.
 
-## Inventory Sorter
+## Inventory Sorter and Inventory Profiles Next
 
-**Optional.** With Inventory Sorter installed, sorting and scroll-moving do nothing on screens whose slots are roles, where an input, a fuel and a result each sit in a place that matters: the [Engineering Table](Engineering_Table.md), Reloading Press, Blueprint Table, Research Table, Material Probe, Enchanting screen, Casting Basin, Mixer, Brewing Stand, Station, Programmer, Prep Table, Thermal Vessel, Arc Hearth and Crucible. Packs and depots stay sortable. Food that differs in cook or moisture state does not merge in a sort.
+**Optional.** Almost every Feedback screen is a **role screen**: an input, a fuel, a result or a recipe-grid cell each sits in a place that matters. With Inventory Sorter or Inventory Profiles Next installed, a sort, a move-all or a scroll-move does nothing on a role screen. This covers the [Engineering Table](Engineering_Table.md), Reloading Press, Blueprint Table, Research Table, Material Probe, Enchanting screen, Casting Basin, Mixer, Brewing Stand, Thermal Vessel, Arc Hearth, Crucible, Station, Programmer, Prep Table, [Computer](Electric_Controller.md), villager and board screens, the counter and every other Feedback screen except storage. Worn packs and depots are storage and stay sortable. Your own inventory sorts as usual.
+
+With Inventory Profiles Next installed, Feedback writes the file `config/inventoryprofilesnext/integrationHints/feedback.json` that tells it which screens to leave alone.
+
+Food that differs in cook or moisture state does not merge in a sort.
 
 ## Simple Voice Chat
 
