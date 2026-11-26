@@ -119,6 +119,7 @@ Feedback's version of a [replaced vanilla block](#vanilla-blocks-in-other-mods-r
 
 - Research that asks for the item accepts Feedback's, and the research page shows it. The Vis Powered Generator's piston is one example.
 - Golem components and filters accept it.
+- Research that asks for an enchanted book, such as one with Silk Touch, accepts a [Rite](Enchanting_Table.md#rites) of the matching attunement when its quality is high enough for the asked level. The research page shows that rite.
 - The golem press multiblock takes Feedback's [Anvil](Anvil.md) and a Feedback [Piston](Piston.md) facing up.
 
 ### Wand caps and rods
