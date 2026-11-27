@@ -26,6 +26,10 @@ A liquid run reads 0 Pu. A **gas** run (steam, a vapor, ethylene) has a pressure
 
 A run held over **5 Pu** can burst, the same way a [Boiler](Boiler.md#pressure) does: the chance climbs with the pressure, and the run's whole contents go with the explosion. Read it with a [Pressure Gauge](Instruments.md#pressure-gauge) before you push a compressor harder. A [Gas Tank](Gas_Tank.md) at the end of the line gives the gas somewhere to go.
 
+## Corrosion
+
+A corrosive fluid (an acid such as [nitric acid](Chemicals.md#nitric-acid) or [sulfuric acid](Chemicals.md#acids), or a base such as [lye](Chemicals.md#lye)) eats at a pipe whose material resists it poorly. About every 5 seconds one pipe of the run is checked; the poorer the material's resistance (below 0.9), the likelier that pipe is eaten through. The pipe breaks away and the run's fluid is lost with it, so the damage shows and the gap can be patched. A pipe of a material that resists well is never touched, and a run with no corrosive fluid is safe. A material's corrosion resistance is in JEI's Material Stats.
+
 ## Notes
 
 - Crude oil, naphtha, kerosene, diesel and their vapors all travel in pipes. See [Oil](Oil.md).

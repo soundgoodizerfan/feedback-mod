@@ -1,0 +1,32 @@
+{
+  "kind": "fluid",
+  "traits": [
+    "corrosive",
+    "electrolyte"
+  ],
+  "hardness": 1,
+  "density": 1.51,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 7.48e-05,
+    "melting_point": -42,
+    "boiling_point": 83,
+    "specific_heat": 1.7,
+    "latent_heat_fusion": 100,
+    "latent_heat_vaporisation": 480
+  },
+  "molten": {
+    "viscosity": 1.1,
+    "shear_thickening": 0
+  },
+  "toxicity": 0.8,
+  "corrosivity": 8,
+  "separation": {
+    "reflectivity": 0.02
+  },
+  "corrosion_resistance": 1.0,
+  "ph": 0,
+  "combustion": {
+    "oxygen_balance": 3
+  }
+}

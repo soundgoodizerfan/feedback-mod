@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "feedback:crystal_flats",
+  "features": "feedback:ore_vein",
+  "step": "underground_ores"
+}

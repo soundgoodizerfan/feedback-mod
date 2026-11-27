@@ -255,6 +255,14 @@ public final class FFluids {
             FLUIDS.register("tetrafluoroethylene", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.TETRAFLUOROETHYLENE, FFluids.TETRAFLUOROETHYLENE, FFluids.TETRAFLUOROETHYLENE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> TETRAFLUOROETHYLENE_FLOWING =
             FLUIDS.register("tetrafluoroethylene_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.TETRAFLUOROETHYLENE, FFluids.TETRAFLUOROETHYLENE, FFluids.TETRAFLUOROETHYLENE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NITRIC_ACID =
+            FLUIDS.register("nitric_acid", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.NITRIC_ACID, FFluids.NITRIC_ACID, FFluids.NITRIC_ACID_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NITRIC_ACID_FLOWING =
+            FLUIDS.register("nitric_acid_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.NITRIC_ACID, FFluids.NITRIC_ACID, FFluids.NITRIC_ACID_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CREEPER_OIL =
+            FLUIDS.register("creeper_oil", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.CREEPER_OIL, FFluids.CREEPER_OIL, FFluids.CREEPER_OIL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CREEPER_OIL_FLOWING =
+            FLUIDS.register("creeper_oil_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.CREEPER_OIL, FFluids.CREEPER_OIL, FFluids.CREEPER_OIL_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> HYDROCHLORIC_ACID =
             FLUIDS.register("hydrochloric_acid", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HYDROCHLORIC_ACID, FFluids.HYDROCHLORIC_ACID, FFluids.HYDROCHLORIC_ACID_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> HYDROCHLORIC_ACID_FLOWING =

@@ -1,0 +1,45 @@
+{
+  "kind": "granular",
+  "traits": [
+    "flammable"
+  ],
+  "hardness": 1,
+  "density": 1.7,
+  "thermal": {
+    "expansion": 1e-05,
+    "cooling_rate": 1.17,
+    "conductivity": 3.74e-05,
+    "oxidation_temperature": 180,
+    "melting_point": 190,
+    "specific_heat": 1.0,
+    "latent_heat_fusion": 100,
+    "boiling_point": 500,
+    "latent_heat_vaporisation": 800,
+    "service_temperature": 120
+  },
+  "mechanical": {
+    "friction": 0.5,
+    "abrasiveness": 0,
+    "yield_strength": 0.5,
+    "toughness": 0.5
+  },
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "combustion": {
+    "oxygen_balance": -0.3,
+    "chamber": {
+      "peak_pressure": 5,
+      "burn_rate": 7
+    }
+  },
+  "corrosion_resistance": 0.4,
+  "toxicity": 0.2,
+  "molten": {
+    "viscosity": 100,
+    "density": 1.53,
+    "shear_thickening": 0
+  },
+  "enchantability": 1,
+  "color": "#f2efe4"
+}

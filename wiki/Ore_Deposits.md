@@ -19,6 +19,7 @@ Dig, as before. Each ore sits where it always did.
 - **Chromite** deep in the lower rock, **pentlandite** (nickel) through the middle depths, **cobaltite** deep, **pyrolusite** (manganese) in the upper rock, **bauxite** (aluminum) high up and near the surface, **wolframite** (tungsten) very deep, **monazite** (thorium) in the lower rock. Monazite is [radioactive](Radiation.md).
 - **Spodumene** (lithium) in the upper rock between y 16 and 128, **beryl** (beryllium) between y 32 and 256 in the same mountain and windswept biomes as emerald, **molybdenite** (molybdenum) low, between y -16 and 48, and **dolomite** (magnesium) in broad veins between y 0 and 96.
 - **Osmiridium** in river biomes between y 36 and 64 as placer veins, and in an underground sulfide band between y -32 and 40, with loose rock above. It is the source of [heavy core](Heavy_Core.md#making-it).
+- **Thorianite** (thorium) deep in the Overworld between y -64 and -8, often beside a uranium lode, with a loose rock above.
 - **Stibnite** (antimony) in the Overworld between y -8 and 64 and **vanadinite** (vanadium) between y -24 and 40, each in veins with a loose rock above. **Cinnabar** (mercury) in the Nether between y 10 and 117, in the netherrack, with a loose rock above.
 - **Cryolite**, rare, in the overworld between y -20 and 60. It melts into the bath for [aluminum](Guide_Making_Aluminum.md).
 - **Saltpetre** in cave deposits from Y -16 to 64, with a loose rock on the surface.
@@ -27,6 +28,7 @@ Dig, as before. Each ore sits where it always did.
 - **Bastion Rubble** in small, rare patches in the Nether between y 30 and 110. Each block breaks into 1 to 3 Worn Netherite Bits, the scrap of [Netherite](Netherite.md#getting-the-scrap).
 - **Sulfur** in the Nether, in the netherrack, with a loose rock above.
 - **Ilmenite** (titanium) in the netherrack.
+- **Thorianite** (thorium) in the netherrack between y 10 and 117, in the hot Nether belt, with a loose rock above.
 - **Nether gold and nether quartz** in the netherrack, all through the Nether. Gold still angers piglins when you mine it.
 
 ## Rarity, provinces and companions
@@ -94,12 +96,12 @@ Gems grow in veins of their own, each marked by a loose rock. Mined, the ore blo
 
 - **Jade** in the Overworld between y 32 and 160.
 - **Garnet** in the Overworld between y -32 and 48, the widest of the four veins.
-- **Tourmaline** in the Overworld between y 16 and 128, in the narrowest veins.
+- **Tourmaline** in the Overworld between y 16 and 128, in the narrowest veins. Tourmaline and beryl also grow on the crystal world.
 - **Ruby** in the Nether, between y 10 and 117, in the netherrack.
 
 ## Beyond the Overworld
 
-The [Gap](The_Gap.md#salvage) holds asteroids of iron, pentlandite, sperrylite, osmiridium and rare beryl. The crystal world has frequent amethyst geodes ([The Gap](The_Gap.md#the-crystal-world-by-rocket)).
+The [Gap](The_Gap.md#salvage) holds asteroids of iron, pentlandite, sperrylite, osmiridium and rare beryl. The crystal world has frequent amethyst geodes, and veins of beryl and tourmaline between y 0 and 160 ([The Gap](The_Gap.md#the-crystal-world-by-rocket)). The frozen moon has ilmenite veins between y 20 and 100. The End has **rheniite** (rhenium) in End stone between y 0 and 80, with a loose rock above.
 
 ## Crystals and clay
 

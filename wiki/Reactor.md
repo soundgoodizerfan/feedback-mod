@@ -87,6 +87,9 @@ Some reactions give off heat, which warms the reactor.
 | **Roast molybdenite** | one molybdenite concentrate, 100 mB oxygen | one **Molybdenum Calcine**, one **Rhenium Oxide** and 100 mB [sulfur dioxide](Chemicals.md#sulfur-dioxide); above 800 Tu the batch spoils | 450 to 750 Tu, best 600 |
 | **Reduce rhenium oxide** | one Rhenium Oxide, 300 mB hydrogen | one **Rhenium Sponge**, and some heat | 300 to 600 Tu, best 400 |
 | **Ammonia** | 100 mB nitrogen, 300 mB hydrogen, an iron bed | 200 mB [ammonia](Chemicals.md#ammonia), and some heat | 400 to 500 Tu, best 450 |
+| **Nitric acid** | 100 mB ammonia, 200 mB oxygen | 100 mB [nitric acid](Chemicals.md#nitric-acid), and some heat | 200 to 320 Tu, best 260 |
+| **Nitrate cellulose** | one Paper, 100 mB nitric acid, 100 mB sulfuric acid | one **Nitrocellulose Dust** and 60 mB sulfuric acid returned | 0 to 40 Tu, best 20 |
+| **Creeper oil** | one Creeper Charge, 100 mB naphtha | 100 mB [creeper oil](Chemicals.md#creeper-oil) | 30 to 90 Tu, best 60 |
 | **Fertilizer** | 200 mB ammonia, 100 mB sulfuric or hydrochloric acid | 2 [Fertilizer](Fertilizer.md) | 20 to 100 Tu, best 50 |
 | **Raw Spatial Slurry** | one Chorus Fruit, 100 mB water | 100 mB Raw Spatial Slurry | 0 to 60 Tu, best 25 |
 | **Damped Spatial Solvent** | 100 mB Unstable Spatial Solvent, 5 mB [Heavy Water](Heavy_Water.md), one Lapis Lazuli dust | 100 mB Damped Spatial Solvent; above 70 Tu, solvent vapor | 5 to 70 Tu, best 30 |
@@ -135,7 +138,7 @@ Both read the fluid's properties, never its name.
 
 A reactor starts with a sound steel shell. While any of its tanks holds a corrosive fluid (an acid such as [sulfuric acid](Chemicals.md#acids), or a base such as [lye](Chemicals.md#lye)), the shell wears a little every second, never all at once. It wears down to about a third of its condition and no further, and stops wearing when the tanks hold nothing corrosive. Condition shows in Jade as *Wearing*.
 
-A worn shell gives way at a lower pressure: the risk line and the burst line in [Pressure](#pressure) both come down as condition falls. The [Pipe](Pipe.md) has no wall material to eat, so a pipe carrying acid does not wear.
+A worn shell gives way at a lower pressure: the risk line and the burst line in [Pressure](#pressure) both come down as condition falls. A [Pipe](Pipe.md) carrying acid is eaten through instead ([Corrosion](Pipe.md#corrosion)).
 
 ## Pressure
 

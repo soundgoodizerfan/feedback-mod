@@ -307,6 +307,8 @@ public class FClientSetup {
         event.registerFluidType(waterTinted(0xFFE8E4D8), FFluidTypes.LYE.get());
         event.registerFluidType(waterTinted(0xFFD9E0C8), FFluidTypes.BATTERY_CARBONATE.get());
         event.registerFluidType(waterTinted(0xFFD8E8A8), FFluidTypes.HYDROCHLORIC_ACID.get());
+        event.registerFluidType(waterTinted(0xFFE8D8A0), FFluidTypes.NITRIC_ACID.get());
+        event.registerFluidType(waterTinted(0xFF5FA85A), FFluidTypes.CREEPER_OIL.get());
         event.registerFluidType(waterTinted(0xFFC8B878), FFluidTypes.SULFURIC_ACID.get());
         event.registerFluidType(waterTinted(0x33FFE8C8), FFluidTypes.METHANE.get());
         event.registerFluidType(waterTinted(0xFFE8F0E8), FFluidTypes.CHLOROFORM.get());

@@ -1,0 +1,26 @@
+{
+  "inputs": [],
+  "min_temperature": 200,
+  "optimal_temperature": 260,
+  "max_temperature": 320,
+  "required_tpu": 100,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:ammonia",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 200
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:nitric_acid",
+        "mb": 100
+      }
+    ],
+    "heat": 6
+  }
+}

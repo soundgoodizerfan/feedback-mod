@@ -101,6 +101,10 @@ The standard propellant: **0.75 Pu per item** in a 9 mm case, so a standard four
 
 Cut from a [Creeper Sac](Creeper_Pen.md#creeper-sac). It carries its own oxygen, so it burns completely on its own, and its peak pressure is **12 Pu**, four times gunpowder's 3, with a fast burn. A chamber rated below that fails ([Overpressure](Guns.md#overpressure)).
 
+### Nitrocellulose Dust
+
+A smokeless propellant made from paper and acids ([Chemicals](Chemicals.md#nitrocellulose)). Its peak pressure is **5 Pu**, between gunpowder's 3 and the creeper charge's 12, and it burns faster than gunpowder, so it loses less in a short barrel. Cooks off at **180 Tu**, cooler than any other charge.
+
 ### Blaze Powder
 
 **2.25 Pu per item**, three times gunpowder, but it's pure fuel. On its own it **barely burns**, because there's nothing in it to burn *with*: a blaze-only round gives about a tenth of its pressure.

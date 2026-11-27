@@ -271,11 +271,11 @@ Clad in stainless steel it becomes the [Plutonium Fuel Rod](Nuclear_Fuel.md#plut
 
 ## Thorium
 
-A heavy, soft, silvery metal that gives off radiation, found as the ore **monazite**.
+A heavy, soft, silvery metal that gives off radiation, found as the ores **monazite** and **thorianite**.
 
-Monazite grows in deep veins (Y -48 to 16), with black sand over some of them. The ore and every thorium form are [radioactive](Radiation.md): the ore at 0.1, the metal at 0.25, a quarter of uranium's. A [Survey Meter](Instruments.md#survey-meter) finds the ore; a [Geiger Counter](Instruments.md#geiger-counter) finds it by ear.
+Monazite grows in deep veins (Y -48 to 16), with black sand over some of them. **Thorianite** grows deeper still (Y -64 to -8) and in the Nether, richer in thorium than monazite. The ore and every thorium form are [radioactive](Radiation.md): the ore at 0.1, the metal at 0.25, a quarter of uranium's. A [Survey Meter](Instruments.md#survey-meter) finds the ore; a [Geiger Counter](Instruments.md#geiger-counter) finds it by ear.
 
-Monazite melts into thorium (1750 Tu) like any ore, and molten thorium casts into ingots. It makes every metal form.
+Monazite and thorianite melt into thorium (1750 Tu) like any ore, and molten thorium casts into ingots. It makes every metal form.
 
 Thorium stands heat. Melted into tungsten in a [crucible](Crucible.md) (about 1 part thorium to 9 of tungsten) it makes **thorium-tungsten**, which stands 2800 Tu in service. Carry it with care: see [Radiation](Radiation.md).
 
@@ -512,6 +512,8 @@ Ore minerals are not metal. Most melt into the metal they carry the most of, and
 | Wolframite | Tungsten |
 | Uraninite | Uranium |
 | Monazite | Thorium |
+| Thorianite | Thorium (88%) |
+| Rheniite | Rhenium (57%) |
 | Spodumene | Lithium (3.7%) |
 | Beryl | Beryllium (5%; reduced, not melted) |
 | Stibnite | Antimony |

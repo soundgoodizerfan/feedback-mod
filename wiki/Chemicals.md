@@ -1,6 +1,6 @@
 # Chemicals
 
-The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, battery electrolyte, acids, carbon dioxide, leach liquors, liquid teleportant, heavy water, fluorine compounds, bleach, nitrogen, argon, helium, ammonia, ethylene, the polyester chain and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
+The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, battery electrolyte, acids, carbon dioxide, leach liquors, liquid teleportant, heavy water, fluorine compounds, bleach, nitrogen, argon, helium, ammonia, ethylene, nitric acid, nitrocellulose, creeper oil, the polyester chain and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
 
 ## Hydrogen
 
@@ -97,6 +97,18 @@ A volatile, toxic gas made by leaching osmiridium with sulfuric acid and oxygen 
 ## Ammonia
 
 A toxic gas made in a Reactor from nitrogen and hydrogen over an iron bed. With sulfuric or hydrochloric acid it makes [Fertilizer](Fertilizer.md).
+
+## Nitric acid
+
+A strong, toxic acid. Make it in a [Reactor](Reactor.md#the-reactions) from ammonia and oxygen, held warm. It bites vessels and pipes that are not lined for it ([Hazards](Hazards.md), [Pipe](Pipe.md#corrosion)), and works as an electrolyte like the other acids. It is the feed for nitrocellulose.
+
+## Nitrocellulose
+
+A pale powder, **Nitrocellulose Dust**: paper steeped in nitric and sulfuric acid in a Reactor held cold. The sulfuric acid is mostly handed back (100 mB goes in, 60 mB comes out). It burns and cooks off easily. It is a smokeless propellant for the [Reloading Press](Ammunition.md#nitrocellulose-dust).
+
+## Creeper oil
+
+A flammable, toxic liquid. A Creeper Charge steeped in naphtha in a warm Reactor gives it. Pipe and store it like any liquid fuel.
 
 ## Fluorine and PTFE
 

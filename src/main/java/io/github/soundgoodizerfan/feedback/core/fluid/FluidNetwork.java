@@ -73,7 +73,7 @@ public class FluidNetwork {
     void tick(Level level) {
         if (ledger.isEmpty())
             return;
-        if (hazard(level))
+        if (hazard(level) || eat(level))
             return;
         int budget = isGas(ledger.getFluid())
                 ? Math.min(FluidTuning.PIPE_FLOW_MB_PER_TICK, Math.max(1, Math.round(pressure().value() * FluidTuning.PIPE_GAS_FLOW_PER_PU)))
@@ -107,4 +107,30 @@ public class FluidNetwork {
         PressureBurst.burst(level, weak.getBlockPos(), FluidTuning.PIPE_BURST_POWER);
         return true;
     }
+
+    /**
+     * An acid or a base in the run eats at a segment of a metal that does not resist it (the pipe's own material, as with a vessel's shell and
+     * {@code space/AcidRain}): every {@link #CORRODE_TICKS} ticks one random segment under {@link io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning#CORROSIVE_BITE}
+     * is eaten through with a chance that grows with the shortfall. The segment is lost and the run's fluid with it, so the damage is seen and patched. True if one went.
+     */
+    private boolean eat(Level level) {
+        if (level.getGameTime() % CORRODE_TICKS != 0 || members.isEmpty()
+                || !io.github.soundgoodizerfan.feedback.core.hazard.Corrosion.corrosive(ledger.getFluid()))
+            return false;
+        PipeBlockEntity pipe = members.stream().skip(level.random.nextInt(members.size())).findFirst().get();
+        if (!(pipe.getBlockState().getBlock() instanceof io.github.soundgoodizerfan.feedback.item.FormBlock block))
+            return false;
+        var material = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(block.material());
+        float resistance = material == null ? 1f : material.corrosionResistance().orElse(1f);
+        float bite = io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning.CORROSIVE_BITE;
+        if (resistance >= bite || level.random.nextFloat() >= (bite - resistance) / bite * CORRODE_CHANCE)
+            return false;
+        ledger.setFluid(FluidStack.EMPTY);
+        level.destroyBlock(pipe.getBlockPos(), false);
+        return true;
+    }
+
+    /** Invented. How often (ticks) a corrosive run is looked at, and the most chance a segment of the least resistant metal is eaten through. */
+    private static final int CORRODE_TICKS = 100;
+    private static final float CORRODE_CHANCE = 0.3f;
 }

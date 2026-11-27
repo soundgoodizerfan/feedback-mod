@@ -100,6 +100,10 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> LYE = petroType("lye", 1430, 2000, 300);
     /** The lithium cell's electrolyte: a lithium salt dissolved in an organic carbonate. */
     public static final DeferredHolder<FluidType, FluidType> BATTERY_CARBONATE = petroType("battery_carbonate", 1280, 3000, 300);
+    /** The nitrating acid of the explosives chain: strong, corrosive and an oxidiser. */
+    public static final DeferredHolder<FluidType, FluidType> NITRIC_ACID = petroType("nitric_acid", 1510, 1100, 300);
+    /** Creeper oil: the creeper charge drawn into naphtha, a dense oxygen-rich blast oil. */
+    public static final DeferredHolder<FluidType, FluidType> CREEPER_OIL = petroType("creeper_oil", 1050, 2200, 300);
     public static final DeferredHolder<FluidType, FluidType> HYDROCHLORIC_ACID = petroType("hydrochloric_acid", 1180, 1500, 300);
     public static final DeferredHolder<FluidType, FluidType> METHANE = petroType("methane", -3, 100, 300);
     public static final DeferredHolder<FluidType, FluidType> CHLOROFORM = petroType("chloroform", 1480, 600, 300);

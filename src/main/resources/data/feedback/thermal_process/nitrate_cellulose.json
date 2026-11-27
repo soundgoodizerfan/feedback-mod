@@ -1,0 +1,34 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:paper"
+    }
+  ],
+  "min_temperature": 0,
+  "optimal_temperature": 20,
+  "max_temperature": 40,
+  "required_tpu": 100,
+  "result": {
+    "id": "feedback:nitrocellulose_dust",
+    "count": 1
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:nitric_acid",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 60
+      }
+    ],
+    "heat": 0
+  }
+}

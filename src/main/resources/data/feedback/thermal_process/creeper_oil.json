@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:creeper_charge"
+    }
+  ],
+  "min_temperature": 30,
+  "optimal_temperature": 60,
+  "max_temperature": 90,
+  "required_tpu": 100,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:naphtha",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:creeper_oil",
+        "mb": 100
+      }
+    ],
+    "heat": 0
+  }
+}

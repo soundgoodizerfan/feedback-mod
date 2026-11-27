@@ -1,0 +1,44 @@
+{
+  "color": "#4a4a45",
+  "kind": "crystal",
+  "abundance": 1.6,
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 6.5,
+  "density": 10.0,
+  "thermal": {
+    "expansion": 1.5e-05,
+    "cooling_rate": 3.07,
+    "conductivity": 0.000499,
+    "melting_point": 3300,
+    "specific_heat": 0.25,
+    "latent_heat_fusion": 120,
+    "boiling_point": 4400,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 3300,
+    "service_temperature": 2800
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.258,
+    "yield_strength": 2
+  },
+  "separation": {
+    "reflectivity": 0.2,
+    "gangue": "feedback:granite"
+  },
+  "bears": {
+    "feedback:thorium": 0.88
+  },
+  "corrosion_resistance": 0.8,
+  "toxicity": 0.5,
+  "molten": {
+    "viscosity": 100,
+    "density": 9.2,
+    "shear_thickening": 0
+  },
+  "enchantability": 6,
+  "perks": {}
+}

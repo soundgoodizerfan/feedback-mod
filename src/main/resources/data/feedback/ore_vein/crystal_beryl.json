@@ -1,0 +1,18 @@
+{
+  "radius": 6,
+  "thickness": 3,
+  "density": 0.8,
+  "triangle": true,
+  "dimension_filter": [
+    "feedback:crystal"
+  ],
+  "indicator": "feedback:beryl_loose_rock",
+  "ore": "feedback:beryl_ore",
+  "deepslate_ore": "feedback:beryl_deepslate_ore",
+  "min_y": 0,
+  "max_y": 160,
+  "material": "feedback:beryl",
+  "share": 1.0,
+  "province": "pegmatite",
+  "biome_default": 1.0
+}
