@@ -49,5 +49,5 @@ AGENTS.md
 art/
 /scripts
 
-# Thaumaturge's API classes, built locally (scripts/build_thaumaturge_api.sh): all rights reserved, never committed
+# Thaumaturge's API classes, built locally (scripts/build_thaumaturge_api.sh): source-available, publishing barred, never committed
 libs/

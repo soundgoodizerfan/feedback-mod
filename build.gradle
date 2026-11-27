@@ -78,7 +78,7 @@ def extractLdlApi = tasks.register('extractLdlApi') {
     }
 }
 
-// Thaumaturge's API classes, for compat/thaumaturge/api only. Thaumaturge is not published and its licence is all rights reserved, so the
+// Thaumaturge's API classes, for compat/thaumaturge/api only. Thaumaturge is not published and its licence is source-available with publishing barred, so the
 // classes are compiled locally from its source (scripts/build_thaumaturge_api.sh) into libs/thaumaturge-api.jar, which is never committed and
 // compileOnly keeps out of our jar: nothing of Thaumaturge ships with Feedback. Without the jar that one package is left out of the build and the
 // rest compiles as before (a pack without Thaumaturge never loads it either: Feedback reaches it by reflection).

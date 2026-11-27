@@ -24,7 +24,7 @@ import net.neoforged.fml.ModList;
  * mod's aspect registry id ({@code thaumaturge:aspect}), so no Thaumaturge type appears here. The call finds a linked relay in range
  * of the consumer's position, walks to its node and drains the node's buffer; it returns 0 with no relay in range.
  *
- * <p>Taken from Thaumaturge (all rights reserved, MIT on dormancy): the name and signature of that one public method, and the
+ * <p>Taken from Thaumaturge (source-available, publishing barred, MIT on dormancy): the name and signature of that one public method, and the
  * registry id of its aspects, as a reader of its source. Rejected: its code, values and its flat vis-to-energy rate.
  */
 public final class ThaumaturgeVis {

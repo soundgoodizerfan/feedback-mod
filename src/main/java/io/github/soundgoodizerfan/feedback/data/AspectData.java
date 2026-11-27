@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * material lists under a form), worked out from the material's own figures, then the hand-written pins of
  * {@code data/feedback/aspect_pins.json} laid over it, a pin replacing the whole entry for its key.
  *
- * <p>Taken from Thaumaturge (all rights reserved, dormancy converts it to MIT): the data-map file format and the
+ * <p>Taken from Thaumaturge (source-available, publishing barred, dormancy converts it to MIT): the data-map file format and the
  * aspect ids, as our own JSON it reads. Rejected: its code, assets and any of its values. Items with neither a
  * baseline nor a pin are left to Thaumaturge's own recipe derivation.
  */
@@ -173,7 +173,7 @@ public final class AspectData implements DataProvider {
      * What the material is made of, by its own figures, each aspect weighted by the figure that earned it (so two
      * metals never carry the same numbers): the amount an ingot-sized form carries. The form only adds the powder aspect.
      */
-    private static Map<String, Float> aspects(Material material, String form) {
+    public static Map<String, Float> aspects(Material material, String form) {
         Map<String, Float> out = new LinkedHashMap<>();
         Material.Kind kind = material.kind().orElse(null);
         float density = material.density().muPerMb();

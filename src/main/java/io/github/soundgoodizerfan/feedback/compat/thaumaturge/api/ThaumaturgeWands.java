@@ -51,6 +51,8 @@ public final class ThaumaturgeWands {
 
     /** Registers the parts and their items on {@code modBus}. */
     public static void init(IEventBus modBus) {
+        // Not a wand part, but the same one reflective entry point: what a modular item scans as.
+        ThaumaturgeModularAspects.init(modBus);
         DeferredRegister<WandCap> caps = DeferredRegister.create(WandCap.REGISTRY_KEY, Feedback.MOD_ID);
         DeferredRegister<WandRod> rods = DeferredRegister.create(WandRod.REGISTRY_KEY, Feedback.MOD_ID);
         DeferredRegister.Items items = DeferredRegister.createItems(Feedback.MOD_ID);

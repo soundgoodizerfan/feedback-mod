@@ -20,7 +20,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
  * reads nothing and draws nothing when the mod is absent. Method handles, as with {@link ThaumaturgeFlux}: no Thaumaturge type appears in a
  * signature here.
  *
- * <p>Taken from Thaumaturge (all rights reserved, dormancy converts it to MIT): the name of the public {@code EssentiaCapabilities.STORAGE}
+ * <p>Taken from Thaumaturge (source-available, publishing barred, dormancy converts it to MIT): the name of the public {@code EssentiaCapabilities.STORAGE}
  * capability and the signatures of {@code IEssentiaStorage.contents/extract} and {@code AspectList.totalAmount/aspects}, as a reader of its source.
  * Rejected: its code, assets and values.
  */

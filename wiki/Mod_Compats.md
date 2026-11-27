@@ -292,7 +292,11 @@ Machines, devices and carried hardware carry aspects that match their function:
 - Reactor parts: their own aspects, set by what they do. See [Fission Reactor](Fission_Reactor.md).
 - [Robot](Robots.md) parts (chassis, drive, head, loader, radio, sensor, tether): Machina, Cognitio and Motus.
 
-Part items that carry their material on the stack have no aspects of their own, and Thaumaturge works theirs out from their recipes. So do engineered items that have no aspects set by hand: they take them from their recipe ingredients. Creative and debug items have none.
+Engineered items that have no aspects set by hand take them from their recipe ingredients. Creative and debug items have none.
+
+#### Modular items and parts
+
+A modular item (tool, weapon, armor, curio, battery, belt, pressure vessel and the rest) and every part item scan as the sum of the aspects of the materials they are built from, scaled by how much of each material went in, plus a little Fabrico for the assembly. An iron-headed pickaxe and a bronze-headed one scan differently. The aspects also show on the item's tooltip, and right-clicking a tube filter with one sets the filter to its first aspect. The item is not an essentia container: nothing can be drawn from it.
 
 Scanning Feedback's entities with the Thaumometer also yields aspects: the robot, the steam cloud, the grenade, the thrown potion bottle, the grapple hook and the thrown weapon.
 

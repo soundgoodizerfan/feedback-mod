@@ -19,7 +19,7 @@ import net.neoforged.fml.ModList;
  * class or a changed signature turns the whole binding off with one log line rather than an error at each call: flux
  * then reads as none anywhere. No Thaumaturge type appears in any signature here.
  *
- * <p>Taken from Thaumaturge (all rights reserved, dormancy converts it to MIT): the names and signatures of six public
+ * <p>Taken from Thaumaturge (source-available, publishing barred, dormancy converts it to MIT): the names and signatures of six public
  * {@code AuraHelper} methods, as a reader of its source. Rejected: its code, assets and values.
  */
 public final class ThaumaturgeFlux {
