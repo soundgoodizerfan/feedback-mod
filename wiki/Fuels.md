@@ -11,6 +11,8 @@ Fuel is a property of a material, not of an item. Anything that burns has a **fl
 | Crude Oil | 1200 Tu | 300 Tu | burns as it comes, at its worst |
 | [Ethanol](Chemicals.md#ethanol-and-acetone) | 1400 Tu | 363 Tu | flashes at 13 Tu |
 | [Acetone](Chemicals.md#ethanol-and-acetone) | 1400 Tu | 465 Tu | flashes at -20 Tu |
+| [Glycerol](Chemicals.md#glycerol-nitroglycerin-and-dynamite) | 1400 Tu | 370 Tu | flashes at 160 Tu |
+| [Nitroglycerin](Chemicals.md#glycerol-nitroglycerin-and-dynamite) | 1400 Tu | 210 Tu | flashes at 200 Tu; shock-sensitive |
 | Soul Oil | 1050 Tu | 260 Tu | carries oxygen of its own (see below) |
 | Ethylene | 1300 Tu | 450 Tu | gas |
 | Wisp Gas | 1050 Tu | 1000 Tu | gas |

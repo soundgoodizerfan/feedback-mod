@@ -1,0 +1,25 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:clay_ball"
+    }
+  ],
+  "min_temperature": 0,
+  "optimal_temperature": 15,
+  "max_temperature": 30,
+  "required_tpu": 100,
+  "result": {
+    "id": "feedback:dynamite_dust",
+    "count": 2
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:nitroglycerin",
+        "mb": 50
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 0
+  }
+}

@@ -93,6 +93,9 @@ public final class FFluidTypes {
     /** The solvents: ethanol (fermented from sugar) and acetone (fermented from grain starch). */
     public static final DeferredHolder<FluidType, FluidType> ETHANOL = petroType("ethanol", 789, 1200, 300);
     public static final DeferredHolder<FluidType, FluidType> ACETONE = petroType("acetone", 784, 310, 300);
+    /** The dynamite chain: glycerol (alkaline fermentation of sugar) and the nitroglycerin it is nitrated to. */
+    public static final DeferredHolder<FluidType, FluidType> GLYCEROL = petroType("glycerol", 1261, 1412000, 300);
+    public static final DeferredHolder<FluidType, FluidType> NITROGLYCERIN = petroType("nitroglycerin", 1600, 36000, 300);
     public static final DeferredHolder<FluidType, FluidType> WISP_GAS = petroType("wisp_gas", -2, 100, 300);
     public static final DeferredHolder<FluidType, FluidType> AIR = petroType("air", -1, 20, 300);
     public static final DeferredHolder<FluidType, FluidType> OXYGEN = petroType("oxygen", -1, 20, 300);

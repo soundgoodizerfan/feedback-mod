@@ -105,6 +105,10 @@ Cut from a [Creeper Sac](Creeper_Pen.md#creeper-sac). It carries its own oxygen,
 
 A smokeless propellant made from paper and acids ([Chemicals](Chemicals.md#nitrocellulose)). Its peak pressure is **5 Pu**, between gunpowder's 3 and the creeper charge's 12, and it burns faster than gunpowder, so it loses less in a short barrel. Cooks off at **180 Tu**, cooler than any other charge.
 
+### Dynamite Dust
+
+A powder made from clay and nitroglycerin ([Chemicals](Chemicals.md#glycerol-nitroglycerin-and-dynamite)). Its peak pressure is **9 Pu**, above nitrocellulose's 5 and below the creeper charge's 12, and it burns faster than nitrocellulose. Cooks off at **200 Tu**, between gunpowder and blaze powder.
+
 ### Blaze Powder
 
 **2.25 Pu per item**, three times gunpowder, but it's pure fuel. On its own it **barely burns**, because there's nothing in it to burn *with*: a blaze-only round gives about a tenth of its pressure.

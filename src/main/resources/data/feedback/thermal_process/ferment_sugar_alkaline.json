@@ -1,0 +1,30 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:sugar"
+    }
+  ],
+  "min_temperature": 15,
+  "optimal_temperature": 32,
+  "max_temperature": 40,
+  "required_tpu": 1200,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "minecraft:water",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:lye",
+        "mb": 20
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:glycerol",
+        "mb": 25
+      }
+    ],
+    "heat": 0
+  }
+}

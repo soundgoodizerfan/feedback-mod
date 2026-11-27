@@ -1,0 +1,35 @@
+{
+  "inputs": [],
+  "min_temperature": -5,
+  "optimal_temperature": 5,
+  "max_temperature": 25,
+  "required_tpu": 300,
+  "spoil_temperature": 35,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:glycerol",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:nitric_acid",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:nitroglycerin",
+        "mb": 80
+      },
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 60
+      }
+    ],
+    "heat": 0
+  }
+}

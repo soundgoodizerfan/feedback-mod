@@ -245,6 +245,7 @@ As it heats up:
 | Gunpowder | 300 Tu |
 | Blaze Powder (or any blend with it) | 220 Tu |
 | Nitrocellulose Dust | 180 Tu |
+| Dynamite Dust | 200 Tu |
 
 A gun cools down wherever it is: in your hand, in your hotbar, in a chest. A [Barrel Shroud](Gun_Parts.md#fittings) makes it cool faster; a suppressor makes it heat faster. Fittings take the barrel's heat too, and one that runs hotter than its metal allows softens and then [runs off the gun](Gun_Parts.md#fitting-heat).
 

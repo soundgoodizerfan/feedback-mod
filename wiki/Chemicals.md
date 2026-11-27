@@ -1,6 +1,6 @@
 # Chemicals
 
-The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, battery electrolyte, acids, carbon dioxide, leach liquors, liquid teleportant, heavy water, fluorine compounds, bleach, nitrogen, argon, helium, ammonia, ethylene, nitric acid, nitrocellulose, creeper oil, the polyester chain and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
+The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, battery electrolyte, acids, carbon dioxide, leach liquors, liquid teleportant, heavy water, fluorine compounds, bleach, nitrogen, argon, helium, ammonia, ethylene, nitric acid, nitrocellulose, glycerol, nitroglycerin, dynamite, creeper oil, the polyester chain and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
 
 ## Hydrogen
 
@@ -113,6 +113,14 @@ A flammable, toxic liquid. A Creeper Charge steeped in naphtha in a warm Reactor
 ## Ethanol and acetone
 
 Thin, clear, flammable liquids ([Fuels](Fuels.md)). Ethanol flashes at 13 Tu and acetone at -20 Tu, so a spill near a spark burns ([Hazards](Hazards.md)). Both come from fermenting in a [Reactor](Reactor.md#the-reactions) kept barely warm, no fire needed: sugar and water give ethanol, and wheat and water give acetone with some ethanol. Pipe and store them like any liquid fuel.
+
+## Glycerol, nitroglycerin and dynamite
+
+**Glycerol** is a thick, flammable liquid ([Fuels](Fuels.md)). Ferment a Sugar with water and a little [lye](#lye) in a [Reactor](Reactor.md#the-reactions) kept barely warm and it gives a small amount.
+
+**Nitroglycerin** is a shock-sensitive, flammable, toxic oil. Glycerol steeped in nitric and sulfuric acid in a Reactor held cold gives it, and most of the sulfuric acid is handed back (100 mB goes in, 60 mB comes out). Past 35 Tu the batch is lost, so keep the Reactor cold ([Hazards](Hazards.md)). Pipe and store it with care.
+
+**Dynamite Dust** is a clay ball soaked in nitroglycerin in a cool Reactor. It is a powder that burns hotter and faster than [nitrocellulose](#nitrocellulose): its peak pressure is **9 Pu** against nitrocellulose's 5. Use it as a filler in a [Demolition Charge](Demolition_Charge.md) or as a powder in the [Reloading Press](Ammunition.md#dynamite-dust).
 
 ## Fluorine and PTFE
 

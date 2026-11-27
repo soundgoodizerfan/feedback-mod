@@ -209,6 +209,14 @@ public final class FFluids {
             FLUIDS.register("acetone", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.ACETONE, FFluids.ACETONE, FFluids.ACETONE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> ACETONE_FLOWING =
             FLUIDS.register("acetone_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.ACETONE, FFluids.ACETONE, FFluids.ACETONE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> GLYCEROL =
+            FLUIDS.register("glycerol", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.GLYCEROL, FFluids.GLYCEROL, FFluids.GLYCEROL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> GLYCEROL_FLOWING =
+            FLUIDS.register("glycerol_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.GLYCEROL, FFluids.GLYCEROL, FFluids.GLYCEROL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NITROGLYCERIN =
+            FLUIDS.register("nitroglycerin", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.NITROGLYCERIN, FFluids.NITROGLYCERIN, FFluids.NITROGLYCERIN_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> NITROGLYCERIN_FLOWING =
+            FLUIDS.register("nitroglycerin_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.NITROGLYCERIN, FFluids.NITROGLYCERIN, FFluids.NITROGLYCERIN_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> WISP_GAS =
             FLUIDS.register("wisp_gas", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.WISP_GAS, FFluids.WISP_GAS, FFluids.WISP_GAS_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> WISP_GAS_FLOWING =
