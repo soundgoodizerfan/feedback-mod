@@ -14,8 +14,8 @@ import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 /**
  * Inventory Sorter (cpw, GPL-3.0) soft compat. Read at its IMC handler ({@code InventorySorter.handleimcmessage}, 1.21 line):
  * a {@code containerblacklist} message carries a menu type id, and the sorter then neither sorts nor scroll-moves in that
- * menu. Taken: the message protocol only, no code. Rejected: a mixin into its stack-merge key (brittle across its releases,
- * and food that merges by our tolerance already merges where the work happens, in the vessel that finishes it).
+ * menu. Taken: the message protocol only, no code. The food merge in a sort is the mixin
+ * {@code mixin/sorter/ItemStackComparatorMixin}.
  *
  * <p>A sort rewrites every slot of a container by item, so a screen whose slot positions are roles (an input here, a fuel
  * there, a result in the corner, a recipe grid) must be left alone: sorting would scramble the work in progress. Storage

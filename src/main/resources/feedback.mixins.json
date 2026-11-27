@@ -8,7 +8,8 @@
     "thaumaturge.BlueprintBlockMixin",
     "thaumaturge.BlueprintStateMixin",
     "thaumaturge.ItemMatchMixin",
-    "thaumaturge.ResearchRequirementMixin"
+    "thaumaturge.ResearchRequirementMixin",
+    "sorter.ItemStackComparatorMixin"
   ],
   "client": [
     "thaumaturge.EntryDetailIconMixin",

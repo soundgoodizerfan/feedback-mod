@@ -378,7 +378,7 @@ Any food from another mod (an item that is edible and is not from Minecraft or F
 
 With Inventory Profiles Next installed, Feedback writes the file `config/inventoryprofilesnext/integrationHints/feedback.json` that tells it which screens to leave alone.
 
-Food that differs in cook or moisture state does not merge in a sort.
+With Inventory Sorter installed, a sort merges stacks of one food whose states are nearly the same: each figure within about 2%, stamped within a minute, in surroundings within about 5 Tu, with the same name. The merged stack takes the worse state: more rot, live load, toxin and char, less cook, smoke and salt, and the earlier stamp. Food that differs more stays apart, and a scroll-move combines only identical food.
 
 ## Simple Voice Chat
 

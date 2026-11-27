@@ -89,6 +89,12 @@ public final class ProcessTuning {
 
     public static final float SALT_DRAW = 0.15f;
 
+    /** Invented. How close two foods' states must be on each fraction for a sort to count them as one food. */
+    public static final float SORT_MERGE_FRACTION = 0.02f;
+    /** Invented. How far apart in ticks two foods' stamps may be for a sort to merge them (a minute). */
+    public static final long SORT_MERGE_STAMP_TICKS = 1200L;
+    /** Invented. How far apart in Tu two foods' surroundings may be for a sort to merge them. */
+    public static final float SORT_MERGE_ENV_TU = 5f;
     /** Invented. A fresh food is stamped to the nearest minute, so stacks made close together still merge. */
     public static final long FOOD_STAMP_BUCKET = 1200L;
 
