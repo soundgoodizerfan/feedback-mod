@@ -184,7 +184,7 @@ public class FCreativeTabs {
             FModular.GAS_TANK, FModular.PRESSURE_VESSEL, FItems.VALVE, FItems.THERMAL_VALVE, FItems.RELIEF_VALVE, FItems.AIR_INTAKE, FItems.RADIATOR_PANEL, FItems.AIR_VALVE,
             FItems.BELLOWS, FItems.DAMPER, FItems.FLARE, FItems.HYDRIDE_BED, FItems.SCRUBBING_BED, FItems.ESSENTIA_VENT, FItems.ESSENTIA_ADAPTER, FItems.CONDENSER, FItems.REBOILER,
             FModular.TRAY, FItems.REACTOR, FModular.GAS_CENTRIFUGE,
-            FItems.SEEP, FItems.SOUL_SEEP, FItems.ECHO_SEEP, FItems.DERRICK_BASE, FItems.DERRICK_CASING, FItems.DERRICK_BIT,
+            FItems.SEEP, FItems.SOUL_SEEP, FItems.ECHO_SEEP, FItems.NITROGEN_SEEP, FItems.DERRICK_BASE, FItems.DERRICK_CASING, FItems.DERRICK_BIT,
             FItems.WELLHEAD);
 
     /** Handling: hand-fed blocks, then belts, tubes and pods, then the ender ports. */
@@ -250,7 +250,7 @@ public class FCreativeTabs {
             FItems.RAW_TIN, FItems.TIN_ORE, FItems.DEEPSLATE_TIN_ORE, FItems.RAW_ZINC, FItems.ZINC_ORE,
             FItems.DEEPSLATE_ZINC_ORE, FItems.RAW_LEAD, FItems.LEAD_ORE, FItems.DEEPSLATE_LEAD_ORE,
             FItems.GRAPHITE_ORE, FItems.DEEPSLATE_GRAPHITE_ORE, FItems.SALTPETRE_ORE, FItems.DEEPSLATE_SALTPETRE_ORE,
-            FItems.SULFUR_ORE, FItems.GALENA_ORE, FItems.PYRITE_ORE, FItems.KAOLINITE_DEPOSIT, FItems.SALT_DEPOSIT,
+            FItems.SULFUR_ORE, FItems.GALENA_ORE, FItems.PYRITE_ORE, FItems.KAOLINITE_DEPOSIT, FItems.SALT_DEPOSIT, FItems.REGOLITH, FItems.SULFUR_CRUST, FItems.CRYSTAL_ROCK,
             FItems.COPPER_FLOWER, FItems.ZINC_VIOLET, FItems.BLADDER_CAMPION, FItems.RUSTY_SOIL,
             FItems.BLEACHED_SOIL, FItems.SOOTY_SOIL, FItems.TARNISHED_SOIL, FItems.BLACK_SAND,
             FItems.GOSSAN_RUBBLE, FItems.BASTION_RUBBLE);

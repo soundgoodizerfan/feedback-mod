@@ -1029,6 +1029,8 @@
     "feedback:nickel_block",
     "feedback:nickel_pipe",
     "feedback:nitrogen_ice",
+    "feedback:sulfur_crust",
+    "feedback:crystal_rock",
     "feedback:note_block",
     "feedback:observer",
     "feedback:optical_glass_block",

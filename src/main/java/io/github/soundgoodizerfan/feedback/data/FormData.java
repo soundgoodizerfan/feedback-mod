@@ -324,8 +324,11 @@ public final class FormData {
             // Hand-registered ore blocks (mechanics §9.4), not generated forms.
             // Each ore needs the tool tier of the vanilla block it replaces: iron and copper a
             // stone tool, gold an iron one, coal and graphite any pickaxe (no needs tag).
+            tag(BlockTags.MINEABLE_WITH_SHOVEL).add(io.github.soundgoodizerfan.feedback.registry.FBlocks.REGOLITH.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.NITROGEN_ICE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SULFUR_CRUST.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.CRYSTAL_ROCK.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.GRAPHITE_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.DEEPSLATE_GRAPHITE_ORE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SALTPETRE_ORE.get())

@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "scooped=false": { "model": "feedback:block/nitrogen_seep" },
+    "scooped=true": { "model": "feedback:block/nitrogen_seep" }
+  }
+}

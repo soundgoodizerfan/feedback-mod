@@ -25,7 +25,10 @@ public final class SkyBodies {
     public static final Body FROZEN_MOON = new Body("frozen_moon", 200, 17, 11, 16f, 0xFFB9D9F2);
     public static final Body CRYSTAL = new Body("crystal", 315, 6, 37, 12f, 0xFFB584E6);
 
-    public static final Body[] ALL = { ACID_CLOUD, FROZEN_MOON, CRYSTAL };
+    /** The End's gas giant, the biggest and slowest wanderer: it resolves at the lowest magnification. */
+    public static final Body GAS_GIANT = new Body("gas_giant", 120, -4, 61, 6f, 0xFFE0B27A);
+
+    public static final Body[] ALL = { ACID_CLOUD, FROZEN_MOON, CRYSTAL, GAS_GIANT };
 
     /** The telescope's blur at or under which a planet's disc shows; above it only a smudge does. */
     public static final float MAX_BLUR = 0.3f;

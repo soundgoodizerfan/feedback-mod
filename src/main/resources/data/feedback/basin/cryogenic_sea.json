@@ -1,0 +1,17 @@
+{
+  "kind": "cryogenic",
+  "fluid": "feedback:nitrogen",
+  "radius": 36,
+  "thickness": 6,
+  "min_y": 40,
+  "max_y": 90,
+  "weight": 3,
+  "dimension_filter": ["feedback:frozen_moon"],
+  "biomes": "feedback:cryogenic_bearing",
+  "volume_mb": 6000000,
+  "drive_pu": 20,
+  "pressure_exponent": 0.8,
+  "crude": { "density": 0.81, "sulfur": 0.0, "light_fraction": 0.0 },
+  "grade_spread": 0.0,
+  "indicator": "feedback:nitrogen_seep"
+}

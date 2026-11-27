@@ -24,6 +24,10 @@ public class FWorldgen {
     public static final DeferredHolder<Feature<?>, io.github.soundgoodizerfan.feedback.geology.BasinFeature> BASIN = FEATURES.register("basin",
             () -> new io.github.soundgoodizerfan.feedback.geology.BasinFeature(NoneFeatureConfiguration.CODEC));
 
+    /** A crashed craft on the acid-cloud world's ground: a holed iron hull and a salvage locker. */
+    public static final DeferredHolder<Feature<?>, io.github.soundgoodizerfan.feedback.worldgen.WreckFeature> WRECK = FEATURES.register("wreck",
+            () -> new io.github.soundgoodizerfan.feedback.worldgen.WreckFeature(NoneFeatureConfiguration.CODEC));
+
     /** Stands traffic cameras on poles: anywhere, far more often beside a road. */
     public static final DeferredHolder<Feature<?>, io.github.soundgoodizerfan.feedback.worldgen.BlockCameraFeature> BLOCK_CAMERA = FEATURES.register("block_camera",
             () -> new io.github.soundgoodizerfan.feedback.worldgen.BlockCameraFeature(NoneFeatureConfiguration.CODEC));

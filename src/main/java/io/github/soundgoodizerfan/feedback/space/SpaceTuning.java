@@ -60,6 +60,9 @@ public final class SpaceTuning {
     /** Placeholder [OPEN]. The Gap's rim: blocks from its origin point (past the farthest planet and its capture sphere) beyond which a body feels drag, and the most of its velocity that drag takes each physics step. */
     public static final double GAP_RIM_BLOCKS = 1100, GAP_RIM_DRAG_MAX = 0.05;
     public static final float ACID_ERODE_CHANCE = 0.3f;
+    /** Placeholder [OPEN]. The crystal world's ringing: how often (ticks) a body is looked at, how many random blocks each time, and the chance a brittle one cracks. */
+    public static final int RESONANCE_SAMPLE_TICKS = 100, RESONANCE_SAMPLES = 16;
+    public static final float RESONANCE_CHANCE = 0.15f;
     /** Ticks the crossing overlay takes to clear. */
     public static final int FADE_TICKS = 60;
 

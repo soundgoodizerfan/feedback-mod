@@ -20,9 +20,11 @@ The End's air is very thin and holds no oxygen, and is gone above y 320. A [thru
 
 The acid-cloud world is a second point in the Gap along its own fixed bearing, the ochre planet in the sky, farther from the origin than the End. A craft that gets within its capture sphere while heading toward it arrives in the acid-cloud world at full size, high up, coming in fast and descending. A craft that misses drifts on toward the [rim](#the-rim). The planet grows in the sky as the craft closes on it.
 
-The world has a yellow-green sky and fog, acid-green water and rain, and no mobs. The air is thick: density 3.0 at the ground, thinning with height to zero near the top of the build height (y 316). It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 90 Tu. Terrain is shaped like the Overworld's. Flying up out of the thick air returns the craft to the Gap just short of the planet, shrunk again.
+The world has a yellow-green sky and fog, acid-green water and rain, and no mobs. The air is thick: density 3.0 at the ground, thinning with height to zero near the top of the build height (y 316). It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 90 Tu. Terrain is shaped like the Overworld's, and its ground is **Sulfur Crust**, a yellow rock mined with a pickaxe. Flying up out of the thick air returns the craft to the Gap just short of the planet, shrunk again.
 
 Its crust is rich in osmiridium, from y 20 to 90 ([Ores](Ores.md)), the platinum-group ore.
+
+Rare **crashed craft** lie on the ground: an iron hull half sunk into the surface with plates missing, and a chest inside holding the same salvage as a [derelict wreck](#salvage).
 
 The rain eats a hull. Every few seconds, exposed blocks of a metal with a **corrosion resistance under 0.9** (a block with air on at least one face) can be eaten away, the less resistant the metal the likelier. Steel, iron, bronze and lead go over minutes; tin, stainless steel, titanium and the noble metals are untouched. An eaten block leaves a gap in the hull, which you can patch with a block of a resistant metal. Resistances are on each [metal's page](Metals.md).
 
@@ -32,13 +34,17 @@ The frozen moon is a point in the Gap along its own fixed bearing, the pale blue
 
 The world has no weather, and its water freezes. The air is very thin: density 0.15 at the ground, thinning with height to zero at y 220. It holds no oxygen, so a [jet](Jet.md) cannot burn it and a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is -150 Tu. Flying up out of the air returns the craft to the Gap just short of the moon, shrunk again.
 
-The ground carries **Nitrogen Ice**, mined with a pickaxe. Melted in a vessel held cold, about -205 Tu, a block gives 1000 mB of [nitrogen](Chemicals.md#nitrogen). The moon has no liquid seas.
+The ground is **Regolith**, a pale dust dug with a shovel, with **Nitrogen Ice** on it, mined with a pickaxe. Melted in a vessel held cold, about -205 Tu, a block gives 1000 mB of [nitrogen](Chemicals.md#nitrogen). 
+
+A **cryogenic sea** lies under the ground in places: a flat circle of liquid nitrogen, between y 40 and 90. A **Nitrogen Seep** marks it on the surface, a pool of cold liquid that boils off a pale mist and does not burn. A **Copper Bucket** used on it scoops **250 mB** of liquid [nitrogen](Chemicals.md#nitrogen); the seep runs dry and refills after a minute, as a [tar seep](Oil.md#tar-seeps) does.
 
 ## The crystal world by rocket
 
 The crystal world is a point in the Gap along its own fixed bearing, the violet disc in the sky. A craft that gets within its capture sphere while heading toward it arrives in the crystal world at full size, high up, coming in fast and descending. A craft that misses drifts on toward the [rim](#the-rim). The planet grows in the sky as the craft closes on it.
 
-The world lies under a violet haze, with frequent amethyst geodes in the ground. Amethyst is the crystal of [experience](Experience.md). The air is thin: density 0.8 at the ground, thinning with height to zero at y 300. It holds some oxygen, a share of 0.4, but too little to breathe unaided, so a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 15 Tu. Flying up out of the air returns the craft to the Gap just short of the planet, shrunk again.
+The world lies under a violet haze, with frequent amethyst geodes in the ground. The ground is **Crystal Rock**, a violet rock mined with a pickaxe. Amethyst is the crystal of [experience](Experience.md). The air is thin: density 0.8 at the ground, thinning with height to zero at y 300. It holds some oxygen, a share of 0.4, but too little to breathe unaided, so a person needs a [Respirator](Respirator.md) or a sealed cabin (see [thin air](Hazards.md#thin-air)). The ambient temperature is 15 Tu. Flying up out of the air returns the craft to the Gap just short of the planet, shrunk again.
+
+The geodes ring. Every few seconds a craft standing in this world can lose a brittle block, one with a hardness of 0.6 or under (glass and glass panes), cracked with a chime. Tougher parts are untouched; the damage is a lost block you can see and patch.
 
 ## The rim
 

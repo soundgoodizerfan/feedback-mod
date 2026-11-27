@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "feedback:frozen_moon_flats",
+  "features": "feedback:basin",
+  "step": "underground_ores"
+}

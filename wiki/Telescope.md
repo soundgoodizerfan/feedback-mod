@@ -30,12 +30,13 @@ Hold right click to look through it. The view narrows by the **magnification** i
 
 ## Sighting a planet
 
-Three faint, unnamed points in the Overworld night sky ride the turning of the stars but drift among them from day to day: an acid cloud world, a frozen moon and a crystal world. They return every 23, 11 and 37 days, so each is up on some nights and not on others. To the eye they stay points.
+Four faint, unnamed points in the Overworld night sky ride the turning of the stars but drift among them from day to day: an acid cloud world, a frozen moon, a crystal world and the End's gas giant. They return every 23, 11, 37 and 61 days, so each is up on some nights and not on others. To the eye they stay points.
 
 Look through the telescope on a clear night (no rain or thunder) with open sky overhead, and keep the planet in the middle third of the view. A telescope strong and sharp enough resolves it as a lit disc; a poorer one shows only a haze, and nothing locks. The blur, heat included, must stay under 0.3, and the magnification must reach:
 
 | Planet | Magnification |
 | --- | --- |
+| The gas giant | 6x |
 | Acid cloud world | 8x |
 | Crystal world | 12x |
 | Frozen moon | 16x |
@@ -51,6 +52,7 @@ Each planet you resolve for the first time is written into your notes with a chi
 | Acid cloud world | yellow-green disc in thick cloud; dense acid air where hulls corrode, wings bite and thrusters struggle |
 | Frozen moon | small pale blue disc; seas of liquid gas, cryogenic coolant |
 | Crystal world | violet disc with glints; geodes holding stored experience |
+| The gas giant | broad banded amber disc, the slowest wanderer; the End hangs among its islands in a sea of light gas |
 
 Under each resolved planet a last line gives its transfer window, the time until the planet lines up with the stars: "Transfer window in N days" counts down in world days, and "Transfer window open" shows for a short stretch around the alignment. Planets with longer periods come around less often.
 

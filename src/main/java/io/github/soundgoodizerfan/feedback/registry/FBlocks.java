@@ -704,6 +704,14 @@ public class FBlocks {
                     .strength(1.0f)
                     .sound(SoundType.GRAVEL)));
 
+    /** The planets' ground: the frozen moon's dust, the acid-cloud world's sulfur crust and the crystal world's bare rock (their own noise settings put them on top). */
+    public static final DeferredBlock<Block> REGOLITH = BLOCKS.register("regolith",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GRAY).strength(0.6f).sound(SoundType.GRAVEL)));
+    public static final DeferredBlock<Block> SULFUR_CRUST = BLOCKS.register("sulfur_crust",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_YELLOW).strength(1.0f).sound(SoundType.STONE)));
+    public static final DeferredBlock<Block> CRYSTAL_ROCK = BLOCKS.register("crystal_rock",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(1.5f).sound(SoundType.AMETHYST)));
+
     /** The frozen moon's surface: nitrogen ice (as on Triton and Pluto), mined whole and melted in a cold vessel into liquid nitrogen. */
     public static final DeferredBlock<Block> NITROGEN_ICE = BLOCKS.register("nitrogen_ice",
             () -> new Block(BlockBehaviour.Properties.of()
@@ -1471,6 +1479,14 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_BROWN)
                     .strength(0.2f)
                     .sound(SoundType.MUD)
+                    .noCollission()
+                    .noOcclusion()
+                    .randomTicks()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.geology.NitrogenSeepBlock> NITROGEN_SEEP = BLOCKS.register("nitrogen_seep",
+            () -> new io.github.soundgoodizerfan.feedback.geology.NitrogenSeepBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE)
+                    .strength(0.2f)
+                    .sound(SoundType.GLASS)
                     .noCollission()
                     .noOcclusion()
                     .randomTicks()));
