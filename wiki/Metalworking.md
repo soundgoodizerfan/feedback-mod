@@ -52,6 +52,10 @@ Drawing and rolling at room temperature strains a metal that is ductile enough t
 
 A strained piece's tooltip reads *Cold-worked: n of m steps*, in red at the limit. Hammer blows never strain a piece. Hand drawing and hand rolling strain a piece the same way.
 
+## Worked past its mark
+
+A [Mechanical Hammer](Mechanical_Hammer.md), a [Mechanical Press](Mechanical_Press.md) or a [Grinding Wheel](Grinding_Wheel.md) stops a stage only when the piece has taken the work it asks, and the last stroke or pass can overshoot. Stock that was worked past its mark carries a ledger of it, and its tooltip reads *Worked past its mark: parts cut from it come out thin and light*. Parts cut from that stock at a part bench ([Smithing Table](Smithing_Table.md)) come out thin and light. Work that comes within a small margin of the mark carries no ledger, and stacks of the same ledger stack together.
+
 ## Wear: hitting the wrong thing
 
 When a blow can't go into the metal, it goes into the **machine** instead. That happens when:

@@ -101,7 +101,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Experience:** [Experience](Experience.md) · [Sculk](Sculk.md)
 
-**Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Electric Controller](Electric_Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md) · [Endernet Upgrade](Endernet_Upgrade.md) · [Job Board](Job_Board.md) · [Laser](Laser.md) · [Loudspeaker](Radio_Set.md#loudspeaker) · [Optical Terminal](Optical_Terminal.md) · [Radio Mast](Radio_Mast.md) · [Radio Set](Radio_Set.md) · [Robots](Robots.md) · [Tether Reel](Tether_Reel.md)
+**Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Electric Controller](Electric_Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md) · [Endernet Upgrade](Endernet_Upgrade.md) · [Job Board](Job_Board.md) · [Laser](Laser.md) · [Loudspeaker](Radio_Set.md#loudspeaker) · [Optical Terminal](Optical_Terminal.md) · [Radio Mast](Radio_Mast.md) · [Radio Set](Radio_Set.md) · [Antenna](Antenna.md) · [Robots](Robots.md) · [Tether Reel](Tether_Reel.md)
 
 **Guns:** [Cleaning Rod](Cleaning_Rod.md) · [Fluid Caster](Fluid_Caster.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Demolition Charge](Demolition_Charge.md) · [Shock Capsule](Shock_Capsule.md)
 

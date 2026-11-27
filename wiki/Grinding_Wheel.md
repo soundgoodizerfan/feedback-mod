@@ -36,6 +36,8 @@ It doesn't stop when the ingot is ground. Leave it and the ingot is ground down 
 
 It also grinds [gun parts](Gun_Parts.md): a plate into a **Slide**, a rod into a **Bolt**, a drilled plate into a **Trigger Group**. And it shortens a **Gun Barrel**, 5 mm per Wu: grind it under 5 cm and it's swarf.
 
+A pass that takes more off than the stage asks leaves the piece overworked; see [Worked past its mark](Metalworking.md#worked-past-its-mark).
+
 ## Grinding makes heat
 
 The wheel **heats whatever it's grinding**, 0.4 Tu for every Wu it grinds. Enough grinding on hardened steel can push it back into tempering range. A piece that has been on the wheel a while comes off warm or hot, and it cools down like any other [hot item](Heat.md#hot-items-stay-hot-and-cool-down-anywhere).

@@ -14,7 +14,7 @@ W is [Copper Wire](Wire_Drawer.md), C is a [circuit](Basic_Electronic_Circuit.md
 ## Using it
 
 - **Sneak and use** steps the band, 1 to 8, and back to 1 after 8. The band shows above the hotbar.
-- **Use with Copper Wire in the other hand** winds 100 mm of antenna onto the set and spends one wire. An antenna holds up to 2500 mm.
+- **Use with Copper Wire in the other hand** winds 100 mm of antenna onto the set and spends one wire. A wound antenna holds up to 2500 mm. Use an [Antenna](Antenna.md) with the set in the other hand, or right-click it onto the set in an inventory, to replace the set's antenna with the Antenna's length and metal.
 - **Right-click the set with a charged [Battery](Battery.md) on the cursor** loads it; right-click with an empty cursor takes the battery out. A set with no charge only listens.
 - **Hold the talk key** (**.** (period) by default, rebindable under the *Feedback* category in Controls) while a set is in either hand to transmit; a keyed set draws **1 Eu/s** from its battery, and stops transmitting when the battery runs flat. Listening costs nothing. While you talk the set's microphone also picks up the room (see [Room sound](#room-sound)).
 
@@ -35,7 +35,7 @@ Each band wants an antenna of its own length, a quarter wave. Band 1 wants about
 | 7 | about 343 |
 | 8 | 300 |
 
-The closer the antenna's length is to the band's, the better the set hears and is heard. The fit falls off smoothly on either side, and a badly matched antenna still carries a little. An antenna is only ever lengthened, so a set wound for a low band is too long for a high one.
+The closer the antenna's length is to the band's, the better the set hears and is heard. The fit falls off smoothly on either side, and a badly matched antenna still carries a little. Winding wire only lengthens the antenna, so a set wound for a low band is too long for a high one; fit an [Antenna](Antenna.md) to set a new length. The metal of the antenna counts too: a metal that conducts worse than copper hears less at any length.
 
 ## Reach
 
