@@ -27,8 +27,8 @@ The share is the part of the ore that is that metal. Depths are y levels. A prov
 | Limonite | Iron (50%) | Overworld, y 0 to 120, cap of the hematite veins |
 | Magnetite | Iron (90%) | Overworld, y -64 to 40, mafic complex |
 | Malachite | Copper (50%) | Overworld, y -16 to 112, cap of the chalcopyrite veins |
-| Molybdenite | Molybdenum (60%), Rhenium (2%) | Overworld, y -16 to 48, tin belt |
-| Monazite | Thorium (50%) | Overworld, y -48 to 16, pegmatite field; the Nether, y 10 to 117, hot Nether belt |
+| Molybdenite | Molybdenum (60%), Rhenium (2%) | Overworld, y -16 to 48, tin belt; the Nether, y 10 to 117, hot Nether belt |
+| Monazite | Thorium (50%) | Overworld, y -48 to 16, pegmatite field; the Nether, y 10 to 117, hot Nether belt; the End, y 0 to 80, in End stone |
 | Osmiridium | Osmium (50%), Iridium (50%) | Overworld: y 36 to 64, river placers; y -32 to 40, mafic complex; the acid-cloud world, y 20 to 90 ([The Gap](The_Gap.md#the-acid-cloud-world-by-rocket)) |
 | Pentlandite | Nickel (60%) | Overworld, y -32 to 40, mafic complex; the Nether, y 10 to 117, hot Nether belt |
 | Pyrolusite | Manganese (63%) | Overworld, y 0 to 64 |
@@ -36,7 +36,7 @@ The share is the part of the ore that is that metal. Depths are y levels. A prov
 | Rheniite | Rhenium (57%) | The End, y 0 to 80, in End stone |
 | Spodumene | Lithium (4%) | Overworld, y 16 to 128, pegmatite field |
 | Stibnite | Antimony (72%) | Overworld, y -8 to 64, sulfide belt |
-| Thorianite | Thorium (88%) | Overworld, y -64 to -8; the Nether, y 10 to 117, hot Nether belt |
+| Thorianite | Thorium (88%) | Overworld, y -64 to -8; the Nether, y 10 to 117, hot Nether belt; the frozen moon, y 20 to 100 |
 | Tin | Tin (100%) | Overworld, y 0 to 64, tin belt |
 | Uraninite | Uranium (88%) | Overworld, y -64 to 16 (uranium lode); the Nether, y 10 to 117, hot Nether belt |
 | Vanadinite | Vanadium (11%) | Overworld, y -24 to 40 |

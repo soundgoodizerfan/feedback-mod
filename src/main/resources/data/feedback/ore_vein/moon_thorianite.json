@@ -1,0 +1,16 @@
+{
+  "radius": 7,
+  "thickness": 3,
+  "density": 0.8,
+  "dimension_filter": [
+    "feedback:frozen_moon"
+  ],
+  "indicator": "feedback:thorianite_loose_rock",
+  "indicator_depth": 12,
+  "ore": "feedback:thorianite_ore",
+  "deepslate_ore": "feedback:thorianite_ore",
+  "min_y": 20,
+  "max_y": 100,
+  "material": "feedback:thorianite",
+  "share": 0.6
+}

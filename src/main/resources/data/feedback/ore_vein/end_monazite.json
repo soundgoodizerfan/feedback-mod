@@ -1,0 +1,18 @@
+{
+  "radius": 6,
+  "thickness": 3,
+  "density": 0.75,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:the_end"
+  ],
+  "host": "feedback:end_ore_replaceables",
+  "indicator": "feedback:monazite_loose_rock",
+  "indicator_depth": 12,
+  "ore": "feedback:monazite_ore",
+  "deepslate_ore": "feedback:monazite_ore",
+  "min_y": 0,
+  "max_y": 80,
+  "material": "feedback:monazite",
+  "share": 0.7
+}

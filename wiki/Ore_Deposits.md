@@ -26,9 +26,10 @@ Dig, as before. Each ore sits where it always did.
 - **Deep Dark uraninite** in the deepslate between y -64 and -16, only where the Deep Dark lies; the sculk concentrates the isotope. It is [radioactive](Radiation.md).
 - **Nether ores**: **pentlandite**, **wolframite**, **chromite**, **cobaltite**, **uraninite** and **monazite** grow in the netherrack all through the Nether, richer in the hot Nether belt, with the same signs as their Overworld kin. Uraninite and monazite are [radioactive](Radiation.md).
 - **Bastion Rubble** in small, rare patches in the Nether between y 30 and 110. Each block breaks into 1 to 3 Worn Netherite Bits, the scrap of [Netherite](Netherite.md#getting-the-scrap).
-- **Sulfur** in the Nether, in the netherrack, with a loose rock above.
+- **Sulfur** in the Nether, in the netherrack, with a loose rock above, and in the Overworld between y -16 and 64 in the sulfide belt, with a loose rock above.
 - **Ilmenite** (titanium) in the netherrack.
 - **Thorianite** (thorium) in the netherrack between y 10 and 117, in the hot Nether belt, with a loose rock above.
+- **Molybdenite** (molybdenum) in the netherrack between y 10 and 117, in the hot Nether belt.
 - **Nether gold and nether quartz** in the netherrack, all through the Nether. Gold still angers piglins when you mine it.
 
 ## Rarity, provinces and companions
@@ -41,12 +42,12 @@ Dig, as before. Each ore sits where it always did.
 | --- | --- |
 | Tin belt | tin, wolframite, molybdenite |
 | Porphyry belt | copper, chalcopyrite, gold, silver |
-| Sulfide belt | galena, sphalerite, zinc, lead, pyrite, stibnite, cobaltite |
+| Sulfide belt | galena, sphalerite, zinc, lead, pyrite, stibnite, cobaltite, sulfur |
 | Pegmatite field | beryl, tourmaline, spodumene, monazite, garnet |
 | Mafic complex | chromite, pentlandite, magnetite, osmiridium sulfide |
 | Evaporite basin | borax, saltpetre |
 | River placers | osmiridium |
-| Hot Nether belt | Nether pentlandite, chromite, cobaltite, wolframite, uraninite, monazite |
+| Hot Nether belt | Nether pentlandite, chromite, cobaltite, wolframite, uraninite, monazite, molybdenite |
 
 Ores with no province (coal, iron, redstone, lapis, diamond, emerald and others) are spread evenly. The Nether holds a little more ore than the Overworld, and its provinces are milder.
 
@@ -95,13 +96,13 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 Gems grow in veins of their own, each marked by a loose rock. Mined, the ore block drops the cut stone (*Jade*, *Garnet*, *Tourmaline*, *Ruby*, *Beryl*) ([Materials](Materials.md#gems)).
 
 - **Jade** in the Overworld between y 32 and 160.
-- **Garnet** in the Overworld between y -32 and 48, the widest of the four veins.
+- **Garnet** in the Overworld between y -32 and 48, the widest of the four veins. Garnet also grows on the crystal world.
 - **Tourmaline** in the Overworld between y 16 and 128, in the narrowest veins. Tourmaline and beryl also grow on the crystal world.
 - **Ruby** in the Nether, between y 10 and 117, in the netherrack.
 
 ## Beyond the Overworld
 
-The [Gap](The_Gap.md#salvage) holds asteroids of iron, pentlandite, sperrylite, osmiridium and rare beryl. The crystal world has frequent amethyst geodes, and veins of beryl and tourmaline between y 0 and 160 ([The Gap](The_Gap.md#the-crystal-world-by-rocket)). The frozen moon has ilmenite veins between y 20 and 100. The End has **rheniite** (rhenium) in End stone between y 0 and 80, with a loose rock above.
+The [Gap](The_Gap.md#salvage) holds asteroids of iron, pentlandite, sperrylite, osmiridium and rare beryl. The crystal world has frequent amethyst geodes, and veins of beryl, tourmaline and garnet between y 0 and 160 ([The Gap](The_Gap.md#the-crystal-world-by-rocket)). The frozen moon has ilmenite and thorianite veins between y 20 and 100, with a loose rock above the thorianite. The acid-cloud world has pyrite veins between y 20 and 90, with a loose rock above. The End has **rheniite** (rhenium) in End stone between y 0 and 80, with a loose rock above, and **monazite** (thorium) in End stone over the same depths, also with a loose rock above. Monazite is [radioactive](Radiation.md).
 
 ## Crystals and clay
 

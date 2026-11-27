@@ -1,0 +1,17 @@
+{
+  "ore": "feedback:pyrite_ore",
+  "deepslate_ore": "feedback:pyrite_ore",
+  "radius": 9,
+  "thickness": 4,
+  "density": 0.75,
+  "min_y": 20,
+  "max_y": 90,
+  "triangle": true,
+  "dimension_filter": [
+    "feedback:acid_cloud"
+  ],
+  "indicator": "feedback:pyrite_loose_rock",
+  "indicator_depth": 12,
+  "material": "feedback:pyrite",
+  "share": 0.8
+}
