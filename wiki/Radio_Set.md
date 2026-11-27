@@ -1,6 +1,6 @@
 # Radio Set
 
-A hand-held radio. Hold the talk key and the sounds around you, and your voice with Simple Voice Chat, reach everyone else holding a set tuned to the same band, over distances far beyond proximity chat.
+A hand-held radio. Hold the talk key and the sounds around you, and your voice with Simple Voice Chat, reach everyone else holding a set tuned to the same band, over distances far beyond proximity chat. A [Loudspeaker](#loudspeaker) block plays the room sound aloud.
 
 ## Crafting
 
@@ -56,3 +56,32 @@ While you hold the talk key, the set's microphone hears game sounds made within 
 ## Voice chat
 
 With [Simple Voice Chat](Mod_Compats.md#simple-voice-chat) installed on the server and on the players, your voice travels over the set as well, and replaces your proximity voice while you talk. Without it the set carries room sound only.
+
+## Loudspeaker
+
+A block that plays aloud the room sound a keyed set relays on its band. It is a sink on an [electrical](Electricity.md) line and is silent without power.
+
+### Crafting
+
+```
+P C P
+W E W
+P P P
+```
+
+P is a Steel Plate, C is paper, W is [Copper Wire](Wire_Drawer.md) and E is an [Electromagnet](Electromagnet.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row, 2 screws ([Fasteners](Fasteners.md)) and Electrical Treatise II: Coils and Magnets ([Treatise](Treatise.md)).
+
+### Using it
+
+- **Use with a radio set in hand** copies the set's band onto the speaker.
+- **Use with an empty hand** steps the band, 1 to 8, and back to 1 after 8.
+
+The band shows above the hotbar. The speaker has no antenna to tune.
+
+### How it works
+
+While a person holds the talk key on a set on the speaker's band, the sounds the set's microphone hears ([Room sound](#room-sound)) come out of the speaker, at the speaker's own place, if that person is within **64 blocks** of it and in the same dimension. The farther away they are, the quieter it plays, and near the edge it drops out in patches. Voice chat does not play from it.
+
+A speaker with no power stays silent. A speaker does not replay what another speaker plays.
+
+Noise cuts the link as it does a set's ([Noise](#noise)): an Arc Head or Arc Hearth within 4 blocks of the speaker, or of the person talking, weakens it, and Lead Chests around the speaker shield it.
