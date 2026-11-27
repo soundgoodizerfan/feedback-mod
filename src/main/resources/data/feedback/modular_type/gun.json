@@ -656,6 +656,22 @@
           {
             "name": "scope",
             "cells": 2
+          },
+          {
+            "name": "rangefinder",
+            "trait": "gun_rangefinder",
+            "params": {
+              "draw_eu": 2
+            },
+            "adjective": true
+          },
+          {
+            "name": "laser",
+            "trait": "gun_laser",
+            "params": {
+              "draw_eu": 5
+            },
+            "adjective": true
           }
         ],
         "slots": [

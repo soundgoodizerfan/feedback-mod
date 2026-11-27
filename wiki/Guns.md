@@ -163,6 +163,13 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why a shor
 | Iron | 85% | 0.12 s | none |
 | Reflex | 80% | 0.15 s | 1 plate |
 | Scope | 40% | 0.3 s | 2 plates |
+| Rangefinder | as a reflex | as a reflex | 1 plate |
+| Laser sight | as a reflex | as a reflex | 1 plate |
+
+A **rangefinder** or **laser sight** is a reflex sight that runs on a [Battery](Battery.md) loaded into the gun. Charge the battery at the [Charger](Charger.md), then right-click the gun in your inventory with the battery on the cursor; right-click it with an empty cursor to take the battery out. While the gun is held the sight draws the battery down steadily. With the battery empty, or none loaded, both sights go dark. Neither changes any figure of the shot.
+
+- The rangefinder prints the distance to what the muzzle points at under the crosshair in first person, in whole blocks, or *no return* past 300 blocks.
+- The laser sight throws a red beam from the muzzle to the point aimed at, with a red glowing mote where it lands. Other players see the beam.
 
 **Recoil** throws your view upward. It's the bullet's push (plus a quarter again for the gas) divided by the gun's weight, and scaled by how grippy the grip is (see [Gun Parts](Gun_Parts.md#grip-friction)). A heavy gun with a grippy grip kicks least. Aiming takes 35% off it. A long string of shots climbs up to about twice the first shot's kick by the tenth, and settles when you stop. Gun techniques that fire the gun kick the view the same way (see [Skills](Skills.md)).
 

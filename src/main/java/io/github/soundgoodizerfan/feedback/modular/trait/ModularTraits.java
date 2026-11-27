@@ -87,6 +87,8 @@ public final class ModularTraits {
         register("slam", new io.github.soundgoodizerfan.feedback.modular.trait.Slam());
         register("pierce", new io.github.soundgoodizerfan.feedback.modular.trait.Pierce());
         register("butcher", new io.github.soundgoodizerfan.feedback.modular.trait.Butcher());
+        register("gun_rangefinder", new io.github.soundgoodizerfan.feedback.modular.trait.GunRangefinder());
+        register("gun_laser", new io.github.soundgoodizerfan.feedback.modular.trait.GunLaser());
         register("line_cut", new io.github.soundgoodizerfan.feedback.modular.trait.LineCut());
         register("smash", new io.github.soundgoodizerfan.feedback.modular.trait.SmashAttack());
         register("spring", new io.github.soundgoodizerfan.feedback.modular.trait.Spring());

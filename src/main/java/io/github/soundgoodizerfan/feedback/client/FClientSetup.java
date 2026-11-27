@@ -181,6 +181,7 @@ public class FClientSetup {
     @SubscribeEvent
     public static void registerGuiLayers(net.neoforged.neoforge.client.event.RegisterGuiLayersEvent event) {
         GunHud.register(event);
+        io.github.soundgoodizerfan.feedback.client.gun.SightHud.register(event);
         io.github.soundgoodizerfan.feedback.client.gun.FireControlHud.register(event);
         HudReadouts.register(event);
         io.github.soundgoodizerfan.feedback.client.hud.SpaceFade.register(event);

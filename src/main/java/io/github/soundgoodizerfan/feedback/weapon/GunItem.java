@@ -52,6 +52,14 @@ public abstract class GunItem extends ModularItem implements io.github.soundgood
         return slotChanged || oldStack.getItem() != newStack.getItem();
     }
 
+    /** A battery on the cursor is loaded into the gun in the slot for its powered sights ({@link SightCell}). */
+    @Override
+    public boolean overrideOtherStackedOnMe(ItemStack gun, ItemStack other, net.minecraft.world.inventory.Slot slot,
+                                            net.minecraft.world.inventory.ClickAction action, net.minecraft.world.entity.player.Player player,
+                                            net.minecraft.world.entity.SlotAccess access) {
+        return SightCell.load(gun, other, slot, action, player, access);
+    }
+
     /** Whether {@code stack} is a gun made to be fired one-handed: the {@code off_hand} trait (a handgun's receiver). */
     public static boolean oneHanded(ItemStack stack) {
         if (!(stack.getItem() instanceof GunItem))
