@@ -87,11 +87,19 @@ public final class Cooking {
 
     private static final Map<Item, Entry> FOREIGN = new java.util.concurrent.ConcurrentHashMap<>();
 
+    /** Drop the cached foreign figures: they read the perks, which a reload changes. */
+    static void forgetForeign() {
+        FOREIGN.clear();
+    }
+
+    /** The share of a perk's strength per unit chance of the effect that names it, matching the vanilla foods' own figures (golden carrot 0.08). */
+    private static final float FOREIGN_PERK = 0.08f;
+
     /**
      * A food another mod added: any item with the food component, or tagged as a fruit, vegetable, raw meat or grain ({@code c:foods/*}), that is neither
      * ours nor vanilla's (both have materials) is a perishable, its figures taken from its nutrition; the tags give it a fruit's sugar and vitamins, a vegetable's
      * vitamins or a meat's protein. A heartier food (more nutrition) is denser and drier, a sweeter one (higher
-     * saturation modifier) carries more fat; it has no compounds, perks or cooked form, so it only keeps, spoils and feeds. Cached
+     * saturation modifier) carries more fat; it has no cooked form; an effect its component carries is read as the perks that grant that effect, at {@code FOREIGN_PERK} times its chance, so it keeps, spoils, feeds and does what its effects say. Cached
      * per item; read from the stack's component so the figures follow whatever that mod gave it. Taken from no mod's code.
      */
     private static Optional<Entry> foreign(ItemStack stack) {
@@ -114,7 +122,12 @@ public final class Cooking {
                 compounds.put("vitamin", 0.06f);
             if (stack.is(MEAT))
                 compounds.put("protein", 0.12f);
-            return new Entry(new Material.Food(moisture, 0f, 0f, Optional.empty(), fat, 0.2f, Map.copyOf(compounds), Map.of(), 1f, 1f), FTuning.FOOD_CHAR_TU, Optional.empty());
+            Map<String, Float> perks = new java.util.HashMap<>();
+            if (food != null)
+                for (FoodProperties.PossibleEffect effect : food.effects())
+                    effect.effect().getEffect().unwrapKey().ifPresent(key -> FoodPerk.get().granting(key.location())
+                            .forEach(perk -> perks.merge(perk, effect.probability() * FOREIGN_PERK, Float::sum)));
+            return new Entry(new Material.Food(moisture, 0f, 0f, Optional.empty(), fat, 0.2f, Map.copyOf(compounds), Map.copyOf(perks), 1f, 1f), FTuning.FOOD_CHAR_TU, Optional.empty());
         }));
     }
 

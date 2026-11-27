@@ -17,7 +17,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [Serene Seasons](#serene-seasons) | Optional | The season shifts the Overworld's room temperature |
 | [Legendary Survival Overhaul](#legendary-survival-overhaul) | Optional | Body temperature and thirst follow Feedback's rooms, machines, armor, food and fluids |
 | [EMI](#emi) | Optional | Shows Feedback's recipe cards through its JEI bridge |
-| [Other mods' foods](#other-mods-foods) | Optional | Any food from another mod keeps and spoils like Feedback food |
+| [Other mods' foods](#other-mods-foods) | Optional | Any food from another mod keeps, spoils and carries perks like Feedback food |
 | [Inventory Sorter and Inventory Profiles Next](#inventory-sorter-and-inventory-profiles-next) | Optional | Sorting skips screens whose slots are roles |
 | [Simple Voice Chat](#simple-voice-chat) | Optional | Adds voice to the [Radio Set](Radio_Set.md) |
 | [LambDynamicLights](#lambdynamiclights) | Optional | Glowing hot items light the area while held or dropped |
@@ -370,7 +370,7 @@ LSO's icon and its word states work as they do without Feedback. While you carry
 
 ## Other mods' foods
 
-Any food from another mod (an item that is edible and is not from Minecraft or Feedback) keeps, spoils and feeds through the [Food](Food.md) state model. Its keeping figures come from its nutrition: a heartier food is drier, and a sweeter food holds more fat. An item tagged as a fruit, vegetable, raw meat or grain also counts when it has no food value of its own: pots and skillets take it, a fruit carrying sugar and vitamins, a vegetable vitamins and a meat protein. It has no other compounds and no perks, and cooking it yields nothing. A material file for the item overrides these figures.
+Any food from another mod (an item that is edible and is not from Minecraft or Feedback) keeps, spoils and feeds through the [Food](Food.md) state model. Its keeping figures come from its nutrition: a heartier food is drier, and a sweeter food holds more fat. An item tagged as a fruit, vegetable, raw meat or grain also counts when it has no food value of its own: pots and skillets take it, a fruit carrying sugar and vitamins, a vegetable vitamins and a meat protein. Each potion effect on the food becomes every [perk](Food.md#food-perks) that grants that effect, so a foreign food with night vision shows the Night Sight perk and acts like it. It has no other compounds, and cooking it yields nothing. A material file for the item overrides these figures.
 
 ## Inventory Sorter and Inventory Profiles Next
 

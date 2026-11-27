@@ -115,7 +115,13 @@ public class FoodPerk extends SimpleJsonResourceReloadListener {
                         Feedback.LOGGER.warn("Food perk {} has unknown kind {}", id, d.kind());
                 }));
         perks = Map.copyOf(loaded);
+        Cooking.forgetForeign();
         Feedback.LOGGER.info("Loaded {} food perks", perks.size());
+    }
+
+    /** Every perk that grants the effect when its dose arrives: what a foreign food carrying that effect on its component is read as. */
+    public List<String> granting(ResourceLocation effect) {
+        return perks.entrySet().stream().filter(e -> e.getValue().grant().stream().anyMatch(g -> g.effect().equals(effect))).map(Map.Entry::getKey).toList();
     }
 
     public Optional<Def> find(String name) {
