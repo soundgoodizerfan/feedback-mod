@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": { "tag": "minecraft:logs" },
+    "F": { "tag": "c:fences/wooden" },
+    "I": { "tag": "c:ingots/iron" },
+    "B": { "tag": "c:cobblestones" }
+  },
+  "pattern": [
+    "LLL",
+    "FIF",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:tilt_hammer"
+  }
+}

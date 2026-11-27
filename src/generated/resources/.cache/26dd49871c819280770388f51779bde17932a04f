@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T20:53:14.671422822	Tags for minecraft:fluid mod id feedback
+// 1.21.1	2026-11-27T13:58:00.971713665	Tags for minecraft:fluid mod id feedback
 5ae7af34ed7ee675d2dc65d80ea3c8397e250dfd data/c/tags/fluid/acetaldehyde.json
 c203a55f68fcb3630c88c0f962262cf2dc8345a3 data/c/tags/fluid/air.json
 1902902e70065592c2e3734fc2d5ce39c1036b7e data/c/tags/fluid/alkaline_water.json
@@ -12,6 +12,7 @@ cf01541af44223de4bce1481730349340479eddb data/c/tags/fluid/carbon_dioxide.json
 8efe09f52caa8b84180bf44f005fec62a0af8c62 data/c/tags/fluid/chloroform.json
 52cb453c78aa2c2e052ecd5db4356838999be260 data/c/tags/fluid/cobalt_sulfate.json
 3b3e9c7735fbad91e4b1f5817f0101b047bd442f data/c/tags/fluid/copper_sulfate.json
+b361d32224bbf588692e31f3d2b5161aaaa4fcc1 data/c/tags/fluid/creeper_oil.json
 6a6c98d81114a0fbd7c6a5c6a42ab817adfac5e1 data/c/tags/fluid/crude_oil.json
 d535e416b302e7925225e1087a9e01e28e351b84 data/c/tags/fluid/cryolite_bath.json
 d2234e4fd523fe7ad49893e684ab38f3475d1e17 data/c/tags/fluid/damped_spatial_solvent.json
@@ -213,6 +214,7 @@ e28cc5fc2f4c246ee9ec057ca780aecc56a6d27c data/c/tags/fluid/molten_zinc.json
 48b2cb85abf1b2792bee850e194c6d800d92963d data/c/tags/fluid/naphtha.json
 192074cb9c0fa85bba1e9a8dcd8ff48257dd4c07 data/c/tags/fluid/naphtha_vapour.json
 14459ac75d180f7d0444b3c6e6ff7f91a802630e data/c/tags/fluid/nickel_sulfate.json
+90eb1e882563a58d4ad383409a2e2531d80e2700 data/c/tags/fluid/nitric_acid.json
 4df618fe46891ee4252c0bcb716b7b5ab5a99df4 data/c/tags/fluid/nitrogen.json
 19de4a30f56ec021dfeef7a64e68d7f791507282 data/c/tags/fluid/osmium_tetroxide.json
 49ea320345cc25846596232ed3568a696841db12 data/c/tags/fluid/oxygen.json

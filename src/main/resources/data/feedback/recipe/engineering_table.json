@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "C": { "tag": "minecraft:wooden_slabs" },
-    "S": { "item": "feedback:wrought_iron_plate" },
+    "B": { "tag": "c:storage_blocks/iron" },
     "T": { "item": "minecraft:crafting_table" }
   },
   "pattern": [
     "CCC",
-    "STS",
-    "SSS"
+    " T ",
+    " B "
   ],
   "result": {
     "count": 1,

@@ -55,6 +55,7 @@ public class FItems {
 
     public static final DeferredItem<BlockItem> CRANK_LINKAGE = ITEMS.registerSimpleBlockItem(FBlocks.CRANK_LINKAGE);
     public static final DeferredItem<BlockItem> MECHANICAL_HAMMER = ITEMS.registerSimpleBlockItem(FBlocks.MECHANICAL_HAMMER);
+    public static final DeferredItem<BlockItem> TILT_HAMMER = ITEMS.registerSimpleBlockItem(FBlocks.TILT_HAMMER);
 
     public static final DeferredItem<BlockItem> WIRE_DRAWER = ITEMS.registerSimpleBlockItem(FBlocks.WIRE_DRAWER);
     public static final DeferredItem<BlockItem> ROLLING_MILL = ITEMS.registerSimpleBlockItem(FBlocks.ROLLING_MILL);

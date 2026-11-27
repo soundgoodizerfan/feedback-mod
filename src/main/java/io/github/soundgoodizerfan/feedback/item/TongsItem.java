@@ -12,7 +12,12 @@ import io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlockEntity;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
+import io.github.soundgoodizerfan.feedback.machine.firebox.FireboxBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlock;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
@@ -63,6 +68,44 @@ public class TongsItem extends Item implements Insulator {
                 && level.getBlockEntity(block.getBlockPos()) instanceof SkilletBlockEntity pan ? pan : null;
     }
 
+    /** The fire the player is looking at within reach, or null. */
+    private static HeatSource fire(Player player, Level level) {
+        HitResult hit = player.pick(FTuning.SKILLET_LIFT_REACH, 0f, false);
+        return hit instanceof BlockHitResult block && block.getType() == HitResult.Type.BLOCK
+                && level.getBlockEntity(block.getBlockPos()) instanceof HeatSource source ? source : null;
+    }
+
+    private static boolean holding(ItemStack tongs) {
+        ItemStack held = tongs.get(FDataComponents.TONGS_HELD.get());
+        return held != null && !held.isEmpty();
+    }
+
+    /**
+     * Tongs on a firebox: sneak with a piece in the jaws lays it in the flame; with empty jaws a click takes the piece lying there into them.
+     * (Holding use with a piece in the jaws reheats it in place: {@link #onUseTick}.)
+     */
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        Level level = context.getLevel();
+        if (!(level.getBlockEntity(context.getClickedPos()) instanceof FireboxBlockEntity firebox) || context.getPlayer() == null)
+            return InteractionResult.PASS;
+        ItemStack tongs = context.getItemInHand();
+        if (holding(tongs)) {
+            if (!context.getPlayer().isShiftKeyDown() || !firebox.getPiece().isEmpty())
+                return InteractionResult.PASS;
+            if (!level.isClientSide) {
+                firebox.putPiece(tongs.get(FDataComponents.TONGS_HELD.get()));
+                tongs.remove(FDataComponents.TONGS_HELD.get());
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (firebox.getPiece().isEmpty())
+            return InteractionResult.PASS;
+        if (!level.isClientSide)
+            tongs.set(FDataComponents.TONGS_HELD.get(), firebox.takePiece());
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return 72000;
@@ -77,10 +120,21 @@ public class TongsItem extends Item implements Insulator {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (pan(player, level) == null)
+        if (pan(player, level) == null && !(holding(stack) && fire(player, level) != null))
             return InteractionResultHolder.pass(stack);
         player.startUsingItem(hand);
         return InteractionResultHolder.consume(stack);
+    }
+
+    /** A piece held in the jaws over a fire closes on its flame without leaving the tongs; the other hand stays free to swing. */
+    private static void reheat(ItemStack tongs, HeatSource source, Level level) {
+        ItemStack held = tongs.get(FDataComponents.TONGS_HELD.get());
+        if (held == null || held.isEmpty())
+            return;
+        Tu now = ItemHeat.get(held, level);
+        float target = source.getFireTu().value();
+        if (target > now.value())
+            ItemHeat.set(held, new Tu(SkilletBlock.warm(now.value(), target, 1f)), level);
     }
 
     @Override
@@ -88,8 +142,12 @@ public class TongsItem extends Item implements Insulator {
         if (level.isClientSide || !(user instanceof Player player))
             return;
         SkilletBlockEntity pan = pan(player, level);
-        if (pan == null)
+        if (pan == null) {
+            HeatSource source = fire(player, level);
+            if (source != null)
+                reheat(stack, source, level);
             return;
+        }
         pan.lift();
         if (pan.panTu() > ThermalTuning.CONTACT_PAIN_TU.value() && pan.panTu() <= handlesUpToTu(stack, level))
             io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(player, "progress/heat/tongs");

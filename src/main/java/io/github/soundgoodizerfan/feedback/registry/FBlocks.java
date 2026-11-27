@@ -230,6 +230,13 @@ public class FBlocks {
                     .sound(SoundType.STONE)
                     .noOcclusion()));
 
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.hammer.TiltHammerBlock> TILT_HAMMER = BLOCKS.register("tilt_hammer",
+            () -> new io.github.soundgoodizerfan.feedback.machine.hammer.TiltHammerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(3.0f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()));
+
     /**
      * The hammer's own model, minus the hammer -- continuous force from network RPM instead of
      * discrete blows. See {@code WireDrawerBlockEntity}, {@code RollingMillBlockEntity} and

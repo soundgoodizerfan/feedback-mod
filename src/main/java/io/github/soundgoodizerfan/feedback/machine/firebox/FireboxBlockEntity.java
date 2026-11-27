@@ -8,6 +8,8 @@ import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
+import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlock;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
@@ -58,6 +60,8 @@ import java.util.Optional;
 public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown {
 
     private ItemStack fuel = ItemStack.EMPTY;
+    /** A piece set in the flame to heat (taken in and out with the hand or tongs), never burnt. */
+    private ItemStack piece = ItemStack.EMPTY;
 
     private int burnTicks;
     /** The flame temperature of the piece currently burning, quality roll already applied. */
@@ -142,6 +146,42 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         }
         setChanged();
         return true;
+    }
+
+    /** The piece lying in the flame (a bar to reheat), or empty. */
+    public ItemStack getPiece() {
+        return piece;
+    }
+
+    /** Lay one piece in the flame, at the heat it already has. False when the slot is taken. */
+    public boolean putPiece(ItemStack one) {
+        if (!piece.isEmpty() || one.isEmpty())
+            return false;
+        piece = one;
+        sync();
+        return true;
+    }
+
+    /** Take the piece out, carrying the heat it reached. */
+    public ItemStack takePiece() {
+        ItemStack taken = piece;
+        piece = ItemStack.EMPTY;
+        sync();
+        return taken;
+    }
+
+    private void sync() {
+        setChanged();
+        if (level != null)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    /** One tick of the piece closing on the flame; a flame cooler than the piece leaves it to cool by its own rate. */
+    private void heatPiece() {
+        Tu now = ItemHeat.get(piece, level);
+        float target = getFireTu().value();
+        if (target > now.value())
+            ItemHeat.set(piece, new Tu(SkilletBlock.warm(now.value(), target, 1f)), level);
     }
 
     public ItemStack removeFuel() {
@@ -250,6 +290,8 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
             return;
         HeatSource.radiate(this);
         refresh();
+        if (!piece.isEmpty())
+            heatPiece();
 
         draught = Math.min(air, VesselTuning.FIREBOX_AIR_PER_TICK.value());
         air -= draught;
@@ -314,6 +356,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         super.saveAdditional(tag, registries);
         tag.put("Fuel", fuel.saveOptional(registries));
         tag.put("Oxidiser", oxidiser.saveOptional(registries));
+        tag.put("Piece", piece.saveOptional(registries));
         tag.put("Oxygen", oxygen.writeToNBT(registries, new CompoundTag()));
         tag.putInt("BurnTicks", burnTicks);
         tag.putFloat("BurnTu", burnTu);
@@ -326,6 +369,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         super.loadAdditional(tag, registries);
         fuel = ItemStack.parseOptional(registries, tag.getCompound("Fuel"));
         oxidiser = ItemStack.parseOptional(registries, tag.getCompound("Oxidiser"));
+        piece = ItemStack.parseOptional(registries, tag.getCompound("Piece"));
         oxygen.readFromNBT(registries, tag.getCompound("Oxygen"));
         burnTicks = tag.getInt("BurnTicks");
         burnTu = tag.contains("BurnTu") ? tag.getFloat("BurnTu") : ThermalTuning.AMBIENT_TU.value();

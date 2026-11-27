@@ -4,6 +4,10 @@ package io.github.soundgoodizerfan.feedback.machine.firebox;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.soundgoodizerfan.feedback.item.HandTool;
+import io.github.soundgoodizerfan.feedback.item.TongsItem;
+import io.github.soundgoodizerfan.feedback.process.MaterialIngredient;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
@@ -12,6 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +33,8 @@ import net.minecraft.world.phys.BlockHitResult;
 /**
  * A hole with a fire in it. Put fuel in, set a vessel on top.
  * <p>
- * Right click with fuel to feed it, empty-handed to take the unburnt fuel back.
+ * Right click with fuel to feed it, empty-handed to take the unburnt fuel back. A piece of material (a bar to reheat) lies in the flame
+ * and warms toward it; empty-handed takes it out. Tongs lay a held piece in (sneak), take one out into the jaws, or reheat it in place (hold use).
  */
 public class FireboxBlock extends Block implements EntityBlock {
 
@@ -47,16 +53,26 @@ public class FireboxBlock extends Block implements EntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
-        if (stack.isEmpty() || player.isShiftKeyDown())
+        // Tongs work the fire through TongsItem (lay a piece in, take one out, reheat in the jaws), so the click passes on to the item.
+        if (stack.isEmpty() || player.isShiftKeyDown() || stack.getItem() instanceof TongsItem)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!(level.getBlockEntity(pos) instanceof FireboxBlockEntity firebox))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         // Server only: the client inserting too left ghost contents until the next sync.
         if (level.isClientSide)
             return ItemInteractionResult.SUCCESS;
-        if (!firebox.insertFuel(stack))
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!firebox.insertFuel(stack)) {
+            if (!layable(stack) || !firebox.getPiece().isEmpty())
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            firebox.putPiece(stack.split(1));
+        }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /** Anything made of a material that is not a block to set down, a tool or tongs may lie in the flame. */
+    private static boolean layable(ItemStack stack) {
+        return !(stack.getItem() instanceof BlockItem) && !(stack.getItem() instanceof HandTool)
+                && !(stack.getItem() instanceof TongsItem) && MaterialIngredient.locate(stack).isPresent();
     }
 
     @Override
@@ -64,8 +80,11 @@ public class FireboxBlock extends Block implements EntityBlock {
                                                BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof FireboxBlockEntity firebox))
             return InteractionResult.PASS;
+        // Tongs in either hand work the fire themselves, so a bare click does not take the fuel out from under them.
+        if (player.getMainHandItem().getItem() instanceof TongsItem || player.getOffhandItem().getItem() instanceof TongsItem)
+            return InteractionResult.PASS;
         if (!level.isClientSide) {
-            ItemStack taken = firebox.removeFuel();
+            ItemStack taken = firebox.getPiece().isEmpty() ? firebox.removeFuel() : firebox.takePiece();
             if (!taken.isEmpty() && !player.getInventory().add(taken))
                 player.drop(taken, false);
         }
@@ -101,6 +120,8 @@ public class FireboxBlock extends Block implements EntityBlock {
             ItemStack held = firebox.getFuel();
             if (!held.isEmpty())
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), held);
+            if (!firebox.getPiece().isEmpty())
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), firebox.getPiece());
             if (!firebox.getOxidiser().isEmpty())
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), firebox.getOxidiser());
         }

@@ -6,11 +6,11 @@ The bench where parts are put together. It builds every [modular](Tools_and_Weap
 
 ```
 C C C
-S T S
-S S S
+  T
+  B
 ```
 
-C is any wooden slab, T is a Crafting Table and S is a Wrought Iron Plate. Mine it with a pickaxe: without one it drops nothing.
+C is any wooden slab, T is a Crafting Table and B is a Block of Iron (cast iron). Mine it with a pickaxe: without one it drops nothing.
 
 ## Using it
 

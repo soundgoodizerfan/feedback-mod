@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T20:01:14.261795319	Item Models: feedback
+// 1.21.1	2026-11-27T13:58:00.948253971	Item Models: feedback
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/acacia_grip.json
 1cbe171cef7392663517643cbe471f06b808ce0b assets/feedback/models/item/acacia_shaving.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/alnico_birdshot.json
@@ -2136,6 +2136,7 @@ ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/nickel_rive
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/nickel_turned_rod.json
 8c6561c2f1587b8b174519f5b02c4f34cba746aa assets/feedback/models/item/nickel_welding_rod.json
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/nickel_wire.json
+94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/nitrocellulose_dust.json
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/oak_grip.json
 1cbe171cef7392663517643cbe471f06b808ce0b assets/feedback/models/item/oak_shaving.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/obsidian_dust.json
@@ -2548,6 +2549,13 @@ ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/redstone_su
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/redstone_superconductor_wire.json
 818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/resonarium_ingot.json
 4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/resonarium_rod.json
+33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/rheniite_calcine.json
+510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/rheniite_concentrate.json
+81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/rheniite_crushed.json
+21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/rheniite_crystal_plate.json
+94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/rheniite_dust.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/rheniite_lump.json
+4e4db6418bc86b3bc438ce254a661b2411f75280 assets/feedback/models/item/rheniite_tailings.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/rhenium_birdshot.json
 67065ce51af909879e9c2e47e3e1448d1d148f93 assets/feedback/models/item/rhenium_coil_spring.json
 a4cf6c4eb1fa839a3be62313a9d7daff7174ff37 assets/feedback/models/item/rhenium_cut_machine_bolt.json
@@ -4339,6 +4347,13 @@ ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/thaumium_vo
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/thaumium_volatus_wire.json
 8c6561c2f1587b8b174519f5b02c4f34cba746aa assets/feedback/models/item/thaumium_welding_rod.json
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/thaumium_wire.json
+33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/thorianite_calcine.json
+510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/thorianite_concentrate.json
+81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/thorianite_crushed.json
+21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/thorianite_crystal_plate.json
+94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/thorianite_dust.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/thorianite_lump.json
+4e4db6418bc86b3bc438ce254a661b2411f75280 assets/feedback/models/item/thorianite_tailings.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/thorium_birdshot.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/thorium_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/thorium_case.json

@@ -283,7 +283,7 @@ public final class FormData {
             // Everything else Feedback registers (machines, stations, wires) gets a tool so it is not
             // hand-mined at bare-hand speed. Instant-break plants, fluids and shovel soils stay out.
             java.util.Set<String> wooden = java.util.Set.of("drying_rack", "woodworking_table",
-                    "prep_table", "blueprint_table", "ice_box", "thresher");
+                    "prep_table", "blueprint_table", "ice_box", "thresher", "tilt_hammer");
             net.minecraft.core.registries.BuiltInRegistries.BLOCK.entrySet().stream()
                     // Registry order varies per run; sort so the generated tags are byte-stable.
                     .sorted(java.util.Comparator.comparing(e -> e.getKey().location().toString()))
@@ -324,7 +324,15 @@ public final class FormData {
             // Hand-registered ore blocks (mechanics §9.4), not generated forms.
             // Each ore needs the tool tier of the vanilla block it replaces: iron and copper a
             // stone tool, gold an iron one, coal and graphite any pickaxe (no needs tag).
-            tag(BlockTags.MINEABLE_WITH_SHOVEL).add(io.github.soundgoodizerfan.feedback.registry.FBlocks.REGOLITH.get());
+            tag(BlockTags.MINEABLE_WITH_SHOVEL).add(io.github.soundgoodizerfan.feedback.registry.FBlocks.REGOLITH.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.RUSTY_SOIL.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.BLEACHED_SOIL.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SOOTY_SOIL.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.TARNISHED_SOIL.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.GOSSAN_RUBBLE.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.BLACK_SAND.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SALT_DEPOSIT.get())
+                    .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.ECHO_SEEP.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.NITROGEN_ICE.get())
                     .add(io.github.soundgoodizerfan.feedback.registry.FBlocks.SULFUR_CRUST.get())

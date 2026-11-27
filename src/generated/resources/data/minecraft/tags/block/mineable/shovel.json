@@ -1,5 +1,13 @@
 {
   "values": [
-    "feedback:regolith"
+    "feedback:regolith",
+    "feedback:rusty_soil",
+    "feedback:bleached_soil",
+    "feedback:sooty_soil",
+    "feedback:tarnished_soil",
+    "feedback:gossan_rubble",
+    "feedback:black_sand",
+    "feedback:salt_deposit",
+    "feedback:echo_seep"
   ]
 }

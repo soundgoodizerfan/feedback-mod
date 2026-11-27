@@ -127,7 +127,7 @@ public class FBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MechanicalHammerBlockEntity>> MECHANICAL_HAMMER =
             BLOCK_ENTITIES.register("mechanical_hammer", () -> BlockEntityType.Builder
-                    .of(MechanicalHammerBlockEntity::new, FBlocks.MECHANICAL_HAMMER.get())
+                    .of(MechanicalHammerBlockEntity::new, FBlocks.MECHANICAL_HAMMER.get(), FBlocks.TILT_HAMMER.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WireDrawerBlockEntity>> WIRE_DRAWER =

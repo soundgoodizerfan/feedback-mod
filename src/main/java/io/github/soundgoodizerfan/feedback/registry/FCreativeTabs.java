@@ -168,7 +168,7 @@ public class FCreativeTabs {
             FItems.SPENT_BLAZE_ROD, FItems.INERT_BLAZE_DUST);
 
     /** Shaping metal: hammer, draw, roll, press, drill, turn; then the test rigs. */
-    private static final List<DeferredItem<?>> METALWORKING = of(FItems.MECHANICAL_HAMMER, FItems.WIRE_DRAWER,
+    private static final List<DeferredItem<?>> METALWORKING = of(FItems.TILT_HAMMER, FItems.MECHANICAL_HAMMER, FItems.WIRE_DRAWER,
             FItems.ROLLING_MILL, FItems.MECHANICAL_PRESS, FItems.DRILL_PRESS, FItems.GEAR_CUTTER, FItems.LATHE, FItems.VICE,
             FItems.IMPACT_PENDULUM, FItems.STRIKE_POST);
 

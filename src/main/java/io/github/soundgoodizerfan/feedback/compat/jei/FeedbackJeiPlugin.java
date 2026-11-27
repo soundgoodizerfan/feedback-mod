@@ -688,7 +688,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(GunOptionCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
         registration.addRecipeCatalysts(ResearchCategory.TYPE, FModular.RESEARCH_TABLE_ITEM.get());
         registration.addRecipeCatalysts(DeformationCategory.TYPE,
-                FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
+                FItems.TILT_HAMMER.get(), FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAFTED_TOOL.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get());

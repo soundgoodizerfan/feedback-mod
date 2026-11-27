@@ -54,6 +54,11 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
         return s;
     }
 
+    /** Whether the head is part of the block: seated on placement, never swapped or taken out ({@link TiltHammerBlock}). */
+    boolean fixedHead() {
+        return false;
+    }
+
     /** A pattern's last note is due: hand over the part ({@link MechanicalHammerBlockEntity#queue}). */
     @Override
     protected void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
@@ -92,7 +97,7 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.has(stack, "head_blank")) {
+        if (!fixedHead() && io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.has(stack, "head_blank")) {
             if (!level.isClientSide)
                 give(player, hammer.seatHead(stack));
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -118,7 +123,7 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
         if (!(level.getBlockEntity(pos) instanceof MechanicalHammerBlockEntity hammer))
             return InteractionResult.PASS;
         if (!level.isClientSide)
-            give(player, player.isShiftKeyDown() ? hammer.removeHead() : !hammer.getWorkpiece().isEmpty() ? hammer.removeWorkpiece() : hammer.removeCam());
+            give(player, player.isShiftKeyDown() && !fixedHead() ? hammer.removeHead() : !hammer.getWorkpiece().isEmpty() ? hammer.removeWorkpiece() : hammer.removeCam());
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -133,7 +138,8 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof MechanicalHammerBlockEntity hammer) {
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), hammer.getWorkpiece());
-            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), hammer.getHead().get());
+            if (!fixedHead())
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), hammer.getHead().get());
             Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), hammer.getCam());
         }
         super.onRemove(state, level, pos, newState, moved);

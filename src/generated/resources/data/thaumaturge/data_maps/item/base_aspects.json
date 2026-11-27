@@ -3296,6 +3296,20 @@
         "aspect": "thaumaturge:machina"
       }
     ],
+    "feedback:antenna_whip": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:cognitio"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:machina"
+      }
+    ],
     "feedback:antimony_birdshot": [
       {
         "amount": 5,
@@ -29278,6 +29292,28 @@
         "aspect": "thaumaturge:ordo"
       }
     ],
+    "feedback:loudspeaker": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 37,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 20,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 30,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 14,
+        "aspect": "thaumaturge:potentia"
+      }
+    ],
     "feedback:lumen_glass_block": [
       {
         "amount": 65,
@@ -35490,6 +35526,20 @@
       {
         "amount": 4,
         "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:nitrocellulose_dust": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ignis"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
       }
     ],
     "feedback:noisemaker": [
@@ -42902,6 +42952,114 @@
       {
         "amount": 3,
         "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:rheniite_calcine": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rheniite_concentrate": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rheniite_crushed": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:rheniite_crystal_plate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rheniite_deepslate_ore": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rheniite_dust": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:rheniite_loose_rock": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rheniite_lump": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rheniite_ore": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:rheniite_tailings": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
       }
     ],
     "feedback:rhenium_birdshot": [
@@ -71472,6 +71630,114 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:instrumentum"
+      }
+    ],
+    "feedback:thorianite_calcine": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorianite_concentrate": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorianite_crushed": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:thorianite_crystal_plate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorianite_deepslate_ore": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorianite_dust": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:thorianite_loose_rock": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorianite_lump": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorianite_ore": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:thorianite_tailings": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ordo"
       }
     ],
     "feedback:thorium_birdshot": [

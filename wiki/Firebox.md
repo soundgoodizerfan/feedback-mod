@@ -15,7 +15,9 @@ B is any brick.
 ## Using it
 
 - **Right-click with fuel** to load it.
-- **Right-click with an empty hand** to take back fuel that hasn't started burning.
+- **Right-click with a piece of material** (a bar, plate or other worked stock; not a block, a hand tool or tongs) to lay one in the flame. It warms toward the flame's temperature. Only one piece lies there at a time.
+- **Right-click with an empty hand** to take the laid piece out, or, when none lies there, to take back fuel that hasn't started burning.
+- **With [Tongs](Hazards.md#tongs)**, see [Reheating in the fire](Hazards.md#reheating-in-the-fire).
 
 A lit firebox smokes and flickers. Whatever sits on top (the fire always radiates up) climbs toward the fire's temperature. Items in a chest or other inventory above it, and dropped items there, warm too, and anything alive standing in the heat burns. See [Heat](Heat.md#heat-pushed-into-what-it-points-at).
 

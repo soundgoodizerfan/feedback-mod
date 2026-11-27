@@ -75,6 +75,10 @@ Tongs hold **one item** between the jaws, like a bundle. In any inventory, right
 
 With a [Hammer](Hammer.md), [File](Hand_Tools.md#file) or [Hand Drill](Hand_Tools.md#hand-drill) in one hand and loaded tongs in the other, hold right-click to work the clamped piece where it is: each stroke changes it in the jaws and nothing moves.
 
+### Reheating in the fire
+
+With a piece in the jaws, **sneak and right-click a [Firebox](Firebox.md)** to lay the piece in the flame, or **right-click it with empty jaws** to take the laid piece out into them. Or hold right-click with the loaded tongs, looking at a lit heat source such as a Firebox within 4.5 blocks: the piece warms toward the fire's temperature in the jaws, and the other hand stays free for a hammer.
+
 ### Lifting a skillet
 
 Hold right-click with the tongs on a [Skillet](Skillet.md) within 4.5 blocks, looking at it, to take the pan by its handle and lift it off the fire. Release to set it down. A pan hotter than the tongs' limit burns your hand once a second while you hold it.

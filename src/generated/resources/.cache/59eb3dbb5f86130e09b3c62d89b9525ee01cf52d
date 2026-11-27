@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T20:01:14.285645472	Loot Tables
+// 1.21.1	2026-11-27T13:58:00.969564768	Loot Tables
 3ec2d8235a145e9ecd4bc49404e31bff70407cfb data/feedback/loot_table/blocks/alnico_block.json
 7ceaa2b8bfe1b647eb0a2c985f24c7b8138994b8 data/feedback/loot_table/blocks/alnico_pipe.json
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
@@ -233,6 +233,9 @@ f56c4a10886ff5b2c48b39b4998f2e760ee57be7 data/feedback/loot_table/blocks/rabbit_
 a31b8672c45b68bb984b9774adc595a4a70670e5 data/feedback/loot_table/blocks/redstone_chromium_pipe.json
 76479562c3f1c60b0afa6e588e0f675ebc655fd0 data/feedback/loot_table/blocks/redstone_loose_rock.json
 e800989f951bf06e20aab1e154091d2fd2b81cee data/feedback/loot_table/blocks/resonarium_block.json
+a18a10e712633892916a563f282ec900af9fc628 data/feedback/loot_table/blocks/rheniite_deepslate_ore.json
+9280aec3b3aaefbf58e02d071dac4413c83b55f4 data/feedback/loot_table/blocks/rheniite_loose_rock.json
+79047adaf796f41f15d24f8e75bc2439ed0a0b20 data/feedback/loot_table/blocks/rheniite_ore.json
 a06ff79e8ab00c32c582affbb65c9ea69c8b6207 data/feedback/loot_table/blocks/rotten_flesh_block.json
 988924cb254aba0b094802b713358b543f27b16a data/feedback/loot_table/blocks/ruby_deepslate_ore.json
 07a64f8a0994a94696da3d67b416a56c62f436c5 data/feedback/loot_table/blocks/ruby_loose_rock.json
@@ -350,6 +353,9 @@ dc7d2c097816e25353f4c97f03ed1638124f1b13 data/feedback/loot_table/blocks/thaumiu
 632c2e4d4b7375b8ab784064bc9b67c4621bda6a data/feedback/loot_table/blocks/thaumium_vitreus_pipe.json
 17cb9b603086cd1e4b4b3c652ecfa0a501ae8aee data/feedback/loot_table/blocks/thaumium_volatus_block.json
 0e7da9fe1d335ccc32af41b7c6533dec7370f634 data/feedback/loot_table/blocks/thaumium_volatus_pipe.json
+0d82abd4e2b445e49e39e8bc70df4000be676e27 data/feedback/loot_table/blocks/thorianite_deepslate_ore.json
+11b1fa5b663aabac400fccfafa1cf1c2ceee2634 data/feedback/loot_table/blocks/thorianite_loose_rock.json
+947a3c6d2ad9fd004380c7cee4ba1f9ad7d65288 data/feedback/loot_table/blocks/thorianite_ore.json
 5460f218da28535cfe64ba8c01a4ce4a99748ad5 data/feedback/loot_table/blocks/thorium_block.json
 6f37c46e5108fb16f0df2d4c9f697bf6c571b4d9 data/feedback/loot_table/blocks/thorium_fuel_rod_pipe.json
 37c2227cf86acd230f931ac38bdf159632813cb2 data/feedback/loot_table/blocks/thorium_pipe.json

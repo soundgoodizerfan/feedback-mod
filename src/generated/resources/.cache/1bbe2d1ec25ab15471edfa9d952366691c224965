@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T20:54:43.268677343	Tags for minecraft:block mod id feedback
+// 1.21.1	2026-11-27T13:58:00.967446169	Tags for minecraft:block mod id feedback
 5299fba2cf8a4d2241cff1374fa635c78187d415 data/c/tags/block/cobbles/deepslate.json
 e46c61e630c70c05b43ebfc298ed188210359830 data/c/tags/block/cobbles/stone.json
 ff5f6a7fd186e4aca55ed7b60721a78c9241c219 data/c/tags/block/deepslate_ores/alumina.json
@@ -37,12 +37,14 @@ de3b7078535514eeabf8b9ad8d84a4a273cddcfc data/c/tags/block/deepslate_ores/lead.j
 5a1b1ac817681ebeb04c93c5c9efccc4861d201e data/c/tags/block/deepslate_ores/pentlandite.json
 ef8b405610ff0c6f5ae14a244f9ffa94f60a9a0d data/c/tags/block/deepslate_ores/pyrolusite.json
 e07078fe48a5544b13c1493d1ccb7690d56c2309 data/c/tags/block/deepslate_ores/redstone.json
+e16b05164f06c261c1a04fcbdecd20229c689203 data/c/tags/block/deepslate_ores/rheniite.json
 e6a49d68ae9b35459bb2650ea69ec7c50b6500fa data/c/tags/block/deepslate_ores/ruby.json
 bfacb970c5259c5c146f66a30d97d287299d4028 data/c/tags/block/deepslate_ores/saltpetre.json
 0c3e673c4918eaad1a0bd39a76c2c312567d9d8a data/c/tags/block/deepslate_ores/sperrylite.json
 af67304dcbbf31dd0729e81fa5443859af1f301a data/c/tags/block/deepslate_ores/sphalerite.json
 74f4d6585c8b10778e158694c7c3f409cf416557 data/c/tags/block/deepslate_ores/spodumene.json
 d3f3c872283eab157aefe8fd6f8b27b448567ae3 data/c/tags/block/deepslate_ores/stibnite.json
+5a86111b489835785630589275d866f3674e275a data/c/tags/block/deepslate_ores/thorianite.json
 8a1a7a6bfecff27534e23528c3f3510c04aa5cd5 data/c/tags/block/deepslate_ores/tin.json
 0f1717b1cb872a033470f3f1993fab1c01bb3d34 data/c/tags/block/deepslate_ores/tourmaline.json
 a85e4d9c901537b121b4f234e704195329c62a8b data/c/tags/block/deepslate_ores/uraninite.json
@@ -88,6 +90,7 @@ a5f86255b4a4c69e8901db1968de825261670f05 data/c/tags/block/loose_rocks/osmiridiu
 3f2106aca3b13a151a8c0633dda6a8e8b5911ef6 data/c/tags/block/loose_rocks/pyrolusite.json
 8a046d5c852352c61c5aed4de0d7ff035280e32f data/c/tags/block/loose_rocks/quartz.json
 72e57498a2a4e245c2fb04939e91b0fde3dbfec3 data/c/tags/block/loose_rocks/redstone.json
+2bf101e9674d9c53c6a4d59cf5866b14bf674858 data/c/tags/block/loose_rocks/rheniite.json
 ac77558326b90247208f579e52299de644b5c095 data/c/tags/block/loose_rocks/ruby.json
 f1e459bbf05a931a68a2914870b2feafe0fdbe63 data/c/tags/block/loose_rocks/saltpetre.json
 10981e20fb3571902d1db5b3ce56a689f970b9c6 data/c/tags/block/loose_rocks/sperrylite.json
@@ -95,13 +98,14 @@ f1e459bbf05a931a68a2914870b2feafe0fdbe63 data/c/tags/block/loose_rocks/saltpetre
 830ee16c0b1a7495ed76f04e864e5f2a5c36965b data/c/tags/block/loose_rocks/spodumene.json
 a5e8ba7af46f7e0d4f5340daa0513bea476d46bf data/c/tags/block/loose_rocks/stibnite.json
 c8ed267cfc71260d6173babd86625edabea42eee data/c/tags/block/loose_rocks/sulfur.json
+6bf537717e60bb381042b133f1006497580fd79b data/c/tags/block/loose_rocks/thorianite.json
 8730e9004ee1d4f625c836b4cb010a19f4023d88 data/c/tags/block/loose_rocks/tin.json
 89af350f37aff7781cfe69029e4901fef2853c6b data/c/tags/block/loose_rocks/tourmaline.json
 2e3fa1d048377b93b26e20a2c1ca6a6ee5fd93de data/c/tags/block/loose_rocks/uraninite.json
 d181f4e2cccf9cef013cdb8aa9e684b6db05ebc1 data/c/tags/block/loose_rocks/vanadinite.json
 2a857f48a6e29385a571d1be31dffbd1b2b84381 data/c/tags/block/loose_rocks/wolframite.json
 32e28512c91d3d7ab91d7b6f219dbd5da63654ad data/c/tags/block/loose_rocks/zinc.json
-325c59fe7788da8b77096a06fbc8a25f043f0424 data/c/tags/block/ores.json
+7c6c0e8d199b4cabb4696da9c32cf22182120c15 data/c/tags/block/ores.json
 35b1bc8d435c581a85001ba42a2bd4d9d99daccc data/c/tags/block/ores/alumina.json
 eff38d86e41cb6a657da04d366a61091921cddd4 data/c/tags/block/ores/argentite.json
 853e8786b8c8563da9edc9aee62a91fb2ad75fa1 data/c/tags/block/ores/bauxite.json
@@ -140,6 +144,7 @@ a0d593a86961ab4115652bfdb910e5c2c52c58f5 data/c/tags/block/ores/osmiridium.json
 6d1bbe81a44f8c6f0879b3beacecab5409ab0060 data/c/tags/block/ores/pyrolusite.json
 93f624cd3ff236deee35789c65353f7074358f0d data/c/tags/block/ores/quartz.json
 428e31607b07d9d9fc0ae533d657f29e7e7810f0 data/c/tags/block/ores/redstone.json
+e5eba1338764c362ce1060d021635e558c1f3381 data/c/tags/block/ores/rheniite.json
 559a4ac13e8f6be8d0cb1c037b826b893ca2612d data/c/tags/block/ores/ruby.json
 39b8c2284db92358b8c01822f6f7fb680be01775 data/c/tags/block/ores/saltpetre.json
 c603121fbd5fcd6e27edae77463274f587b69490 data/c/tags/block/ores/sperrylite.json
@@ -147,6 +152,7 @@ c603121fbd5fcd6e27edae77463274f587b69490 data/c/tags/block/ores/sperrylite.json
 985e0170cabdd6f9031c86cd5824e8d6741cc6e6 data/c/tags/block/ores/spodumene.json
 1e7ac79db793c8f277b90c48a1a3dc8a864c0de7 data/c/tags/block/ores/stibnite.json
 dee54203a54edb98b8534ddb2ecfe161fa8e6c2e data/c/tags/block/ores/sulfur.json
+a3e3b0a9f30c6e7cd6b2d4e7ec2bdbd4b7787409 data/c/tags/block/ores/thorianite.json
 573c4c56d3e61084a0780ab9431bb95b62dd8567 data/c/tags/block/ores/tin.json
 7b5c4d6aae38e1c9110034b76e9e974f70d6a211 data/c/tags/block/ores/tourmaline.json
 959692c7e737f98c1bfa5a62692b8111b17452ef data/c/tags/block/ores/uraninite.json
@@ -486,11 +492,12 @@ f0e6e7fd112e766051ef90ca812d1f29e8e55368 data/c/tags/block/storage_blocks/vanadi
 350c36a1d855833cea93ab644457a37e66f2641b data/c/tags/block/storage_blocks/woods_metal.json
 89fa0cca950999bcaf5dd691cce2a22c56fe2f51 data/c/tags/block/storage_blocks/wrought_iron.json
 5d3ada3fbceaf4e9e91cdb9532b2abd36bcabd9d data/c/tags/block/storage_blocks/zinc.json
-c22b42fcbb1522359052b6e4820f8f696eec933b data/feedback/tags/block/mineable/wrench.json
-513d6f343f36bc01daa756011e4dbbe32d3ff6b6 data/minecraft/tags/block/mineable/axe.json
+44237b805935dbe5a995c2705c33d62af8fd099f data/feedback/tags/block/mineable/wrench.json
+7ed26b19a5171c4f505f6c666a195e85134a7b1c data/minecraft/tags/block/mineable/axe.json
 a45842e11a0f307ad8ba6b6b9af3cf1f17e5e45b data/minecraft/tags/block/mineable/hoe.json
-30c550d0c884ed48b9ea3d79118e032e92df8635 data/minecraft/tags/block/mineable/pickaxe.json
+aa910d3d5e6809bd0ca2100bbb0e8b7d3dfe83b3 data/minecraft/tags/block/mineable/pickaxe.json
+4235450e5097f0c7782fed14e4bbf531f356af41 data/minecraft/tags/block/mineable/shovel.json
 ae9427d3f6cf27d8eb095f5fa284df1b89372e2b data/minecraft/tags/block/needs_iron_tool.json
-45aff7d7130af30d0f43c29f2828106202544d64 data/minecraft/tags/block/needs_stone_tool.json
-c878f64edc33630e9f3a6f5227ac16296618b90d data/thaumaturge/tags/block/portable_hole_blacklist.json
-c878f64edc33630e9f3a6f5227ac16296618b90d data/thaumaturge/tags/block/taint_conversion_immune.json
+eb145d98287725b4a08c2a8cbf14033fa5e05bde data/minecraft/tags/block/needs_stone_tool.json
+a3c1aa0d130af988914d86a0c9b8cfda2a6a91dd data/thaumaturge/tags/block/portable_hole_blacklist.json
+a3c1aa0d130af988914d86a0c9b8cfda2a6a91dd data/thaumaturge/tags/block/taint_conversion_immune.json

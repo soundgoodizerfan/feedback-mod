@@ -81,6 +81,16 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         super(FBlockEntities.MECHANICAL_HAMMER.get(), pos, state);
     }
 
+    /** A hammer whose head is cast into it gets that head the first time it exists in a level with none (a loaded head is already there). */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && !level.isClientSide && head.isEmpty() && getBlockState().getBlock() instanceof MechanicalHammerBlock block && block.fixedHead()) {
+            head.swap(TiltHammerBlock.castHead());
+            setChanged();
+        }
+    }
+
     public ItemStack getWorkpiece() {
         return workpiece;
     }

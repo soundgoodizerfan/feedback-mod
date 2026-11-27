@@ -1,6 +1,6 @@
 # Mechanical Hammer
 
-A powered hammer and anvil. Driven by a [Crank Linkage](Crank_Linkage.md), it hits whatever is on its anvil **over and over, for as long as it's turning**. It's the first real machine in the mod, and the clearest example of how every Feedback machine behaves.
+A powered hammer and anvil. The [Tilt Hammer](Tilt_Hammer.md) is the same machine with a cast iron head fixed in, crafted at the plain crafting table. Driven by a [Crank Linkage](Crank_Linkage.md), it hits whatever is on its anvil **over and over, for as long as it's turning**. It's the first real machine in the mod, and the clearest example of how every Feedback machine behaves.
 
 ## Crafting
 
