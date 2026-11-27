@@ -63,7 +63,9 @@ These are builds, not separate items: a shield face's size is an axis, and a sma
 
 ## Casts and stamina
 
-Many [skills](Skills.md#techniques-keys-and-stamina) are **casts**: techniques you slot into one of five cast slots on the skill screen and fire with that slot's key, or with the radial (**C**: tap to fire the selected one, hold to pick). Held casts end when you let go of the key.
+Many [skills](Skills.md#techniques-keys-and-stamina) are **casts**: techniques you slot into one of five cast slots on the skill screen and fire with that slot's key, or with the radial (**C**: tap to fire the selected one, hold to pick). Held casts end when you let go of the key. While the radial is open you can still walk, jump, sneak, sprint and switch hotbar slots with the number keys; the camera stays still and the mouse picks the cast.
+
+The radial opens with its five wedges arriving one after another, clockwise, each with a small bounce. A wedge that holds a technique plays a sound for the [skill tree](Skills.md) that unlocks it as it lands: a chain for Anchor, a stone thud for Brute, a warped zap for Chaos, a sonar ping for Observation, a blade whoosh for Onslaught, a chime for Proficiency, a breath for Veil. Each such wedge also carries a looping picture in the tree's color: rings closing inward (Anchor), cracks from the rim (Brute), jittering shards (Chaos), a sweep line with a reticle (Observation), rising embers and slash streaks (Onslaught), turning cogs and sparks (Proficiency), drifting smoke (Veil). The picture is stronger on the selected and the hovered wedge. With reduce motion on, the wedges appear at once without the bounce or the pictures; the sounds still play.
 
 A cast needs the skill, to be rearmed (each lists its own rearm: a timer, a landed blow, a stagger, a parry) and enough **stamina**.
 

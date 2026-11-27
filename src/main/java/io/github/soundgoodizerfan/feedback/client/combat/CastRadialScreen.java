@@ -9,6 +9,8 @@ import io.github.soundgoodizerfan.feedback.combat.cast.Casts;
 import io.github.soundgoodizerfan.feedback.combat.skill.TreeHue;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.client.ClientSettings;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;
 
@@ -30,7 +32,10 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 public final class CastRadialScreen extends Screen {
 
     private static final GuiSkin SKIN = GuiSkin.VANILLA;
-    private static final int R_OUT = 88, R_IN = 36, GAP = 3, RIM = 2, LABEL_R = (R_OUT + R_IN) / 2;
+    static final int R_OUT = 88, R_IN = 36, LABEL_R = (R_OUT + R_IN) / 2;
+    private static final int GAP = 3, RIM = 2;
+    /** Wedges arrive one after another, clockwise from the top, each taking {@link #POP_MS}. */
+    private static final long STAGGER_MS = 60, POP_MS = 180;
 
     /**
      * The ring cut once into horizontal runs, each tagged {@code slot * 2 + rim}, offsets from the centre. The gaps between
@@ -75,6 +80,12 @@ public final class CastRadialScreen extends Screen {
         return slot * 2 + (r > R_OUT - RIM || r < R_IN + RIM ? 1 : 0);
     }
 
+    /** Whether the pixel at this offset from the centre is inside wedge {@code slot} (not its gap or a neighbour). */
+    static boolean inSlot(int slot, int dx, int dy) {
+        int c = code(dx, dy);
+        return c >= 0 && c >> 1 == slot;
+    }
+
     private static double wrap(double a) {
         return Math.atan2(Math.sin(a), Math.cos(a));
     }
@@ -116,14 +127,24 @@ public final class CastRadialScreen extends Screen {
 
     /** Each slot's highlight: the hue of the tree its technique is unlocked in, else the skin's accent. */
     private final int[] hue = new int[CastState.SLOTS];
+    /** Each slot's tree pool (null when no tree unlocks its technique), which picks its overlay and arrival sound. */
+    private final String[] pool = new String[CastState.SLOTS];
+    private final boolean[] arrived = new boolean[CastState.SLOTS];
 
     CastRadialScreen() {
         super(Component.translatable("key.feedback.cast_radial"));
         var mc = net.minecraft.client.Minecraft.getInstance();
         var slots = CastState.of(mc.player).slots();
         for (int i = 0; i < hue.length; i++) {
-            hue[i] = TreeHue.ofTechnique(i < slots.size() ? slots.get(i) : "", SKIN.accent()) | 0xFF000000;
+            String tech = i < slots.size() ? slots.get(i) : "";
+            hue[i] = TreeHue.ofTechnique(tech, SKIN.accent()) | 0xFF000000;
+            pool[i] = tech.isEmpty() ? null : TreeHue.poolOfTechnique(tech);
         }
+    }
+
+    private static float easeOutBack(float x) {
+        float u = x - 1;
+        return 1 + 2.70158f * u * u * u + 1.70158f * u * u;
     }
 
     /** The slot a tap of the radial key casts: the chosen one if it still holds a technique, else the first that does, else -1. */
@@ -140,7 +161,7 @@ public final class CastRadialScreen extends Screen {
         return -1;
     }
 
-    private static double angle(int i) {
+    static double angle(int i) {
         return -Math.PI / 2 + i * 2 * Math.PI / CastState.SLOTS;
     }
 
@@ -182,6 +203,7 @@ public final class CastRadialScreen extends Screen {
         lastHover = hovHas ? hov : -1;
         float pulse = 0.75f + 0.25f * (float) Math.sin(now / 180.0);
         int ink = SKIN.ink() | 0xFF000000, dim = SKIN.dim() | 0xFF000000;
+        boolean reduce = ClientSettings.reduceMotion();
 
         g.pose().pushPose();
         g.pose().translate(width / 2f, height / 2f, 0);
@@ -194,18 +216,32 @@ public final class CastRadialScreen extends Screen {
             int face = i == sel ? 0xC0 << 24 | GuiSkin.lerp(0xFF141414, accent, 0.35f + 0.1f * pulse) & 0xFFFFFF
                     : has ? GuiSkin.lerp(0xB0181C20, 0xC0384048, pop[i]) : 0x80101214;
             int rim = i == sel ? fade(accent, pulse) : has ? GuiSkin.lerp(0x80 << 24 | dim & 0xFFFFFF, accent, pop[i]) : 0x40 << 24 | dim & 0xFFFFFF;
+            // Wedge i arrives i steps after the opening, with its tree's sound; reduced motion has them all arrive together.
+            long delay = reduce ? 0 : i * STAGGER_MS;
+            float ti = Math.min(1f, Math.max(0f, (now - openedAt - delay) / (float) POP_MS));
+            if (!arrived[i] && now - openedAt >= delay) {
+                arrived[i] = true;
+                var sound = pool[i] == null ? null : FSounds.RADIAL.get(pool[i]);
+                if (sound != null)
+                    GuiSkin.play(sound.get(), 1f, 0.6f);
+            }
             float push = pop[i] * 5f, dx = (float) Math.cos(angle(i)) * push, dy = (float) Math.sin(angle(i)) * push;
+            float cx = (float) Math.cos(angle(i)) * LABEL_R, cy = (float) Math.sin(angle(i)) * LABEL_R, ps = reduce ? 1f : 0.6f + 0.4f * easeOutBack(ti);
             g.pose().pushPose();
-            g.pose().translate(dx, dy, 0);
+            g.pose().translate(dx + cx, dy + cy, 0);
+            g.pose().scale(ps, ps, 1);
+            g.pose().translate(-cx, -cy, 0);
             for (int r = SLOT_FROM[i]; r < SLOT_FROM[i + 1]; r++)
-                g.fill(RUN_X0[r], RUN_Y[r], RUN_X1[r], RUN_Y[r] + 1, fade((RUN_CODE[r] & 1) == 0 ? face : rim, t));
+                g.fill(RUN_X0[r], RUN_Y[r], RUN_X1[r], RUN_Y[r] + 1, fade((RUN_CODE[r] & 1) == 0 ? face : rim, ti));
+            if (!reduce && pool[i] != null && ti > 0f)
+                RadialFx.draw(g, pool[i], i, (now - openedAt) / 1000f, ti * Math.min(1f, 0.35f + (i == sel ? 0.25f : 0f) + 0.4f * pop[i]), hue[i] & 0xFFFFFF);
             String tech = slots.get(i);
             var cast = Casts.find(tech);
             Component name = cast == null ? Component.translatable("gui.feedback.cast_empty") : label(tech);
             int lx = (int) Math.round(Math.cos(angle(i)) * LABEL_R), ly = (int) Math.round(Math.sin(angle(i)) * LABEL_R);
             var lines = font.split(name, 52);
             for (int l = 0; l < Math.min(2, lines.size()); l++)
-                g.drawCenteredString(font, lines.get(l), lx, ly - Math.min(2, lines.size()) * 5 + l * 10, fade(cast == null ? dim : i == sel ? accent : ink, t));
+                g.drawCenteredString(font, lines.get(l), lx, ly - Math.min(2, lines.size()) * 5 + l * 10, fade(cast == null ? dim : i == sel ? accent : ink, ti));
             g.pose().popPose();
         }
         // The middle names what a tap would cast, or what the pointer is over.
@@ -253,5 +289,22 @@ public final class CastRadialScreen extends Screen {
         var k = CombatKeys.RADIAL.getKey();
         if (k.getType() == InputConstants.Type.KEYSYM && !InputConstants.isKeyDown(minecraft.getWindow().getWindow(), k.getValue()))
             onClose();
+        // A screen swallows key events and releases every binding, so walking is fed from the raw key state.
+        var o = minecraft.options;
+        var win = minecraft.getWindow().getWindow();
+        for (var m : new net.minecraft.client.KeyMapping[] { o.keyUp, o.keyDown, o.keyLeft, o.keyRight, o.keyJump, o.keyShift, o.keySprint }) {
+            var key = m.getKey();
+            m.setDown(key.getType() == InputConstants.Type.KEYSYM && InputConstants.isKeyDown(win, key.getValue()));
+        }
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scan, int mods) {
+        for (var m : minecraft.options.keyHotbarSlots)
+            if (m.matches(key, scan)) {
+                net.minecraft.client.KeyMapping.click(InputConstants.getKey(key, scan));
+                return true;
+            }
+        return super.keyPressed(key, scan, mods);
     }
 }

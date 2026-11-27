@@ -30,9 +30,15 @@ public final class TreeHue {
 
     /** The colour of the tree that unlocks this technique, or {@code fallback} when none does. */
     public static int ofTechnique(String technique, int fallback) {
+        String pool = poolOfTechnique(technique);
+        return pool != null ? of(pool) : fallback;
+    }
+
+    /** The pool of the first tree that unlocks this technique, or {@code null} when none does. */
+    public static String poolOfTechnique(String technique) {
         for (SkillTree tree : SkillTrees.get().trees())
             if (tree.nodes().stream().anyMatch(n -> n.effect().unlock().filter(technique::equals).isPresent()))
-                return of(tree.pool());
-        return fallback;
+                return tree.pool();
+        return null;
     }
 }

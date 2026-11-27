@@ -344,6 +344,12 @@ public class FSounds {
     /** One click of a Geiger counter; the counter draws how many a tick. */
     public static final DeferredHolder<SoundEvent, SoundEvent> GEIGER_CLICK = ui("geiger.click");
 
+    /** The cast radial's wedge arriving, one per skill tree (named as its pool): chain, stone, zap, ping, blade, chime, breath. */
+    public static final java.util.Map<String, DeferredHolder<SoundEvent, SoundEvent>> RADIAL = java.util.Map.of(
+            "anchor", ui("radial.anchor"), "brute", ui("radial.brute"), "chaos", ui("radial.chaos"),
+            "observation", ui("radial.observation"), "onslaught", ui("radial.onslaught"),
+            "proficiency", ui("radial.proficiency"), "veil", ui("radial.veil"));
+
     private static DeferredHolder<SoundEvent, SoundEvent> ui(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Feedback.id(name)));
     }

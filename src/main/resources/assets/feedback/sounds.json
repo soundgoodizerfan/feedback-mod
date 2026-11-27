@@ -1028,5 +1028,54 @@
         "name": "feedback:gun/bipod_deploy"
       }
     ]
+  },
+  "radial.anchor": {
+    "sounds": [
+      {
+        "name": "feedback:radial/anchor"
+      }
+    ]
+  },
+  "radial.brute": {
+    "sounds": [
+      {
+        "name": "feedback:radial/brute"
+      }
+    ]
+  },
+  "radial.chaos": {
+    "sounds": [
+      {
+        "name": "feedback:radial/chaos"
+      }
+    ]
+  },
+  "radial.observation": {
+    "sounds": [
+      {
+        "name": "feedback:radial/observation"
+      }
+    ]
+  },
+  "radial.onslaught": {
+    "sounds": [
+      {
+        "name": "feedback:radial/onslaught"
+      }
+    ]
+  },
+  "radial.proficiency": {
+    "sounds": [
+      {
+        "name": "feedback:radial/proficiency"
+      }
+    ]
+  },
+  "radial.veil": {
+    "sounds": [
+      {
+        "name": "feedback:radial/veil"
+      }
+    ]
   }
 }
