@@ -82,7 +82,7 @@ public final class HandWork {
     /** Use: take one piece from the other hand into the tool, if a stroke could land on it. */
     public static InteractionResultHolder<ItemStack> begin(Level level, Player player, InteractionHand hand) {
         ItemStack tool = player.getItemInHand(hand);
-        if (!(tool.getItem() instanceof HandTool) || tool.has(FDataComponents.HAND_WORK) || tool.has(FDataComponents.HAND_VICE))
+        if (!(tool.getItem() instanceof HandTool) || working(tool))
             return InteractionResultHolder.pass(tool);
         // A piece clamped in the vice the player is looking at is worked where it sits: the tool is in one hand and the other stays free.
         ViceBlockEntity vice = viceLookedAt(level, player);
@@ -95,6 +95,16 @@ public final class HandWork {
             return InteractionResultHolder.consume(tool);
         }
         ItemStack other = player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+        // Tongs in the other hand hold the piece: it is worked where it sits, between the jaws, and nothing moves.
+        if (other.getItem() instanceof TongsItem) {
+            ItemStack held = other.get(FDataComponents.TONGS_HELD);
+            if (held == null || held.isEmpty() || stroke(tool, held, level) == null)
+                return InteractionResultHolder.pass(tool);
+            if (!level.isClientSide)
+                tool.set(FDataComponents.HAND_TONGS, true);
+            player.startUsingItem(hand);
+            return InteractionResultHolder.consume(tool);
+        }
         if (other.isEmpty() || other.getItem() instanceof HandTool)
             return InteractionResultHolder.pass(tool);
         ItemStack one = other.copyWithCount(1);
@@ -110,7 +120,14 @@ public final class HandWork {
 
     /** Whether a piece is held in {@code tool} for work, or a vice's piece is being worked. */
     public static boolean working(ItemStack tool) {
-        return tool.has(FDataComponents.HAND_WORK) || tool.has(FDataComponents.HAND_VICE);
+        return tool.has(FDataComponents.HAND_WORK) || tool.has(FDataComponents.HAND_VICE) || tool.has(FDataComponents.HAND_TONGS);
+    }
+
+    /** The tongs in the hand that is not using {@code tool}, or null. */
+    @Nullable
+    public static ItemStack tongsBeside(Player player) {
+        ItemStack other = player.getItemInHand(player.getUsedItemHand() == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+        return other.getItem() instanceof TongsItem ? other : null;
     }
 
     /** The vice the player's crosshair is on, if any. */
@@ -142,6 +159,7 @@ public final class HandWork {
         BlockPos vicePos = tool.get(FDataComponents.HAND_VICE);
         ViceBlockEntity vice = null;
         ItemStack piece;
+        ItemStack tongs = null;
         float wobble = ItemTuning.HAND_WOBBLE;
         if (vicePos != null) {
             // Worked in the vice: the piece stays clamped; the stroke stops when the jaws are open, emptied or out of reach.
@@ -152,6 +170,14 @@ public final class HandWork {
             }
             piece = vice.getWorkpiece();
             wobble = vice.wobble();
+        } else if (tool.has(FDataComponents.HAND_TONGS)) {
+            // Worked in the tongs: the stroke stops when they are gone or empty.
+            tongs = tongsBeside(player);
+            piece = tongs == null ? null : tongs.get(FDataComponents.TONGS_HELD);
+            if (piece == null || piece.isEmpty()) {
+                player.stopUsingItem();
+                return;
+            }
         } else
             piece = tool.get(FDataComponents.HAND_WORK);
         ItemStack next = stroke(tool, piece, level, wobble);
@@ -162,6 +188,8 @@ public final class HandWork {
         HandTool handTool = (HandTool) tool.getItem();
         if (vice != null)
             vice.setWorkpiece(next);
+        else if (tongs != null)
+            tongs.set(FDataComponents.TONGS_HELD, next);
         else
             tool.set(FDataComponents.HAND_WORK, next);
         player.causeFoodExhaustion(ItemTuning.HAND_SWING_EXHAUSTION_PER_ST * Math.max(1f, handTool.getStrength(tool).value())
@@ -198,6 +226,7 @@ public final class HandWork {
     private static void giveBack(Player player, ItemStack tool) {
         // A vice's piece never left the vice: letting go only forgets which vice.
         tool.remove(FDataComponents.HAND_VICE);
+        tool.remove(FDataComponents.HAND_TONGS);
         ItemStack piece = tool.remove(FDataComponents.HAND_WORK);
         if (piece == null || piece.isEmpty())
             return;

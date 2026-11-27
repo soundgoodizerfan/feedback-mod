@@ -12,11 +12,11 @@ The hand tools are the ones you carry and use yourself: a hammer, a file and a d
 - [Wrench](Wrench.md): turns a placed block a quarter turn. Made by hot-hammering four ingots of one hard metal in a crafting grid with a hammer.
 - [Pry Bar](Pry_Bar.md): pries fittings off a machine and lifts nailed or pinned blocks off whole. A pry head on a haft.
 - [Spoon](#spoon): stirs and skims a [Stockpot](Stockpot.md), and tastes a dish. Made from a spoon bowl shaped from plate, planks or bone (metal is shaped hot), put with a handle.
-- [Tongs](Hazards.md#tongs): hold hot work so it doesn't burn your hand. Made from two rods of one metal at working temperature, a grip and a hammer, in a crafting grid.
+- [Tongs](Hazards.md#tongs): hold hot work so it doesn't burn your hand. Made from two rods of one metal at working temperature, a grip and a hammer, in a crafting grid. They clamp one piece, which the hammer, file and drill can work in the jaws ([how](Hazards.md#clamping-a-piece)).
 
 ## Working in your hands
 
-The hammer, file and drill all work a piece the same way: the tool in one hand, the piece in the other, **hold right-click**. In first person the piece is shown in front of your view while you work, since your other hand is empty. It dips and tilts on every stroke, and glows by its temperature when it is hot. With reduce motion on, it does not dip. The piece is not shown when you work at a vice (the vice shows its own piece) or in third person.
+The hammer, file and drill all work a piece the same way: the tool in one hand, the piece in the other (or clamped in [Tongs](Hazards.md#clamping-a-piece)), **hold right-click**. In first person the piece is shown in front of your view while you work, since your other hand is empty. It dips and tilts on every stroke, and glows by its temperature when it is hot. With reduce motion on, it does not dip. The piece is not shown when you work at a vice (the vice shows its own piece) or in third person.
 
 ## File
 

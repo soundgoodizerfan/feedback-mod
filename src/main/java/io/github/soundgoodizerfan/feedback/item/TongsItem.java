@@ -10,7 +10,12 @@ import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import io.github.soundgoodizerfan.feedback.machine.skillet.SkilletBlockEntity;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -105,6 +110,53 @@ public class TongsItem extends Item implements Insulator {
         return Math.min(grip, arms);
     }
 
+    /**
+     * Bundle-style loading, read from vanilla's BundleItem: right-click a carried item onto tongs in a slot to load it, right-click tongs
+     * with an empty cursor to take it out (two methods, because either the tongs or the item can be the one on the cursor). Taken: the
+     * two-sided secondary-click pattern and {@code allowModification}. Rejected: its weight, many-item contents and sounds.
+     * Tongs on the cursor: onto an item loads it, onto an empty slot unloads.
+     */
+    @Override
+    public boolean overrideStackedOnOther(ItemStack tongs, Slot slot, ClickAction action, Player player) {
+        if (action != ClickAction.SECONDARY || !slot.allowModification(player))
+            return false;
+        ItemStack there = slot.getItem();
+        ItemStack held = tongs.get(FDataComponents.TONGS_HELD.get());
+        if (there.isEmpty()) {
+            if (held == null || held.isEmpty() || !slot.mayPlace(held))
+                return false;
+            ItemHeat.settle(held, player.level());
+            tongs.remove(FDataComponents.TONGS_HELD.get());
+            slot.set(held);
+            return true;
+        }
+        if (held != null || there.getItem() instanceof TongsItem)
+            return false;
+        tongs.set(FDataComponents.TONGS_HELD.get(), there.split(1));
+        slot.setChanged();
+        return true;
+    }
+
+    /** Tongs in a slot, an item or nothing on the cursor: an item is loaded, an empty cursor takes the held piece out. */
+    @Override
+    public boolean overrideOtherStackedOnMe(ItemStack tongs, ItemStack other, Slot slot, ClickAction action, Player player, SlotAccess access) {
+        if (action != ClickAction.SECONDARY || !slot.allowModification(player))
+            return false;
+        ItemStack held = tongs.get(FDataComponents.TONGS_HELD.get());
+        if (other.isEmpty()) {
+            if (held == null || held.isEmpty())
+                return false;
+            ItemHeat.settle(held, player.level());
+            tongs.remove(FDataComponents.TONGS_HELD.get());
+            access.set(held);
+            return true;
+        }
+        if (held != null || other.getItem() instanceof TongsItem)
+            return false;
+        tongs.set(FDataComponents.TONGS_HELD.get(), other.split(1));
+        return true;
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         Tongs tongs = stack.get(FDataComponents.TONGS.get());
@@ -112,6 +164,12 @@ public class TongsItem extends Item implements Insulator {
             return;
         tooltip.add(Component.translatable("item.feedback.tongs.arms", name(tongs.arms())));
         tooltip.add(Component.translatable("item.feedback.tongs.grip", name(tongs.grip())));
+        ItemStack held = stack.get(FDataComponents.TONGS_HELD.get());
+        if (held != null && !held.isEmpty()) {
+            Level level = context.level();
+            boolean hot = level != null && ItemHeat.isHot(held, level);
+            tooltip.add(Component.translatable(hot ? "item.feedback.tongs.held_hot" : "item.feedback.tongs.held", held.getHoverName()));
+        }
     }
 
     private static Component name(ResourceLocation material) {

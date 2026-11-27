@@ -58,7 +58,15 @@ public final class HazardEvents {
 
         float safe = Protection.handlesUpToTu(player);
         for (InteractionHand hand : InteractionHand.values()) {
-            burnFor(player, player.getItemInHand(hand), safe);
+            ItemStack inHand = player.getItemInHand(hand);
+            burnFor(player, inHand, safe);
+            // A piece between the jaws of tongs reaches the hand through them: the tongs' own limit is part of `safe`, a hotter piece still burns.
+            ItemStack gripped = inHand.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TONGS_HELD.get());
+            if (gripped != null && !gripped.isEmpty() && ItemHeat.isHot(gripped, player.level())) {
+                ItemStack copy = gripped.copy();
+                burnFor(player, copy, safe);
+                inHand.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TONGS_HELD.get(), copy);
+            }
         }
         burnFor(player, player.containerMenu.getCarried(), safe);
     }

@@ -476,6 +476,20 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.machine.cable.CableGauge.STREAM_CODEC)
                     .build());
 
+    /** The one item a pair of tongs holds between its jaws, with its own heat stamp -- see {@code item/TongsItem}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.world.item.ItemStack>> TONGS_HELD =
+            COMPONENTS.register("tongs_held", () -> DataComponentType.<net.minecraft.world.item.ItemStack>builder()
+                    .persistent(net.minecraft.world.item.ItemStack.CODEC)
+                    .networkSynchronized(net.minecraft.world.item.ItemStack.STREAM_CODEC)
+                    .build());
+
+    /** Set on a hand tool while its use is held on a piece in the tongs of the other hand ({@code item/HandWork}); the piece itself stays in the tongs. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> HAND_TONGS =
+            COMPONENTS.register("hand_tongs", () -> DataComponentType.<Boolean>builder()
+                    .persistent(com.mojang.serialization.Codec.BOOL)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.BOOL)
+                    .build());
+
     /** What a pair of tongs is made of: arms and grip, both materials -- see {@code item/Tongs}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.Tongs>> TONGS =
             COMPONENTS.register("tongs", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.Tongs>builder()

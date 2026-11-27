@@ -60,6 +60,10 @@ public final class HandWorkView {
         if (!HandWork.working(tool))
             return;
         ItemStack piece = tool.get(FDataComponents.HAND_WORK);
+        if (piece == null && tool.has(FDataComponents.HAND_TONGS)) {
+            ItemStack tongs = HandWork.tongsBeside(player);
+            piece = tongs == null ? null : tongs.get(FDataComponents.TONGS_HELD);
+        }
         if (piece == null || piece.isEmpty())
             return;
         HumanoidArm arm = event.getHand() == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();

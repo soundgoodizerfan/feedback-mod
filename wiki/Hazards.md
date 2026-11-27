@@ -69,6 +69,12 @@ So for **steel straight out of the crucible** (1350–1410 Tu) you want **bone-g
 
 Holding tongs when the piece isn't hot enough to need them: *"Not hot enough to need them."* Tongs do nothing against electricity. They don't wear out.
 
+### Clamping a piece
+
+Tongs hold **one item** between the jaws, like a bundle. In any inventory, right-click a carried item onto the tongs, or the tongs onto an item, to clamp it. Right-click the tongs with an empty cursor to take the piece out; tongs on the cursor also unload onto an empty slot. The tooltip shows *Holding* and the piece's name, marked *(hot)* when it is. The piece keeps cooling in the jaws, and the hand burns only if the piece is hotter than the tongs' limit, checked about twice a second as for a held stack.
+
+With a [Hammer](Hammer.md), [File](Hand_Tools.md#file) or [Hand Drill](Hand_Tools.md#hand-drill) in one hand and loaded tongs in the other, hold right-click to work the clamped piece where it is: each stroke changes it in the jaws and nothing moves.
+
 ### Lifting a skillet
 
 Hold right-click with the tongs on a [Skillet](Skillet.md) within 4.5 blocks, looking at it, to take the pan by its handle and lift it off the fire. Release to set it down. A pan hotter than the tongs' limit burns your hand once a second while you hold it.
