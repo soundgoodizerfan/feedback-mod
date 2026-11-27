@@ -5,12 +5,12 @@ package io.github.soundgoodizerfan.feedback.combat.cast;
 import io.github.soundgoodizerfan.feedback.core.unit.Work;
 
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -53,7 +53,7 @@ final class PocketSand {
             Vec3 d = look.add((lv.random.nextDouble() - 0.5) * 0.7, (lv.random.nextDouble() - 0.3) * 0.5, (lv.random.nextDouble() - 0.5) * 0.7).normalize();
             lv.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ground), hand.x, hand.y, hand.z, 0, d.x, d.y, d.z, 0.5 + lv.random.nextDouble() * 0.4);
         }
-        CastFx.sound(lv, hand, SoundEvents.SAND_BREAK, 1f, 0.8f);
+        CastFx.sound(lv, hand, FSounds.CAST_VEIL.get(), 1f, 1.1f);
         return true;
     }
 }

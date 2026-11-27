@@ -7,10 +7,8 @@ import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import java.util.Comparator;
 import java.util.List;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -50,11 +48,11 @@ final class WalkingFire {
                 }
                 ServerLevel lv = p.serverLevel();
                 // lock-on mark, then a tracer from the muzzle to it
-                CastFx.ring(lv, CastFx.dust(CastFx.GOLD, 1.0f), end, 0.7, 12, 0);
-                CastFx.line(lv, CastFx.fade(CastFx.GOLD, CastFx.EMBER, 0.9f), muzzle, end, 0.5);
-                lv.sendParticles(ParticleTypes.FLAME, muzzle.x, muzzle.y, muzzle.z, 4, 0.05, 0.05, 0.05, 0.04);
-                lv.sendParticles(ParticleTypes.CRIT, end.x, end.y, end.z, 6, 0.2, 0.2, 0.2, 0.2);
-                CastFx.sound(lv, muzzle, SoundEvents.FIREWORK_ROCKET_BLAST, 0.5f, 1.2f + 0.15f * n);
+                CastFx.gather(lv, end, CastFx.GOLD, 1.1f, 6);
+                CastFx.streak(lv, muzzle, end, CastFx.GOLD, 0.035f, 5);
+                CastFx.shards(lv, muzzle, CastFx.EMBER, 0.6f, 4);
+                CastFx.shards(lv, end, CastFx.GOLD, 0.8f, 6);
+                CastFx.sound(lv, muzzle, io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_LOCK.get(), 0.7f, 1.0f + 0.12f * n);
                 GunShots.triggerHeard(p.serverLevel(), p, held, yaw, pitch, System.currentTimeMillis(), false, InteractionHand.MAIN_HAND);
             });
         }

@@ -7,9 +7,8 @@ import io.github.soundgoodizerfan.feedback.combat.grab.Grabbing;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
@@ -31,7 +30,8 @@ final class HumanShield {
         if (Grabbing.held(p) == null)
             return false;
         SHIELDING.add(p.getUUID());
-        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, 0.8f, 0.6f);
+        CastFx.pulse(p.serverLevel(), p.position().add(0, 1, 0).add(p.getLookAngle().scale(0.8)), p.getLookAngle(), CastFx.STEEL, 1f, 7);
+        CastFx.sound(p.serverLevel(), p.position(), FSounds.CAST_GUARD.get(), 0.8f, 0.8f);
         return true;
     }
 
@@ -50,7 +50,7 @@ final class HumanShield {
         body.invulnerableTime = 0;
         body.hurt(event.getSource(), event.getAmount());
         Vec3 c = body.getBoundingBox().getCenter();
-        p.serverLevel().sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 10, 0.25, 0.3, 0.25, 0.3);
-        CastFx.sound(p.serverLevel(), c, SoundEvents.PLAYER_ATTACK_KNOCKBACK, 0.8f, 0.8f);
+        CastFx.shards(p.serverLevel(), c, CastFx.STEEL, 0.9f, 5);
+        CastFx.sound(p.serverLevel(), c, FSounds.CAST_PUNCH.get(), 0.8f, 1f);
     }
 }

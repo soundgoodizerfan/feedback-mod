@@ -13,10 +13,9 @@ import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tether;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tethers;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,8 +43,9 @@ final class ShakeOff {
                 return false;
         }
         Vec3 at = p.position().add(0, 1, 0);
-        p.serverLevel().sendParticles(ParticleTypes.POOF, at.x, at.y, at.z, 14, 0.4, 0.5, 0.4, 0.05);
-        CastFx.sound(p.serverLevel(), at, SoundEvents.WOLF_SHAKE, 1f, 0.8f);
+        CastFx.shards(p.serverLevel(), at, 0xFFFFFF, 1.2f, 6);
+        CastFx.pulse(p.serverLevel(), at, Vec3.ZERO, CastFx.STEEL, 1.1f, 7);
+        CastFx.sound(p.serverLevel(), at, FSounds.CAST_WHOOSH.get(), 0.9f, 1.2f);
         return true;
     }
 

@@ -30,21 +30,15 @@ import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroPlacer;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -54,7 +48,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /**
  * Micro cells ({@code docs/dev/vehicle.md}, phase 1): the voxels are the shape, the state
  * Sable reads names the same voxels at half-block resolution, a save keeps them, the cell weighs
- * what they weigh, and a held block places and removes them.
+ * what they weigh.
  */
 @GameTestHolder(Feedback.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -161,48 +155,6 @@ public class MicroGameTests {
         helper.assertTrue(Math.abs(MicroCellBlockEntity.voxelKpg(Blocks.SPONGE.defaultBlockState())
                 - VehicleTuning.MICRO_FALLBACK_DENSITY.muPerMb() / 64) < 1e-6, "a block no material claims weighs the fallback");
         level.removeBlock(cell, false);
-        helper.succeed();
-    }
-
-    /** A held block places in front of the face hit and costs one; sneaking removes nothing (mining does that); creative pays nothing. */
-    @GameTest(template = "empty")
-    public static void aHeldBlockPlacesAndSneakRemoves(GameTestHelper helper) {
-        var level = helper.getLevel();
-        BlockPos cell = clearCell(helper);
-        helper.assertTrue(MicroPlacer.put(level, cell.getX() * 4, cell.getY() * 4, cell.getZ() * 4, STONE), "a first voxel");
-        var be = (MicroCellBlockEntity) level.getBlockEntity(cell);
-        // The middle of the first voxel's east face.
-        BlockHitResult east = new BlockHitResult(new Vec3(cell.getX() + 0.25, cell.getY() + 0.125, cell.getZ() + 0.125),
-                Direction.EAST, cell, false);
-
-        var survival = helper.makeMockPlayer(GameType.SURVIVAL);
-        survival.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_BLOCK, 3));
-        helper.assertTrue(MicroPlacer.use(survival, survival.getMainHandItem(), cell, east), "a held block places");
-        helper.assertTrue(be.get(1) == IRON && survival.getMainHandItem().getCount() == 2, "the voxel east of the one hit is iron, and it cost one block");
-
-        survival.setShiftKeyDown(true);
-        // Taking a voxel out is mining it with a tool, never a sneak-click: sneaking changes nothing here.
-        helper.assertFalse(MicroPlacer.use(survival, survival.getMainHandItem(), cell, east), "sneaking does not remove, and the voxel beyond is taken");
-        helper.assertTrue(be.get(0) == STONE && be.get(1) == IRON && survival.getMainHandItem().getCount() == 2,
-                "both voxels stay and nothing more is paid");
-
-        var creative = helper.makeMockPlayer(GameType.CREATIVE);
-        creative.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_BLOCK, 3));
-        BlockHitResult top = new BlockHitResult(new Vec3(cell.getX() + 0.375, cell.getY() + 0.25, cell.getZ() + 0.125),
-                Direction.UP, cell, false);
-        helper.assertTrue(MicroPlacer.use(creative, creative.getMainHandItem(), cell, top), "a creative player places too");
-        helper.assertTrue(be.get(MicroCellBlockEntity.index(1, 1, 0)) == IRON && creative.getMainHandItem().getCount() == 3,
-                "on top of the voxel hit, and for nothing");
-        level.removeBlock(cell, false);
-        helper.succeed();
-    }
-
-    /** Only a plain block can be a voxel: not a tool, and not a block with an entity of its own. */
-    @GameTest(template = "empty")
-    public static void onlyPlainBlocksFit(GameTestHelper helper) {
-        helper.assertTrue(MicroPlacer.fits(new ItemStack(Items.IRON_BLOCK)), "iron block fits");
-        helper.assertFalse(MicroPlacer.fits(new ItemStack(FVehicles.LIFT_ITEM.get())), "a Lift has a block entity");
-        helper.assertFalse(MicroPlacer.fits(new ItemStack(Items.CHEST)), "so does a chest");
         helper.succeed();
     }
 

@@ -406,6 +406,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.CasterStreamPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.CasterStreamPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.CasterStreamPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.CastShowPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.CastShowPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.CastShowPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GunTracerPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunTracerPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunTracerPayload::handle)

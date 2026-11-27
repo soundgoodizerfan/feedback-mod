@@ -9,10 +9,8 @@ import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -51,16 +49,12 @@ final class Whirl {
             later(p, n, () -> {
                 double a = a0 + n * Math.PI / 4;
                 Vec3 dir = new Vec3(Math.cos(a), 0, Math.sin(a));
-                CastFx.line(level, CastFx.fade(0xFFFFFF, CastFx.STEEL, 1.3f), c.add(dir.scale(0.8)), c.add(dir.scale(3.2)), 0.3);
-                Vec3 tip = c.add(dir.scale(3.0));
-                level.sendParticles(ParticleTypes.SWEEP_ATTACK, tip.x, tip.y, tip.z, 1, 0, 0, 0, 0);
-                level.sendParticles(ParticleTypes.CRIT, tip.x, tip.y, tip.z, 5, 0.15, 0.15, 0.15, 0.3);
-                CastFx.ring(level, CastFx.dust(CastFx.STEEL, 1.0f), c.add(0, -0.9, 0), 0.8 + n * 0.3, 8, 0);
+                CastFx.slash(level, c, dir, CastFx.STEEL, 2.2f, 5);
                 if (n % 4 == 0)
-                    CastFx.sound(level, c, SoundEvents.PLAYER_ATTACK_SWEEP, 1f, 1.1f - n * 0.05f);
+                    CastFx.sound(level, c, FSounds.CAST_SLASH.get(), 1f, 1.1f - n * 0.05f);
             });
         }
-        CastFx.ring(level, ParticleTypes.CLOUD, c.add(0, -0.9, 0), 0.6, 18, 0.3);
+        CastFx.pulse(level, c.add(0, -0.9, 0), Vec3.ZERO, 0xFFFFFF, 3f, 8);
         p.swing(InteractionHand.MAIN_HAND, true);
         CastFx.clip(p, "two_handed_spin", CastFx.TWO, 14, 4);
         CombatCues.everyone(p, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 0.9f);

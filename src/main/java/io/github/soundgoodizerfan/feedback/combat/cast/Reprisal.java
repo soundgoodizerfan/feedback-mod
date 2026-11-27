@@ -11,10 +11,8 @@ import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -39,11 +37,10 @@ final class Reprisal {
             // the answer: a streak from you to the one who struck, and a cut where it lands
             ServerLevel lv = p.serverLevel();
             Vec3 from = p.getEyePosition().add(0, -0.4, 0), to = foe.getBoundingBox().getCenter();
-            CastFx.line(lv, CastFx.fade(CastFx.GOLD, 0xFFFFFF, 1.2f), from, to, 0.25);
-            lv.sendParticles(ParticleTypes.SWEEP_ATTACK, to.x, to.y, to.z, 1, 0, 0, 0, 0);
-            CastFx.spray(lv, ParticleTypes.ELECTRIC_SPARK, to, 20, 0.5);
-            CastFx.sound(lv, to, SoundEvents.PLAYER_ATTACK_CRIT, 1f, 1.2f);
-            CastFx.sound(lv, to, SoundEvents.TRIDENT_RETURN, 0.8f, 1.6f);
+            CastFx.streak(lv, from, to, CastFx.GOLD, 0.03f, 4);
+            CastFx.slash(lv, to, to.subtract(from).normalize(), 0xFFFFFF, 1.2f, 7);
+            CastFx.shards(lv, to, CastFx.GOLD, 0.9f, 6);
+            CastFx.sound(lv, to, FSounds.CAST_SLASH.get(), 1f, 1.2f);
         }
     }
 }

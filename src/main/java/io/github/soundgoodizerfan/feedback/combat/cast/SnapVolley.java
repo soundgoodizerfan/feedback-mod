@@ -8,7 +8,6 @@ import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +29,13 @@ final class SnapVolley {
             return false;
         Vec3 eye = p.getEyePosition(), d = t.getBoundingBox().getCenter().subtract(eye);
         float yaw = (float) (Mth.atan2(-d.x, d.z) * Mth.RAD_TO_DEG), pitch = (float) -(Mth.atan2(d.y, Math.hypot(d.x, d.z)) * Mth.RAD_TO_DEG);
-        return GunShots.trigger(p.serverLevel(), p, gun, yaw, pitch, System.currentTimeMillis(), false, InteractionHand.MAIN_HAND);
+        boolean fired = GunShots.trigger(p.serverLevel(), p, gun, yaw, pitch, System.currentTimeMillis(), false, InteractionHand.MAIN_HAND);
+        if (fired) {
+            Vec3 at = t.getBoundingBox().getCenter();
+            CastFx.gather(p.serverLevel(), at, CastFx.STEEL, 1.0f, 5);
+            CastFx.bolt(p.serverLevel(), eye.add(p.getLookAngle().scale(0.8)), at, CastFx.ICE, 0.012f, 3);
+        }
+        return fired;
     }
 
     /** Snap volley: up to three rounds, four ticks apart, each at the next nearest living thing in the forward cone (the same one again if it is alone). The gun's own cycle may refuse a follow-up; each round spends ammo and adds heat as any shot. */
@@ -51,7 +56,7 @@ final class SnapVolley {
                     fireAt(p, t);
             });
         }
-        CastFx.sound(p.serverLevel(), eye, SoundEvents.CROSSBOW_QUICK_CHARGE_3.value(), 0.6f, 1.6f);
+        CastFx.sound(p.serverLevel(), eye, io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_LOCK.get(), 0.8f, 1.3f);
         return true;
     }
 }

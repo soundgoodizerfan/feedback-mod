@@ -12,10 +12,9 @@ import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -111,11 +110,10 @@ final class Kindle {
             ItemHeat.drain(held, p.level(), lit * COST_TU);
         HotContact.burn(p, new Tu(Math.min(tu.value(), 500f)));
         p.swing(InteractionHand.MAIN_HAND, true);
-        lv.sendParticles(ParticleTypes.FLAME, spot.x, spot.y + 0.2, spot.z, 30, RADIUS * 0.4, 0.2, RADIUS * 0.4, 0.04);
-        CastFx.ring(lv, ParticleTypes.FLAME, spot, RADIUS, 24, 0.05);
-        CastFx.spray(lv, ParticleTypes.LAVA, spot.add(0, 0.3, 0), 8, 0.3);
-        CastFx.sound(lv, spot, SoundEvents.FIRECHARGE_USE, 1f, 0.7f);
-        CastFx.sound(lv, spot, SoundEvents.LAVA_POP, 0.8f, 0.8f);
+        CastFx.pulse(lv, spot, Vec3.ZERO, CastFx.EMBER, (float) RADIUS, 9);
+        CastFx.column(lv, spot, CastFx.EMBER, 1.8f, 10);
+        CastFx.shards(lv, spot.add(0, 0.3, 0), CastFx.GOLD, 1.2f, 6);
+        CastFx.sound(lv, spot, FSounds.CAST_SURGE.get(), 0.9f, 1.1f);
         return true;
     }
 }

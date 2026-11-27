@@ -10,9 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -46,7 +44,7 @@ final class SuppressingFire {
         if (!(gun.getItem() instanceof GunItem) || GunAmmo.count(gun) < 1)
             return false;
         BURSTS.put(p.getUUID(), p.level().getGameTime());
-        CastFx.sound(p.serverLevel(), p.getEyePosition(), SoundEvents.CROSSBOW_LOADING_END.value(), 0.8f, 0.8f);
+        CastFx.sound(p.serverLevel(), p.getEyePosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_LOCK.get(), 0.8f, 0.8f);
         return true;
     }
 
@@ -66,7 +64,7 @@ final class SuppressingFire {
         float side = phase < 1f ? phase * 2f - 1f : 3f - phase * 2f;
         float yaw = p.getYRot() + HALF_DEG * Mth.clamp(side, -1f, 1f);
         Vec3 muzzle = p.getEyePosition().add(p.getLookAngle().scale(0.9));
-        p.serverLevel().sendParticles(ParticleTypes.FLAME, muzzle.x, muzzle.y, muzzle.z, 2, 0.05, 0.05, 0.05, 0.04);
+        CastFx.streak(p.serverLevel(), muzzle, muzzle.add(Vec3.directionFromRotation(p.getXRot(), yaw).scale(6)), CastFx.EMBER, 0.02f, 3);
         GunShots.triggerHeard(p.serverLevel(), p, gun, yaw, p.getXRot(), System.currentTimeMillis(), false, InteractionHand.MAIN_HAND);
         return true;
     }

@@ -13,10 +13,8 @@ import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -66,8 +64,9 @@ final class ShadowStep {
             return false;
         ServerLevel level = p.serverLevel();
         Vec3 from = p.position().add(0, 1, 0);
-        level.sendParticles(ParticleTypes.LARGE_SMOKE, from.x, from.y, from.z, 8, 0.3, 0.5, 0.3, 0.02);
-        CastFx.sound(level, from, SoundEvents.PLAYER_ATTACK_SWEEP, 0.8f, 1.5f);
+        CastFx.pulse(level, p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.SHADOW, 1.2f, 7);
+        CastFx.trail(level, p, new Vec3(0, 0.9, 0), CastFx.SHADOW, 0.14f, CastTuning.FLANK_TICKS);
+        CastFx.sound(level, from, FSounds.CAST_VEIL.get(), 0.9f, 1.2f);
         CombatCues.everyone(p, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 1.6f);
         DASHES.put(p.getUUID(), new Dash(to, t.getUUID(), CastTuning.FLANK_TICKS, p.getHealth()));
         AMBUSH.put(p.getUUID(), p.level().getGameTime() + CastTuning.AMBUSH_TICKS);
@@ -95,8 +94,6 @@ final class ShadowStep {
         Vec3 step = left.normalize().scale(Math.min(CastTuning.FLANK_SPEED, left.length()));
         p.setDeltaMovement(step.x, p.getDeltaMovement().y, step.z);
         p.hurtMarked = true;
-        Vec3 at = p.position().add(0, 0.9, 0);
-        p.serverLevel().sendParticles(CastFx.fade(CastFx.SHADOW, 0x000000, 1.2f), at.x, at.y, at.z, 3, 0.15, 0.4, 0.15, 0);
         DASHES.put(p.getUUID(), new Dash(d.to(), d.target(), d.left() - 1, d.health()));
     }
 

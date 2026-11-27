@@ -8,9 +8,8 @@ import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -49,9 +48,9 @@ final class Cauterize {
             p.heal(band == HotContact.Band.SEAR ? HEAL_SEAR : HEAL_BURN);
             ItemHeat.drain(stack, p.level(), practised ? SPENT * CastTuning.SEAR_SHUT_SPENT : SPENT);
             Vec3 at = p.position().add(0, 1, 0);
-            p.serverLevel().sendParticles(ParticleTypes.LARGE_SMOKE, at.x, at.y, at.z, 12, 0.25, 0.3, 0.25, 0.02);
-            p.serverLevel().sendParticles(ParticleTypes.LAVA, at.x, at.y, at.z, 4, 0.2, 0.2, 0.2, 0);
-            CastFx.sound(p.serverLevel(), at, SoundEvents.FIRE_EXTINGUISH, 1f, 0.7f);
+            CastFx.gather(p.serverLevel(), at, CastFx.EMBER, 1f, 6);
+            CastFx.column(p.serverLevel(), p.position(), CastFx.EMBER, 1.6f, 8);
+            CastFx.sound(p.serverLevel(), at, FSounds.CAST_MEND.get(), 1f, 0.8f);
             return true;
         }
         return false;

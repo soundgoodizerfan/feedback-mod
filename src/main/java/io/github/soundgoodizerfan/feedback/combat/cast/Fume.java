@@ -24,6 +24,9 @@ final class Fume {
         PotionSpray.mist(p.serverLevel(), at, drawn, drawn.getAmount() * 2);
         Vials.splash(p.serverLevel(), at, drawn);
         p.swing(InteractionHand.MAIN_HAND, true);
+        CastFx.pulse(p.serverLevel(), at.add(0, -0.5, 0), Vec3.ZERO, CastFx.ICE, 1.8f, 9);
+        CastFx.shards(p.serverLevel(), at, CastFx.ICE, 1f, 6);
+        CastFx.sound(p.serverLevel(), at, io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_SHATTER.get(), 0.8f, 1.1f);
         return true;
     }
 }

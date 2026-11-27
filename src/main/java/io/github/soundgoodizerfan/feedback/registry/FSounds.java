@@ -341,6 +341,11 @@ public class FSounds {
     /** A roll begun. */
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLL_WHOOSH = ui("combat.roll_whoosh");
 
+    /** Cast technique staging: a fist landing, a fast move, a heavy landing, a rage or surge, a target locked. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CAST_PUNCH = ui("cast.punch"), CAST_WHOOSH = ui("cast.whoosh"),
+            CAST_SLAM = ui("cast.slam"), CAST_SURGE = ui("cast.surge"), CAST_LOCK = ui("cast.lock"),
+            CAST_SLASH = ui("cast.slash"), CAST_VEIL = ui("cast.veil"), CAST_MEND = ui("cast.mend"), CAST_GUARD = ui("cast.guard"), CAST_SHATTER = ui("cast.shatter");
+
     /** One click of a Geiger counter; the counter draws how many a tick. */
     public static final DeferredHolder<SoundEvent, SoundEvent> GEIGER_CLICK = ui("geiger.click");
 

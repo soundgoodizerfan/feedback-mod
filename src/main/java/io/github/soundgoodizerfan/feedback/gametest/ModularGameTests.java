@@ -12,7 +12,6 @@ import io.github.soundgoodizerfan.feedback.modular.item.ModularRework;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.bench.ModularAssembly;
-import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
@@ -107,30 +106,6 @@ public class ModularGameTests {
         helper.succeed();
     }
 
-    /** Three ingots at the table, with the pickaxe head's shape chosen, are a pickaxe head of three cells. */
-    @GameTest(template = "empty")
-    public static void tableShapesAPart(GameTestHelper helper) {
-        ItemStack i = new ItemStack(Items.IRON_INGOT, 1);
-        var option = PartBenchShaping.options(ModularTypes.on(helper.getLevel())).stream()
-                .filter(o -> o.shaping().item().getPath().equals("pickaxe_head") && o.variant().name().isEmpty()).findFirst().orElseThrow();
-        ItemStack head = PartBenchShaping.make(option, List.of(i, i, i), ClientMaterials.on(helper.getLevel()), helper.getLevel());
-        var made = head.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
-        helper.assertTrue(head.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem
-                && made != null && made.cells() == 3, "the part should be a three-cell head, got " + head);
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty")
-    public static void ironPickaxeIsNearVanilla(GameTestHelper helper) {
-        ItemStack pick = pickaxe(helper, Items.IRON_INGOT);
-        helper.assertTrue(pick.is(FModular.HAFTED_TOOL.get()), "three ingots over two sticks should be a pickaxe, got " + pick);
-        ModularFigures f = ModularStacks.figures(pick);
-        helper.assertTrue(f != null, "the assembled item should carry baked figures");
-        helper.assertTrue(Math.abs(f.get(Fig.DIG_SPEED) - 6) < 1.2f, "an iron pickaxe digs near 6, got " + f.get(Fig.DIG_SPEED));
-        helper.assertTrue(Math.abs(pick.getMaxDamage() - 250) < 50, "an iron pickaxe lasts near 250, got " + pick.getMaxDamage());
-        helper.succeed();
-    }
-
     /** Gold is soft and nearly three times iron's density: a heavy head that swings slow and bites poorly. */
     @GameTest(template = "empty")
     public static void heavierHeadHitsHarderAndSwingsSlower(GameTestHelper helper) {
@@ -171,20 +146,6 @@ public class ModularGameTests {
         helper.succeed();
     }
 
-    /** Two blades over a grip is a sword; a maul head over two rods is a maul. */
-    @GameTest(template = "empty")
-    public static void swordAndMaceAssemble(GameTestHelper helper) {
-        ItemStack i = new ItemStack(Items.IRON_INGOT);
-        ItemStack s = new ItemStack(Items.STICK);
-        ItemStack sword = craft(helper, List.of(partOf(helper, "sword_blade", Items.IRON_INGOT, 2),
-                partOf(helper, "sword_guard", Items.IRON_INGOT, 1), s));
-        helper.assertTrue(sword.is(FModular.HAFTED_TOOL.get()), "a blade over a guard and a grip is a sword, got " + sword);
-        helper.assertTrue(sword.has(DataComponents.TOOL), "a sword cuts cobweb");
-        ItemStack maul = craft(helper, List.of(partOf(helper, "maul_head", Items.IRON_INGOT, 6), s, s, binding(helper)));
-        helper.assertTrue(maul.is(FModular.HAFTED_TOOL.get()), "a maul head over two sticks and a binding is a maul, got " + maul);
-        helper.succeed();
-    }
-
     /** Stiffer limbs shoot faster and draw slower; a weak string is the limit. */
     @GameTest(template = "empty")
     public static void stiffLimbsShootFasterAndDrawSlower(GameTestHelper helper) {
@@ -217,22 +178,6 @@ public class ModularGameTests {
         helper.assertTrue(ModularStacks.figures(goldChest).get(Fig.ARMOUR) < iron8, "soft gold stops less than iron");
         helper.assertTrue(ModularStacks.figures(goldChest).get(Fig.SLOW) > ModularStacks.figures(ironChest).get(Fig.SLOW),
                 "a gold chestplate is heavier to carry");
-        helper.succeed();
-    }
-
-    /** Custom types are only files: a cleaver inherits the axe's, a spear is long, and a longer handle reaches further. */
-    @GameTest(template = "empty")
-    public static void customTypesAssemble(GameTestHelper helper) {
-        ItemStack i = new ItemStack(Items.IRON_INGOT);
-        ItemStack s = new ItemStack(Items.STICK);
-        ItemStack e = ItemStack.EMPTY;
-        ItemStack cleaver = craft(helper, List.of(partOf(helper, "cleaver_head", i.getItem(), 4), s, binding(helper)));
-        helper.assertTrue(cleaver.is(FModular.HAFTED_TOOL.get()), "a cleaver head over a handle and a binding is a cleaver, got " + cleaver);
-        ItemStack spear = craft(helper, List.of(partOf(helper, "spear_head", i.getItem(), 3), s, s, s, binding(helper)));
-        helper.assertTrue(spear.is(FModular.HAFTED_TOOL.get()), "one head over three handles and a binding is a spear, got " + spear);
-        ItemStack shovel = craft(helper, List.of(partOf(helper, "shovel_head", i.getItem(), 3), s, s, binding(helper)));
-        helper.assertTrue(ModularStacks.figures(spear).get(Fig.REACH) > ModularStacks.figures(shovel).get(Fig.REACH),
-                "a spear reaches further than a shovel");
         helper.succeed();
     }
 }

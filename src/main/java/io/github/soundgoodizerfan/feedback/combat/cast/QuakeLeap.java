@@ -14,10 +14,8 @@ import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -48,12 +46,11 @@ final class QuakeLeap {
         LEAPING.put(p.getUUID(), new double[]{p.getY(), p.level().getGameTime()});
         ServerLevel lv = p.serverLevel();
         Vec3 at = p.position().add(0, 0.1, 0);
-        CastFx.ring(lv, ParticleTypes.CLOUD, at, 0.5, 16, 0.3);
-        CastFx.spokes(lv, ParticleTypes.CRIT, at, 0.3, 1.6, 6, 0.3);
+        CastFx.pulse(lv, at, Vec3.ZERO, CastFx.STEEL, 1.8f, 8);
+        CastFx.column(lv, at, CastFx.STEEL, 1.8f, 8);
         CastFx.debris(lv, at, 24, 0.6);
-        lv.sendParticles(ParticleTypes.EXPLOSION, at.x, at.y, at.z, 1, 0, 0, 0, 0);
-        CastFx.sound(lv, at, SoundEvents.FIREWORK_ROCKET_LAUNCH, 0.8f, 0.6f);
-        CastFx.sound(lv, at, SoundEvents.ANVIL_LAND, 0.4f, 0.5f);
+        CastFx.sound(lv, at, FSounds.CAST_WHOOSH.get(), 0.9f, 0.8f);
+        CastFx.sound(lv, at, FSounds.CAST_SLAM.get(), 0.5f, 1.2f);
         CombatCues.everyone(p, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 0.7f);
         return true;
     }
@@ -68,8 +65,8 @@ final class QuakeLeap {
         air[0] = Math.max(air[0], p.getY());
         p.fallDistance = 0f; // the leap lands without hurting
         if (!p.onGround()) {
-            p.serverLevel().sendParticles(CastFx.fade(CastFx.STEEL, CastFx.EMBER, 1.4f), p.getX(), p.getY() + 0.4, p.getZ(), 3, 0.2, 0.3, 0.2, 0);
-            p.serverLevel().sendParticles(ParticleTypes.CLOUD, p.getX(), p.getY() + 0.2, p.getZ(), 1, 0.1, 0.1, 0.1, 0.01);
+            if (p.level().getGameTime() % 4 == 0)
+                CastFx.trail(p.serverLevel(), p, new Vec3(0, 0.4, 0), CastFx.STEEL, 0.14f, 6);
         }
         if (p.level().getGameTime() - (long) air[1] < 4 || !p.onGround())
             return;

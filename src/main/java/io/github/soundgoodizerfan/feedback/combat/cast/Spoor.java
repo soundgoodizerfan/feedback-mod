@@ -17,7 +17,6 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -62,7 +61,8 @@ final class Spoor {
         if (signs(p).isEmpty())
             return false;
         SHOWING.put(p.getUUID(), p.level().getGameTime() + CastTuning.SPOOR_TICKS);
-        p.serverLevel().playSound(null, p.getX(), p.getEyeY(), p.getZ(), SoundEvents.FOX_SNIFF, net.minecraft.sounds.SoundSource.PLAYERS, 0.8f, 0.9f);
+        CastFx.sound(p.serverLevel(), p.getEyePosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_LOCK.get(), 0.8f, 0.9f);
+        CastFx.gather(p.serverLevel(), p.position().add(0, 0.1, 0), CastFx.GOLD, (float) CastTuning.SPOOR_RANGE * 0.25f, 8);
         return true;
     }
 

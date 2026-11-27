@@ -2,11 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -39,10 +38,10 @@ final class Rend {
         p.swing(InteractionHand.MAIN_HAND, true);
         ServerLevel lv = p.serverLevel();
         Vec3 chest = t.position().add(0, t.getBbHeight() * 0.65, 0);
-        lv.sendParticles(ParticleTypes.ELECTRIC_SPARK, chest.x, chest.y, chest.z, 22, 0.25, 0.25, 0.25, 0.4);
-        CastFx.line(lv, CastFx.fade(CastFx.STEEL, CastFx.EMBER, 1.1f), chest.add(-0.4, 0.4, 0), chest.add(0.4, -0.4, 0), 0.1);
-        CastFx.sound(lv, chest, SoundEvents.GRINDSTONE_USE, 1f, 0.8f);
-        CastFx.sound(lv, chest, SoundEvents.ANVIL_LAND, 0.5f, 1.6f);
+        CastFx.shards(lv, chest, CastFx.EMBER, 1.0f, 6);
+        CastFx.streak(lv, chest.add(-0.5, 0.5, 0), chest.add(0.5, -0.5, 0), CastFx.STEEL, 0.03f, 5);
+        CastFx.sound(lv, chest, FSounds.CAST_SLASH.get(), 1f, 0.8f);
+        CastFx.sound(lv, chest, FSounds.CAST_SHATTER.get(), 0.6f, 1.2f);
         return true;
     }
 }

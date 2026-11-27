@@ -17,7 +17,6 @@ import java.util.UUID;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -74,7 +73,7 @@ final class MarkAndFire {
         speed.removeModifier(SLOW);
         speed.addTransientModifier(new AttributeModifier(SLOW, -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         CombatCues.everyone(p, FSounds.FEEL_LIGHT.get(), FeelTuning.LIGHT_VOLUME, 0.5f);
-        CastFx.sound(p.serverLevel(), p.getEyePosition(), SoundEvents.NOTE_BLOCK_HAT.value(), 0.8f, 1.4f);
+        CastFx.sound(p.serverLevel(), p.getEyePosition(), FSounds.CAST_LOCK.get(), 0.8f, 1.4f);
         return true;
     }
 
@@ -114,7 +113,8 @@ final class MarkAndFire {
             return;
         m.ids().add(t.getId());
         MARKS.put(p.getUUID(), new Marking(m.ids(), m.max(), m.start(), now));
-        CastFx.sound(level, p.getEyePosition(), SoundEvents.NOTE_BLOCK_PLING.value(), 0.8f, 0.6f + 0.15f * m.ids().size());
+        CastFx.gather(level, t.getBoundingBox().getCenter(), CastFx.CRIMSON, 1f, 6);
+        CastFx.sound(level, p.getEyePosition(), FSounds.CAST_LOCK.get(), 0.8f, 0.8f + 0.1f * m.ids().size());
         if (m.ids().size() >= m.max())
             execute(p);
     }
@@ -142,6 +142,7 @@ final class MarkAndFire {
                 float pitch = (float) (-Mth.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)) * Mth.RAD_TO_DEG);
                 // Ask the client to ease the view round to it, so the volley sweeps the player round the room, one mark at a time.
                 net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(p, new CastPayloads.Turn(yaw, pitch));
+                CastFx.bolt(p.serverLevel(), p.getEyePosition().add(0, -0.3, 0), e.getBoundingBox().getCenter(), CastFx.CRIMSON, 0.015f, 4);
                 DeadEye.arm(p, 2); // each of these is exact
                 GunShots.triggerTurned(p.serverLevel(), p, held, yaw, pitch, System.currentTimeMillis(), false, InteractionHand.MAIN_HAND);
             });

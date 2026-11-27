@@ -19,7 +19,11 @@ final class LeeSide {
 
     @SubscribeEvent
     public static void onKnockback(LivingKnockBackEvent event) {
-        if (event.getEntity() instanceof ServerPlayer p && Skills.leeSide(p))
+        if (event.getEntity() instanceof ServerPlayer p && Skills.leeSide(p)) {
             event.setStrength(event.getStrength() * 0.5f);
+            net.minecraft.world.phys.Vec3 at = p.position().add(0, 0.8, 0);
+            CastFx.shards(p.serverLevel(), at, CastFx.STEEL, 0.5f, 4);
+            CastFx.sound(p.serverLevel(), at, io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_GUARD.get(), 0.5f, 1.3f);
+        }
     }
 }

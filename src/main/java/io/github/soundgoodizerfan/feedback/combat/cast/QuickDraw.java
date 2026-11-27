@@ -11,7 +11,6 @@ import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -66,9 +65,9 @@ public final class QuickDraw {
         p.connection.send(new ClientboundSetCarriedItemPacket(slot));
         ServerLevel lv = p.serverLevel();
         Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.5)).add(0, -0.3, 0);
-        CastFx.sound(lv, hand, FSounds.ROLL_WHOOSH.get(), 0.5f, 1.9f);
-        lv.sendParticles(CastFx.dust(CastFx.STEEL, 0.8f), hand.x, hand.y, hand.z, 6, 0.1, 0.1, 0.1, 0.02);
-        lv.sendParticles(ParticleTypes.CRIT, hand.x, hand.y, hand.z, 3, 0.1, 0.1, 0.1, 0.1);
+        CastFx.sound(lv, hand, FSounds.CAST_WHOOSH.get(), 0.7f, 1.5f);
+        CastFx.slash(lv, hand, p.getLookAngle(), CastFx.STEEL, 0.9f, 7);
+        CastFx.shards(lv, hand.add(p.getLookAngle().scale(0.4)), 0xFFFFFF, 0.7f, 5);
         return true;
     }
 }

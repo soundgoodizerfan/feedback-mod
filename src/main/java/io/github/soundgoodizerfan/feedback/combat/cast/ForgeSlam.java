@@ -11,7 +11,6 @@ import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -43,20 +42,17 @@ final class ForgeSlam {
         float lost = 150f + burned * 40f; // the more it sears, the more the iron gives up
         if (!(held.getItem() instanceof GunItem))
             ItemHeat.drain(held, p.level(), lost);
-        level.sendParticles(ParticleTypes.LAVA, p.getX(), p.getY() + 0.2, p.getZ(), 20, 1.5, 0.1, 1.5, 0);
-        level.sendParticles(ParticleTypes.FLAME, p.getX(), p.getY() + 0.1, p.getZ(), 40, 1.8, 0.05, 1.8, 0.05);
-        // heat reads in the colour: a molten ring spreading out, cracks glowing in the floor, sparks and smoke rising
+        // heat reads in the colour: a molten ring spreading out, a second one behind it, sparks and a column rising
         Vec3 land = p.position().add(0, 0.1, 0);
         double heat = Math.min(1.0, tu.value() / 1200.0);
-        CastFx.shockwave(p, land, 3.5, 5, CastFx.fade(0xFFE08A, CastFx.EMBER, 1.6f), 0);
-        CastFx.shockwave(p, land, 3.5, 5, ParticleTypes.FLAME, 0.18);
-        CastFx.spokes(level, CastFx.fade(0xFFE08A, 0x802000, 1.2f), land, 0.4, 3.5, 8, 0.2);
-        CastFx.spray(level, ParticleTypes.LAVA, land.add(0, 0.3, 0), 10 + (int) (20 * heat), 0.35);
-        CastFx.spray(level, ParticleTypes.ELECTRIC_SPARK, land.add(0, 0.3, 0), 20, 0.7);
+        CastFx.pulse(level, land, Vec3.ZERO, 0xFFE08A, 3.5f, 9);
+        CastFx.pulse(level, land, Vec3.ZERO, CastFx.EMBER, 2.5f, 12);
+        CastFx.shards(level, land.add(0, 0.3, 0), CastFx.EMBER, 1.5f + (float) heat, 8);
+        CastFx.column(level, land, CastFx.EMBER, 2f + (float) heat, 10);
         level.sendParticles(ParticleTypes.LARGE_SMOKE, land.x, land.y + 0.5, land.z, 10, 0.5, 0.3, 0.5, 0.05);
         CastFx.smash(level, land, 750, false);
-        CastFx.sound(level, land, SoundEvents.LAVA_EXTINGUISH, 0.8f, 0.7f);
-        CastFx.sound(level, land, SoundEvents.BLAZE_SHOOT, 0.6f, 0.6f);
+        CastFx.sound(level, land, FSounds.CAST_SLAM.get(), 1f, 0.8f);
+        CastFx.sound(level, land, FSounds.CAST_SURGE.get(), 0.6f, 0.7f);
         level.playSound(null, p.blockPosition(), FSounds.FEEL_HEAVY.get(), net.minecraft.sounds.SoundSource.PLAYERS, 0.9f, 0.5f);
         p.swing(InteractionHand.MAIN_HAND, true);
         CastFx.clip(p, "one_handed_slam_instant", CastFx.MAIN, 14, 4);

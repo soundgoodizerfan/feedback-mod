@@ -9,10 +9,9 @@ import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.combat.hit.FistTuning;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -44,7 +43,8 @@ final class Uppercut {
             LivingEntity t = ahead(p, 3.2, 0.5);
             if (t == null) {
                 CombatTicker.stagger(p, 15, ParryTuning.STAGGER_SLOW);
-                lv.sendParticles(ParticleTypes.CLOUD, hand.x, hand.y, hand.z, 5, 0.2, 0.3, 0.2, 0.05);
+                CastFx.streak(lv, hand, hand.add(0, 1.2, 0), CastFx.STEEL, 0.03f, 5);
+                CastFx.sound(lv, hand, FSounds.CAST_WHOOSH.get(), 0.8f, 1.1f);
                 return;
             }
             t.invulnerableTime = 0;
@@ -58,9 +58,10 @@ final class Uppercut {
             }
             stagger(p, t, new Work(dmg * ParryTuning.WORK_PER_DAMAGE));
             Vec3 c = t.getBoundingBox().getCenter();
-            lv.sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 20, 0.2, 0.4, 0.2, 0.5);
-            CastFx.sound(lv, c, SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1f, 0.8f);
-            CastFx.sound(lv, c, SoundEvents.PLAYER_ATTACK_CRIT, 1f, 0.7f);
+            CastFx.streak(lv, c.add(0, -0.6, 0), c.add(0, 2.2, 0), 0xFFFFFF, 0.05f, 6);
+            CastFx.shards(lv, c, CastFx.GOLD, 1.3f, 7);
+            CastFx.sound(lv, c, FSounds.CAST_PUNCH.get(), 1f, 0.8f);
+            CastFx.sound(lv, c, FSounds.CAST_WHOOSH.get(), 0.7f, 1.3f);
         });
         return true;
     }

@@ -16,10 +16,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -75,12 +73,13 @@ final class Slide {
             e.hurtMarked = true;
             if (stagger(p, e, new Work(work * io.github.soundgoodizerfan.feedback.modular.trait.Poleyn.staggerMult(e))))
                 Disorder.note(p, e, Disorder.Kind.TRIPPED);
-            lv.sendParticles(ParticleTypes.CRIT, e.getX(), e.getY() + 0.3, e.getZ(), 8, 0.2, 0.1, 0.2, 0.2);
-            CastFx.sound(lv, e.position(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, 0.9f, 0.9f);
+            CastFx.shards(lv, e.position().add(0, 0.3, 0), 0xFFFFFF, 0.9f, 5);
+            CastFx.sound(lv, e.position(), FSounds.CAST_PUNCH.get(), 0.9f, 0.9f);
         }
         CastFx.debris(lv, p.position(), 6, 0.3);
-        lv.sendParticles(ParticleTypes.CLOUD, p.getX() - d.x * 0.5, p.getY() + 0.1, p.getZ() - d.z * 0.5, 2, 0.2, 0.02, 0.2, 0.02);
-        if (p.level().getGameTime() % 4 == 0)
-            CastFx.sound(lv, p.position(), SoundEvents.GRAVEL_STEP, 0.7f, 0.7f);
+        if (p.level().getGameTime() % 4 == 0) {
+            CastFx.streak(lv, p.position().add(-d.x * 1.2, 0.1, -d.z * 1.2), p.position().add(0, 0.1, 0), CastFx.STEEL, 0.03f, 5);
+            CastFx.sound(lv, p.position(), FSounds.CAST_WHOOSH.get(), 0.5f, 0.8f);
+        }
     }
 }

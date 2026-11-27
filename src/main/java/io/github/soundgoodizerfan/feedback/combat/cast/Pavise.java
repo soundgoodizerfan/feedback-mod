@@ -9,9 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -47,8 +46,8 @@ final class Pavise {
         if (!p.isShiftKeyDown() || shield(p).isEmpty())
             return false;
         PLANTS.put(p.getUUID(), new Plant(p.level().getGameTime() + TICKS, p.position()));
-        CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.ICE, 1.2f), p.position().add(0, 0.1, 0), 1.0, 16, 0.2);
-        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.ANVIL_PLACE, 0.8f, 0.6f);
+        CastFx.pulse(p.serverLevel(), p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.ICE, 1.6f, 9);
+        CastFx.sound(p.serverLevel(), p.position(), FSounds.CAST_GUARD.get(), 0.8f, 0.7f);
         return true;
     }
 
@@ -79,8 +78,8 @@ final class Pavise {
                     shield == p.getMainHandItem() ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
         event.setCanceled(true);
         Vec3 at = p.position().add(0, 1.1, 0).add(look.normalize().scale(0.7));
-        p.serverLevel().sendParticles(ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, 10, 0.25, 0.3, 0.25, 0.4);
-        CastFx.sound(p.serverLevel(), at, SoundEvents.SHIELD_BLOCK, 1f, 0.8f);
+        CastFx.shards(p.serverLevel(), at, CastFx.ICE, 0.8f, 5);
+        CastFx.sound(p.serverLevel(), at, FSounds.CAST_GUARD.get(), 1f, 1.1f);
     }
 
     @SubscribeEvent

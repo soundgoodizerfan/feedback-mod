@@ -12,9 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -52,7 +51,7 @@ final class Overwatch {
         if (!(gun.getItem() instanceof GunItem) || GunAmmo.count(gun) < 1)
             return false;
         WATCHES.put(p.getUUID(), new Watch(p.level().getGameTime() + TICKS, p.position(), new HashSet<>()));
-        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.CROSSBOW_LOADING_END.value(), 0.8f, 0.7f);
+        CastFx.sound(p.serverLevel(), p.position(), FSounds.CAST_LOCK.get(), 0.8f, 0.8f);
         return true;
     }
 
@@ -69,7 +68,7 @@ final class Overwatch {
         }
         Vec3 eye = p.getEyePosition(), look = p.getLookAngle();
         if (p.tickCount % 5 == 0) // the watched lane, drawn faintly
-            CastFx.line(p.serverLevel(), CastFx.dust(CastFx.GOLD, 0.5f), eye.add(look.scale(1.5)), eye.add(look.scale(RANGE * 0.6)), 0.3);
+            CastFx.streak(p.serverLevel(), eye.add(look.scale(1.5)).add(0, -0.3, 0), eye.add(look.scale(RANGE * 0.6)), CastFx.GOLD, 0.01f, 6);
         for (LivingEntity e : near(p, eye.add(look.scale(RANGE / 2)), RANGE / 2 + 2)) {
             if (w.caught().contains(e.getUUID()) || !p.hasLineOfSight(e))
                 continue;
@@ -83,9 +82,9 @@ final class Overwatch {
             e.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, PIN_TICKS, 2));
             Disorder.note(p, e, Disorder.Kind.PINNED);
             Vec3 c = e.getBoundingBox().getCenter();
-            p.serverLevel().sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 6, 0.2, 0.2, 0.2, 0.15);
-            CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.EMBER, 1.0f), e.position().add(0, 0.1, 0), 0.8, 12, 0);
-            CastFx.sound(p.serverLevel(), c, SoundEvents.ARROW_HIT, 0.6f, 1.7f);
+            CastFx.gather(p.serverLevel(), c, CastFx.EMBER, 1f, 6);
+            CastFx.pulse(p.serverLevel(), e.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.EMBER, 0.8f, 8);
+            CastFx.sound(p.serverLevel(), c, FSounds.CAST_LOCK.get(), 0.6f, 1.5f);
         }
     }
 }

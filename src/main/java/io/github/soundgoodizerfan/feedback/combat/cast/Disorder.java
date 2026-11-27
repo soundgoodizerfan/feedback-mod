@@ -120,7 +120,7 @@ public final class Disorder {
                 if (owner != null)
                     note(owner, n, Kind.BURNING);
                 if (b.body().level() instanceof net.minecraft.server.level.ServerLevel lv)
-                    lv.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME, n.getX(), n.getY() + n.getBbHeight() * 0.5, n.getZ(), 6, 0.2, 0.3, 0.2, 0.02);
+                    CastFx.bolt(lv, b.body().position().add(0, b.body().getBbHeight() * 0.5, 0), n.position().add(0, n.getBbHeight() * 0.5, 0), CastFx.EMBER, 0.02f, 6);
             }
             return false;
         });

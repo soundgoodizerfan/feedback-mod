@@ -4,10 +4,9 @@
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -30,8 +29,8 @@ final class SecondBreath {
             return false;
         Stamina.restore(p, to);
         Vec3 at = p.position().add(0, 1.6, 0);
-        p.serverLevel().sendParticles(ParticleTypes.CLOUD, at.x, at.y, at.z, 8, 0.3, 0.3, 0.3, 0.02);
-        CastFx.sound(p.serverLevel(), at, SoundEvents.ARMOR_EQUIP_CHAIN.value(), 0.8f, 0.8f);
+        CastFx.gather(p.serverLevel(), p.position().add(0, 1, 0), CastFx.GOLD, 1.2f, 6);
+        CastFx.sound(p.serverLevel(), at, FSounds.CAST_MEND.get(), 0.8f, 1.1f);
         return true;
     }
 }

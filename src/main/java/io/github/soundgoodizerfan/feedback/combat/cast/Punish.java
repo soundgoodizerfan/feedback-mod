@@ -6,11 +6,10 @@ import io.github.soundgoodizerfan.feedback.core.unit.Work;
 
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -49,11 +48,11 @@ final class Punish {
         CastFx.clip(p, "one_handed_stab", CastFx.MAIN, 12, 3);
         ServerLevel lv = p.serverLevel();
         Vec3 c = t.getBoundingBox().getCenter();
-        lv.sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 24, 0.3, 0.3, 0.3, 0.5);
-        lv.sendParticles(ParticleTypes.EXPLOSION, c.x, c.y, c.z, 1, 0, 0, 0, 0);
-        CastFx.shockwave(p, t.position().add(0, 0.1, 0), 2.5, 4, CastFx.dust(CastFx.CRIMSON, 1.3f), 0);
-        CastFx.sound(lv, c, SoundEvents.PLAYER_ATTACK_CRIT, 1f, 0.6f);
-        CastFx.sound(lv, c, SoundEvents.ANVIL_LAND, 0.7f, 0.9f);
+        CastFx.streak(lv, p.getEyePosition().add(0, -0.3, 0), c, CastFx.CRIMSON, 0.04f, 4);
+        CastFx.shards(lv, c, CastFx.CRIMSON, 1.8f, 8);
+        CastFx.pulse(lv, t.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.CRIMSON, 2.5f, 8);
+        CastFx.sound(lv, c, FSounds.CAST_PUNCH.get(), 1f, 0.8f);
+        CastFx.sound(lv, c, FSounds.CAST_SLAM.get(), 0.6f, 1.3f);
         return true;
     }
 }

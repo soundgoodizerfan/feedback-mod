@@ -10,10 +10,8 @@ import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -40,11 +38,10 @@ public final class PinDown {
             e.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 40, 2));
             if (shooter instanceof net.minecraft.server.level.ServerPlayer sp)
                 Disorder.note(sp, e, Disorder.Kind.PINNED);
-            level.sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 6, 0.2, 0.2, 0.2, 0.15);
             // the round's near miss: a pinning ring at the feet and a whine as it passes
-            CastFx.ring(level, CastFx.dust(CastFx.EMBER, 1.0f), e.position().add(0, 0.1, 0), 0.8, 12, 0);
-            CastFx.line(level, CastFx.dust(CastFx.GOLD, 0.6f), from, to, 1.0);
-            CastFx.sound(level, c, SoundEvents.ARROW_HIT, 0.6f, 1.7f);
+            CastFx.pulse(level, e.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.EMBER, 0.9f, 8);
+            CastFx.streak(level, from, to, CastFx.GOLD, 0.02f, 4);
+            CastFx.sound(level, c, FSounds.CAST_LOCK.get(), 0.6f, 1.4f);
         }
     }
 }

@@ -6,10 +6,9 @@ import io.github.soundgoodizerfan.feedback.core.unit.Work;
 
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -32,7 +31,8 @@ final class Cleave {
         if (p.getMainHandItem().getItem() instanceof GunItem || damage < 5f)
             return false;
         Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.6)).add(0, 0.6, 0);
-        CastFx.converge(p, hand, 1.2, 6, CastFx.dust(CastFx.STEEL, 1.2f));
+        CastFx.gather(p.serverLevel(), hand, CastFx.STEEL, 1.2f, 6);
+        CastFx.sound(p.serverLevel(), hand, FSounds.CAST_WHOOSH.get(), 0.8f, 0.8f);
         CastFx.clip(p, "two_handed_slash_vertical_right", CastFx.TWO, 18, 6);
         later(p, 6, () -> {
             if (!p.isAlive())
@@ -55,12 +55,12 @@ final class Cleave {
                     continue;
                 stagger(p, e, new Work(damage * ParryTuning.WORK_PER_DAMAGE * (float) (1 - along / 9)));
             }
-            CastFx.line(lv, CastFx.dust(CastFx.EMBER, 1.2f), start.add(0, 0.1, 0), start.add(d.scale(7)).add(0, 0.1, 0), 0.25);
-            for (int i = 1; i <= 7; i++)
-                CastFx.debris(lv, start.add(d.scale(i)).add(0, 0.2, 0), 10, 0.3);
-            lv.sendParticles(ParticleTypes.EXPLOSION, start.x, start.y + 0.2, start.z, 1, 0, 0, 0, 0);
-            CastFx.sound(lv, start, SoundEvents.ANVIL_LAND, 1f, 0.5f);
-            CastFx.sound(lv, start, SoundEvents.GENERIC_EXPLODE.value(), 0.5f, 1.4f);
+            CastFx.streak(lv, start.add(0, 0.1, 0), start.add(d.scale(7)).add(0, 0.1, 0), CastFx.EMBER, 0.06f, 6);
+            CastFx.slash(lv, start.add(0, 1, 0), d, CastFx.STEEL, 2f, 8);
+            CastFx.column(lv, start, CastFx.EMBER, 2f, 8);
+            CastFx.pulse(lv, start.add(0, 0.1, 0), Vec3.ZERO, CastFx.EMBER, 2.5f, 8);
+            CastFx.sound(lv, start, FSounds.CAST_SLAM.get(), 1f, 0.8f);
+            CastFx.sound(lv, start, FSounds.CAST_SLASH.get(), 0.7f, 0.8f);
         });
         return true;
     }

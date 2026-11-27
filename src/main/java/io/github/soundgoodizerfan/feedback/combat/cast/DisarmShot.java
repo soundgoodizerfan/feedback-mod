@@ -9,9 +9,8 @@ import io.github.soundgoodizerfan.feedback.weapon.GunFu;
 import io.github.soundgoodizerfan.feedback.weapon.GunFuTuning;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,9 +45,9 @@ final class DisarmShot {
             Disorder.note(p, t, Disorder.Kind.STRIPPED);
         }
         stagger(p, t, new Work(GunFu.lastImpulse(p) * GunFuTuning.MUZZLE_JOULES_PER_IMPULSE));
-        p.serverLevel().sendParticles(ParticleTypes.CRIT, hand.x, hand.y, hand.z, 14, 0.2, 0.2, 0.2, 0.4);
-        p.serverLevel().sendParticles(ParticleTypes.ELECTRIC_SPARK, hand.x, hand.y, hand.z, 10, 0.2, 0.2, 0.2, 0.5);
-        CastFx.sound(p.serverLevel(), hand, SoundEvents.ANVIL_PLACE, 0.8f, 1.8f);
+        CastFx.streak(p.serverLevel(), eye.add(p.getLookAngle().scale(0.5)), hand, CastFx.GOLD, 0.02f, 4);
+        CastFx.shards(p.serverLevel(), hand, CastFx.GOLD, 0.7f, 5);
+        CastFx.sound(p.serverLevel(), hand, FSounds.CAST_LOCK.get(), 0.8f, 1.4f);
         return true;
     }
 }

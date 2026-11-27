@@ -5,7 +5,9 @@ package io.github.soundgoodizerfan.feedback.combat.cast;
 import io.github.soundgoodizerfan.feedback.core.unit.Work;
 import io.github.soundgoodizerfan.feedback.potion.PotionTuning;
 
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -29,6 +31,9 @@ final class CrackVial {
             return false;
         Vials.dose(p, t, drawn);
         stagger(p, t, new Work(30f));
+        Vec3 at = t.position().add(0, t.getBbHeight() * 0.7, 0);
+        CastFx.shards(p.serverLevel(), at, 0xFFFFFF, 0.9f, 6);
+        CastFx.sound(p.serverLevel(), at, FSounds.CAST_SHATTER.get(), 1f, 1f);
         p.swing(InteractionHand.MAIN_HAND, true);
         return true;
     }

@@ -444,7 +444,7 @@ public final class GunFx {
     }
 
     /** A jagged path from {@code a} to {@code b}: a point every segment, pushed sideways by up to {@code amp}, held at both ends. */
-    private static List<Vec3> bolt(Vec3 a, Vec3 b, Vec3 dir, double len, double amp, RandomSource r) {
+    public static List<Vec3> bolt(Vec3 a, Vec3 b, Vec3 dir, double len, double amp, RandomSource r) {
         Vec3 u = Math.abs(dir.y) > 0.95 ? new Vec3(1, 0, 0) : dir.cross(new Vec3(0, 1, 0)).normalize();
         Vec3 v = dir.cross(u).normalize();
         int n = Mth.clamp((int) (len / 0.7), 2, 60);
@@ -463,7 +463,7 @@ public final class GunFx {
             tube(m, vc, path.get(i), path.get(i + 1), w, r, g, bl, a);
     }
 
-    private static void tube(Matrix4f m, VertexConsumer vc, Vec3 from, Vec3 to, float w, float r, float g, float b, float a) {
+    public static void tube(Matrix4f m, VertexConsumer vc, Vec3 from, Vec3 to, float w, float r, float g, float b, float a) {
         Vec3 axis = to.subtract(from);
         if (axis.lengthSqr() < 1e-8)
             return;
@@ -657,7 +657,7 @@ public final class GunFx {
     }
 
     /** A long square beam from head to tail: four faces, opaque at the head and clear at the tail. */
-    private static void beam(Matrix4f m, VertexConsumer vc, Vec3 head, Vec3 tail, Vec3 dir, float w, float r, float g, float b, float a, float aTail) {
+    public static void beam(Matrix4f m, VertexConsumer vc, Vec3 head, Vec3 tail, Vec3 dir, float w, float r, float g, float b, float a, float aTail) {
         Vec3 u = Math.abs(dir.y) > 0.95 ? new Vec3(1, 0, 0) : dir.cross(new Vec3(0, 1, 0)).normalize();
         Vec3 v = dir.cross(u).normalize().scale(w);
         u = u.scale(w);
@@ -671,7 +671,7 @@ public final class GunFx {
         }
     }
 
-    private static void quadV(Matrix4f m, VertexConsumer vc, Vec3 p, float r, float g, float b, float a) {
+    public static void quadV(Matrix4f m, VertexConsumer vc, Vec3 p, float r, float g, float b, float a) {
         vc.addVertex(m, (float) p.x, (float) p.y, (float) p.z).setColor(r, g, b, a);
     }
 

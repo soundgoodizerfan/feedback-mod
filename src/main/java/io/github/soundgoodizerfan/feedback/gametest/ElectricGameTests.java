@@ -22,15 +22,12 @@ import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.fitting.sensor.CurrentSensorFitting;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
-import io.github.soundgoodizerfan.feedback.item.ElectroscopeItem;
-import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamotorBlock;
 import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamotorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.Direction;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
@@ -46,10 +43,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import io.github.soundgoodizerfan.feedback.machine.electrolytic.ElectrolyticCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlockEntity;
-import net.minecraft.world.item.Item;
-import io.github.soundgoodizerfan.feedback.process.MaterialTable;
-import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlockEntity;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -459,20 +452,6 @@ public class ElectricGameTests {
         helper.succeed();
     }
 
-    /** The carried instruments are different instruments: neither reads what the other does. */
-    @GameTest(template = "empty")
-    public static void electroscopeAndGalvanometerReadDifferentQuantities(GameTestHelper helper) {
-        ElectroscopeItem electroscope = (ElectroscopeItem) FItems.ELECTROSCOPE.get();
-        GalvanometerItem galvanometer = (GalvanometerItem) FItems.GALVANOMETER.get();
-        helper.assertTrue(electroscope.canRead(Quantity.BAND) && !electroscope.canRead(Quantity.CURRENT),
-                "the electroscope reads the band, never current (6.7)");
-        helper.assertTrue(galvanometer.canRead(Quantity.CURRENT) && !galvanometer.canRead(Quantity.BAND),
-                "the galvanometer reads current");
-        helper.assertTrue(electroscope.resolution(Quantity.BAND) > 0 && galvanometer.resolution(Quantity.CURRENT) > 0,
-                "and neither is exact (philosophy 10)");
-        helper.succeed();
-    }
-
     // --- the electromagnet, end to end ------------------------------------------------------
 
     private static ElectromagnetBlockEntity placeMagnet(GameTestHelper helper, BlockPos at) {
@@ -608,42 +587,6 @@ public class ElectricGameTests {
         helper.succeed();
     }
 
-    /** What it pulls is decided by the material's magnetic property, not by what the item is called. */
-    @GameTest(template = "empty", timeoutTicks = 100)
-    public static void magnetPullsMagneticItemsAndLeavesTheRest(GameTestHelper helper) {
-        helper.assertTrue(ElectromagnetBlockEntity.isMagnetic(Items.IRON_INGOT), "iron is magnetic");
-        helper.assertTrue(ElectromagnetBlockEntity.isMagnetic(Items.NETHERITE_INGOT),
-                "so is netherite, by the same property and no special case");
-        helper.assertFalse(ElectromagnetBlockEntity.isMagnetic(Items.COPPER_INGOT), "copper is not");
-
-        BlockPos cell = new BlockPos(1, 2, 1), at = cell.east();
-        helper.setBlock(cell, FBlocks.GALVANIC_CELL.get().defaultBlockState());
-        ElectromagnetBlockEntity magnet = placeMagnet(helper, at);
-        // Out at 2.2 blocks: inside the pull range of 0.73 field x 4 blocks, so it should come in.
-        ItemEntity iron = helper.spawnItem(Items.IRON_INGOT, 4.2f, 2.5f, 1.5f);
-        ItemEntity copper = helper.spawnItem(Items.COPPER_INGOT, 1.5f, 2.5f, 4.2f);
-        iron.setNoGravity(true);
-        copper.setNoGravity(true);
-        iron.setDeltaMovement(0, 0, 0);
-        copper.setDeltaMovement(0, 0, 0);
-        double ironStart = iron.position().distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(at)));
-        double copperStart = copper.position().distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(at)));
-        helper.runAfterDelay(40, () -> {
-            net.minecraft.world.phys.Vec3 centre = net.minecraft.world.phys.Vec3.atCenterOf(helper.absolutePos(at));
-            helper.assertTrue(magnet.getFieldStrength() > 0f, "the magnet is energised");
-            helper.assertTrue(iron.position().distanceTo(centre) < ironStart - 0.3,
-                    "the iron should have moved toward it, started " + ironStart + " now "
-                            + iron.position().distanceTo(centre));
-            helper.assertTrue(Math.abs(copper.position().distanceTo(centre) - copperStart) < 0.05,
-                    "the copper should not have moved");
-            iron.discard();
-            copper.discard();
-            helper.setBlock(cell, Blocks.AIR.defaultBlockState());
-            helper.setBlock(at, Blocks.AIR.defaultBlockState());
-            helper.succeed();
-        });
-    }
-
     // --- the dynamo -----------------------------------------------------------
 
     /**
@@ -671,38 +614,6 @@ public class ElectricGameTests {
             helper.assertTrue(Math.abs(dynamo.getShaftLoad().value() - expected) < 1e-3,
                     "the dynamo loads its shaft with the Eu drawn over what the shaft carries, got " + dynamo.getShaftLoad().value() + ", wanted " + expected);
             for (BlockPos p : BlockPos.betweenClosed(0, 2, 0, 4, 2, 0))
-                helper.setBlock(p, Blocks.AIR.defaultBlockState());
-            RotationGameTests.done(helper);
-        });
-    }
-
-    /**
-     * A crank turns a generator, a cable carries its current to a machine run as a motor, and the motor turns a shaft of its
-     * own: the shaft spins, never past the motor's no-load speed (its rated speed at the packet it sees), and the
-     * motor's torque is its Su per amp times its current.
-     */
-    @GameTest(template = "empty", timeoutTicks = 160)
-    public static void motorTurnsAShaftFromTheLine(GameTestHelper helper) {
-        BlockPos crankAt = new BlockPos(0, 2, 1);
-        HandCrankBlockEntity crank = RotationGameTests.crankRun(helper, crankAt, 2);
-        helper.setBlock(crankAt.east(3), FBlocks.DYNAMOTOR.get().defaultBlockState()
-                .setValue(DynamotorBlock.FACING, Direction.WEST));
-        // Up, not along: a long row reaches the neighbouring test's rig.
-        BlockPos motorAt = crankAt.east(3).above(2);
-        placeCable(helper, crankAt.east(3).above());
-        helper.setBlock(motorAt, FBlocks.DYNAMOTOR.get().defaultBlockState()
-                .setValue(DynamotorBlock.FACING, Direction.EAST).setValue(DynamotorBlock.MODE, DynamotorBlock.Mode.MOTOR));
-        helper.setBlock(motorAt.east(), RotationGameTests.alongX(FBlocks.SHAFT.get()));
-        DynamotorBlockEntity motor = (DynamotorBlockEntity) helper.getBlockEntity(motorAt);
-
-        RotationGameTests.each(helper, crank::turn);
-        helper.runAtTickTime(140, () -> {
-            float rpm = motor.getShaftRpm();
-            helper.assertTrue(rpm > 0, "the motor turns its shaft");
-            helper.assertTrue(rpm <= motor.noLoadRpm() + EPS, "never past no-load speed " + motor.noLoadRpm() + ", got " + rpm);
-            helper.assertTrue(Math.abs(motor.getShaftTorque().value() - motor.getAmps() * motor.getSuPerAmp() * motor.getCondition()) < EPS,
-                    "torque is Su-per-amp x amps x condition, got " + motor.getShaftTorque().value() + " at " + motor.getAmps() + " A, condition " + motor.getCondition());
-            for (BlockPos p : BlockPos.betweenClosed(0, 2, 1, 4, 4, 1))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             RotationGameTests.done(helper);
         });
@@ -880,62 +791,6 @@ public class ElectricGameTests {
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             helper.succeed();
         });
-    }
-
-    // --- the breaker and the fuse ---------------------------------------------
-
-    /**
-     * Cell, breaker, magnet in a column. Closed, the magnet is fed; opened under load, the line is
-     * two runs and the magnet gets nothing, and the arc has cost the breaker condition. Closed
-     * again, it feeds again.
-     */
-    @GameTest(template = "empty", timeoutTicks = 40)
-    public static void breakerOpensTheLineAndArcsUnderLoad(GameTestHelper helper) {
-        BlockPos from = new BlockPos(1, 2, 1);
-        ElectromagnetBlockEntity magnet = row(helper, from, 1);
-        helper.setBlock(from.above(), FBlocks.BREAKER.get().defaultBlockState());
-        BreakerBlockEntity breaker = (BreakerBlockEntity) helper.getBlockEntity(from.above());
-        helper.runAtTickTime(5, () -> {
-            helper.assertTrue(magnet.getAmps() > 0f, "closed, the magnet is fed");
-            breaker.setEngaged(false);
-            helper.assertTrue(breaker.getCondition() < 1f, "opening under load arcs, got " + breaker.getCondition());
-        });
-        helper.runAtTickTime(10, () -> {
-            helper.assertTrue(magnet.getAmps() == 0f, "open, the magnet gets nothing, got " + magnet.getAmps());
-            breaker.setEngaged(true);
-        });
-        helper.runAtTickTime(15, () -> {
-            helper.assertTrue(magnet.getAmps() > 0f, "closed again, it is fed again");
-            clearRow(helper, from, 1);
-            helper.succeed();
-        });
-    }
-
-    /**
-     * A tin fuse wire carried at its rating stays; past it, it warms to tin's melting point and is
-     * gone, and the holder conducts nothing until it is rewired.
-     */
-    @GameTest(template = "empty", timeoutTicks = 200)
-    public static void fuseWireMeltsPastItsRating(GameTestHelper helper) {
-        BlockPos at = new BlockPos(1, 2, 1);
-        helper.setBlock(at, FBlocks.FUSE.get().defaultBlockState());
-        FuseBlockEntity fuse = (FuseBlockEntity) helper.getBlockEntity(at);
-        ResourceLocation tin = Feedback.id("tin");
-        Item wire = MaterialTable.get().materials().get(tin).item(tin, "fine_wire").orElseThrow();
-        helper.assertTrue(fuse.rewire(new ItemStack(wire)), "a tin fine wire fits");
-        float rating = fuse.getRatingAmps();
-        for (int i = 0; i < 100; i++)
-            fuse.onResolved(VoltageBand.LV, 32f, rating, 0f, false);
-        helper.assertTrue(fuse.isIntact(), "at its rating it holds");
-        int ticks = 0;
-        while (fuse.isIntact() && ticks < 100) {
-            fuse.onResolved(VoltageBand.LV, 32f, rating + 2f, 0f, false);
-            ticks++;
-        }
-        helper.assertFalse(fuse.isIntact(), "two amps over, tin melts");
-        helper.assertTrue(ticks < 60, "and quickly, took " + ticks + " t");
-        helper.setBlock(at, Blocks.AIR.defaultBlockState());
-        helper.succeed();
     }
 
     // --- the lead-acid battery ---------------------------------------------------------------

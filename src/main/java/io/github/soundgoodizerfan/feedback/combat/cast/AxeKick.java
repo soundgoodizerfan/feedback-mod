@@ -8,10 +8,9 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -48,9 +47,9 @@ final class AxeKick {
         p.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);
         ServerLevel lv = p.serverLevel();
         Vec3 top = t.position().add(0, t.getBbHeight() + 0.8, 0), head = t.position().add(0, t.getBbHeight(), 0);
-        CastFx.line(lv, CastFx.fade(CastFx.STEEL, 0xFFFFFF, 1.3f), top, head, 0.15);
-        lv.sendParticles(ParticleTypes.CRIT, head.x, head.y, head.z, 12, 0.25, 0.1, 0.25, 0.3);
-        CastFx.sound(lv, head, guarded ? SoundEvents.SHIELD_BREAK : SoundEvents.PLAYER_ATTACK_STRONG, 1f, 0.8f);
+        CastFx.streak(lv, top, head, CastFx.STEEL, 0.04f, 5);
+        CastFx.shards(lv, head, 0xFFFFFF, 1f, 6);
+        CastFx.sound(lv, head, guarded ? FSounds.CAST_GUARD.get() : FSounds.CAST_PUNCH.get(), 1f, 0.8f);
         return true;
     }
 }

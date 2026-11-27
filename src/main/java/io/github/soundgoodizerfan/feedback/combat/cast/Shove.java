@@ -18,7 +18,6 @@ import java.util.UUID;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
@@ -69,7 +68,9 @@ final class Shove {
         if (standingOn(p, body))
             return refuse(p, "standing");
         GRIPS.put(p.getUUID(), local);
-        CastFx.sound(p.serverLevel(), body.logicalPose().transformPosition(local), SoundEvents.ANVIL_PLACE, 0.5f, 0.7f);
+        Vec3 grip = body.logicalPose().transformPosition(local);
+        CastFx.sound(p.serverLevel(), grip, io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_GUARD.get(), 0.6f, 0.7f);
+        CastFx.pulse(p.serverLevel(), grip, p.getLookAngle(), CastFx.STEEL, 0.6f, 6);
         return true;
     }
 

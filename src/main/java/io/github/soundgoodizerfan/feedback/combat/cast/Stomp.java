@@ -46,6 +46,9 @@ final class Stomp {
         ServerLevel lv = p.serverLevel();
         Vec3 at = t.position().add(0, 0.2, 0);
         CastFx.smash(lv, at, 400, false);
+        CastFx.sound(lv, at, io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_SLAM.get(), 1f, 1.1f);
+        CastFx.pulse(lv, at, Vec3.ZERO, CastFx.STEEL, 1.8f, 7);
+        CastFx.shards(lv, at, 0xFFFFFF, 1.2f, 6);
         return true;
     }
 }

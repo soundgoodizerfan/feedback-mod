@@ -111,6 +111,40 @@ public final class CastRadialScreen extends Screen {
     private long lastMs = openedAt;
     private int lastHover = -1;
 
+    /**
+     * Walking under the screen: {@code KeyMapping.isDown} is false in a screen (the in-game conflict context is off), so
+     * the movement input is rewritten from the raw keys each tick.
+     */
+    @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
+    static final class Walk {
+        @SubscribeEvent
+        static void onInput(net.neoforged.neoforge.client.event.MovementInputUpdateEvent event) {
+            var mc = net.minecraft.client.Minecraft.getInstance();
+            if (!(mc.screen instanceof CastRadialScreen))
+                return;
+            var in = event.getInput();
+            var o = mc.options;
+            in.up = down(mc, o.keyUp);
+            in.down = down(mc, o.keyDown);
+            in.left = down(mc, o.keyLeft);
+            in.right = down(mc, o.keyRight);
+            in.jumping = down(mc, o.keyJump);
+            in.shiftKeyDown = down(mc, o.keyShift);
+            in.forwardImpulse = (in.up ? 1f : 0f) - (in.down ? 1f : 0f);
+            in.leftImpulse = (in.left ? 1f : 0f) - (in.right ? 1f : 0f);
+            if (in.shiftKeyDown) {
+                in.forwardImpulse *= 0.3f;
+                in.leftImpulse *= 0.3f;
+            } else if (in.forwardImpulse > 0 && down(mc, o.keySprint) && !event.getEntity().isUsingItem())
+                event.getEntity().setSprinting(true);
+        }
+
+        private static boolean down(net.minecraft.client.Minecraft mc, net.minecraft.client.KeyMapping m) {
+            var k = m.getKey();
+            return k.getType() == InputConstants.Type.KEYSYM && InputConstants.isKeyDown(mc.getWindow().getWindow(), k.getValue());
+        }
+    }
+
     /** The crosshair has no business under the ring. */
     @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
     static final class HideCrosshair {
@@ -198,8 +232,12 @@ public final class CastRadialScreen extends Screen {
         lastMs = now;
         int hov = hovered(mx, my), sel = selected(), n = slots.size();
         boolean hovHas = hov >= 0 && Casts.find(slots.get(hov)) != null;
-        if (hovHas && hov != lastHover)
+        if (hovHas && hov != lastHover) {
             GuiSkin.play(SKIN.click(), 1.5f, 0.5f);
+            var treeSound = pool[hov] == null ? null : FSounds.RADIAL.get(pool[hov]);
+            if (treeSound != null)
+                GuiSkin.play(treeSound.get(), 1f, 0.25f);
+        }
         lastHover = hovHas ? hov : -1;
         float pulse = 0.75f + 0.25f * (float) Math.sin(now / 180.0);
         int ink = SKIN.ink() | 0xFF000000, dim = SKIN.dim() | 0xFF000000;
@@ -289,20 +327,14 @@ public final class CastRadialScreen extends Screen {
         var k = CombatKeys.RADIAL.getKey();
         if (k.getType() == InputConstants.Type.KEYSYM && !InputConstants.isKeyDown(minecraft.getWindow().getWindow(), k.getValue()))
             onClose();
-        // A screen swallows key events and releases every binding, so walking is fed from the raw key state.
-        var o = minecraft.options;
-        var win = minecraft.getWindow().getWindow();
-        for (var m : new net.minecraft.client.KeyMapping[] { o.keyUp, o.keyDown, o.keyLeft, o.keyRight, o.keyJump, o.keyShift, o.keySprint }) {
-            var key = m.getKey();
-            m.setDown(key.getType() == InputConstants.Type.KEYSYM && InputConstants.isKeyDown(win, key.getValue()));
-        }
     }
 
     @Override
     public boolean keyPressed(int key, int scan, int mods) {
         for (var m : minecraft.options.keyHotbarSlots)
             if (m.matches(key, scan)) {
-                net.minecraft.client.KeyMapping.click(InputConstants.getKey(key, scan));
+                // handleKeybinds does not run under a screen, so a click would sit unread until it closed.
+                minecraft.player.getInventory().selected = java.util.Arrays.asList(minecraft.options.keyHotbarSlots).indexOf(m);
                 return true;
             }
         return super.keyPressed(key, scan, mods);

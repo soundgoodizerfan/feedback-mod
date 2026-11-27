@@ -7,10 +7,9 @@ import io.github.soundgoodizerfan.feedback.core.unit.Work;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -64,10 +63,10 @@ final class Sunder {
         p.swing(InteractionHand.MAIN_HAND, true);
         ServerLevel lv = p.serverLevel();
         Vec3 at = t.position().add(0, t.getBbHeight() * 0.7, 0);
-        lv.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 18, 0.3, 0.3, 0.3, 0.4);
-        CastFx.line(lv, CastFx.fade(0xFFFFFF, CastFx.STEEL, 1.3f), at.add(0, 0.9, 0), at.add(0, -0.3, 0), 0.12);
-        CastFx.sound(lv, at, guard ? SoundEvents.SHIELD_BREAK : SoundEvents.ITEM_BREAK, 1f, 0.7f);
-        CastFx.sound(lv, at, SoundEvents.ANVIL_LAND, 0.7f, 0.9f);
+        CastFx.shards(lv, at, CastFx.STEEL, 1.4f, 7);
+        CastFx.streak(lv, at.add(0, 0.9, 0), at.add(0, -0.3, 0), 0xFFFFFF, 0.05f, 4);
+        CastFx.sound(lv, at, guard ? FSounds.CAST_SHATTER.get() : FSounds.CAST_GUARD.get(), 1f, 0.8f);
+        CastFx.sound(lv, at, FSounds.CAST_SLAM.get(), 0.7f, 1.2f);
         return true;
     }
 }

@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,14 +38,15 @@ final class Stampede {
             m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, DASH_TICKS, 1));
             Disorder.kindled(p, m);
             Disorder.note(p, m, Disorder.Kind.PANICKED);
-            lv.sendParticles(ParticleTypes.ANGRY_VILLAGER, m.getX(), m.getY() + m.getBbHeight() + 0.3, m.getZ(), 3, 0.2, 0.1, 0.2, 0);
+            CastFx.streak(lv, p.position().add(0, 1, 0), m.position().add(0, m.getBbHeight() / 2, 0), CastFx.EMBER, 0.03f, 5);
             n++;
         }
         if (n == 0)
             return false;
-        CastFx.ring(lv, ParticleTypes.SMOKE, p.position().add(0, 0.2, 0), 1.0, 20, 0.35);
-        CastFx.sound(lv, p.position(), SoundEvents.RAVAGER_ROAR, 1f, 0.9f);
-        CastFx.sound(lv, p.position(), SoundEvents.HORSE_GALLOP, 0.8f, 0.6f);
+        CastFx.pulse(lv, p.position().add(0, 0.2, 0), Vec3.ZERO, CastFx.EMBER, (float) RANGE * 0.6f, 12);
+        CastFx.pulse(lv, p.position().add(0, 0.2, 0), Vec3.ZERO, 0xFFFFFF, (float) RANGE * 0.3f, 8);
+        CastFx.sound(lv, p.position(), FSounds.CAST_SURGE.get(), 1f, 0.7f);
+        CastFx.sound(lv, p.position(), FSounds.CAST_SLAM.get(), 0.8f, 0.8f);
         return true;
     }
 }

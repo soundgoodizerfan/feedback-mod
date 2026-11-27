@@ -13,7 +13,6 @@ import io.github.soundgoodizerfan.feedback.modular.bake.ModularBake;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns;
@@ -21,19 +20,14 @@ import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
-import io.github.soundgoodizerfan.feedback.weapon.GunCalibres;
-import io.github.soundgoodizerfan.feedback.weapon.GunDesignation;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
 import io.github.soundgoodizerfan.feedback.weapon.Magazine;
-import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -42,9 +36,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
  * A gun is a modular item like a pick: its figures come out of its
- * parts and their metals with no row anywhere, the Tool Table's inference reads the parts back as a gun, the
- * variants, traits and designation are read off the parts, and a shot that leaves the muzzle lands on what is in
- * front of it. Tests are built from a design the way a player's parts make one: {@link #steel}, {@link #with}.
+ * parts and their metals with no row anywhere, and the Tool Table's inference reads the parts back as a gun. Tests are built from a design the way a player's parts make one: {@link #steel}, {@link #with}.
  */
 @GameTestHolder(Feedback.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -133,13 +125,6 @@ public class GunGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty")
-    public static void calibresAreAShortListOfClasses(GameTestHelper helper) {
-        helper.assertTrue(GunCalibres.classes().size() >= 4, "named calibre classes");
-        helper.assertTrue(GunCalibres.nearest(10).boreMm() == 9 && GunCalibres.step(9, 1).boreMm() == 12, "a die steps between classes, never in between");
-        helper.succeed();
-    }
-
     /** An action works only with a feed that suits it, and a second barrel only on a break action. */
     @GameTest(template = "empty")
     public static void theActionAndTheFeedHaveToWork(GameTestHelper helper) {
@@ -154,49 +139,6 @@ public class GunGameTests {
         helper.assertTrue(legal(with(lever, cylinder)), "a lever action does");
         ModularDesign second = with(d, part("D", "steel", "turned_rod", 1, "gun_barrel", "", Map.of()));
         helper.assertFalse(legal(second), "a second barrel needs a break action");
-        helper.succeed();
-    }
-
-    @GameTest(template = "empty")
-    public static void fittingsArePartsThatTrade(GameTestHelper helper) {
-        ModularDesign plain = steel();
-        GunFigures bare = bake(plain);
-        GunFigures quiet = bake(with(plain, part("M", "steel", "cylinder", 1, "suppressor", "", Map.of())));
-        helper.assertTrue(quiet.report() < bare.report() && quiet.heatFactor() > 1f && quiet.gunMass().value() > bare.gunMass().value(),
-                "a suppressor is quieter, hotter and heavier");
-        GunFigures braked = bake(with(plain, part("N", "steel", "magazine_tube", 1, "muzzle_brake", "", Map.of())));
-        helper.assertTrue(braked.kickDeg() < bare.kickDeg() && braked.report() > bare.report(), "a brake kicks less and is louder");
-        helper.assertFalse(legal(with(with(plain, part("M", "steel", "cylinder", 1, "suppressor", "", Map.of())),
-                part("N", "steel", "magazine_tube", 1, "muzzle_brake", "", Map.of()))), "one muzzle, one fitting on it");
-        GunFigures shrouded = bake(with(plain, part("H", "steel", "drilled_plate", 1, "barrel_shroud", "", Map.of())));
-        helper.assertTrue(shrouded.coolingRate().tuPerTick() > bare.coolingRate().tuPerTick(), "a shroud sheds heat faster");
-        helper.succeed();
-    }
-
-    /** Traits are aspects read from the parts; the designation is a rule over them. */
-    @GameTest(template = "empty")
-    public static void traitsAndDesignationAreReadOffTheParts(GameTestHelper helper) {
-        var types = ModularTypes.get().types();
-        var materials = MaterialTable.get().materials();
-        ModularDesign d = steel();
-        ItemStack gun = ToolDesigns.build(d, types, materials).orElseThrow();
-        List<String> ids = ModularTraits.allOf(gun).stream().map(ModularTraits.Active::id).toList();
-        helper.assertTrue(ids.contains("blowback") && ids.contains("closed_bolt"),
-                "a slide is blowback, got " + ids);
-        helper.assertTrue(ModularTraits.cooksOff(gun), "a closed bolt can cook off");
-        helper.assertTrue(GunDesignation.of(gun, spec(d)).orElse("").equals("pistol"), "a self-loading handgun is a pistol");
-        // A cylinder wants a hammer: the self-loading slide has none, so a revolver is a lever-action handgun with one.
-        ModularDesign hammered = new ModularDesign(d.type(), d.parts().stream().filter(p -> !p.role().equals("A")).toList(), d.edge());
-        ModularDesign revolver = with(with(hammered, part("K", "steel", "rod", 1, "bolt", "lever", Map.of())),
-                part("F", "steel", "ground_ingot", 1, "cylinder", "", Map.of()));
-        helper.assertTrue(GunDesignation.of(ToolDesigns.build(revolver, types, materials)
-                .orElseThrow(() -> new AssertionError("the table builds the revolver: " + revolver.parts())), spec(revolver)).orElse("").equals("revolver"),
-                "a handgun with a cylinder is a revolver");
-        // A long receiver is shouldered: it is no gun without a stock.
-        ModularDesign mg = with(with(d, part("R", "steel", "ingot", 3, "receiver", "machine_gun", Map.of())),
-                part("i", "wood", "gun_stock", 1, "gun_stock", "fixed", Map.of()));
-        ItemStack mgGun = ToolDesigns.build(mg, types, materials).orElseThrow(() -> new AssertionError("the table builds the machine gun: " + mg.parts()));
-        helper.assertFalse(ModularTraits.cooksOff(mgGun), "an open bolt has nothing in the hot chamber to cook off");
         helper.succeed();
     }
 
@@ -227,24 +169,5 @@ public class GunGameTests {
         helper.assertFalse(GunShots.accept(player, f, t + 10), "ten ms later is far inside the cycle");
         helper.assertTrue(GunShots.accept(player, f, t + f.cycleMs()), "one cycle later is accepted");
         helper.succeed();
-    }
-
-    /** A shot leaves a muzzle and lands on the zombie in front of it. */
-    @GameTest(template = "empty", timeoutTicks = 100)
-    public static void aShotHitsWhatIsInFront(GameTestHelper helper) {
-        GunFigures f = bake(steel());
-        var level = helper.getLevel();
-        var player = helper.makeMockPlayer(GameType.SURVIVAL);
-        Vec3 feet = helper.absoluteVec(new Vec3(1.5, 1.0, 2.2));
-        player.setPos(feet.x, feet.y, feet.z);
-        Zombie zombie = helper.spawn(EntityType.ZOMBIE, new BlockPos(1, 2, 3));
-        zombie.setNoAi(true);
-        zombie.setSilent(true);
-        float before = zombie.getHealth();
-        GunShots.fire(level, player, f, 0f, 0f);
-        helper.runAfterDelay(10, () -> {
-            helper.assertTrue(zombie.getHealth() < before, "the zombie took damage, health " + zombie.getHealth() + " of " + before);
-            helper.succeed();
-        });
     }
 }

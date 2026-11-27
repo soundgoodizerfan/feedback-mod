@@ -57,7 +57,8 @@ final class SmokeStep {
         p.hurtMarked = true;
         c.level().sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ground), c.at().x, c.at().y, c.at().z,
                 (int) (30 * radius), c.radius() * 0.4, 0.3, c.radius() * 0.4, 0.05);
-        CastFx.sound(c.level(), c.at(), ground.getSoundType().getBreakSound(), 1f, 0.6f);
+        CastFx.pulse(c.level(), c.at(), Vec3.ZERO, CastFx.SHADOW, (float) radius, 8);
+        CastFx.sound(c.level(), c.at(), FSounds.CAST_VEIL.get(), 1f, 1f);
         CombatCues.everyone(p, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 0.9f);
         return true;
     }

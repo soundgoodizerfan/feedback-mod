@@ -7,9 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -43,7 +42,8 @@ final class FieldDressing {
         if (p.getHealth() >= p.getMaxHealth() || Stamina.get(p) < DRAIN)
             return false;
         PLANTED.put(p.getUUID(), new Dressing(p.position(), p.getHealth()));
-        CastFx.sound(p.serverLevel(), p.position().add(0, 1, 0), SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1f, 1.2f);
+        CastFx.gather(p.serverLevel(), p.position().add(0, 1, 0), 0x6BE06B, 1f, 6);
+        CastFx.sound(p.serverLevel(), p.position().add(0, 1, 0), FSounds.CAST_MEND.get(), 1f, 1.1f);
         return true;
     }
 
@@ -58,8 +58,7 @@ final class FieldDressing {
         p.heal(HEAL_PER_TICK);
         PLANTED.put(p.getUUID(), new Dressing(d.at(), p.getHealth()));
         if (p.level().getGameTime() % 10 == 0) {
-            Vec3 h = p.position().add(0, 1, 0);
-            p.serverLevel().sendParticles(ParticleTypes.HEART, h.x, h.y, h.z, 1, 0.4, 0.5, 0.4, 0);
+            CastFx.pulse(p.serverLevel(), p.position().add(0, 0.1, 0), Vec3.ZERO, 0x6BE06B, 0.8f, 8);
         }
         return true;
     }

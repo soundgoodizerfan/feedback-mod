@@ -9,9 +9,8 @@ import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning;
 
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -65,7 +64,8 @@ final class Aid {
         if (a == null || a.getHealth() >= a.getMaxHealth() || Stamina.get(p) < FieldDressing.DRAIN)
             return false;
         TENDING.put(p.getUUID(), new Tending(a.getUUID(), p.position(), a.position(), p.getHealth(), a.getHealth()));
-        CastFx.sound(p.serverLevel(), p.position().add(0, 1, 0), SoundEvents.ARMOR_EQUIP_LEATHER.value(), 1f, 1.2f);
+        CastFx.sound(p.serverLevel(), p.position().add(0, 1, 0), FSounds.CAST_MEND.get(), 0.8f, 1.2f);
+        CastFx.gather(p.serverLevel(), a.position().add(0, 1, 0), CastFx.GOLD, 1f, 6);
         return true;
     }
 
@@ -85,8 +85,7 @@ final class Aid {
         TENDING.put(p.getUUID(), new Tending(t.ally(), t.me(), t.them(), p.getHealth(), a.getHealth()));
         long now = p.level().getGameTime();
         if (now % 10 == 0) {
-            Vec3 h = a.position().add(0, 1, 0);
-            p.serverLevel().sendParticles(ParticleTypes.HEART, h.x, h.y, h.z, 1, 0.4, 0.5, 0.4, 0);
+            CastFx.column(p.serverLevel(), a.position(), CastFx.GOLD, 1.6f, 8);
         }
         if (now % 20 == 0)
             SkillEarning.aided(p, a);
@@ -105,8 +104,9 @@ final class Aid {
         if (a == null || !ShakeOff.freeOf(a, p))
             return false;
         Vec3 at = a.position().add(0, 1, 0);
-        p.serverLevel().sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 12, 0.4, 0.5, 0.4, 0.1);
-        CastFx.sound(p.serverLevel(), at, SoundEvents.SHEEP_SHEAR, 1f, 1f);
+        CastFx.shards(p.serverLevel(), at, CastFx.STEEL, 1.2f, 6);
+        CastFx.slash(p.serverLevel(), at, a.position().subtract(p.position()), CastFx.STEEL, 1f, 6);
+        CastFx.sound(p.serverLevel(), at, FSounds.CAST_SLASH.get(), 1f, 1.2f);
         SkillEarning.aided(p, a);
         return true;
     }

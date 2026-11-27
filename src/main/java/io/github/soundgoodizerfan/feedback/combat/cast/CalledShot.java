@@ -6,7 +6,7 @@ import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -30,8 +30,8 @@ final class CalledShot {
             if (mark == null || !p.hasLineOfSight(mark))
                 return false;
             io.github.soundgoodizerfan.feedback.combat.skill.BowCraft.call(p, mark);
-            CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.GOLD, 1.0f), mark.getBoundingBox().getCenter(), 0.5, 12, 0);
-            CastFx.sound(p.serverLevel(), p.getEyePosition(), SoundEvents.ARROW_HIT_PLAYER, 0.6f, 1.5f);
+            CastFx.gather(p.serverLevel(), mark.getBoundingBox().getCenter(), CastFx.GOLD, 1f, 6);
+            CastFx.sound(p.serverLevel(), p.getEyePosition(), FSounds.CAST_LOCK.get(), 0.7f, 1.2f);
             return true;
         }
         if (!(gun.getItem() instanceof GunItem) || GunAmmo.count(gun) < 1)
@@ -45,9 +45,9 @@ final class CalledShot {
         float yaw = (float) (Mth.atan2(-d.x, d.z) * Mth.RAD_TO_DEG), pitch = (float) -(Mth.atan2(d.y, Math.hypot(d.x, d.z)) * Mth.RAD_TO_DEG);
         if (!GunShots.trigger(p.serverLevel(), p, gun, yaw, pitch, System.currentTimeMillis(), true))
             return false;
-        CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.GOLD, 1.0f), lead, 0.5, 12, 0);
-        CastFx.line(p.serverLevel(), CastFx.dust(CastFx.GOLD, 0.6f), c, lead, 0.3);
-        CastFx.sound(p.serverLevel(), eye, SoundEvents.ARROW_HIT_PLAYER, 0.6f, 1.5f);
+        CastFx.gather(p.serverLevel(), lead, CastFx.GOLD, 1f, 6);
+        CastFx.streak(p.serverLevel(), c, lead, CastFx.GOLD, 0.02f, 6);
+        CastFx.sound(p.serverLevel(), eye, FSounds.CAST_LOCK.get(), 0.7f, 1.2f);
         return true;
     }
 }

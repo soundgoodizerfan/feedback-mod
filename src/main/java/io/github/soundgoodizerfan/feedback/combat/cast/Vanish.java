@@ -10,9 +10,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.Vec3;
@@ -53,8 +52,9 @@ final class Vanish {
         ACTIVE.add(p.getUUID());
         p.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
         Vec3 c = p.position().add(0, 1, 0);
-        p.serverLevel().sendParticles(ParticleTypes.SMOKE, c.x, c.y, c.z, 10, 0.3, 0.6, 0.3, 0.02);
-        CastFx.sound(p.serverLevel(), c, SoundEvents.ENDERMAN_TELEPORT, 0.4f, 1.8f);
+        CastFx.pulse(p.serverLevel(), c, Vec3.ZERO, CastFx.SHADOW, 1.2f, 8);
+        CastFx.column(p.serverLevel(), p.position(), CastFx.SHADOW, 2f, 10);
+        CastFx.sound(p.serverLevel(), c, FSounds.CAST_VEIL.get(), 0.7f, 1.2f);
         return true;
     }
 
@@ -82,7 +82,8 @@ final class Vanish {
                 && ACTIVE.contains(p.getUUID())) {
             stop(p);
             Vec3 c = p.position().add(0, 1, 0);
-            p.serverLevel().sendParticles(ParticleTypes.SMOKE, c.x, c.y, c.z, 14, 0.3, 0.6, 0.3, 0.03);
+            CastFx.shards(p.serverLevel(), c, CastFx.SHADOW, 1.2f, 6);
+            CastFx.sound(p.serverLevel(), c, FSounds.CAST_VEIL.get(), 0.7f, 0.8f);
         }
     }
 }

@@ -5,9 +5,7 @@ package io.github.soundgoodizerfan.feedback.combat.cast;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,10 +37,11 @@ final class Challenge {
         if (weapon.isDamageableItem())
             weapon.hurtAndBreak(1, p, EquipmentSlot.MAINHAND);
         p.swing(InteractionHand.MAIN_HAND, true);
-        CastFx.shockwave(p, p.position().add(0, 0.1, 0), 10, 6, CastFx.dust(CastFx.CRIMSON, 1.4f), 0);
-        p.serverLevel().sendParticles(ParticleTypes.ELECTRIC_SPARK, c.x, c.y + 0.5, c.z, 20, 0.4, 0.3, 0.4, 0.4);
-        CastFx.sound(p.serverLevel(), c, SoundEvents.ANVIL_LAND, 1.2f, 1.2f);
-        CastFx.sound(p.serverLevel(), c, SoundEvents.RAVAGER_ROAR, 0.7f, 0.9f);
+        CastFx.pulse(p.serverLevel(), p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.CRIMSON, 10f, 12);
+        CastFx.pulse(p.serverLevel(), p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.CRIMSON, 6f, 9);
+        CastFx.shards(p.serverLevel(), c.add(0, 0.5, 0), CastFx.CRIMSON, 2.5f, 8);
+        CastFx.sound(p.serverLevel(), c, FSounds.CAST_SURGE.get(), 1.2f, 0.8f);
+        CastFx.sound(p.serverLevel(), c, FSounds.CAST_SLAM.get(), 0.7f, 1.2f);
         CombatCues.everyone(p, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 1.1f);
         return true;
     }

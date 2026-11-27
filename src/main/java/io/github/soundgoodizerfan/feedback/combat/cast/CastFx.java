@@ -43,6 +43,51 @@ final class CastFx {
         return new DustColorTransitionOptions(rgb(from), rgb(to), size);
     }
 
+    // Procedural client effects (CastVisuals): one message each, shape built on the client.
+    private static void show(ServerLevel l, byte kind, int entity, Vec3 a, Vec3 b, int rgb, float scale, int life) {
+        io.github.soundgoodizerfan.feedback.net.CastShowPayload.send(l, kind, entity, entity < 0 ? a : l.getEntity(entity).position(), a, b, rgb, scale, life);
+    }
+
+    /** A tapered tracer flying from {@code a} to {@code b}. */
+    static void streak(ServerLevel l, Vec3 a, Vec3 b, int rgb, float width, int life) {
+        show(l, (byte) 0, -1, a, b, rgb, width, life);
+    }
+
+    /** A flickering jagged bolt. */
+    static void bolt(ServerLevel l, Vec3 a, Vec3 b, int rgb, float width, int life) {
+        show(l, (byte) 1, -1, a, b, rgb, width, life);
+    }
+
+    /** A flat ring growing to {@code radius}, lying on the plane whose normal is {@code normal} (up for the ground). */
+    static void pulse(ServerLevel l, Vec3 c, Vec3 normal, int rgb, float radius, int life) {
+        show(l, (byte) 2, -1, c, normal, rgb, radius, life);
+    }
+
+    /** A crescent swept round {@code c}, facing along {@code facing}. */
+    static void slash(ServerLevel l, Vec3 c, Vec3 facing, int rgb, float radius, int life) {
+        show(l, (byte) 3, -1, c, facing, rgb, radius, life);
+    }
+
+    /** Shards thrown out of {@code c}. */
+    static void shards(ServerLevel l, Vec3 c, int rgb, float reach, int life) {
+        show(l, (byte) 4, -1, c, Vec3.ZERO, rgb, reach, life);
+    }
+
+    /** A pillar rising from {@code c}. */
+    static void column(ServerLevel l, Vec3 c, int rgb, float height, int life) {
+        show(l, (byte) 5, -1, c, Vec3.ZERO, rgb, height, life);
+    }
+
+    /** A ribbon trailing {@code e} for {@code life} ticks, {@code offset} from its feet. */
+    static void trail(ServerLevel l, net.minecraft.world.entity.Entity e, Vec3 offset, int rgb, float width, int life) {
+        show(l, (byte) 6, e.getId(), offset, Vec3.ZERO, rgb, width, life);
+    }
+
+    /** Rings closing in on {@code c} from {@code radius}. */
+    static void gather(ServerLevel l, Vec3 c, int rgb, float radius, int life) {
+        show(l, (byte) 7, -1, c, Vec3.ZERO, rgb, radius, life);
+    }
+
     /** Better Combat's animated-hand slots, by ordinal (the server cannot load its enum). */
     static final int MAIN = 0, OFF = 1, TWO = 2;
 

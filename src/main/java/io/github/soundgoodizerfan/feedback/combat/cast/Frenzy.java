@@ -39,8 +39,11 @@ final class Frenzy {
         speed.removeModifier(FAST);
         speed.addTransientModifier(new AttributeModifier(FAST, 0.8, Operation.ADD_MULTIPLIED_TOTAL));
         STATE.put(p.getUUID(), new long[]{now + 100, now + 160});
-        CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.CRIMSON, 1.4f), p.position().add(0, 1, 0), 0.9, 16, 0.2);
-        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.RAVAGER_ROAR, 0.8f, 1.4f);
+        CastFx.pulse(p.serverLevel(), p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.CRIMSON, 3.0f, 9);
+        CastFx.column(p.serverLevel(), p.position(), CastFx.CRIMSON, 3.0f, 12);
+        CastFx.shards(p.serverLevel(), p.position().add(0, 1, 0), CastFx.CRIMSON, 1.8f, 8);
+        CastFx.trail(p.serverLevel(), p, new Vec3(0, 1.0, 0), CastFx.CRIMSON, 0.14f, 100);
+        CastFx.sound(p.serverLevel(), p.position(), io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_SURGE.get(), 1f, 1.0f);
         return true;
     }
 
@@ -52,9 +55,10 @@ final class Frenzy {
         long[] s = STATE.get(p.getUUID());
         var speed = p.getAttribute(Attributes.ATTACK_SPEED);
         if (now < s[0]) {
-            if (now % 4 == 0) { // the hands are lit
+            if (now % 6 == 0) { // the hands crackle
                 Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.6)).add(0, -0.5, 0);
-                p.serverLevel().sendParticles(CastFx.dust(CastFx.CRIMSON, 0.9f), hand.x, hand.y, hand.z, 3, 0.2, 0.1, 0.2, 0);
+                var r = p.getRandom();
+                CastFx.bolt(p.serverLevel(), hand, hand.add(r.nextGaussian() * 0.5, r.nextGaussian() * 0.4, r.nextGaussian() * 0.5), CastFx.CRIMSON, 0.012f, 3);
             }
         } else if (speed.hasModifier(FAST)) {
             speed.removeModifier(FAST);

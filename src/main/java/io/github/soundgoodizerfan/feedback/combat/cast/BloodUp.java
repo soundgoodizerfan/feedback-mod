@@ -13,9 +13,8 @@ import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -77,8 +76,8 @@ final class BloodUp {
         WARM.put(p.getUUID(), now + CastTuning.WARM_TICKS);
         Rearms.spend(p, "blood_up");
         Vec3 at = p.position().add(0, 1, 0);
-        p.serverLevel().sendParticles(ParticleTypes.CLOUD, at.x, at.y + 0.6, at.z, 6, 0.3, 0.3, 0.3, 0.02);
-        CastFx.sound(p.serverLevel(), at, SoundEvents.PLAYER_BREATH, 0.6f, 0.9f);
+        CastFx.column(p.serverLevel(), p.position(), CastFx.EMBER, 1.6f, 8);
+        CastFx.sound(p.serverLevel(), at, FSounds.CAST_SURGE.get(), 0.6f, 1.2f);
     }
 
     @SubscribeEvent
@@ -90,7 +89,7 @@ final class BloodUp {
             return;
         Stamina.gain(p, Math.max(MIN, Math.min(MOST, f.mass().value() * PER_MU)));
         Vec3 at = p.position().add(0, 1.6, 0);
-        p.serverLevel().sendParticles(ParticleTypes.CLOUD, at.x, at.y, at.z, 5, 0.2, 0.2, 0.2, 0.02);
-        CastFx.sound(p.serverLevel(), at, SoundEvents.PLAYER_BREATH, 0.8f, 1.1f);
+        CastFx.gather(p.serverLevel(), at, CastFx.GOLD, 0.8f, 6);
+        CastFx.sound(p.serverLevel(), at, FSounds.CAST_MEND.get(), 0.6f, 1.3f);
     }
 }

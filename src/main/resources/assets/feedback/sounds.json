@@ -1077,5 +1077,105 @@
         "name": "feedback:radial/veil"
       }
     ]
+  },
+  "cast.punch": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_punch_0",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "feedback:combat/cast_punch_1",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "feedback:combat/cast_punch_2",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.whoosh": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_whoosh_0",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "feedback:combat/cast_whoosh_1",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.slam": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_slam",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.surge": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_surge",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.lock": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_lock",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.slash": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_slash_0",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "feedback:combat/cast_slash_1",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.veil": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_veil",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.mend": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_mend",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.guard": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_guard",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "cast.shatter": {
+    "sounds": [
+      {
+        "name": "feedback:combat/cast_shatter_0",
+        "attenuation_distance": 24
+      },
+      {
+        "name": "feedback:combat/cast_shatter_1",
+        "attenuation_distance": 24
+      }
+    ]
   }
 }

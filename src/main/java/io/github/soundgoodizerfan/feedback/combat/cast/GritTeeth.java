@@ -11,10 +11,8 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -49,7 +47,8 @@ final class GritTeeth {
         if (event.getEntity() instanceof ServerPlayer p && Skills.unlocked(p, "grit_teeth") && Stamina.spend(p, COST)) {
             event.setAmount(event.getAmount() * (1 - share(p)));
             Vec3 at = p.position().add(0, 1, 0);
-            p.serverLevel().sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 6, 0.3, 0.4, 0.3, 0.05);
+            CastFx.shards(p.serverLevel(), at, CastFx.STEEL, 0.7f, 5);
+            CastFx.sound(p.serverLevel(), at, io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_GUARD.get(), 0.6f, 1.2f);
         }
     }
 }

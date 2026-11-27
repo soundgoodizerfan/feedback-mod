@@ -9,10 +9,8 @@ import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 
 import static io.github.soundgoodizerfan.feedback.combat.cast.Casts.later;

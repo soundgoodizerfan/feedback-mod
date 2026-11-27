@@ -12,9 +12,7 @@ import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -66,7 +64,9 @@ final class WallRun {
         Vec3 d = along(p);
         p.setDeltaMovement(d.x * 0.6, 0.3, d.z * 0.6);
         p.hurtMarked = true;
-        CastFx.spray(p.serverLevel(), ParticleTypes.CLOUD, p.position().add(0, 0.3, 0), 8, 0.2);
+        CastFx.shards(p.serverLevel(), p.position().add(0, 0.3, 0), CastFx.STEEL, 1f, 5);
+        CastFx.trail(p.serverLevel(), p, new Vec3(0, 0.9, 0), CastFx.STEEL, 0.1f, ticks);
+        CastFx.sound(p.serverLevel(), p.position(), FSounds.CAST_WHOOSH.get(), 0.8f, 1.2f);
         CombatCues.everyone(p, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 1.3f);
         return true;
     }
@@ -86,9 +86,9 @@ final class WallRun {
         p.hurtMarked = true;
         p.fallDistance = 0f;
         var lv = p.serverLevel();
-        lv.sendParticles(CastFx.dust(CastFx.STEEL, 0.9f), p.getX(), p.getY() + 0.1, p.getZ(), 3, 0.15, 0.05, 0.15, 0);
-        lv.sendParticles(ParticleTypes.CRIT, p.getX(), p.getY() + 1, p.getZ(), 1, 0.3, 0.4, 0.3, 0);
-        if (p.level().getGameTime() % 3 == 0)
-            CastFx.sound(lv, p.position(), SoundEvents.STONE_STEP, 0.6f, 1.4f);
+        if (p.level().getGameTime() % 3 == 0) {
+            CastFx.streak(lv, p.position().add(-d.x * 1.0, 0.1, -d.z * 1.0), p.position().add(0, 0.1, 0), CastFx.STEEL, 0.025f, 4);
+            CastFx.sound(lv, p.position(), FSounds.CAST_WHOOSH.get(), 0.4f, 1.4f);
+        }
     }
 }

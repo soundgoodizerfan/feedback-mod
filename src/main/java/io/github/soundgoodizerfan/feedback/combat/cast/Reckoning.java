@@ -12,10 +12,8 @@ import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -43,9 +41,8 @@ final class Reckoning {
         // the blow is visible in the weapon: sparks drawn into the hand, the pitch climbing with its weight
         ServerLevel lv = p.serverLevel();
         Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.7)).add(0, -0.5, 0);
-        CastFx.converge(p, hand, 1.2, 4, CastFx.dust(CastFx.GOLD, 1.0f));
-        lv.sendParticles(ParticleTypes.ELECTRIC_SPARK, hand.x, hand.y, hand.z, 4 + (int) bank[0] / 4, 0.2, 0.2, 0.2, 0.3);
-        CastFx.sound(lv, hand, SoundEvents.AMETHYST_BLOCK_CHIME, 1f, 0.8f + bank[0] * 0.03f);
+        CastFx.gather(lv, hand, CastFx.GOLD, 1.2f, 6);
+        CastFx.sound(lv, hand, FSounds.CAST_SURGE.get(), 0.9f, Math.min(1.4f, 0.8f + bank[0] * 0.03f));
     }
 
     /** Reckoning: the last parried blow goes back through the weapon as one strike at what you face. */
@@ -65,14 +62,14 @@ final class Reckoning {
         CastFx.clip(p, "two_handed_slash_vertical_left", CastFx.TWO, 16, 4);
         ServerLevel lv = p.serverLevel();
         Vec3 from = p.getEyePosition().add(0, -0.4, 0), to = t.getBoundingBox().getCenter();
-        CastFx.line(lv, CastFx.fade(0xFFFFFF, CastFx.GOLD, 1.8f), from, to, 0.2);
-        CastFx.line(lv, ParticleTypes.ELECTRIC_SPARK, from, to, 0.8);
-        lv.sendParticles(damage > 16 ? ParticleTypes.EXPLOSION_EMITTER : ParticleTypes.EXPLOSION, to.x, to.y, to.z, 1, 0, 0, 0, 0);
-        lv.sendParticles(ParticleTypes.FLASH, to.x, to.y, to.z, 1, 0, 0, 0, 0);
-        CastFx.spray(lv, ParticleTypes.ELECTRIC_SPARK, to, 40, 0.8);
-        CastFx.shockwave(p, t.position().add(0, 0.1, 0), 3.5, 5, CastFx.dust(CastFx.GOLD, 1.5f), 0);
-        CastFx.sound(lv, to, SoundEvents.LIGHTNING_BOLT_IMPACT, 0.9f, 1.4f);
-        CastFx.sound(lv, to, SoundEvents.ANVIL_LAND, 1f, 0.6f);
+        CastFx.streak(lv, from, to, 0xFFFFFF, 0.05f, 5);
+        CastFx.bolt(lv, from, to, CastFx.GOLD, 0.03f, 6);
+        CastFx.slash(lv, to, to.subtract(from).normalize(), CastFx.GOLD, 2f, 8);
+        CastFx.shards(lv, to, 0xFFFFFF, damage > 16 ? 3.2f : 2.4f, 10);
+        CastFx.pulse(lv, t.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.GOLD, 3.5f, 9);
+        CastFx.column(lv, t.position(), CastFx.GOLD, 3f, 10);
+        CastFx.sound(lv, to, FSounds.CAST_SLAM.get(), 1f, 0.9f);
+        CastFx.sound(lv, to, FSounds.CAST_SURGE.get(), 0.8f, 1.3f);
         CombatCues.everyone(p, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 0.8f);
         return true;
     }

@@ -10,10 +10,8 @@ import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -50,11 +48,9 @@ final class Brace {
             weapon.hurtAndBreak(Math.max(1, (int) (held / 4)), p, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
         ServerLevel lv = p.serverLevel();
         Vec3 clash = p.position().add(0, 1.2, 0).add(foe.position().subtract(p.position()).multiply(1, 0, 1).normalize().scale(0.8));
-        lv.sendParticles(ParticleTypes.CRIT, p.getX(), p.getY() + 1, p.getZ(), 5, 0.3, 0.3, 0.3, 0.2);
-        lv.sendParticles(ParticleTypes.ELECTRIC_SPARK, clash.x, clash.y, clash.z, 14, 0.25, 0.25, 0.25, 0.5);
-        lv.sendParticles(ParticleTypes.FLASH, clash.x, clash.y, clash.z, 1, 0, 0, 0, 0);
-        CastFx.sound(lv, clash, SoundEvents.SHIELD_BLOCK, 1f, 0.6f);
-        CastFx.sound(lv, clash, SoundEvents.ANVIL_LAND, 0.4f, 1.6f);
+        CastFx.shards(lv, clash, 0xFFFFFF, 1.1f, 6);
+        CastFx.pulse(lv, clash, foe.position().subtract(p.position()).multiply(1, 0, 1), CastFx.STEEL, 1.2f, 7);
+        CastFx.sound(lv, clash, FSounds.CAST_GUARD.get(), 1f, 0.8f);
     }
 
     /** Braced is crouching with the skill: the player's own stance, so there is no window or key. */

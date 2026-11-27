@@ -13,9 +13,7 @@ import io.github.soundgoodizerfan.feedback.combat.kick.Carrying;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -47,8 +45,9 @@ final class Dropkick {
         p.fallDistance = 0f;
         DIVING.add(p.getUUID());
         BOUNCED.remove(p.getUUID());
-        CastFx.spray(p.serverLevel(), ParticleTypes.CLOUD, p.position().add(0, 1, 0), 14, 0.25);
-        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.PHANTOM_SWOOP, 1f, 0.6f);
+        CastFx.shards(p.serverLevel(), p.position().add(0, 1, 0), 0xFFFFFF, 1.4f, 6);
+        CastFx.trail(p.serverLevel(), p, new Vec3(0, 0.9, 0), CastFx.EMBER, 0.16f, 22);
+        CastFx.sound(p.serverLevel(), p.position(), FSounds.CAST_WHOOSH.get(), 1f, 0.75f);
         CombatCues.everyone(p, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 0.8f);
         return true;
     }
@@ -76,8 +75,6 @@ final class Dropkick {
                         }
                     }
                 }
-                p.serverLevel().sendParticles(CastFx.fade(CastFx.EMBER, 0x331100, 1.6f), p.getX(), p.getY() + 0.6, p.getZ(), 4, 0.25, 0.4, 0.25, 0);
-                p.serverLevel().sendParticles(ParticleTypes.FLAME, p.getX(), p.getY() + 1.2, p.getZ(), 2, 0.2, 0.2, 0.2, 0.02);
             }
             if (p.onGround()) {
                 DIVING.remove(p.getUUID());
@@ -91,6 +88,10 @@ final class Dropkick {
                 Carrying.end(p);
                 Vec3 land = p.position().add(0, 0.2, 0);
                 CastFx.smash(p.serverLevel(), land, 500, false);
+                CastFx.sound(p.serverLevel(), land, FSounds.CAST_SLAM.get(), 1f, 1f);
+                CastFx.pulse(p.serverLevel(), land, Vec3.ZERO, CastFx.EMBER, 3.2f, 8);
+                CastFx.pulse(p.serverLevel(), land, Vec3.ZERO, 0xFFFFFF, 1.8f, 6);
+                CastFx.shards(p.serverLevel(), land, CastFx.EMBER, 2.4f, 9);
                 CombatCues.everyone(p, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 0.9f);
             }
         }

@@ -9,10 +9,9 @@ import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,8 +32,8 @@ final class Haymaker {
         if (!BareMode.mainHand(p).isEmpty())
             return false;
         Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.6)).add(0, -0.4, 0);
-        CastFx.converge(p, hand, 1.4, 10, CastFx.dust(CastFx.EMBER, 1.2f));
-        CastFx.sound(p.serverLevel(), hand, SoundEvents.PLAYER_ATTACK_KNOCKBACK, 0.6f, 0.5f);
+        CastFx.gather(p.serverLevel(), hand, CastFx.EMBER, 1.4f, 10);
+        CastFx.sound(p.serverLevel(), hand, FSounds.CAST_SURGE.get(), 0.6f, 0.8f);
         CastFx.clip(p, "one_handed_swipe_horizontal_right", CastFx.MAIN, 20, 10);
         later(p, 10, () -> {
             if (!p.isAlive())
@@ -44,7 +43,8 @@ final class Haymaker {
             ServerLevel lv = p.serverLevel();
             if (t == null) {
                 CombatTicker.stagger(p, 25, ParryTuning.STAGGER_SLOW); // the weight of a whiff
-                lv.sendParticles(ParticleTypes.CLOUD, hand.x, hand.y, hand.z, 6, 0.3, 0.2, 0.3, 0.05);
+                CastFx.streak(lv, hand, hand.add(p.getLookAngle().scale(2.5)), 0xFFFFFF, 0.03f, 5);
+                CastFx.sound(lv, hand, FSounds.CAST_WHOOSH.get(), 0.8f, 0.7f);
                 return;
             }
             float mine = BodyMass.of(p) + BodyMass.armour(p), theirs = Math.max(1f, BodyMass.of(t) + BodyMass.armour(t));
@@ -57,11 +57,11 @@ final class Haymaker {
             t.hurtMarked = true;
             stagger(p, t, new Work(dmg * ParryTuning.WORK_PER_DAMAGE));
             Vec3 c = t.getBoundingBox().getCenter();
-            lv.sendParticles(ParticleTypes.EXPLOSION, c.x, c.y, c.z, 1, 0, 0, 0, 0);
-            lv.sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 24, 0.3, 0.3, 0.3, 0.6);
-            CastFx.shockwave(p, t.position().add(0, 0.1, 0), 2.4, 4, CastFx.dust(CastFx.EMBER, 1.3f), 0);
-            CastFx.sound(lv, c, SoundEvents.PLAYER_ATTACK_CRIT, 1f, 0.5f);
-            CastFx.sound(lv, c, SoundEvents.ANVIL_LAND, 0.6f, 1.3f);
+            CastFx.streak(lv, hand, c, CastFx.EMBER, 0.04f, 4);
+            CastFx.shards(lv, c, 0xFFFFFF, 2f, 9);
+            CastFx.pulse(lv, t.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.EMBER, 2.4f, 9);
+            CastFx.sound(lv, c, FSounds.CAST_PUNCH.get(), 1f, 0.8f);
+            CastFx.sound(lv, c, FSounds.CAST_SLAM.get(), 0.7f, 1.1f);
         });
         return true;
     }

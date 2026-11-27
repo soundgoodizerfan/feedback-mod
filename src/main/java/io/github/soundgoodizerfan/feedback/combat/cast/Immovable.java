@@ -31,7 +31,11 @@ public final class Immovable {
             return;
         float mass = Math.max(1f, BodyMass.of(p) + BodyMass.armour(p));
         float cost = event.getStrength() * STAMINA_PER_STRENGTH * REFERENCE_MASS / mass;
-        if (Stamina.spend(p, cost))
+        if (Stamina.spend(p, cost)) {
             event.setCanceled(true);
+            net.minecraft.world.phys.Vec3 at = p.position().add(0, 0.1, 0);
+            CastFx.pulse(p.serverLevel(), at, net.minecraft.world.phys.Vec3.ZERO, CastFx.STEEL, 1.2f, 7);
+            CastFx.sound(p.serverLevel(), at, io.github.soundgoodizerfan.feedback.registry.FSounds.CAST_GUARD.get(), 0.7f, 0.9f);
+        }
     }
 }

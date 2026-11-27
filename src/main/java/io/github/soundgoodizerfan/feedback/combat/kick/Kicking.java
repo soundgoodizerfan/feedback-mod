@@ -80,11 +80,17 @@ public final class Kicking {
         Vec3 dir = new Vec3(look.x, 0, look.z);
         dir = dir.lengthSqr() < 1e-6 ? Vec3.directionFromRotation(0, player.getYRot()) : dir.normalize();
         Optional<LivingEntity> picked = pick(player, player.position().add(0, KickTuning.WAIST, 0), dir, KickTuning.REACH);
+        // Show: a fast leg sweep in front of the hips.
+        net.minecraft.server.level.ServerLevel lv = player.serverLevel();
+        Vec3 leg = player.position().add(dir.x * 0.6, KickTuning.WAIST, dir.z * 0.6);
+        io.github.soundgoodizerfan.feedback.net.CastShowPayload.send(lv, (byte) 3, -1, leg, leg, dir, 0xB8C4D6, 1.1f, 5);
         if (picked.isEmpty()) {
             CombatCues.everyone(player, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 1.4f);
             return;
         }
         LivingEntity target = picked.get();
+        Vec3 struck = target.getBoundingBox().getCenter();
+        lv.playSound(null, struck.x, struck.y, struck.z, FSounds.CAST_PUNCH.get(), SoundSource.PLAYERS, 1f, 0.9f);
         float impact = ParryTuning.standInMass(player) * KickTuning.WORK_PER_KICKER_MU + KickTuning.DAMAGE * ParryTuning.WORK_PER_DAMAGE;
         float mass = ParryTuning.standInMass(target);
         boolean guard = target.isBlocking();

@@ -10,10 +10,8 @@ import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -42,10 +40,9 @@ final class Vault {
         stagger(p, t, new Work((BodyMass.of(p) + BodyMass.armour(p)) * FTuning.GRAVITY_BLOCKS_PER_S2 * 1.2f));
         ServerLevel lv = p.serverLevel();
         Vec3 shoulders = t.position().add(0, t.getBbHeight(), 0);
-        lv.sendParticles(ParticleTypes.CRIT, shoulders.x, shoulders.y, shoulders.z, 10, 0.3, 0.1, 0.3, 0.2);
-        CastFx.ring(lv, CastFx.dust(CastFx.GOLD, 1.1f), shoulders, 0.5, 10, 0);
-        CastFx.line(lv, CastFx.fade(CastFx.GOLD, 0xFFFFFF, 1.1f), p.position().add(0, 0.5, 0), shoulders, 0.25);
-        CastFx.sound(lv, shoulders, SoundEvents.PLAYER_ATTACK_KNOCKBACK, 0.8f, 1.2f);
+        CastFx.pulse(lv, shoulders, Vec3.ZERO, CastFx.GOLD, 1f, 6);
+        CastFx.streak(lv, p.position().add(0, 0.5, 0), shoulders, CastFx.GOLD, 0.04f, 5);
+        CastFx.sound(lv, shoulders, FSounds.CAST_WHOOSH.get(), 0.8f, 1.3f);
         CombatCues.everyone(p, FSounds.ROLL_WHOOSH.get(), FeelTuning.ROLL_VOLUME, 1.1f);
         return true;
     }

@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.UseAnim;
@@ -42,7 +41,8 @@ final class Advance {
         if (p.getMainHandItem().getUseAnimation() != UseAnim.BLOCK && p.getOffhandItem().getUseAnimation() != UseAnim.BLOCK)
             return false;
         MARCHING.put(p.getUUID(), p.level().getGameTime() + 60);
-        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.IRON_GOLEM_REPAIR, 0.9f, 0.6f);
+        CastFx.pulse(p.serverLevel(), p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.STEEL, 1.8f, 8);
+        CastFx.sound(p.serverLevel(), p.position(), FSounds.CAST_GUARD.get(), 0.9f, 0.7f);
         CombatCues.everyone(p, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 0.8f);
         return true;
     }
@@ -72,8 +72,8 @@ final class Advance {
         }
         if (now % 3 == 0) {
             Vec3 front = p.position().add(d.scale(0.9)).add(0, 0.8, 0);
-            CastFx.ring(lv, CastFx.dust(CastFx.STEEL, 1.1f), front, 0.5, 8, 0);
-            CastFx.sound(lv, p.position(), SoundEvents.IRON_GOLEM_STEP, 0.7f, 0.8f);
+            CastFx.pulse(lv, front, d, CastFx.STEEL, 0.9f, 5);
+            CastFx.sound(lv, p.position(), FSounds.CAST_GUARD.get(), 0.6f, 0.9f);
         }
     }
 }

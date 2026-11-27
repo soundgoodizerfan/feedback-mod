@@ -12,11 +12,10 @@ import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunFu;
 import io.github.soundgoodizerfan.feedback.weapon.GunFuTuning;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -59,10 +58,9 @@ final class PointBlank {
         t.invulnerableTime = 0;
         t.hurt(p.damageSources().playerAttack(p), Math.min(20f, work / ParryTuning.WORK_PER_DAMAGE));
         stagger(p, t, new Work(work));
-        lv.sendParticles(ParticleTypes.FLASH, c.x, c.y, c.z, 1, 0, 0, 0, 0);
-        lv.sendParticles(ParticleTypes.SMOKE, c.x, c.y, c.z, 14, 0.25, 0.25, 0.25, 0.05);
-        CastFx.spray(lv, CastFx.dust(CastFx.CRIMSON, 1.1f), c, 18, 0.35);
-        CastFx.sound(lv, c, SoundEvents.GENERIC_EXPLODE.value(), 0.5f, 1.8f);
+        CastFx.shards(lv, c, CastFx.CRIMSON, 1.2f, 6);
+        CastFx.pulse(lv, c, eye.subtract(c).normalize(), 0xFFFFFF, 0.9f, 6);
+        CastFx.sound(lv, c, FSounds.CAST_PUNCH.get(), 0.9f, 1.3f);
         return true;
     }
 }

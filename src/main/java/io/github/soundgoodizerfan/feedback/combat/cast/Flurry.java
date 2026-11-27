@@ -13,10 +13,8 @@ import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -67,19 +65,17 @@ final class Flurry {
                 ServerLevel lv = p.serverLevel();
                 Vec3 hit = best.getBoundingBox().getCenter().add((lv.random.nextDouble() - 0.5) * 0.5, (lv.random.nextDouble() - 0.5) * 0.4, (lv.random.nextDouble() - 0.5) * 0.5);
                 // each fist leaves a streak and a spark; the pitch climbs a blow at a time
-                CastFx.line(lv, CastFx.fade(CastFx.GOLD, 0xFFFFFF, 1.0f), eye.add(look.scale(0.5)).add(0, -0.3, 0), hit, 0.2);
-                lv.sendParticles(ParticleTypes.CRIT, hit.x, hit.y, hit.z, 6, 0.15, 0.15, 0.15, 0.3);
-                lv.sendParticles(ParticleTypes.ELECTRIC_SPARK, hit.x, hit.y, hit.z, 3, 0.1, 0.1, 0.1, 0.3);
-                CastFx.sound(lv, hit, SoundEvents.PLAYER_ATTACK_STRONG, 0.8f, 1.0f + n * 0.12f);
+                CastFx.streak(lv, eye.add(look.scale(0.5)).add(0, -0.3, 0), hit, CastFx.GOLD, 0.03f, 4);
+                CastFx.shards(lv, hit, CastFx.GOLD, 0.5f + n * 0.08f, 5);
+                CastFx.sound(lv, hit, FSounds.CAST_PUNCH.get(), 0.9f, 1.0f + n * 0.03f);
                 if (last) {
                     if (best == pinned && pinAir)
                         launch(p, best, look);
                     stagger(p, best, new Work(6f * ParryTuning.WORK_PER_DAMAGE));
-                    lv.sendParticles(ParticleTypes.EXPLOSION, hit.x, hit.y, hit.z, 1, 0, 0, 0, 0);
-                    lv.sendParticles(ParticleTypes.FLASH, hit.x, hit.y, hit.z, 1, 0, 0, 0, 0);
-                    CastFx.shockwave(p, best.position().add(0, 0.1, 0), 2.5, 4, CastFx.dust(CastFx.GOLD, 1.3f), 0);
-                    CastFx.sound(lv, hit, SoundEvents.PLAYER_ATTACK_CRIT, 1f, 0.8f);
-                    CastFx.sound(lv, hit, SoundEvents.ANVIL_LAND, 0.6f, 0.8f);
+                    CastFx.shards(lv, hit, 0xFFFFFF, 2.2f, 10);
+                    CastFx.pulse(lv, best.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.GOLD, 2.8f, 9);
+                    CastFx.column(lv, best.position(), CastFx.GOLD, 2.6f, 9);
+                    CastFx.sound(lv, hit, FSounds.CAST_SLAM.get(), 0.9f, 1.15f);
                 }
                 CombatCues.everyone(p, FSounds.FEEL_LIGHT.get(), FeelTuning.LIGHT_VOLUME, 1.1f);
             });

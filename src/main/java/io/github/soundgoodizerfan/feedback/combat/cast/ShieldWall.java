@@ -12,9 +12,7 @@ import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -43,9 +41,9 @@ final class ShieldWall {
             return false;
         WALLS.put(p.getUUID(), new Wall(p.level().getGameTime() + 60, new java.util.HashSet<>()));
         Vec3 feet = p.position().add(0, 0.1, 0);
-        CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.ICE, 1.4f), feet, 1.2, 20, 0.25);
-        CastFx.sound(p.serverLevel(), feet, SoundEvents.ANVIL_PLACE, 1f, 0.5f);
-        CastFx.sound(p.serverLevel(), feet, SoundEvents.BEACON_ACTIVATE, 0.6f, 1.6f);
+        CastFx.pulse(p.serverLevel(), feet, Vec3.ZERO, CastFx.ICE, 2.2f, 9);
+        CastFx.column(p.serverLevel(), p.position(), CastFx.ICE, 2f, 9);
+        CastFx.sound(p.serverLevel(), feet, FSounds.CAST_GUARD.get(), 1f, 0.7f);
         CombatCues.everyone(p, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 1.2f);
         return true;
     }
@@ -56,20 +54,9 @@ final class ShieldWall {
             return;
         look = look.normalize();
         Vec3 face = p.position().add(look.scale(1.2)).add(0, 1, 0);
-        p.serverLevel().sendParticles(ParticleTypes.CRIT, face.x, face.y, face.z, 2, 0.5, 0.6, 0.5, 0);
-        // the wall itself: a curved pane of light in front, shimmering from the feet up to over the head
-        if (p.level().getGameTime() % 2 == 0) {
-            long left = w.until() - p.level().getGameTime();
-            double flare = left < 12 ? left / 12.0 : 1; // thins out as it runs down
-            for (int col = -3; col <= 3; col++) {
-                double a = col * 0.22;
-                Vec3 dir = new Vec3(look.x * Math.cos(a) - look.z * Math.sin(a), 0, look.x * Math.sin(a) + look.z * Math.cos(a));
-                for (int row = 0; row < 4; row++)
-                    if (p.getRandom().nextDouble() < flare)
-                        p.serverLevel().sendParticles(CastFx.dust(row % 2 == 0 ? CastFx.ICE : CastFx.STEEL, 1.1f),
-                                p.getX() + dir.x * 1.5, p.getY() + 0.2 + row * 0.55, p.getZ() + dir.z * 1.5, 1, 0, 0, 0, 0);
-            }
-        }
+        // the wall itself: a ring of light standing upright in front, renewed while it lasts
+        if (p.level().getGameTime() % 6 == 0 && w.until() - p.level().getGameTime() > 4)
+            CastFx.pulse(p.serverLevel(), p.position().add(look.scale(1.5)).add(0, 1, 0), look, CastFx.ICE, 1.3f, 6);
         // Phalanx: allies standing behind you within three blocks are covered by the wall too.
         java.util.List<LivingEntity> covered = new java.util.ArrayList<>(java.util.List.of(p));
         if (io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "phalanx"))
@@ -90,11 +77,9 @@ final class ShieldWall {
             e.push(look.x * 0.9, 0.2, look.z * 0.9);
             e.hurtMarked = true;
             Vec3 hit = e.getBoundingBox().getCenter();
-            p.serverLevel().sendParticles(ParticleTypes.EXPLOSION, hit.x, hit.y, hit.z, 1, 0, 0, 0, 0);
-            CastFx.spray(p.serverLevel(), ParticleTypes.ELECTRIC_SPARK, hit, 20, 0.6);
-            CastFx.ring(p.serverLevel(), CastFx.dust(CastFx.ICE, 1.3f), face, 1.0, 16, 0.3);
-            CastFx.sound(p.serverLevel(), hit, SoundEvents.SHIELD_BLOCK, 1f, 0.5f);
-            CastFx.sound(p.serverLevel(), hit, SoundEvents.ANVIL_LAND, 0.7f, 0.7f);
+            CastFx.shards(p.serverLevel(), hit, CastFx.ICE, 1.6f, 7);
+            CastFx.pulse(p.serverLevel(), hit, look, 0xFFFFFF, 1.4f, 8);
+            CastFx.sound(p.serverLevel(), hit, FSounds.CAST_GUARD.get(), 1f, 0.8f);
             CombatCues.everyone(p, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 1.4f);
         }
     }

@@ -3,12 +3,11 @@
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -40,8 +39,8 @@ final class RisingTempo {
         chain[1] = Math.min(MAX, chain[1] + 1);
         chain[0] = p.level().getGameTime() + WINDOW;
         Vec3 c = event.getEntity().getBoundingBox().getCenter();
-        p.serverLevel().sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 3 + (int) chain[1], 0.2, 0.2, 0.2, 0.3);
-        CastFx.sound(p.serverLevel(), c, SoundEvents.NOTE_BLOCK_CHIME.value(), 0.8f, 0.7f + chain[1] * 0.1f);
+        CastFx.shards(p.serverLevel(), c, CastFx.GOLD, 0.5f + chain[1] * 0.1f, 5);
+        CastFx.sound(p.serverLevel(), c, FSounds.CAST_PUNCH.get(), 0.7f, 0.9f + chain[1] * 0.07f);
     }
 
     @SubscribeEvent
@@ -50,7 +49,7 @@ final class RisingTempo {
             return;
         if (p.level().getGameTime() >= CHAINS.get(p.getUUID())[0]) { // a miss, or a pause: the tempo drops
             CHAINS.remove(p.getUUID());
-            CastFx.ring(p.serverLevel(), ParticleTypes.CLOUD, p.position().add(0, 1, 0), 0.7, 10, 0.1);
+            CastFx.pulse(p.serverLevel(), p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.STEEL, 0.8f, 6);
         }
     }
 }

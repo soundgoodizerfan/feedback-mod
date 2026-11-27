@@ -9,11 +9,10 @@ import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -67,9 +66,10 @@ final class Pace {
         s.fleetGain = FLEET_MAX * Mth.clamp(1f - slow(p, s) / FLEET_CAP_SLOW, FLEET_LEAST, 1f);
         s.fleetUntil = p.level().getGameTime() + FLEET_TICKS;
         ServerLevel lv = p.serverLevel();
-        CastFx.ring(lv, CastFx.dust(CastFx.STEEL, 1.1f), p.position().add(0, 0.2, 0), 0.8, 14, 0.2);
+        CastFx.pulse(lv, p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.STEEL, 1.2f, 8);
+        CastFx.trail(lv, p, new Vec3(0, 0.15, 0), CastFx.STEEL, 0.12f, FLEET_TICKS);
         CastFx.debris(lv, p.position(), 10, 0.4);
-        CastFx.sound(lv, p.position(), SoundEvents.PLAYER_ATTACK_SWEEP, 0.9f, 1.5f);
+        CastFx.sound(lv, p.position(), FSounds.CAST_WHOOSH.get(), 0.9f, 1.3f);
         CastFx.sound(lv, p.position(), FSounds.ROLL_WHOOSH.get(), 0.8f, 1.3f);
         return true;
     }
@@ -126,12 +126,6 @@ final class Pace {
             if (want != 0f)
                 speed.addTransientModifier(new AttributeModifier(ID, want, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
             s.applied = want;
-        }
-        if (fleet && now % 2 == 0) {
-            ServerLevel lv = p.serverLevel();
-            lv.sendParticles(CastFx.dust(CastFx.STEEL, 0.9f), p.getX(), p.getY() + 0.15, p.getZ(), 3, 0.2, 0.05, 0.2, 0.0);
-            if (p.onGround())
-                lv.sendParticles(ParticleTypes.CLOUD, p.getX(), p.getY() + 0.05, p.getZ(), 1, 0.15, 0.0, 0.15, 0.01);
         }
     }
 

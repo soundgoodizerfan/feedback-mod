@@ -7,10 +7,9 @@ import io.github.soundgoodizerfan.feedback.core.unit.Work;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -48,12 +47,8 @@ final class MuzzleFlash {
         }
         ServerLevel lv = p.serverLevel();
         Vec3 muzzle = eye.add(look.scale(0.9));
-        lv.sendParticles(ParticleTypes.FLASH, eye.x + look.x, eye.y + look.y, eye.z + look.z, 1, 0, 0, 0, 0);
-        // the blast: a cone of fire and smoke thrown down the line of the shot, and a boom at its edge
-        for (int i = 0; i < 28; i++) {
-            Vec3 d = look.add((lv.random.nextDouble() - 0.5) * 0.9, (lv.random.nextDouble() - 0.5) * 0.9, (lv.random.nextDouble() - 0.5) * 0.9).normalize();
-            lv.sendParticles(i % 3 == 0 ? ParticleTypes.SMOKE : ParticleTypes.FLAME, muzzle.x, muzzle.y, muzzle.z, 0, d.x, d.y, d.z, 0.5 + lv.random.nextDouble() * 0.5);
-        }
+        // the blast: a white flash of shards at the muzzle, tracers down the line of the shot, and a ring at its edge
+        CastFx.shards(lv, muzzle, 0xFFFFFF, 1.6f, 6);
         Vec3 edge = eye.add(look.scale(3));
         // Dazzle: the flash lights a bottle dashed ahead of it, and the mist hangs where the blast ends.
         if (io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "dazzle")) {
@@ -63,10 +58,12 @@ final class MuzzleFlash {
                 Vials.splash(lv, edge, drawn);
             }
         }
-        lv.sendParticles(ParticleTypes.SONIC_BOOM, edge.x, edge.y, edge.z, 1, 0, 0, 0, 0);
-        CastFx.line(lv, CastFx.fade(0xFFFFFF, CastFx.EMBER, 1.2f), muzzle, eye.add(look.scale(6)), 0.4);
-        CastFx.sound(lv, muzzle, SoundEvents.FIREWORK_ROCKET_LARGE_BLAST, 1f, 0.7f);
-        CastFx.sound(lv, muzzle, SoundEvents.WARDEN_SONIC_BOOM, 0.5f, 1.8f);
+        CastFx.pulse(lv, edge, look, CastFx.EMBER, 2.5f, 9);
+        CastFx.streak(lv, muzzle, eye.add(look.scale(6)), 0xFFFFFF, 0.05f, 5);
+        CastFx.streak(lv, muzzle, eye.add(look.scale(5)).add(0, 0.4, 0), CastFx.EMBER, 0.03f, 5);
+        CastFx.streak(lv, muzzle, eye.add(look.scale(5)).add(0, -0.4, 0), CastFx.EMBER, 0.03f, 5);
+        CastFx.sound(lv, muzzle, FSounds.CAST_SLAM.get(), 1f, 1.3f);
+        CastFx.sound(lv, muzzle, FSounds.CAST_SURGE.get(), 0.5f, 1.4f);
         return true;
     }
 }

@@ -7,9 +7,8 @@ import io.github.soundgoodizerfan.feedback.combat.skill.Rearms;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -49,8 +48,8 @@ final class Rebuke {
         }
         p.swing(InteractionHand.MAIN_HAND, true);
         Vec3 c = foe.getBoundingBox().getCenter();
-        p.serverLevel().sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 12, 0.3, 0.3, 0.3, 0.4);
-        p.serverLevel().sendParticles(ParticleTypes.ELECTRIC_SPARK, c.x, c.y, c.z, 8, 0.2, 0.2, 0.2, 0.4);
-        CastFx.sound(p.serverLevel(), c, SoundEvents.PLAYER_ATTACK_CRIT, 0.9f, 0.7f);
+        CastFx.shards(p.serverLevel(), c, CastFx.STEEL, 1.1f, 6);
+        CastFx.streak(p.serverLevel(), p.getEyePosition().add(0, -0.3, 0), c, CastFx.STEEL, 0.03f, 4);
+        CastFx.sound(p.serverLevel(), c, FSounds.CAST_PUNCH.get(), 0.9f, 0.9f);
     }
 }

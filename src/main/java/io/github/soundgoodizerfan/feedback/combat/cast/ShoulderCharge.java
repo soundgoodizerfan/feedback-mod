@@ -11,7 +11,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Work;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -54,7 +54,8 @@ final class ShoulderCharge {
         if (!p.onGround() || p.isPassenger() || p.getLookAngle().multiply(1, 0, 1).lengthSqr() < 1e-6)
             return false;
         RUNNING.put(p.getUUID(), new Run(p.level().getGameTime() + TICKS, new HashSet<>()));
-        CastFx.sound(p.serverLevel(), p.position(), SoundEvents.RAVAGER_STEP, 1f, 0.8f);
+        CastFx.sound(p.serverLevel(), p.position(), FSounds.CAST_WHOOSH.get(), 1f, 0.7f);
+        CastFx.trail(p.serverLevel(), p, new Vec3(0, 1.1, 0), CastFx.STEEL, 0.2f, TICKS);
         return true;
     }
 
@@ -80,7 +81,9 @@ final class ShoulderCharge {
             float theirs = Math.max(1f, BodyMass.of(e) + BodyMass.armour(e));
             float ratio = mine / theirs;
             CastFx.debris(lv, e.position(), 6, 0.3);
-            CastFx.sound(lv, e.position(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1f, 0.7f);
+            CastFx.sound(lv, e.position(), FSounds.CAST_PUNCH.get(), 1f, 0.7f);
+            CastFx.pulse(lv, e.position().add(0, 0.9, 0), d, CastFx.STEEL, 1.4f, 7);
+            CastFx.shards(lv, e.position().add(0, 0.9, 0), 0xFFFFFF, 1.2f, 6);
             if (ratio >= FLY_RATIO) {
                 float v = Mth.clamp(ratio * FLY_PER_RATIO, 3f, FLY_MAX);
                 e.setDeltaMovement(d.x * v / FTuning.TICKS_PER_SECOND, 0.3, d.z * v / FTuning.TICKS_PER_SECOND);

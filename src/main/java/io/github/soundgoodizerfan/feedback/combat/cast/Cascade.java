@@ -4,6 +4,7 @@ package io.github.soundgoodizerfan.feedback.combat.cast;
 
 import io.github.soundgoodizerfan.feedback.potion.PotionTuning;
 
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,7 +43,10 @@ final class Cascade {
         FluidStack two = second == null ? FluidStack.EMPTY : Vials.draw(p, PotionTuning.SPRAY_DOSE_MB);
         if (second != null && !two.isEmpty()) {
             Vec3 a = first.position().add(0, first.getBbHeight() * 0.6, 0), b = second.position().add(0, second.getBbHeight() * 0.6, 0);
-            CastFx.line(p.serverLevel(), CastFx.fade(io.github.soundgoodizerfan.feedback.potion.PotionSpray.colour(one), io.github.soundgoodizerfan.feedback.potion.PotionSpray.colour(one), 1f), a, b, 0.3);
+            int col = io.github.soundgoodizerfan.feedback.potion.PotionSpray.colour(one);
+            CastFx.streak(p.serverLevel(), a, b, col, 0.04f, 6);
+            CastFx.shards(p.serverLevel(), b, col, 0.8f, 6);
+            CastFx.sound(p.serverLevel(), b, FSounds.CAST_SHATTER.get(), 0.8f, 1.2f);
             Vials.dose(p, second, two);
         }
         p.swing(InteractionHand.MAIN_HAND, true);

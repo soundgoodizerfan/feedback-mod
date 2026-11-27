@@ -11,9 +11,9 @@ import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tether;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tethers;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
+import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -64,13 +64,15 @@ final class Pin {
         if (ratio < THROWN_OFF_RATIO) {
             // Too heavy to hold: it shrugs you off.
             CombatTicker.stagger(p, 15, ParryTuning.STAGGER_SLOW);
-            CastFx.sound(p.serverLevel(), p.position(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, 0.8f, 0.7f);
+            CastFx.pulse(p.serverLevel(), p.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.STEEL, 1.2f, 7);
+            CastFx.sound(p.serverLevel(), p.position(), FSounds.CAST_GUARD.get(), 0.8f, 0.8f);
             return true;
         }
         int ticks = Mth.clamp(Math.round(BASE_TICKS * ratio), MIN_TICKS, MAX_TICKS);
         Tethers.add(t, new Tether(p.getUUID(), new Tether.Anchor.OnEntity(p.getId()), 2f, 0f, VULNERABILITY, new Tether.Release(0, ticks)));
         HOLDS.put(p.getUUID(), new Hold(t.getUUID(), p.level().getGameTime() + ticks));
-        CastFx.sound(p.serverLevel(), t.position(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1f, 0.5f);
+        CastFx.pulse(p.serverLevel(), t.position().add(0, 0.1, 0), Vec3.ZERO, CastFx.STEEL, 1.4f, 8);
+        CastFx.sound(p.serverLevel(), t.position(), FSounds.CAST_SLAM.get(), 0.8f, 1.2f);
         return true;
     }
 
