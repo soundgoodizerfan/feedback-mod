@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,9 +36,12 @@ public final class RadioHearing {
     /** The game tick a speaker last relayed in, and how many sounds they have relayed in it. */
     private static final Map<UUID, long[]> TICKS = new ConcurrentHashMap<>();
 
+    /** Set while a loudspeaker plays a relayed sound, so the sound it makes is not relayed again. */
+    private static final ThreadLocal<Boolean> RELAYING = ThreadLocal.withInitial(() -> false);
+
     @SubscribeEvent
     public static void onSound(PlayLevelSoundEvent.AtPosition event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || event.getSound() == null || event.getSource() == SoundSource.MUSIC
+        if (RELAYING.get() || !(event.getLevel() instanceof ServerLevel level) || event.getSound() == null || event.getSource() == SoundSource.MUSIC
                 || event.getSource() == SoundSource.MASTER)
             return;
         Vec3 at = event.getPosition();
@@ -48,6 +52,7 @@ public final class RadioHearing {
             ItemStack set = RadioSets.held(speaker);
             if (set.isEmpty() || !within(level, speaker))
                 continue;
+            speakers(level, speaker, set, event);
             for (ServerPlayer listener : level.getServer().getPlayerList().getPlayers()) {
                 if (listener == speaker || listener.level() != level)
                     continue;
@@ -64,6 +69,28 @@ public final class RadioHearing {
                 listener.connection.send(new ClientboundSoundPacket(event.getSound(), SoundSource.PLAYERS, listener.getX(), listener.getY(), listener.getZ(),
                         Math.min(1f, event.getNewVolume() * RadioTuning.RELAY_VOLUME * quality), event.getNewPitch() * RadioTuning.RELAY_PITCH,
                         level.random.nextLong()));
+            }
+        }
+    }
+
+    /** A powered loudspeaker on the speaker's band, in this level and in reach, plays the relayed sound aloud at its own place. */
+    private static void speakers(ServerLevel level, ServerPlayer speaker, ItemStack set, PlayLevelSoundEvent.AtPosition event) {
+        for (LoudspeakerBlockEntity box : LoudspeakerBlockEntity.loaded()) {
+            if (box.getLevel() != level || box.band() != RadioSets.band(set) || !box.powered())
+                continue;
+            BlockPos at = box.getBlockPos();
+            double blocks = Math.sqrt(speaker.distanceToSqr(at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5));
+            float quality = (float) (1.0 - blocks / RadioTuning.SPEAKER_REACH_BLOCKS) - RadioNoise.cut(speaker);
+            if (!RadioNoise.shielded(level, at) && RadioNoise.noisy(level, at, RadioTuning.NOISE_BLOCKS, new BlockPos.MutableBlockPos()))
+                quality -= RadioTuning.NOISE_CUT;
+            if (quality <= 0f || level.random.nextFloat() < RadioSets.dropShare(quality))
+                continue;
+            RELAYING.set(true);
+            try {
+                level.playSeededSound(null, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, event.getSound(), SoundSource.BLOCKS,
+                        Math.min(1.5f, event.getNewVolume() * quality * 1.5f), event.getNewPitch() * RadioTuning.RELAY_PITCH, level.random.nextLong());
+            } finally {
+                RELAYING.set(false);
             }
         }
     }

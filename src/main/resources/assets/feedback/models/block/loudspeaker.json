@@ -1,0 +1,9 @@
+{
+  "textures": { "case": "minecraft:block/iron_block", "cone": "minecraft:block/black_concrete", "particle": "minecraft:block/iron_block" },
+  "elements": [
+    { "from": [2, 0, 4], "to": [14, 14, 16],
+      "faces": { "down": { "texture": "#case" }, "up": { "texture": "#case" }, "north": { "texture": "#case" }, "south": { "texture": "#case" }, "west": { "texture": "#case" }, "east": { "texture": "#case" } } },
+    { "from": [4, 2, 3], "to": [12, 12, 4],
+      "faces": { "north": { "texture": "#cone" }, "up": { "texture": "#case" }, "down": { "texture": "#case" }, "west": { "texture": "#case" }, "east": { "texture": "#case" } } }
+  ]
+}

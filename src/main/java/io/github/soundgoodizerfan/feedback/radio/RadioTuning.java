@@ -29,5 +29,7 @@ public final class RadioTuning {
     public static final float NOISE_CUT = 0.35f, KEYED_DRAW_EU = 1f;
     /** Invented. The most chance a marginal link (under {@link #GARBLE_BELOW}) lets a click of static through beside a relayed sound, and its volume. */
     public static final float STATIC_CHANCE = 0.8f, STATIC_VOLUME = 0.25f;
+    /** Invented. A loudspeaker's fixed reach (blocks) and the amps it draws. */
+    public static final float SPEAKER_REACH_BLOCKS = 64f, SPEAKER_AMPS = 0.5f;
     public static final float RELAY_VOLUME = 0.7f, RELAY_PITCH = 0.9f;
 }

@@ -334,6 +334,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.ROBOT_DOCK.get(), Component.translatable("feedback.jei.info.robot_dock"));
         registration.addIngredientInfo(FItems.ROBOT_BEACON.get(), Component.translatable("feedback.jei.info.robot_beacon"));
         registration.addIngredientInfo(FItems.ROBOT_ARM.get(), Component.translatable("feedback.jei.info.robot_arm"));
+        registration.addIngredientInfo(FItems.LOUDSPEAKER.get(), Component.translatable("feedback.jei.info.loudspeaker"));
         registration.addIngredientInfo(FItems.ROBOT_MAST.get(), Component.translatable("feedback.jei.info.robot_mast"));
         registration.addIngredientInfo(FItems.ROBOT_BOARD.get(), Component.translatable("feedback.jei.info.robot_board"));
         registration.addIngredientInfo(FItems.ROBOT_REEL.get(), Component.translatable("feedback.jei.info.robot_reel"));

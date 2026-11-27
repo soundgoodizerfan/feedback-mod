@@ -970,6 +970,11 @@ public class FBlocks {
             BLOCKS.register("robot_mast", () -> new io.github.soundgoodizerfan.feedback.robot.RobotMastBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_ORANGE).strength(1.0f).sound(SoundType.COPPER).noOcclusion()));
 
+    /** The loudspeaker: plays a band's relayed sound aloud while powered; see {@code radio/LoudspeakerBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.radio.LoudspeakerBlock> LOUDSPEAKER =
+            BLOCKS.register("loudspeaker", () -> new io.github.soundgoodizerfan.feedback.radio.LoudspeakerBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.5f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+
     /** The job board a fleet shares over radio; see {@code robot/RobotBoardBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.robot.RobotBoardBlock> ROBOT_BOARD =
             BLOCKS.register("robot_board", () -> new io.github.soundgoodizerfan.feedback.robot.RobotBoardBlock(
