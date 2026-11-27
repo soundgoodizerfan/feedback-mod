@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularRework;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
@@ -50,6 +52,7 @@ final class NotesScreen extends Screen {
     private final Screen parent;
     private final int containerId, rounds;
     private final List<ItemStack> parts = new ArrayList<>();
+    private final List<Piece> pieces = new ArrayList<>();
     private final float[] scores, spans, readings;
     private final Specks specks = new Specks(64);
     private final Component title = Component.translatable("gui.feedback.notes.title");
@@ -60,6 +63,10 @@ final class NotesScreen extends Screen {
     private boolean sent;
     private long doneAt;
 
+    /** One part of the specimen as the sketch draws it: where its role sits along the item, how long it runs, its layer and its material's colour. */
+    private record Piece(float at, float length, int layer, int rgb) {
+    }
+
     NotesScreen(Screen parent, EngineeringTableMenu menu, MinigameOpenPayload session) {
         super(Component.translatable("gui.feedback.notes.title"));
         this.parent = parent;
@@ -68,6 +75,15 @@ final class NotesScreen extends Screen {
         var level = Minecraft.getInstance().level;
         if (level != null && ModularStacks.design(specimen) != null)
             parts.addAll(ModularRework.dismantle(specimen, ClientMaterials.on(level), io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.on(level), 0f));
+        var design = ModularStacks.design(specimen);
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
+        if (type != null)
+            for (var part : design.parts()) {
+                ModularType.Role role = type.roles().get(part.role());
+                if (role != null)
+                    pieces.add(new Piece(role.at(), role.length() > 0f ? role.length() : (float) Math.sqrt(role.litres()), role.layer(),
+                            0xFF000000 | MaterialColors.of(part.material())));
+            }
         this.rounds = Math.max(1, Math.min(Math.min(ModularTuning.NOTES_MAX_PARTS, Math.max(1, parts.size())), session.rounds()));
         this.scores = new float[rounds];
         this.spans = new float[rounds];
@@ -279,16 +295,9 @@ final class NotesScreen extends Screen {
             int shiver = ClientSettings.reduceMotion() || write >= 1f ? 0 : (ticks % 2);
             g.drawString(font, line.substring(0, n), nx + 6, ny + 4 + i * 12 + shiver, col, false);
         }
-        // The pencil sketch of the whole: the parts in a row, faint, one more for each part read.
-        int sketch = Math.min(parts.size(), pull + (phase >= INK ? 1 : 0));
-        for (int i = 0; i < sketch && i < 6; i++) {
-            ItemStack p = parts.get(i);
-            g.pose().pushPose();
-            g.pose().translate(nx + 4 + (i % 3) * 22, ny + bh - 4 + (i / 3) * 16, 0);
-            g.pose().scale(0.85f, 0.85f, 1f);
-            g.renderItem(p, 0, 0);
-            g.pose().popPose();
-        }
+        // The pencil sketch of the whole, exploded: one row per part read so far, each placed along the item where its role sits and as long
+        // as its role runs, rows spaced apart by layer order, a faint axis through them.
+        sketch(g, nx + 4, ny + bh - 6, nw - 8, pull + (phase >= INK ? 1 : 0));
         g.fill(nx + 3, ny + bh + 28, nx + nw - 3, ny + bh + 29, PENCIL);
         // One mark per part, filled with how its reading went.
         for (int i = 0; i < rounds; i++) {
@@ -308,6 +317,26 @@ final class NotesScreen extends Screen {
                 g.drawString(font, line, px + 12, y, SKIN.ink(), false);
                 y += 10;
             }
+        }
+    }
+
+    /** The exploded side view: {@code shown} pieces as bars in a box {@code w} wide, one row each in layer order, on a pencil axis. */
+    private void sketch(GuiGraphics g, int x, int y, int w, int shown) {
+        int n = Math.min(Math.min(pieces.size(), shown), 6);
+        if (n == 0)
+            return;
+        List<Piece> rows = new ArrayList<>(pieces.subList(0, n));
+        rows.sort(java.util.Comparator.comparingInt(Piece::layer));
+        float longest = 0f;
+        for (Piece p : pieces)
+            longest = Math.max(longest, p.length());
+        g.fill(x, y + 2 + n * 5, x + w, y + 3 + n * 5, PENCIL);
+        for (int i = 0; i < n; i++) {
+            Piece p = rows.get(i);
+            int bar = Math.max(4, Math.round(w * (0.25f + 0.75f * (longest > 0f ? p.length() / longest : 1f))));
+            int bx = x + Math.round(Mth.clamp(p.at(), 0f, 1f) * (w - bar));
+            g.fill(bx, y + i * 5, bx + bar, y + i * 5 + 3, p.rgb());
+            g.fill(bx, y + i * 5, bx + bar, y + i * 5 + 1, 0x55FFFFFF);
         }
     }
 
