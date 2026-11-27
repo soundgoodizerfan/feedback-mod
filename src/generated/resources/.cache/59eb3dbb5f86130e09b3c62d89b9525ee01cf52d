@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T17:39:47.465261681	Loot Tables
+// 1.21.1	2026-11-26T20:01:14.285645472	Loot Tables
 3ec2d8235a145e9ecd4bc49404e31bff70407cfb data/feedback/loot_table/blocks/alnico_block.json
 7ceaa2b8bfe1b647eb0a2c985f24c7b8138994b8 data/feedback/loot_table/blocks/alnico_pipe.json
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
@@ -245,6 +245,8 @@ cb29df2bb7577b19f718394ac9caf9cf3bbb07b8 data/feedback/loot_table/blocks/salmon_
 aca4caa3c3cd8590e6b684a74542ff5ed6a5a5e0 data/feedback/loot_table/blocks/silica_glass_block.json
 202e2da86117ebe7ceedf35ac7f0371c3d21752e data/feedback/loot_table/blocks/silver_block.json
 35eb8b2614c43284eb7928f7d1041068fe2491f9 data/feedback/loot_table/blocks/silver_pipe.json
+d4c393930d3dc81ea26ae3bd44023dc6e573dc4a data/feedback/loot_table/blocks/sodium_block.json
+d5f6d16a6e19a08d19c54a0fd477b96fbcb0aad1 data/feedback/loot_table/blocks/sodium_pipe.json
 5a30a8fd4dd1e451411762b5924f5645e843fb73 data/feedback/loot_table/blocks/solder_free_pipe.json
 cd11c332686fbdc4e70429c4d28212ea94cb59fa data/feedback/loot_table/blocks/solder_leaded_pipe.json
 3b27ba4aa26e14eb9063729f2b5cb965bd5074cb data/feedback/loot_table/blocks/soul_resin_block.json

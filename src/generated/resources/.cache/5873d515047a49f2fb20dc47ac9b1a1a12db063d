@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T17:39:47.473504185	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-26T20:01:14.29081252	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
@@ -74,6 +74,7 @@ a0d11e1baef227a1dd7d3c370b220e7e606751f6 data/c/tags/item/birdshots/polyethylene
 b945021f7b5dccd358579e775044723566c7168b data/c/tags/item/birdshots/rhenium.json
 c3cfe655beff2f9bae4d3f20ad721975bd4e3416 data/c/tags/item/birdshots/shakudo.json
 6c12e3cea5bf30142de3a5101300c1259bf2c3ce data/c/tags/item/birdshots/silver.json
+f5792c77e121a3a30f650e8c29a8c91908ddd3dc data/c/tags/item/birdshots/sodium.json
 a2593c99e94c290bce72912e1a199db0533c2b04 data/c/tags/item/birdshots/solder_free.json
 55369162405c56e971bc6f3143f6b16483177ec7 data/c/tags/item/birdshots/solder_leaded.json
 cad166ef1e6361b929dca1b9fe25509b5ac50309 data/c/tags/item/birdshots/soul_resin.json
@@ -211,6 +212,7 @@ f6f914e79e8b5dbe1181e18bb419e0822c3d0ef6 data/c/tags/item/bullets/pvc.json
 f564b25419d20878849a8ff42aedf8198a511d8e data/c/tags/item/bullets/redstone_chromium.json
 588d3abb3fef0e1f9af1ea3f3e0758b9da723a32 data/c/tags/item/bullets/shakudo.json
 827a0fc5916aff18bdea3380081b13cec4cd8461 data/c/tags/item/bullets/silver.json
+627f101c78f3d4d818dd56171e27d9acb3d261ed data/c/tags/item/bullets/sodium.json
 5bb6bd0b52c0c9240be575b62e3c7f9103d004b1 data/c/tags/item/bullets/soul_resin.json
 c9cb755cc987fb5b9848c4185280123220684c9b data/c/tags/item/bullets/spent_fuel_rod.json
 7fecb86f765659f25f48eee6e1b94ae77646b1e7 data/c/tags/item/bullets/stainless_steel.json
@@ -376,6 +378,7 @@ c64d69ad64e7f68ad41916bac7aaa4efc0a71c23 data/c/tags/item/cases/plutonium_fuel_r
 867bcecbe6fb4971ea7ad8bda6d5820c8ad00c4d data/c/tags/item/cases/redstone_chromium.json
 dd2a00dee307981fafa0dd6273643466286360c8 data/c/tags/item/cases/shakudo.json
 c25efbe228548fc7963449743d7bec2607c78d0d data/c/tags/item/cases/silver.json
+50210b9846de231da945b663ed707a7a4c43de92 data/c/tags/item/cases/sodium.json
 21aff40c3d059dc74ed1d5ca02a871c6a490f6e1 data/c/tags/item/cases/spent_fuel_rod.json
 c4367f592790da03bb9e611d1b9707746a44a210 data/c/tags/item/cases/stainless_steel.json
 d9b258ca5df14d6c43da5ba720c93e252de845ff data/c/tags/item/cases/steel.json
@@ -507,6 +510,7 @@ d220a856d16a07f45173159ab6f4f5a5b5f2782e data/c/tags/item/coil_springs/redstone_
 18fabea78c2737e5346d732bb62b154ef861c57d data/c/tags/item/coil_springs/rhenium.json
 c57fcfe3c66b5d230e52c2f39ca6c15e8dedf5be data/c/tags/item/coil_springs/shakudo.json
 04130304d7673d56128d645ffd52399cfb7c4c1f data/c/tags/item/coil_springs/silver.json
+3826867f3bdee597118e443a56acfdbb45a3355b data/c/tags/item/coil_springs/sodium.json
 a13a50bb7bcea2dd85e0a99918e1b556c51e956c data/c/tags/item/coil_springs/solder_free.json
 6d2bfbee7e1d67df5f34de9cd725388f5c09a6c5 data/c/tags/item/coil_springs/solder_leaded.json
 10fa929f4034f5b50fa119551a60c72a9f38857e data/c/tags/item/coil_springs/spent_fuel_rod.json
@@ -629,6 +633,7 @@ a978c887e1f7332e977fbc5f880c804f996e1b76 data/c/tags/item/coins/pewter.json
 a66cca99766293cef1e4017b2d7932c21f263c19 data/c/tags/item/coins/redstone_chromium.json
 754b7044b08922719c29ca40240fdb3152f3c3b3 data/c/tags/item/coins/shakudo.json
 486242e2f9740134506f3abdb7187177bea32e9a data/c/tags/item/coins/silver.json
+288117b23edc858140606a81120295e5a7d84073 data/c/tags/item/coins/sodium.json
 9b951c364a14c3c5970803290d59625af8f1d36f data/c/tags/item/coins/solder_free.json
 2bfee180b63b49f52beebc638586c0ae103ae051 data/c/tags/item/coins/solder_leaded.json
 5a5d72c9d746ce41f6fc75151f9ede98378512b0 data/c/tags/item/coins/spent_fuel_rod.json
@@ -897,6 +902,7 @@ c89b52d3cdd3a35c237115985c84a608f70b5464 data/c/tags/item/cut_machine_bolts/reds
 242ce18b68997dff877dea190e31efb1f1f74832 data/c/tags/item/cut_machine_bolts/rhenium.json
 f442cd10b2a162d1373bed036489968e5404228c data/c/tags/item/cut_machine_bolts/shakudo.json
 d8b8c5e35cb4703ede1dff11fba2a57bb5debfd7 data/c/tags/item/cut_machine_bolts/silver.json
+5bf5507cf32cc71f181ea1ccf8e383b741ca96fe data/c/tags/item/cut_machine_bolts/sodium.json
 673147e640970eb8357b9fdaf88b80f063676d27 data/c/tags/item/cut_machine_bolts/solder_free.json
 a159c959c43664aba6a07d256aa7628517e3d8bb data/c/tags/item/cut_machine_bolts/solder_leaded.json
 74574651a75692319973c0c6a72549435beff529 data/c/tags/item/cut_machine_bolts/spent_fuel_rod.json
@@ -1031,6 +1037,7 @@ b82796d13bccfb4e585a848584110ef75d1fcc12 data/c/tags/item/cut_screws/redstone_su
 b458345ff512c231782dad189e24389820ff3d54 data/c/tags/item/cut_screws/rhenium.json
 f0470be31ab24c4280feab39cb23e3954cde47a2 data/c/tags/item/cut_screws/shakudo.json
 15e3088893c3658dfa85c2e4558aa6273376c113 data/c/tags/item/cut_screws/silver.json
+4d02779866eda38b0472ce08da42fbe8843d44a6 data/c/tags/item/cut_screws/sodium.json
 5c0ad203a53173b668dcd51799d9d6767a12af9e data/c/tags/item/cut_screws/solder_free.json
 b9e14e4f2d30492834b3d462fe7aaddbaff2d9b5 data/c/tags/item/cut_screws/solder_leaded.json
 1fd7b5b7732d8e3f86ac59759bc9967fbac8ab3c data/c/tags/item/cut_screws/spent_fuel_rod.json
@@ -1165,6 +1172,7 @@ f5d9099abe8c70ca75606eb42b8808efd615b54e data/c/tags/item/cut_thread_rods/redsto
 cb971c67f4d678169022f2509749b1878a3158de data/c/tags/item/cut_thread_rods/rhenium.json
 a57438c1b12f9f64e80a3f060a973c573a7264fd data/c/tags/item/cut_thread_rods/shakudo.json
 d3b0ad5b5ecc448518b9ae66fa2e3fe3a56766c6 data/c/tags/item/cut_thread_rods/silver.json
+1eb2f54769474768dfe0da7b20c71e65864c5b5b data/c/tags/item/cut_thread_rods/sodium.json
 7ac3d12527cd40617998125949352036b2cc7174 data/c/tags/item/cut_thread_rods/solder_free.json
 21b657381a9af4d9c8872170df05e3dad23e0b46 data/c/tags/item/cut_thread_rods/solder_leaded.json
 e609a241bd1fe1332be4d293812460ca0e978bee data/c/tags/item/cut_thread_rods/spent_fuel_rod.json
@@ -1329,6 +1337,7 @@ a5a18d7b3108be6d370c83e4882accf8ea565c94 data/c/tags/item/drilled_plates/plutoni
 a783a20e29ec1ec011c0bd3c07757f6afb3716e4 data/c/tags/item/drilled_plates/redstone_chromium.json
 fe78f66d2336e1a7ad010b92f57a7d1592c1311e data/c/tags/item/drilled_plates/shakudo.json
 557d67f5bbc1c3f43e539c6af4d10b8c6ebd47c1 data/c/tags/item/drilled_plates/silver.json
+7e8ce77bc1ea6bae96684a10277690df8ae122d4 data/c/tags/item/drilled_plates/sodium.json
 9dabe69ef2869202f8a4ebf1459847aef45ecf15 data/c/tags/item/drilled_plates/stainless_steel.json
 9351e01509cf424767763bc36daad36bdd6668b6 data/c/tags/item/drilled_plates/steel.json
 806dcdf376416a112731578039f0eb894c238fd4 data/c/tags/item/drilled_plates/stellite.json
@@ -1540,6 +1549,7 @@ c3a1ffe1ac2610aa9904a10deee895d3d084be52 data/c/tags/item/dusts/silicon_crude.js
 8ae2aa8a70ab4c320712fedbf3bd7aa504b3213c data/c/tags/item/dusts/silver.json
 9ec559b18b5c31c7e0c7f90a289672df4f48a3f4 data/c/tags/item/dusts/slag.json
 1896e3fe6b43083615eaa51a12a1244787ee3669 data/c/tags/item/dusts/snow.json
+68fe83279e05d3e1195b48104d614e0c8355c555 data/c/tags/item/dusts/sodium.json
 0dc9c3e2a8d332a6e4b18c87632313a79c300a73 data/c/tags/item/dusts/solder_free.json
 a30a92f1ee4cb021183206c8808667571b35880a data/c/tags/item/dusts/solder_leaded.json
 b2c383b6d5258237e6d7456763b31a41d7c82324 data/c/tags/item/dusts/soul_crystal.json
@@ -1681,6 +1691,7 @@ c9cb7a5075f757e3308c9879f80a479a29eee137 data/c/tags/item/fine_wires/redstone_ch
 447503a94b88039d1e790fed74b68e09ddf39ae3 data/c/tags/item/fine_wires/redstone_filament.json
 85156277fbb93d667f94abbe4a085b9b7cf47a51 data/c/tags/item/fine_wires/shakudo.json
 8160a260aee6c303b7ab523a4ac655633bd2f630 data/c/tags/item/fine_wires/silver.json
+603bb78b178ec9837b0b24564b34f3d866233c0c data/c/tags/item/fine_wires/sodium.json
 cfa6d5fca56d18480d1179c2eae9ab1ab1f20bb6 data/c/tags/item/fine_wires/stainless_steel.json
 1ce57afdf6fbc22d4645ee6cfbde1598bef64ab5 data/c/tags/item/fine_wires/steel.json
 b1f29dbd370f90107427d017e6d26724a42301ff data/c/tags/item/fine_wires/stellite.json
@@ -1812,6 +1823,7 @@ a971a0805c52c45df455e70b2fffdf3cca30b0ff data/c/tags/item/flat_nose_bullets/reds
 1d94c328c486b59731a9bce3532f3133bd7d3bbc data/c/tags/item/flat_nose_bullets/rhenium.json
 cc0a58efcd4284b5e6fd7b115be8250cc6726430 data/c/tags/item/flat_nose_bullets/shakudo.json
 620161b9d3dcd2fedf97ed942ba649a94443d647 data/c/tags/item/flat_nose_bullets/silver.json
+a2cd98ec29e825462ca8c856b3966f4155674283 data/c/tags/item/flat_nose_bullets/sodium.json
 1a9c2588e7bbc3d03293d8f0ce6432eec3339616 data/c/tags/item/flat_nose_bullets/solder_free.json
 4957440474729896545e27381dbb4546a99d58bf data/c/tags/item/flat_nose_bullets/solder_leaded.json
 8c0e240a950d80ceec90907e25b0c83d90e9ec8d data/c/tags/item/flat_nose_bullets/soul_resin.json
@@ -1953,6 +1965,7 @@ a4d0eacc3a97b5c22f50bf5a4599f18af19c0dfd data/c/tags/item/flechettes/redstone_ch
 30136b4b172c19ebda7ca17115e13408ba17ba97 data/c/tags/item/flechettes/rhenium.json
 7c6137497cac485cef957fe54d6305da9f7cac88 data/c/tags/item/flechettes/shakudo.json
 d996f81757cc495c71a004b284bc1aa43a6dab4b data/c/tags/item/flechettes/silver.json
+4122991ea603c110ca17f53bf4ac830d964e183b data/c/tags/item/flechettes/sodium.json
 178ad0d3f70621806d2c1f9689ff1df96f039526 data/c/tags/item/flechettes/solder_free.json
 fd58c0682588d1f00bd912a9be1b34f61959dec1 data/c/tags/item/flechettes/solder_leaded.json
 4a062c8fc67a12ec6a97baef046e4a513e69621a data/c/tags/item/flechettes/soul_resin.json
@@ -2076,6 +2089,7 @@ a32dfcd2d63d12d466a7de2f35217640aa9b1233 data/c/tags/item/foils/palladium.json
 02defa35c95d3a263555d835eea81da493072f8f data/c/tags/item/foils/redstone_chromium.json
 e924eca98d68115fc40e8f11d23e3c6d87b0b5f5 data/c/tags/item/foils/shakudo.json
 165daa56e5444cea3434001c32ffb5ecbdb6fd08 data/c/tags/item/foils/silver.json
+bd1b6d6b34684cfa0bf75db347250f33dc98ee84 data/c/tags/item/foils/sodium.json
 6777fedbf2557f6b2d61a6fd51eb8440ba2588f5 data/c/tags/item/foils/stainless_steel.json
 35a676d3b102bf452f29dc89cfb4f60f6e8f51c6 data/c/tags/item/foils/steel.json
 2c82b182dcda2686821c727198a25d301275414a data/c/tags/item/foils/stellite.json
@@ -2132,6 +2146,7 @@ dabf77dfe869a9971bd5e6e6b43411b104d05501 data/c/tags/item/foils/uranium_depleted
 67985674f336b3ad7e12445c6cf4eb4d911e9f34 data/c/tags/item/foils/woods_metal.json
 5a480c29434c22f1a3a8b9854d3f3bc7ace43026 data/c/tags/item/foils/wrought_iron.json
 49230f661b9a81c520f0e7d2b73e7dddf6337a74 data/c/tags/item/foils/zinc.json
+bb78923976d3d8d0ddbd5c306d2ae32386586b28 data/c/tags/item/gems/amethyst.json
 82a7d56733b74a8dc36b4026d8bca59570a1f608 data/c/tags/item/gems/beryl.json
 89d7df11cfcd0b9991ca2454ec30fab295f83731 data/c/tags/item/gems/diamond.json
 e99538836b754e91f7f16b0ab0dfaf6ee15cb467 data/c/tags/item/gems/emerald.json
@@ -2224,6 +2239,7 @@ d8aede25397c2419fd7bfd4202817b3fcbfd9ab6 data/c/tags/item/grips/redstone_chromiu
 978d3dc92ccd732138b070faa13d5e4bfa6cda69 data/c/tags/item/grips/shakudo.json
 2ba93cd55645d434f6aab41bbbf1aee94dcfe24c data/c/tags/item/grips/silver.json
 4e26f10bd0bee9de0e774d33d2c0f1678dfc19f6 data/c/tags/item/grips/silverwood.json
+648fd6cea22d03172b5c2946b488c6b146fbc623 data/c/tags/item/grips/sodium.json
 ca0a893df233a2685d4109d9de046c6b8a463d26 data/c/tags/item/grips/soul_resin.json
 b5ed511f7896ee798d404e4a5631d85fd6fdaf95 data/c/tags/item/grips/spent_fuel_rod.json
 608221e59f3fef4233cecc1db3520a334f4e452f data/c/tags/item/grips/spruce.json
@@ -2348,6 +2364,7 @@ a9186a9a71c771165bc97b63645142f116c5cb2b data/c/tags/item/ground_ingots/plutoniu
 cf2061c0c6779b7b18d2959df1eae1a9e07aeb15 data/c/tags/item/ground_ingots/redstone_chromium.json
 7e6a6aba475108281d30aebabfd1d84c1d40bc2c data/c/tags/item/ground_ingots/shakudo.json
 177f1746e9f9043f453962558e5c91ff02a42102 data/c/tags/item/ground_ingots/silver.json
+1724f235526eb360a618021f5e9b251c3c55c95d data/c/tags/item/ground_ingots/sodium.json
 4399ee388d73a946213560bc8e77bd0adff902aa data/c/tags/item/ground_ingots/spent_fuel_rod.json
 6e1dc7d2d2417f62d52b47fe4fbbf70465916277 data/c/tags/item/ground_ingots/stainless_steel.json
 fda701ac9af85029f8e97cde82345ec587e70e70 data/c/tags/item/ground_ingots/steel.json
@@ -2485,6 +2502,7 @@ b6f86116366112cec4085ec495f9df92dde666e0 data/c/tags/item/hollow_point_bullets/p
 e04fc30696d10709e064edf820f88226df80af66 data/c/tags/item/hollow_point_bullets/rhenium.json
 a7c4bd916e52ee7b0e7c7d9caa6700c350fb6dc8 data/c/tags/item/hollow_point_bullets/shakudo.json
 2c612482441675a661cd705364caddb8cade843f data/c/tags/item/hollow_point_bullets/silver.json
+d59c06be85fbb3021e4be7b9cabcc20022fe44e7 data/c/tags/item/hollow_point_bullets/sodium.json
 2e24c2abda4dff5ea6c35fcb843e6012c49ad722 data/c/tags/item/hollow_point_bullets/solder_free.json
 e7d1a0e471fe9e220af96dbac9f1392f9965c821 data/c/tags/item/hollow_point_bullets/solder_leaded.json
 cfbaabed5771318cb52d978a442e4b9134f6857d data/c/tags/item/hollow_point_bullets/soul_resin.json
@@ -2646,6 +2664,7 @@ f51b0faf0e3cf935240367067f7e870da7acd014 data/c/tags/item/ingots/silicon.json
 6df32121e7dc0e2fcdea0aba9d65cc8cba413809 data/c/tags/item/ingots/silicon_crude.json
 f1ec6c5df93b57103120fb397e4be919368813d7 data/c/tags/item/ingots/silver.json
 93b36a02df55519316dd2d07e5af50edf6754735 data/c/tags/item/ingots/slag.json
+2f7469fa81c6983b04ae325c1f4f1e57741c2ed6 data/c/tags/item/ingots/sodium.json
 8981311fce96400bb02191ace1eb95da6b25e464 data/c/tags/item/ingots/solder_free.json
 58c97a1278f222e20fec1521fc1e24181910ca07 data/c/tags/item/ingots/solder_leaded.json
 4777203c4beaba13ee4764b061db94501940ac94 data/c/tags/item/ingots/soul_resin.json
@@ -2801,6 +2820,7 @@ a75a11f06e038a4085366c2ef0d4415fba6faa10 data/c/tags/item/large_shots/redstone_c
 adeb1f12025bb24f71d1040bcf2d0a425417bc5a data/c/tags/item/large_shots/rhenium.json
 e76bb3e95d69f541d472270290f9c67e0688fc3e data/c/tags/item/large_shots/shakudo.json
 1d4280b5798d94d896f0ad4cefb9ca08b66bd08d data/c/tags/item/large_shots/silver.json
+3e9359086497dda22adf67e81665b7a440ba9aa0 data/c/tags/item/large_shots/sodium.json
 cb9eb0c18b3383c20a2c5cbbc452234ae8a38482 data/c/tags/item/large_shots/solder_free.json
 cc25c1e3d3deb3474066d0584389370658268cae data/c/tags/item/large_shots/solder_leaded.json
 a1e322d38f89eb3832800694a90202ed41ff82cd data/c/tags/item/large_shots/soul_resin.json
@@ -3037,6 +3057,7 @@ a1e0515473e1d611a4fd0458e21356dcb25db75f data/c/tags/item/machine_bolts/redstone
 66bbd228d2e968e7b3af0c0bbe2eb76f2250c61a data/c/tags/item/machine_bolts/rhenium.json
 2cd2e80ccec57733e0a2453f96b12f57f706bdd0 data/c/tags/item/machine_bolts/shakudo.json
 255e85e9f5588bd9f6c6d71deb9d49cc7b548628 data/c/tags/item/machine_bolts/silver.json
+fe7b36fdbaf6f1e57c4e8196663340e697c76c43 data/c/tags/item/machine_bolts/sodium.json
 541fff7cc1ff79bbeae314a616324882503a02c7 data/c/tags/item/machine_bolts/solder_free.json
 802327bc4eefb1d711a4f74ac3930b3936fbb885 data/c/tags/item/machine_bolts/solder_leaded.json
 9ef41b9d4cdbe20a23765b8755d30d99f04139ab data/c/tags/item/machine_bolts/spent_fuel_rod.json
@@ -3165,6 +3186,7 @@ e31234590b4dcd96fb8fdef9816cafe9b02b022e data/c/tags/item/nuggets/redstone_chrom
 efcbb73dc63519e6f22e74e0be054c36870adcac data/c/tags/item/nuggets/silicon.json
 77a9b6fc048440200d5491e90c20f393d9f8b1d9 data/c/tags/item/nuggets/silicon_crude.json
 bd74d26d8ca9378b1c503b859823822e1a2edf93 data/c/tags/item/nuggets/silver.json
+12ce677eef1aac99cd1e6eebc67e3416d0555b82 data/c/tags/item/nuggets/sodium.json
 408127eaedec84f9eebebdd21e50299869796c08 data/c/tags/item/nuggets/stainless_steel.json
 c1139ab41cb8561c9c3d89c317310ed584cb014a data/c/tags/item/nuggets/steel.json
 cabe95d1f90d5c30629750b3669c6166bb4624bc data/c/tags/item/nuggets/stellite.json
@@ -3346,6 +3368,7 @@ ddc180dcaadd62eff0e6fc1d16947fb0d02d2494 data/c/tags/item/pipes/polyester.json
 12693fe300a6a9ad2861ab17debfa00d19ee8ac9 data/c/tags/item/pipes/redstone_chromium.json
 f4084feffda0d2c576ec3d29d6b799fd47ea5035 data/c/tags/item/pipes/shakudo.json
 e21b8bc884a6b450538b3593bbd6c4fcd5cad543 data/c/tags/item/pipes/silver.json
+02eada2bf242169249ebd1113be58a29ded71524 data/c/tags/item/pipes/sodium.json
 fc961c8271c808bb2d2024eea61de2e7423c7e14 data/c/tags/item/pipes/solder_free.json
 8fd809adbb874ccecef961f85ec0390a562c5009 data/c/tags/item/pipes/solder_leaded.json
 ac78e81e9ea69ba65b7b7a737944a46d46c77b4f data/c/tags/item/pipes/soul_resin.json
@@ -3484,6 +3507,7 @@ c3d9f8e3d55815111489d516206c6452cdd7a63b data/c/tags/item/plates/silica_glass.js
 08e097f61c3db87cf49d084f93d978b7818ba6e5 data/c/tags/item/plates/silicon.json
 ee527221ff25911ec3bb8a189f9f5ca18edeb76c data/c/tags/item/plates/silicon_crude.json
 723fbc4d2fdc032094b76d4ffb47249e505c87fc data/c/tags/item/plates/silver.json
+b0d3c2951adad94ec7d6e4ea08689127fe0144ef data/c/tags/item/plates/sodium.json
 e4699352e9d332d618a5634004179b31bbd1882d data/c/tags/item/plates/stainless_steel.json
 e7e5b0257fa52fbe2284329a5c6c94aa048794f8 data/c/tags/item/plates/steel.json
 e04274ed722fcf6e1d36f7f9b0c3fa062e5bb018 data/c/tags/item/plates/stellite.json
@@ -3619,6 +3643,7 @@ c1d8d218785c7c1a3f047f6fe29aca581e056af1 data/c/tags/item/pointed_bullets/redsto
 e7434672c954b0caba2f65e834f1fe960bd9f111 data/c/tags/item/pointed_bullets/rhenium.json
 04f39b71c31971f778d0cfe20078ac9d8a8883ad data/c/tags/item/pointed_bullets/shakudo.json
 fb5bd045d4fbc71b34200b242a63bb1939df4014 data/c/tags/item/pointed_bullets/silver.json
+3aa673ef764d1f79faf676f37c9b9a92d3f7d09e data/c/tags/item/pointed_bullets/sodium.json
 971f57808da9e69e3c87f26ec59da45990ad23be data/c/tags/item/pointed_bullets/solder_free.json
 3789223de309e2a94b7069b67d880195bff12c55 data/c/tags/item/pointed_bullets/solder_leaded.json
 8a03e33ca0221a01ea43e1cb44b628b685ef3f0f data/c/tags/item/pointed_bullets/soul_resin.json
@@ -3754,6 +3779,7 @@ ab3bf5806b31b7e57bf51039ad7818e7aead2b41 data/c/tags/item/rivets/redstone_superc
 3a3e2413a4250cb541d7347d8e5d817681ade756 data/c/tags/item/rivets/rhenium.json
 e516db854e83ce2dbd6e5d987ec247d209058919 data/c/tags/item/rivets/shakudo.json
 3409128e830b66bba233ebb036f37199a41f5b33 data/c/tags/item/rivets/silver.json
+a3eb7f36c695b9ec502e29332cc5cff5ef701bf7 data/c/tags/item/rivets/sodium.json
 5762e164c3079dd6b6e3ebdf75530656650b4022 data/c/tags/item/rivets/solder_free.json
 9139c35a71c0f4f09875148c7e6433a128d87389 data/c/tags/item/rivets/solder_leaded.json
 4b923521483a9cc971fd23bc44bfb8c994d6468d data/c/tags/item/rivets/spent_fuel_rod.json
@@ -3902,6 +3928,7 @@ dce1b46409b4658beb30fc55e4b0ff60f7a90930 data/c/tags/item/rods/silica_glass.json
 8ca7900a9e8ee1cf000ecfb893e8da458e06f022 data/c/tags/item/rods/silicon.json
 0f7f3fb78c0a815c1d5dd432f77f9cc9462daeb8 data/c/tags/item/rods/silicon_crude.json
 97f6a9daec045e9b841764cfdcf028a2123519d9 data/c/tags/item/rods/silver.json
+f18fd8dee9aab0943fbafaf897465b7f21e19b7e data/c/tags/item/rods/sodium.json
 89ba09d53e8b33e992e20d0b75971742794cc54d data/c/tags/item/rods/spent_blaze.json
 486ba25a638cf12fb1ea69fdf56dc9c2c81175c7 data/c/tags/item/rods/stainless_steel.json
 e740dc4d5d3056a8294254c00a66cfea2e8ad53b data/c/tags/item/rods/steel.json
@@ -4033,6 +4060,7 @@ b3a1649268a589dec5f9e115c9c7766a45726fa7 data/c/tags/item/rolled_machine_bolts/r
 d76ceb7b219c25a74af029979439d452d8ace509 data/c/tags/item/rolled_machine_bolts/rhenium.json
 dbeb8bacd2a3e5c18ba3472c227ab61f126b8f18 data/c/tags/item/rolled_machine_bolts/shakudo.json
 8e77f36fc73828c9b5f244fd5011049ee2a84964 data/c/tags/item/rolled_machine_bolts/silver.json
+9fa3d6c3cd556c73d3572352b4ba0cd81809d7e4 data/c/tags/item/rolled_machine_bolts/sodium.json
 06c9b68d2892589e0a5e715268a2ebf96bf69ce8 data/c/tags/item/rolled_machine_bolts/solder_free.json
 414163c3c38ba509215a45a8980eb95f023119aa data/c/tags/item/rolled_machine_bolts/solder_leaded.json
 430b18a5217def317917e56ccc2bf58152dd6d05 data/c/tags/item/rolled_machine_bolts/spent_fuel_rod.json
@@ -4167,6 +4195,7 @@ e675fda019b09c04e45f3a16fcd45e4c8b8d0717 data/c/tags/item/rolled_screws/redstone
 2a01027144a76a01405a22c91c4a74849b8a5572 data/c/tags/item/rolled_screws/rhenium.json
 c5b40d9ce85be9f69e6224650171658d83967194 data/c/tags/item/rolled_screws/shakudo.json
 df061bd2060fdb57a1249a494d7594610f550ff7 data/c/tags/item/rolled_screws/silver.json
+8a4d48cb3515925a83e22b616b1876a0cc411569 data/c/tags/item/rolled_screws/sodium.json
 8061bad5424268a3c3b03b8d8a63cc8257bcacc8 data/c/tags/item/rolled_screws/solder_free.json
 f62adadbac71b04ca1eeef8ced45ea1bbe106a93 data/c/tags/item/rolled_screws/solder_leaded.json
 95ec9cfa5256e26057c1235fb17f03af259a9ed2 data/c/tags/item/rolled_screws/spent_fuel_rod.json
@@ -4301,6 +4330,7 @@ e9e5d5f7ce75f8fce05ede5da3b4b7bc0b2310ed data/c/tags/item/rolled_thread_rods/rar
 ad59a4c639097a0873434a7027242231e05ff33b data/c/tags/item/rolled_thread_rods/rhenium.json
 d160de1f6ecdb68ee2ed9b90237501c03936c121 data/c/tags/item/rolled_thread_rods/shakudo.json
 dc56e02b9eeaf46757965bbaed49fc4ef957cedf data/c/tags/item/rolled_thread_rods/silver.json
+fc92a03cce6644e769d76a270e5edd2fc7513042 data/c/tags/item/rolled_thread_rods/sodium.json
 9d3bbb72492ca2b2f2deb78d026b26deefd29303 data/c/tags/item/rolled_thread_rods/solder_free.json
 5665520a81f3865629db69fcd8bd96e1e28d8d3a data/c/tags/item/rolled_thread_rods/solder_leaded.json
 f5e9e1047f86726c08c3b4636c4886771eabf165 data/c/tags/item/rolled_thread_rods/spent_fuel_rod.json
@@ -4440,6 +4470,7 @@ f7067c856e0b1fa0d580d853b0e9ba38642e215a data/c/tags/item/round_balls/redstone_c
 502b8c762d18ee33f4c22a18f603d61690ff37b8 data/c/tags/item/round_balls/rhenium.json
 1246a93ebcd749f279bf7c26f1de9d19a17568a8 data/c/tags/item/round_balls/shakudo.json
 2bfecda1fe4d5208173ea9be795bef47b9c5ea7f data/c/tags/item/round_balls/silver.json
+ac7826dc2a3d5a13b05fafee5530ee593c2ea11c data/c/tags/item/round_balls/sodium.json
 3745450945b8cfebc7d26bf77aa74376e146aa72 data/c/tags/item/round_balls/solder_free.json
 024dd05bc9b01b888033f4a8b168f3aa4d155982 data/c/tags/item/round_balls/solder_leaded.json
 c1d1dff8f0a48b639e13feb5aff725002830afc1 data/c/tags/item/round_balls/soul_resin.json
@@ -4558,6 +4589,7 @@ fa06f44b6b403c0e05e97bdd326598f55e64c2b1 data/c/tags/item/scraps/pewter.json
 7e269e85e48dac94e439ba01ab6a53e84e72823f data/c/tags/item/scraps/redstone_chromium.json
 f7e4572cb6d146d98f9e12c8f74f2d7859e5f689 data/c/tags/item/scraps/shakudo.json
 b4616ea0ef2bc5e74e357d0cd650af898ebb8094 data/c/tags/item/scraps/silver.json
+52ba039dfe0bbf6739504592877591efd5af1298 data/c/tags/item/scraps/sodium.json
 4b355bf55906911fdd9a2e974a83d31d29eb8d79 data/c/tags/item/scraps/stainless_steel.json
 14d3b930b1361c5e809157779f37fb55b92a264f data/c/tags/item/scraps/steel.json
 33ea1ed7ebbca5527ac4bc9b3737631dc8c065bd data/c/tags/item/scraps/stellite.json
@@ -4685,6 +4717,7 @@ ae4f8a2a7c448a7e2c06a7bdde979db8ad5c79c4 data/c/tags/item/screws/redstone_chromi
 8719a7aa7fd0437c1a8f37a1ff1b262f06bcaa7e data/c/tags/item/screws/rhenium.json
 ce2dc791486d7c0f8b7e72573fe17d11e7bdc2b1 data/c/tags/item/screws/shakudo.json
 9995afdc2e7ac40e9bbcacb1cc0db44ba8d96344 data/c/tags/item/screws/silver.json
+fd7639f7841a23fa865f67de9920fd6952bfdf6c data/c/tags/item/screws/sodium.json
 aaf03894a2e945e18b919befed1cc9dad9af8d57 data/c/tags/item/screws/solder_free.json
 faa19397d563997fb310886a58e5b136f89caf52 data/c/tags/item/screws/solder_leaded.json
 0356d834312e3782e13b181b4432bd7d462b9234 data/c/tags/item/screws/spent_fuel_rod.json
@@ -4912,6 +4945,7 @@ a51ced254fa7c06e88aa6c31d50f597429985a4d data/c/tags/item/storage_blocks/sandsto
 a239cabdb1411527d7eacb96d0bb16fd49626027 data/c/tags/item/storage_blocks/silver.json
 995a07c518903890174cd04fac668ad48f279d2e data/c/tags/item/storage_blocks/slime.json
 a9d582264a2c43fa7e46bff6b6330dd464fba1f6 data/c/tags/item/storage_blocks/snow.json
+de80dec47757bf460e6ec82fb05177831338d25c data/c/tags/item/storage_blocks/sodium.json
 192f4eda298d3be7e6f8bfb012d4f5a92673eb83 data/c/tags/item/storage_blocks/soul_resin.json
 5abc2924f080b4124504b46f89470a00254b91b8 data/c/tags/item/storage_blocks/soul_sand.json
 c92e134372fc31a6a701e4dc6dbaace3095048d5 data/c/tags/item/storage_blocks/stainless_steel.json
@@ -5059,6 +5093,7 @@ ec7244871224d1c2bb0fda85b9dac0cd9f632ebe data/c/tags/item/swarfs/plutonium_fuel_
 d605ae351b6c20d13a7b98e3b0f5ba060f8b2fd6 data/c/tags/item/swarfs/redstone_chromium.json
 54e634bed727df33d17f5641716d64ae1b3d14fa data/c/tags/item/swarfs/shakudo.json
 c449c192a82e965c654df70d0d7d47ca4412e544 data/c/tags/item/swarfs/silver.json
+2da7cf5cc72865a199a6e7f86bfcf01ecc6f0d0f data/c/tags/item/swarfs/sodium.json
 3f5022eb755ef50d16bea2733646929ed3f15556 data/c/tags/item/swarfs/spent_fuel_rod.json
 57bda09993e3d3f25c398cc50720b6a0b53e542f data/c/tags/item/swarfs/stainless_steel.json
 62703d4bc373031353cf2c09b01e25d4b0411443 data/c/tags/item/swarfs/steel.json
@@ -5214,6 +5249,7 @@ ec137445db36228f7e7d98b753b0893982ae3489 data/c/tags/item/turned_rods/pewter.jso
 42bb8483e491c3f9eb9a2de12c91dbae201f0d5f data/c/tags/item/turned_rods/redstone_chromium.json
 69fd34a6ad9c3c7fbbd097852f1ebf9fa7f5ee75 data/c/tags/item/turned_rods/shakudo.json
 a3ccca7098092665c2cab7a71995ae2d3068c24c data/c/tags/item/turned_rods/silver.json
+b848279789cdba488464e635249d2e1a94010add data/c/tags/item/turned_rods/sodium.json
 49f6ec56e76da9c1ad2c40ff72d53b0c93ec0825 data/c/tags/item/turned_rods/stainless_steel.json
 1f0c3407b11b2e405a1d167e79dcd77bf79aba70 data/c/tags/item/turned_rods/steel.json
 79ef4ba8eec8fc2e196c84dbe164de448a787fca data/c/tags/item/turned_rods/stellite.json
@@ -5342,6 +5378,7 @@ ad8fe8f92f37bc90d4ea622d6ffbcf7a24cfd712 data/c/tags/item/welding_rods/redstone_
 3d427d094799744759401e5b364f5b5ddf737ed6 data/c/tags/item/welding_rods/rhenium.json
 ec5b17253c4371bc05e0ab36012a35d48f93c259 data/c/tags/item/welding_rods/shakudo.json
 e9f15a97be911d92081fc30c4dd64e73bbc667e8 data/c/tags/item/welding_rods/silver.json
+c3f712929f8346f30f03efc0b139d1dbae644900 data/c/tags/item/welding_rods/sodium.json
 17bdb749a507aa645fdf14179b22e652201c50a0 data/c/tags/item/welding_rods/solder_free.json
 325e50d32fa4d112d9b513bb4c63190f99f93950 data/c/tags/item/welding_rods/solder_leaded.json
 4487b1b90ea449f85051e482b42e17f664512057 data/c/tags/item/welding_rods/spent_fuel_rod.json
@@ -5460,6 +5497,7 @@ a01faa3cf81f0ebdc4ad58feef7915736d7fcd04 data/c/tags/item/wires/redstone_superco
 bb0af0fe6de079e840930b6c334b9e7be7997463 data/c/tags/item/wires/redstone_superconductor_poor.json
 9f077a059b0bfd86f93f964e01729378ef695c9a data/c/tags/item/wires/shakudo.json
 79fd396630045a660fbda8c0543ccd8c92f1d42f data/c/tags/item/wires/silver.json
+8c94f02b4a9f3dfaa3e6142e91f2a14779bd650d data/c/tags/item/wires/sodium.json
 09dd103517ec90107ce232745b6a343f2c2c4a6e data/c/tags/item/wires/stainless_steel.json
 6fe190568264fba980101d084129e88311813882 data/c/tags/item/wires/steel.json
 346aa2149a5b88cb30f64f3e1edf94b355c2f120 data/c/tags/item/wires/stellite.json

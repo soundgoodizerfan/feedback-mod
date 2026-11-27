@@ -2900,6 +2900,16 @@
         "aspect": "thaumaturge:perditio"
       }
     ],
+    "feedback:amethyst_gem": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:analog_adapter": [
       {
         "amount": 3,
@@ -20176,6 +20186,20 @@
         "aspect": "thaumaturge:machina"
       }
     ],
+    "feedback:fission_device": [
+      {
+        "amount": 12,
+        "aspect": "thaumaturge:perditio"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ignis"
+      }
+    ],
     "feedback:flare": [
       {
         "amount": 6,
@@ -20776,6 +20800,20 @@
       {
         "amount": 1,
         "aspect": "thaumaturge:ignis"
+      }
+    ],
+    "feedback:fusion_chamber": [
+      {
+        "amount": 12,
+        "aspect": "thaumaturge:ignis"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:machina"
       }
     ],
     "feedback:galena": [
@@ -25632,6 +25670,32 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:interferometer": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 16,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 14,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 7,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:vitreus"
       }
     ],
     "feedback:invar_birdshot": [
@@ -45652,6 +45716,676 @@
         "aspect": "thaumaturge:terra"
       }
     ],
+    "feedback:sodium_birdshot": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_block": [
+      {
+        "amount": 21,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 34,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 54,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 32,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_bullet": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_case": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_coil_spring": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_coin": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_cut_machine_bolt": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_cut_screw": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_cut_thread_rod": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_drilled_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_dust": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:sodium_fine_wire": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_flat_nose_bullet": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_flechette": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_foil": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_grip": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_ground_ingot": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_hollow_point_bullet": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_ingot": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_large_shot": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_machine_bolt": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_nugget": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_pipe": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_plate": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_pointed_bullet": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_rivet": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_rod": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_rolled_machine_bolt": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_rolled_screw": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_rolled_thread_rod": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_round_ball": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_scrap": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_screw": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_swarf": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_turned_rod": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_welding_rod": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
+    "feedback:sodium_wire": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      }
+    ],
     "feedback:solder_free_birdshot": [
       {
         "amount": 5,
@@ -47814,6 +48548,20 @@
       {
         "amount": 7,
         "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:star_burner": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ignis"
+      },
+      {
+        "amount": 8,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:machina"
       }
     ],
     "feedback:star_seat": [
@@ -77910,6 +78658,32 @@
       {
         "amount": 4,
         "aspect": "thaumaturge:metallum"
+      }
+    ],
+    "feedback:vis_coil": [
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 56,
+        "aspect": "thaumaturge:lux"
+      },
+      {
+        "amount": 53,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:motus"
+      },
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 56,
+        "aspect": "thaumaturge:potentia"
       }
     ],
     "feedback:vis_tap": [
