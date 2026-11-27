@@ -201,6 +201,10 @@ public class FItems {
     public static final DeferredItem<Item> CALIPERS =
             ITEMS.registerItem("calipers", CalipersItem::new, new Item.Properties().stacksTo(1));
 
+    /** A fine-wire coil on a steel core; with Thaumaturge present its recipes give it a vis capacity (the {@code thaumaturge:rechargeable} component) set by the wire. */
+    public static final DeferredItem<Item> VIS_COIL =
+            ITEMS.registerItem("vis_coil", Item::new, new Item.Properties().stacksTo(1));
+
     public static final DeferredItem<Item> CLEANING_ROD =
             ITEMS.registerItem("cleaning_rod", io.github.soundgoodizerfan.feedback.item.CleaningRodItem::new, new Item.Properties().stacksTo(1));
 

@@ -60,7 +60,16 @@ public final class ThaumaturgeWands {
             float conduct = (float) Math.min(1.0, conductivity(p.id()) / Math.max(1e-9, reference));
             float modifier = 1.2f - 0.4f * conduct;
             int cost = Math.max(1, Math.round(number(m, "thermal", "melting_point") / 600f));
-            DeferredHolder<WandCap, WandCap> cap = caps.register(p.id(), () -> new WandCap(modifier, List.of(), 0f, cost,
+            // A cap is cheaper still for the aspects its metal is: a dense one for earth, a light one for air, one that melts high for fire.
+            List<net.minecraft.resources.ResourceKey<com.leclowndu93150.thaumaturge.api.aspect.IAspect>> special = new java.util.ArrayList<>();
+            if (number(m, null, "density") >= 7f)
+                special.add(aspect("terra"));
+            if (number(m, null, "density") < 3f)
+                special.add(aspect("aer"));
+            if (number(m, "thermal", "melting_point") >= 1500f)
+                special.add(aspect("ignis"));
+            float specialModifier = Math.max(0.5f, modifier - 0.15f);
+            DeferredHolder<WandCap, WandCap> cap = caps.register(p.id(), () -> new WandCap(modifier, special, specialModifier, cost,
                     ResourceLocation.fromNamespaceAndPath("thaumaturge", "textures/models/wand_cap_" + p.standIn() + ".png")));
             items.registerItem("wand_cap_" + p.id(), props -> new ItemWandCap(props.stacksTo(1), cap));
         }
@@ -77,6 +86,20 @@ public final class ThaumaturgeWands {
         caps.register(modBus);
         rods.register(modBus);
         items.register(modBus);
+        // The parts stand in Feedback's parts tab beside the rest.
+        modBus.addListener((net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent e) -> {
+            if (e.getTabKey() == io.github.soundgoodizerfan.feedback.registry.FCreativeTabs.PARTS.getKey())
+                for (String id : itemIds()) {
+                    Item part = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Feedback.id(id));
+                    if (part != net.minecraft.world.item.Items.AIR)
+                        e.accept(part);
+                }
+        });
+    }
+
+    private static net.minecraft.resources.ResourceKey<com.leclowndu93150.thaumaturge.api.aspect.IAspect> aspect(String path) {
+        return net.minecraft.resources.ResourceKey.create(com.leclowndu93150.thaumaturge.api.aspect.IAspect.REGISTRY_KEY,
+                ResourceLocation.fromNamespaceAndPath("thaumaturge", path));
     }
 
     /** The wand part items, for the creative tab. */

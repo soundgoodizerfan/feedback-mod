@@ -1,0 +1,42 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thaumaturge"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "W": {
+      "item": "feedback:copper_fine_wire"
+    },
+    "R": {
+      "item": "feedback:steel_rod"
+    }
+  },
+  "pattern": [
+    "WWW",
+    "WRW",
+    "WWW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:vis_coil",
+    "components": {
+      "thaumaturge:rechargeable": {
+        "capacity": 60
+      }
+    }
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "electrical:2"
+}

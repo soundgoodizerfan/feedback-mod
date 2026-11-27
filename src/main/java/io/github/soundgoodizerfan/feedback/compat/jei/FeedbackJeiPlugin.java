@@ -511,6 +511,14 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.SURVEY_METER.get(), "survey_meter");
         info(registration, FItems.INTERFEROMETER.get(), "interferometer");
         info(registration, FItems.CLEANING_ROD.get(), "cleaning_rod");
+        info(registration, FItems.VIS_COIL.get(), "vis_coil");
+        // Thaumaturge's wand parts made of Feedback's materials, when that mod is loaded: one note each.
+        if (net.neoforged.fml.ModList.get().isLoaded("thaumaturge"))
+            for (String id : thaumaturgeWandParts()) {
+                var part = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id(id));
+                if (part != net.minecraft.world.item.Items.AIR)
+                    registration.addIngredientInfo(part, Component.translatable("feedback.jei.info.wand_part"));
+            }
         info(registration, FItems.XP_METER.get(), "xp_meter");
         info(registration, FItems.ELECTRIC_CONTROLLER.get(), "electric_controller");
         info(registration, FItems.ELECTRIC_PROGRAMMER.get(), "electric_programmer");
@@ -655,6 +663,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.BEARING_SENSOR_ITEM.get(), "bearing_sensor");
         registration.addIngredientInfo(FItems.POTION.get(), Component.translatable("feedback.jei.info.potion"), Component.translatable("feedback.jei.info.potion_use"));
         registration.addIngredientInfo(FItems.POTION_SALTS.get(), Component.translatable("feedback.jei.info.potion_salts"), Component.translatable("feedback.jei.info.potion_salts_use"));
+    }
+
+    /** The ids of Thaumaturge wand part items Feedback registers; only called when Thaumaturge is loaded (the class it reads is compile-only). */
+    private static java.util.List<String> thaumaturgeWandParts() {
+        return io.github.soundgoodizerfan.feedback.compat.thaumaturge.api.ThaumaturgeWands.itemIds();
     }
 
     private static void info(IRecipeRegistration registration, Item item, String key) {
