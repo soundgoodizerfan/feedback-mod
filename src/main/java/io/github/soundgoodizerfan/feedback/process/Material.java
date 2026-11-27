@@ -133,7 +133,27 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron, Optional<Integer> fastener,
                        Optional<Float> toxicity, Optional<Float> corrosivity, Optional<Float> abundance, Optional<Float> ph, Optional<Float> attenuation,
                        Optional<Float> transition, Optional<Float> refractiveIndex,
-                       Map<String, List<String>> accepts) {
+                       Map<String, List<String>> accepts, Optional<String> tag) {
+
+    /**
+     * The name this material goes by in the common {@code c:<form>s/<name>} tags: its own {@code tag} when the file states one, else the end of its id.
+     * A bare name is reserved for the plain material (cast iron is {@code iron}; pure iron is {@code pure_iron}), so a tag with no adjective never
+     * names two materials.
+     */
+    public String tagName(ResourceLocation id) {
+        return tag.orElse(id.getPath());
+    }
+
+    /**
+     * The tag name for one form: the rock, ore and ore-ladder forms (an ore, a raw lump, a loose rock, crushed ore) are the mineral that bears the
+     * metal and keep the id's own name ({@code c:ores/iron} is iron's ore whichever iron it is smelted to), every other form uses {@link #tagName(ResourceLocation)}.
+     */
+    public String tagName(ResourceLocation id, String form) {
+        var type = io.github.soundgoodizerfan.feedback.registry.FormItems.types().get(form);
+        boolean rock = form.startsWith("raw") || form.endsWith("ore") || form.equals("loose_rock") || OreLadder.LADDER_FORMS.contains(form)
+                || type != null && type.bearing();
+        return rock ? id.getPath() : tagName(id);
+    }
 
     /**
      * How a material meets neutrons in a reactor core (fission spec 2.5): {@code fissile} is what a rod of it gives per neutron
@@ -750,12 +770,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.neutron(), new Extras(m.luminance(), m.phosphor(), m.fastener(), m.toxicity(), m.corrosivity(), m.abundance(), m.ph(), m.attenuation(), m.transition(), m.refractiveIndex(), m.accepts())))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.neutron(), new Extras(m.luminance(), m.phosphor(), m.fastener(), m.toxicity(), m.corrosivity(), m.abundance(), m.ph(), m.attenuation(), m.transition(), m.refractiveIndex(), m.accepts(), m.tag())))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food().map(f -> f.heated(thermal.specificHeat())), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron(), tail.fastener(), tail.toxicity(), tail.corrosivity(), tail.abundance(), tail.ph(), tail.attenuation(), tail.transition(), tail.refractiveIndex(), tail.accepts())));
+            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food().map(f -> f.heated(thermal.specificHeat())), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron(), tail.fastener(), tail.toxicity(), tail.corrosivity(), tail.abundance(), tail.ph(), tail.attenuation(), tail.transition(), tail.refractiveIndex(), tail.accepts(), tail.tag())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -784,6 +804,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         Optional<Float> transition() { return extras.transition(); }
         Optional<Float> refractiveIndex() { return extras.refractiveIndex(); }
         Map<String, List<String>> accepts() { return extras.accepts(); }
+        Optional<String> tag() { return extras.tag(); }
 
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
@@ -832,7 +853,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     private record Extras(Optional<Integer> luminance, boolean phosphor, Optional<Integer> fastener, Optional<Float> toxicity,
                           Optional<Float> corrosivity, Optional<Float> abundance, Optional<Float> ph, Optional<Float> attenuation,
                           Optional<Float> transition, Optional<Float> refractiveIndex,
-                          Map<String, List<String>> accepts) {
+                          Map<String, List<String>> accepts, Optional<String> tag) {
         static final com.mojang.serialization.MapCodec<Extras> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.intRange(0, 15).optionalFieldOf("luminance").forGetter(Extras::luminance),
                 Codec.BOOL.optionalFieldOf("phosphor", false).forGetter(Extras::phosphor),
@@ -844,7 +865,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.floatRange(0f, Float.MAX_VALUE).optionalFieldOf("attenuation").forGetter(Extras::attenuation),
                 Codec.floatRange(-273f, Float.MAX_VALUE).optionalFieldOf("transition").forGetter(Extras::transition),
                 Codec.floatRange(1f, 10f).optionalFieldOf("refractive_index").forGetter(Extras::refractiveIndex),
-                Codec.unboundedMap(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("accepts", Map.of()).forGetter(Extras::accepts)
+                Codec.unboundedMap(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("accepts", Map.of()).forGetter(Extras::accepts),
+                Codec.STRING.optionalFieldOf("tag").forGetter(Extras::tag)
         ).apply(instance, Extras::new));
     }
 
@@ -1074,14 +1096,14 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Located at = new Located(e.getKey(), e.getValue(), form.getKey());
                 built.putIfAbsent(form.getValue(), at);
                 tags.putIfAbsent(ResourceLocation.fromNamespaceAndPath("c",
-                        io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form.getKey()) + "/" + e.getKey().getPath()), at);
+                        io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form.getKey()) + "/" + e.getValue().tagName(e.getKey(), form.getKey())), at);
             }
         // Another mod's nugget, plate or block of a material whose file lists no such form is still that material in that form: any form type
         // that applies to the material is read from its common tag, after every own form so none is displaced.
         for (Map.Entry<ResourceLocation, Material> e : materials.entrySet())
             for (String form : e.getValue().tagForms())
                 tags.putIfAbsent(ResourceLocation.fromNamespaceAndPath("c",
-                        io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form) + "/" + e.getKey().getPath()),
+                        io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form) + "/" + e.getValue().tagName(e.getKey(), form)),
                         new Located(e.getKey(), e.getValue(), form));
         // Foreign items a file names under `accepts` come after every own form, so they never displace one.
         Map<Item, List<Keyed>> keyed = new java.util.IdentityHashMap<>();
@@ -1204,7 +1226,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         java.util.Set<Item> out = new java.util.LinkedHashSet<>();
         for (String form : tagForms())
             tagItems(out, ResourceLocation.fromNamespaceAndPath("c",
-                    io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form) + "/" + id.getPath()));
+                    io.github.soundgoodizerfan.feedback.data.FormData.tagFolder(form) + "/" + tagName(id, form)));
         accepts.values().forEach(entries -> {
             for (String entry : entries) {
                 boolean tag = entry.startsWith("#");

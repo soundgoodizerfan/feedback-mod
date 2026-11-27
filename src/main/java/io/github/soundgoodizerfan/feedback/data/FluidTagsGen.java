@@ -47,6 +47,12 @@ public final class FluidTagsGen extends FluidTagsProvider {
             String name = id.getPath().endsWith("_flowing")
                     ? id.getPath().substring(0, id.getPath().length() - "_flowing".length())
                     : id.getPath();
+            // A metal that goes by another name in the common tags (cast iron is plain iron, pure iron is pure_iron) is tagged by that name here too.
+            boolean molten = name.startsWith("molten_");
+            String base = molten ? name.substring("molten_".length()) : name;
+            var material = io.github.soundgoodizerfan.feedback.registry.FormItems.materials().get(Feedback.id(base));
+            if (material != null)
+                name = (molten ? "molten_" : "") + material.tagName(Feedback.id(base));
             FormData.put(tag(TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("c", name))), BuiltInRegistries.FLUID, fluid);
             if (fluid.getFluidType().getDensity() < 0) FormData.put(tag(Tags.Fluids.GASEOUS), BuiltInRegistries.FLUID, fluid);
         }

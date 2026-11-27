@@ -2,13 +2,14 @@
   "fastener": 1,
   "color": "#55575c",
   "kind": "metal",
+  "tag": "iron",
   "traits": [
     "alloy"
   ],
   "hardness": 20,
   "density": 7.2,
   "thermal": {
-    "expansion": 1.1e-5,
+    "expansion": 1.1e-05,
     "melting_point": 1200,
     "boiling_point": 2860,
     "cooling_rate": 1.6,

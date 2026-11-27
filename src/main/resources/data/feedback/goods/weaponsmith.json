@@ -9,6 +9,12 @@
     },
     {
       "level": 1,
+      "item": "feedback:wrought_iron_ingot",
+      "price": 5,
+      "count": 2
+    },
+    {
+      "level": 1,
       "item": "feedback:sword_blade",
       "material": "feedback:iron",
       "price": 5,

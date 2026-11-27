@@ -219,7 +219,7 @@ public final class FormData {
     }
 
     private static ResourceLocation formTag(Material.Located located) {
-        return ResourceLocation.fromNamespaceAndPath("c", tagFolder(located.form()) + "/" + located.id().getPath());
+        return ResourceLocation.fromNamespaceAndPath("c", tagFolder(located.form()) + "/" + located.material().tagName(located.id(), located.form()));
     }
 
     /** Every generated form item is in {@code c:<form>s/<material>} (neoforge's common convention; the prefix is {@code c}, not {@code forge}). */

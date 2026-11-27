@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-26T20:01:14.29081252	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-26T20:54:43.274536552	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
@@ -20,7 +20,6 @@ f955d8b0af1d0fc185f6d8b40809b3b3bccaf4be data/c/tags/item/birdshots/brass.json
 a0ba19eb1af638e28b93c743f4125d8c9aa59320 data/c/tags/item/birdshots/breeder_rod.json
 19b04847e7ea9096c5d017c1eed5105e856196a1 data/c/tags/item/birdshots/bronze.json
 48cf348ad3554a7c46d8929fc9eaa6fc4e51e7ed data/c/tags/item/birdshots/cadmium.json
-0d8ba6f4336a16c0f31920c896e0bb2c118d8403 data/c/tags/item/birdshots/cast_iron.json
 82dcf185c3bbff93791449c31a949b69eafa78ff data/c/tags/item/birdshots/cast_netherite.json
 4f1ed2356a4255238ab0c13d751f747da6fb4387 data/c/tags/item/birdshots/cermet.json
 37fc9dabc7b57a382439d0a7aa0cd0c971ee0446 data/c/tags/item/birdshots/chromium.json
@@ -44,7 +43,7 @@ ec510895e3fba12163ccc38c45aa13a4bb6a3672 data/c/tags/item/birdshots/ignitium.jso
 767e1e28a121f9518086364283265956a7b95713 data/c/tags/item/birdshots/indium.json
 99b7570000ee337f655a435f7a3ab82e20337b26 data/c/tags/item/birdshots/invar.json
 d428a5a2b1d7b7a4b3901bce1c4b12cce13ec1bf data/c/tags/item/birdshots/iridium.json
-1421ee7ebaee4c5d77c878f1abd8be52565749c8 data/c/tags/item/birdshots/iron.json
+0d8ba6f4336a16c0f31920c896e0bb2c118d8403 data/c/tags/item/birdshots/iron.json
 f78d941933832c10ed1fb9fc9fbc2ee3f0b79f22 data/c/tags/item/birdshots/iron_bloom.json
 fb8187f23a68d2e72818b810fb99f11dc7f4054b data/c/tags/item/birdshots/lead.json
 58e82d2352deff4e611869bade57bac0759fafb8 data/c/tags/item/birdshots/lithium.json
@@ -68,6 +67,7 @@ c501ef4e690a0783611cc4c338692eaead5d793b data/c/tags/item/birdshots/plutonium_fu
 a0d11e1baef227a1dd7d3c370b220e7e606751f6 data/c/tags/item/birdshots/polyethylene.json
 95404c688618ddc1f79f23efd267795e008d990f data/c/tags/item/birdshots/polypropylene.json
 1bab8ff5bedf379e29c8078e1dbf5c7ddadd9959 data/c/tags/item/birdshots/polytetrafluoroethylene.json
+1421ee7ebaee4c5d77c878f1abd8be52565749c8 data/c/tags/item/birdshots/pure_iron.json
 280e61c098cde5fc194a9118c0551ddb54be9038 data/c/tags/item/birdshots/pvc.json
 2f4e5516a036199f4e5ed64065f01310d16381b1 data/c/tags/item/birdshots/rare_earth_magnet.json
 55ac325270c17d958c998c4ad1b0abe7ab35a30f data/c/tags/item/birdshots/redstone_chromium.json
@@ -163,7 +163,6 @@ d570ba02fdd2d415baa8afa4c40908cd2a306c53 data/c/tags/item/bullets/black_steel.js
 d04dddcb3f5ace4f1ef2ffb97b3c9d30fb2f6bac data/c/tags/item/bullets/breeder_rod.json
 67533519be772b5f45e3d88fcce15103f74f8cb0 data/c/tags/item/bullets/bronze.json
 c4a43ec43b40ccf02f8e2b19ab2690b9ffe7205f data/c/tags/item/bullets/cadmium.json
-ce3ca322c52d4f580381604294e2b36b6094703d data/c/tags/item/bullets/cast_iron.json
 54a0422bf4f8d5ad67dda28b477cf1aaa293bc16 data/c/tags/item/bullets/cast_netherite.json
 c51416631fb91008015f6d8b2d3b1866294ce132 data/c/tags/item/bullets/cermet.json
 b7c5346b39ce1151e42c82c2a0050e1b7da1bf9a data/c/tags/item/bullets/chromium.json
@@ -186,7 +185,7 @@ c6bb8833d64781b8667918b9602afc0dd9479304 data/c/tags/item/bullets/hardened_high_
 8712f96bbed238a54f2aabdf0fb7fda81e03cb87 data/c/tags/item/bullets/ignitium.json
 f1d48bef4a2abd3646a4abf7702bd208b2efe942 data/c/tags/item/bullets/indium.json
 4faceb8a30779b15c1029e06e80fc6046e090db6 data/c/tags/item/bullets/invar.json
-e2ee3a1c138dde7d83340e5391ead8e1f293392b data/c/tags/item/bullets/iron.json
+ce3ca322c52d4f580381604294e2b36b6094703d data/c/tags/item/bullets/iron.json
 afab08f778dd326158f86a27bacdaa0234282de2 data/c/tags/item/bullets/lead.json
 ad89c4bfcb3c9fcdd36342af612022b66614dfcd data/c/tags/item/bullets/lithium.json
 0f2f5699d5170b3b19233faed613bc6b2f8aa3e4 data/c/tags/item/bullets/magnesium.json
@@ -208,6 +207,7 @@ db32bdf6168887f7dd37a506dad1dc1711448ddd data/c/tags/item/bullets/plutonium.json
 07bbe2c802d8e7c39b5d2258f3ef2c74c3bb259a data/c/tags/item/bullets/polyethylene.json
 08320055b7ef7bb27a578c900aacb1eb0db856a4 data/c/tags/item/bullets/polypropylene.json
 5e0d492af99c9e4da3003c206085e1b86c42b752 data/c/tags/item/bullets/polytetrafluoroethylene.json
+e2ee3a1c138dde7d83340e5391ead8e1f293392b data/c/tags/item/bullets/pure_iron.json
 f6f914e79e8b5dbe1181e18bb419e0822c3d0ef6 data/c/tags/item/bullets/pvc.json
 f564b25419d20878849a8ff42aedf8198a511d8e data/c/tags/item/bullets/redstone_chromium.json
 588d3abb3fef0e1f9af1ea3f3e0758b9da723a32 data/c/tags/item/bullets/shakudo.json
@@ -335,7 +335,6 @@ e78230ecf26e4f7e0fb989c7e9bafa67d5dd2713 data/c/tags/item/cases/brass.json
 b0f37f4127332c3b9ed9ada4d0340d6b0d051aa6 data/c/tags/item/cases/breeder_rod.json
 d6d5263064913a3909383c91a663e3027b37f2bd data/c/tags/item/cases/bronze.json
 82fccb7d730464d965b12dde9247422a34360a73 data/c/tags/item/cases/cadmium.json
-44b277d4b8c4aadbefc54cfca25d015ebe91e5dd data/c/tags/item/cases/cast_iron.json
 8e7d6759a8f40de3f8f1d1dff51a5e03448fddf2 data/c/tags/item/cases/cast_netherite.json
 6002c25184c305a84a478434dbd0901b7d8ea1f8 data/c/tags/item/cases/cermet.json
 0b36bc46ccea4db4d603a07728ced3d93eb52356 data/c/tags/item/cases/chromium.json
@@ -358,7 +357,7 @@ b3711fd4416615523d654095c64b3e48263926ba data/c/tags/item/cases/hardened_steel.j
 11e47af401c6b13ce6657c01d878ebf444f8fa2d data/c/tags/item/cases/ignitium.json
 a7e716fc3bcc9c5fd1616f3136b6ff0b856f4aa0 data/c/tags/item/cases/indium.json
 e006a959f2385a9d001e627b50aecf4b33c73cea data/c/tags/item/cases/invar.json
-97ac7ca056473eace332dc0dc144d1f4bd6ad62b data/c/tags/item/cases/iron.json
+44b277d4b8c4aadbefc54cfca25d015ebe91e5dd data/c/tags/item/cases/iron.json
 f2107e23362184a68812b26f4ce85d2a6274b3ba data/c/tags/item/cases/lead.json
 c7dfb42d21f3a0c400df6e3ddf9727da068df6db data/c/tags/item/cases/lithium.json
 9f462a27eed20b60bacfadd2ec608169aec09c73 data/c/tags/item/cases/magnesium.json
@@ -375,6 +374,7 @@ f832fe8a3b36e01631ab2b7ba2f283ea76f3a4ab data/c/tags/item/cases/nickel.json
 ee3a372c08f956296a2b3e6c067ce7f4cf2f33f6 data/c/tags/item/cases/platinum.json
 dcdc3a4a13e5df649b8fce7a7a8a7de3c957743f data/c/tags/item/cases/plutonium.json
 c64d69ad64e7f68ad41916bac7aaa4efc0a71c23 data/c/tags/item/cases/plutonium_fuel_rod.json
+97ac7ca056473eace332dc0dc144d1f4bd6ad62b data/c/tags/item/cases/pure_iron.json
 867bcecbe6fb4971ea7ad8bda6d5820c8ad00c4d data/c/tags/item/cases/redstone_chromium.json
 dd2a00dee307981fafa0dd6273643466286360c8 data/c/tags/item/cases/shakudo.json
 c25efbe228548fc7963449743d7bec2607c78d0d data/c/tags/item/cases/silver.json
@@ -458,7 +458,6 @@ cb5476795143101fe38d6b10be43852992b21b9f data/c/tags/item/coil_springs/beryllium
 9cb9caac1e4fe72b15ae7c5c85975e2489deadd1 data/c/tags/item/coil_springs/breeder_rod.json
 4ce9f70fbbdcf8f34708244baac7bef61b8d7629 data/c/tags/item/coil_springs/bronze.json
 117ad744532de34da737855f416d36dc7df7ac18 data/c/tags/item/coil_springs/cadmium.json
-89fddccde56be7ac4ea476ef1a1dac5552e86ef4 data/c/tags/item/coil_springs/cast_iron.json
 674b7a03e931f9c7a80dd81613cdb6b7c092e4ad data/c/tags/item/coil_springs/cast_netherite.json
 8524ba3b4db2fc5cf4613c060c7164e9e8ba631a data/c/tags/item/coil_springs/cermet.json
 a5f9e2a276cc9ff49d20ae86cd59a79a0846b755 data/c/tags/item/coil_springs/chromium.json
@@ -482,7 +481,7 @@ c78dd3402645028802c35d9bdc0348107d80b284 data/c/tags/item/coil_springs/hardened_
 0f3462b45579f94e31d1ec1c722ecbf1a2fef50a data/c/tags/item/coil_springs/indium.json
 78cc7e7d7faedfff18d892778859cf7777c1e060 data/c/tags/item/coil_springs/invar.json
 5634f1f0e2e1f5cd26459a598fe756e2a435146d data/c/tags/item/coil_springs/iridium.json
-a52cbc45d433d13b9f002de593531d5b844a7c99 data/c/tags/item/coil_springs/iron.json
+89fddccde56be7ac4ea476ef1a1dac5552e86ef4 data/c/tags/item/coil_springs/iron.json
 bf8fa0c3f5e90c9567814d595ee12518a19886a7 data/c/tags/item/coil_springs/iron_bloom.json
 66a1d8ab740ef26c7b5e0a2c5e5a5334542c24d1 data/c/tags/item/coil_springs/lead.json
 d7471c07676fbe2a5201636f463dec7bd665b643 data/c/tags/item/coil_springs/lithium.json
@@ -501,6 +500,7 @@ f8882a4801aab0a5c60276b40dcd489bf0cd4662 data/c/tags/item/coil_springs/pewter.js
 11196fa2505ac391eefeb0ec2821750c750a5b31 data/c/tags/item/coil_springs/platinum.json
 183c0e3a839c5cbcfd1e4e14557a06f9f74d916c data/c/tags/item/coil_springs/plutonium.json
 d4b13636a5fd49255cad5c5f04d7d5d46c8d7fb9 data/c/tags/item/coil_springs/plutonium_fuel_rod.json
+a52cbc45d433d13b9f002de593531d5b844a7c99 data/c/tags/item/coil_springs/pure_iron.json
 d8f9a9467d96f638a54fe993e3d091d22928c481 data/c/tags/item/coil_springs/rare_earth_magnet.json
 4380cac75d133219d7dccf9b870476a9a459ef61 data/c/tags/item/coil_springs/redstone_chromium.json
 c55109a17d5726e3c89c4793ceaf624d3cdd7a50 data/c/tags/item/coil_springs/redstone_filament.json
@@ -592,7 +592,6 @@ f3c81ef21635aa58890b581b570210de642ab8c3 data/c/tags/item/coins/beryllium_copper
 bf6ec3cce21591bbd2251e14d38c4f6ae1e1818d data/c/tags/item/coins/breeder_rod.json
 2c0fbc46434eaa6e422b299fe16147218cd83664 data/c/tags/item/coins/bronze.json
 37bdfba248700627717af165da8180d7587df5ed data/c/tags/item/coins/cadmium.json
-31d1918f74095ad8d4d614a05bfbcd8ee51c8156 data/c/tags/item/coins/cast_iron.json
 741c68bfb63bb6d93f5ab257e21281f1bd775ec8 data/c/tags/item/coins/cast_netherite.json
 cb1fd3a969ab054efa1ccf73ca8cab957273f136 data/c/tags/item/coins/chromium.json
 b34aa7c65b72072e17c0c6a8de4b999487630a98 data/c/tags/item/coins/cobalt.json
@@ -614,7 +613,7 @@ abf5e8dfda34e0a62aa22f32d1c46ad03e68c543 data/c/tags/item/coins/hardened_high_sp
 69d917841651efdf02fd0a2e6b174ec2cf3d374b data/c/tags/item/coins/ignitium.json
 5d1effe9b8b39a12d2b5933d2d5dd3085e6da89e data/c/tags/item/coins/indium.json
 5aea95b0f0ffbf6a2da005c98c899afd279fe857 data/c/tags/item/coins/invar.json
-12da206e69a6cadfc623c58216b871a6d33a0025 data/c/tags/item/coins/iron.json
+31d1918f74095ad8d4d614a05bfbcd8ee51c8156 data/c/tags/item/coins/iron.json
 4ef43a90f0e7b42d4681b28e80c56bd21c9d8021 data/c/tags/item/coins/lead.json
 29020504bedb5ee56c419c133aef84c755a7abaf data/c/tags/item/coins/lithium.json
 ca0b47892ea1a8211335cca5dc54adc7af74fd11 data/c/tags/item/coins/magnesium.json
@@ -630,6 +629,7 @@ a978c887e1f7332e977fbc5f880c804f996e1b76 data/c/tags/item/coins/pewter.json
 73f3ef4492689e4aaf9d08650c36c734a24ae732 data/c/tags/item/coins/platinum.json
 4e6e3249ac739d3222bf6f66fc14c96a34eacc8a data/c/tags/item/coins/plutonium.json
 148ca199e93c4510e82be581ea3ce564dd55fa62 data/c/tags/item/coins/plutonium_fuel_rod.json
+12da206e69a6cadfc623c58216b871a6d33a0025 data/c/tags/item/coins/pure_iron.json
 a66cca99766293cef1e4017b2d7932c21f263c19 data/c/tags/item/coins/redstone_chromium.json
 754b7044b08922719c29ca40240fdb3152f3c3b3 data/c/tags/item/coins/shakudo.json
 486242e2f9740134506f3abdb7187177bea32e9a data/c/tags/item/coins/silver.json
@@ -849,7 +849,6 @@ b5bb9ca3ef1a875e7dd6ba4bcdadb11b086750ce data/c/tags/item/cut_machine_bolts/bras
 7dc82064b165980fd58aca0299487f6910803d03 data/c/tags/item/cut_machine_bolts/breeder_rod.json
 1e6b8b290df1bc1b482d5992894c1a989048e536 data/c/tags/item/cut_machine_bolts/bronze.json
 28f713e315be65f164c527492d778ace642b0655 data/c/tags/item/cut_machine_bolts/cadmium.json
-cd7271f14d5af6d6a5115721b06da9c9f551a51b data/c/tags/item/cut_machine_bolts/cast_iron.json
 2d3f6bb15faf098dd6a2d0c73ec74da3436019cc data/c/tags/item/cut_machine_bolts/cast_netherite.json
 f59e01970398530d28d376f267885247550d0095 data/c/tags/item/cut_machine_bolts/cermet.json
 0730a3b72f260cac3054e8528df5c670ed0943aa data/c/tags/item/cut_machine_bolts/chromium.json
@@ -874,7 +873,7 @@ ca2b5f9c64807d72910700bef8dced097cb75fd3 data/c/tags/item/cut_machine_bolts/hard
 ff3820b9410f1734f98680dd200aef5652af5cc0 data/c/tags/item/cut_machine_bolts/indium.json
 996366501f9554c05c4800513b5da82447bcc346 data/c/tags/item/cut_machine_bolts/invar.json
 586fba6f211d70d700f3c4dfa85ab0bf15206cc3 data/c/tags/item/cut_machine_bolts/iridium.json
-064bbbe8776d39a367aefdbe296be2c2983d4757 data/c/tags/item/cut_machine_bolts/iron.json
+cd7271f14d5af6d6a5115721b06da9c9f551a51b data/c/tags/item/cut_machine_bolts/iron.json
 430105aa4ec26e50122b27cdaf792f86b03ee92a data/c/tags/item/cut_machine_bolts/iron_bloom.json
 79c6b9e9d749ef50dbef7baeefea16055292ddb4 data/c/tags/item/cut_machine_bolts/lead.json
 a6a8d6685d902d9eb12a1e190e97d1697f16f1e9 data/c/tags/item/cut_machine_bolts/lithium.json
@@ -893,6 +892,7 @@ f611151333be3f38813a8460cf74ffc01796ad70 data/c/tags/item/cut_machine_bolts/pewt
 3bf9e5d2836bcb10fd9fa88cad935bd0277051f8 data/c/tags/item/cut_machine_bolts/platinum.json
 47256d9383bf8c9b6d9c0c1d3882fe494c8427e8 data/c/tags/item/cut_machine_bolts/plutonium.json
 6a5d955f25910189bd369651330c82d9507b6569 data/c/tags/item/cut_machine_bolts/plutonium_fuel_rod.json
+064bbbe8776d39a367aefdbe296be2c2983d4757 data/c/tags/item/cut_machine_bolts/pure_iron.json
 59775fb9c875a97fc41f3b6d6df2a46f661c3cd6 data/c/tags/item/cut_machine_bolts/rare_earth_magnet.json
 ed7e1904e89a5fcba4947bd746865c16adb19a1d data/c/tags/item/cut_machine_bolts/redstone_chromium.json
 57a18b1cd4cffb6bfa2614b9de386dbb3fab7171 data/c/tags/item/cut_machine_bolts/redstone_filament.json
@@ -984,7 +984,6 @@ ff6bcb5aa5d3f920b7b685fff7013ca74d3a91c7 data/c/tags/item/cut_screws/bismuth.jso
 d9f383927d4540f439ea07daea798b9305b86827 data/c/tags/item/cut_screws/breeder_rod.json
 80a527bfe3bc9ab338b53c78abbae484dd0a1a2b data/c/tags/item/cut_screws/bronze.json
 4af0aa5121ff5b03730bae55eace34d1bad4f336 data/c/tags/item/cut_screws/cadmium.json
-cf15758c0b7ffb8221b994fb2ef05db225c158bf data/c/tags/item/cut_screws/cast_iron.json
 3bc4753754705e71639f392c0826647c0f5192ee data/c/tags/item/cut_screws/cast_netherite.json
 37bb165b91c5116be0e7cac0dc3ce148f67182cc data/c/tags/item/cut_screws/cermet.json
 d5452a7854ac3daa76c6bc4dbe85d02aa1370f4f data/c/tags/item/cut_screws/chromium.json
@@ -1009,7 +1008,7 @@ c7ebf2400258090e611bce775255296be800a89e data/c/tags/item/cut_screws/hardened_hi
 874888781d5d1cf7c96c3201fca1676f299df962 data/c/tags/item/cut_screws/indium.json
 e97bc5154d0913d36fc43ef32b4640392f42ec48 data/c/tags/item/cut_screws/invar.json
 cde14dc522bd6d9310c6ff29f7ed9b92f0a296ab data/c/tags/item/cut_screws/iridium.json
-963147204ede4d8af58b5cd95764da64c601e379 data/c/tags/item/cut_screws/iron.json
+cf15758c0b7ffb8221b994fb2ef05db225c158bf data/c/tags/item/cut_screws/iron.json
 f92686c7f5aebd70be8649b7250f117df9ffe4db data/c/tags/item/cut_screws/iron_bloom.json
 56b440f7e4ce8951f554b882629a304f4ef01551 data/c/tags/item/cut_screws/lead.json
 3da5626b6d6aaea10c39d82c1bee51cfa94072db data/c/tags/item/cut_screws/lithium.json
@@ -1028,6 +1027,7 @@ afb30d053210fb3d94289fd3ebf88c66bd5f557e data/c/tags/item/cut_screws/pewter.json
 fe3234feec223a7890c70e65a6785ffb95495bb9 data/c/tags/item/cut_screws/platinum.json
 96dc19fa8789e525e0505e51d41eae607726add8 data/c/tags/item/cut_screws/plutonium.json
 c1a8e483ac6be80018804b4e9acb0d4287a28e4a data/c/tags/item/cut_screws/plutonium_fuel_rod.json
+963147204ede4d8af58b5cd95764da64c601e379 data/c/tags/item/cut_screws/pure_iron.json
 974cad9353f75ce611c5ce898604917f3894210c data/c/tags/item/cut_screws/rare_earth_magnet.json
 035e6cffec55e529bec178680a3ffa8f814d8527 data/c/tags/item/cut_screws/redstone_chromium.json
 6687c14c746f6a5c8d583e2ca358187a0db94d3f data/c/tags/item/cut_screws/redstone_filament.json
@@ -1119,7 +1119,6 @@ bb18fc225b8c6c380fa547559397028b009dc7ab data/c/tags/item/cut_thread_rods/babbit
 985b0834476d6ac658474ad31cc181eb681a87ff data/c/tags/item/cut_thread_rods/breeder_rod.json
 b123090c68a19f696fa1ada55b11530fb2fdefa1 data/c/tags/item/cut_thread_rods/bronze.json
 31af01b54144bb11466bade6e8cb0fee7d1a6029 data/c/tags/item/cut_thread_rods/cadmium.json
-f7ffa039e9a91d20a6d61209958656c254b776b0 data/c/tags/item/cut_thread_rods/cast_iron.json
 2d5df28ddbd9ae5070e2417221f8784e77a1bb0d data/c/tags/item/cut_thread_rods/cast_netherite.json
 09f530fa58488e0fcac2817e39e5600558e7e26e data/c/tags/item/cut_thread_rods/cermet.json
 8f38be9d545dbc5d37b1ebe3768ce62c7eec7e1f data/c/tags/item/cut_thread_rods/chromium.json
@@ -1144,7 +1143,7 @@ eda67c4d6798d801f562889c8daf7775cc3a5e47 data/c/tags/item/cut_thread_rods/harden
 fd9515ba46f739ac4acdf7af15304fe368da9907 data/c/tags/item/cut_thread_rods/indium.json
 d74fce873ef23018a4ee51fd7c683082268abc57 data/c/tags/item/cut_thread_rods/invar.json
 0fe601c5e644cf78d20967014d29079ddb43e293 data/c/tags/item/cut_thread_rods/iridium.json
-cf58fd0e741a44b992ece4d86083f6f6880b2ae1 data/c/tags/item/cut_thread_rods/iron.json
+f7ffa039e9a91d20a6d61209958656c254b776b0 data/c/tags/item/cut_thread_rods/iron.json
 6af2a5791a7675ccc71dcc4eeb6dcfe1d5da7199 data/c/tags/item/cut_thread_rods/iron_bloom.json
 e58dafeed5a4cf7df1dcc9ef221e184401612fc1 data/c/tags/item/cut_thread_rods/lead.json
 2618b71286b0fb35c4d16996fd645e0457349d61 data/c/tags/item/cut_thread_rods/lithium.json
@@ -1163,6 +1162,7 @@ a4264f4de198116d5c28c3fd9195cd1da540ac54 data/c/tags/item/cut_thread_rods/pewter
 305c826929a879ca071a06f177753278d38d002a data/c/tags/item/cut_thread_rods/platinum.json
 d0b2c6aebc64f5916ecba009437fdfea062819f4 data/c/tags/item/cut_thread_rods/plutonium.json
 695c1a005de964b29805a4bd45a6573fc36f3808 data/c/tags/item/cut_thread_rods/plutonium_fuel_rod.json
+cf58fd0e741a44b992ece4d86083f6f6880b2ae1 data/c/tags/item/cut_thread_rods/pure_iron.json
 0bae448de28967ca32eabe5f3228397189617296 data/c/tags/item/cut_thread_rods/rare_earth_magnet.json
 f467c0af373184c02d17878d36c2734a7c509c5d data/c/tags/item/cut_thread_rods/redstone_chromium.json
 5fa04365eba6c25c196867046ace800b3dd9f996 data/c/tags/item/cut_thread_rods/redstone_filament.json
@@ -1318,7 +1318,6 @@ b0ed7f010424e786b54fd10631c1fc7f98c06d18 data/c/tags/item/drilled_plates/galinst
 98a4e0a495e2ce3b8a2357312f8ebb57ca26e7b0 data/c/tags/item/drilled_plates/ignitium.json
 1e7a84a36efc8d59c1f6f3e30e90332cec60608e data/c/tags/item/drilled_plates/indium.json
 24d9700545c08b34d2694e3c99bf637a2a8db605 data/c/tags/item/drilled_plates/invar.json
-6576c3f7e19a4be725aac932768bbd84531d42f6 data/c/tags/item/drilled_plates/iron.json
 682ed356984ae09a742a3179228e810161b86cea data/c/tags/item/drilled_plates/lead.json
 d47692a10961678db81a1d5e79d5276ec5012084 data/c/tags/item/drilled_plates/lithium.json
 53c756e3830dabfca1247810bb2eb7fbf67a6f22 data/c/tags/item/drilled_plates/magnesium.json
@@ -1334,6 +1333,7 @@ e6a276d5c4f1a1569a546ddfd84befe5783a2af7 data/c/tags/item/drilled_plates/nickel.
 655bd80059a18709d31c2e1c0c17e7af7bb9c891 data/c/tags/item/drilled_plates/pewter.json
 99501cae75387f3895391c078fd1f1d25ddfb861 data/c/tags/item/drilled_plates/platinum.json
 a5a18d7b3108be6d370c83e4882accf8ea565c94 data/c/tags/item/drilled_plates/plutonium.json
+6576c3f7e19a4be725aac932768bbd84531d42f6 data/c/tags/item/drilled_plates/pure_iron.json
 a783a20e29ec1ec011c0bd3c07757f6afb3716e4 data/c/tags/item/drilled_plates/redstone_chromium.json
 fe78f66d2336e1a7ad010b92f57a7d1592c1311e data/c/tags/item/drilled_plates/shakudo.json
 557d67f5bbc1c3f43e539c6af4d10b8c6ebd47c1 data/c/tags/item/drilled_plates/silver.json
@@ -1430,7 +1430,6 @@ b1dc9fa08f0d783d72b6139028a64401be098d06 data/c/tags/item/dusts/brick.json
 1a01b5fd43be14d27b898d5b4d48516c3cff6bd2 data/c/tags/item/dusts/bronze.json
 981a1c4c94bfd7b7efb7d62dec6ac9c24ae5b780 data/c/tags/item/dusts/cadmium.json
 f0a0ebb9c0bba416756df53d3d36afb364c9b2bd data/c/tags/item/dusts/calcite.json
-4b8d01e21d067326fdc4549a4cabfee56186c800 data/c/tags/item/dusts/cast_iron.json
 123a488a1566707c1fd5f0da262ee6a2e53e2e31 data/c/tags/item/dusts/cast_netherite.json
 5830caca44eeeddb400d8f7dcfaa8946c2abbaa3 data/c/tags/item/dusts/ceramic.json
 fc8f9d81b6b7c93b7cc809c2d4d221627eedab50 data/c/tags/item/dusts/cermet.json
@@ -1488,7 +1487,7 @@ cc2f0a03905adcbc2ed01a9731ceb83fa393cd4b data/c/tags/item/dusts/hematite.json
 aa2920393a5e2beeb021da303e3913ca0742739c data/c/tags/item/dusts/inert_blaze.json
 0516592b895adbdcf7419b2d2ec41d83df469925 data/c/tags/item/dusts/invar.json
 d16907c227b1cc05c599b3cbfd5d04f3d3c8b043 data/c/tags/item/dusts/iridium.json
-a0236a294d50ef9bc246fe00cc6826b0d66aba16 data/c/tags/item/dusts/iron.json
+4b8d01e21d067326fdc4549a4cabfee56186c800 data/c/tags/item/dusts/iron.json
 aa89a7d25f699c29c019f20c8adcff5ed88911d6 data/c/tags/item/dusts/jade.json
 a54c55c624278c53d300c8b78d7c7521287c755f data/c/tags/item/dusts/lapis.json
 36cdc2e2bc4e0c81b5e66256a8d8fa0acb9d413c data/c/tags/item/dusts/lead.json
@@ -1523,6 +1522,7 @@ e10dcf4aa351f93757c8042e38ad904613e5f9b2 data/c/tags/item/dusts/obsidian.json
 03a519852bd0c7d253a2958a087c8aa198b03ce9 data/c/tags/item/dusts/plutonium.json
 6ec47ef1a8fcdcfbf87bb64d93833651e2d94517 data/c/tags/item/dusts/polytetrafluoroethylene.json
 dd1eaebb5e508c4f14fdb68b5fc55dc6bc57ef67 data/c/tags/item/dusts/prismarine.json
+a0236a294d50ef9bc246fe00cc6826b0d66aba16 data/c/tags/item/dusts/pure_iron.json
 3d9811c022d82c0099b0ec6c8aace12486b807a2 data/c/tags/item/dusts/purified_redstone.json
 359430bc083fb5afd8999d6bfbfd0fdabddee0cf data/c/tags/item/dusts/pyrite.json
 32adf202a6ea2714d2195361344f144367d6b83e data/c/tags/item/dusts/pyrolusite.json
@@ -1672,7 +1672,6 @@ a728439aad5b84ab2a8055d34a0966cbc9c3f665 data/c/tags/item/fine_wires/high_speed_
 a2e7e4104dc6eb13bcf749e1257fa9013970b2df data/c/tags/item/fine_wires/ignitium.json
 c9e728376549a53144721bcd7ab869b21f55176e data/c/tags/item/fine_wires/indium.json
 dbed0b94e9dcf0e4c0b1946dc4fe67e2e5a403bc data/c/tags/item/fine_wires/invar.json
-5c3758170ed25318beaf93cd8840f458f1c0fe43 data/c/tags/item/fine_wires/iron.json
 3e217ce5fd7c53a817c9125b73a93995afa38781 data/c/tags/item/fine_wires/lead.json
 6eb0faf1274f186c23fbd687c4740806a324f770 data/c/tags/item/fine_wires/lithium.json
 46293c182277d302c340ec42b48047b8d6bbd479 data/c/tags/item/fine_wires/magnesium.json
@@ -1687,6 +1686,7 @@ bf9e5b7eddfdcd282decbd7bdfd7a08c4bb5cda4 data/c/tags/item/fine_wires/nichrome.js
 9b5106f7927fb557d68bd27c815cdbc93f713482 data/c/tags/item/fine_wires/pewter.json
 049ff68da739bd7b8730d910cb10894b6155af77 data/c/tags/item/fine_wires/platinum.json
 09e2d69ce198a219874920b01073aa66482336d9 data/c/tags/item/fine_wires/plutonium.json
+5c3758170ed25318beaf93cd8840f458f1c0fe43 data/c/tags/item/fine_wires/pure_iron.json
 c9cb7a5075f757e3308c9879f80a479a29eee137 data/c/tags/item/fine_wires/redstone_chromium.json
 447503a94b88039d1e790fed74b68e09ddf39ae3 data/c/tags/item/fine_wires/redstone_filament.json
 85156277fbb93d667f94abbe4a085b9b7cf47a51 data/c/tags/item/fine_wires/shakudo.json
@@ -1769,7 +1769,6 @@ f9245d38a84b52f98de3ebab162745a79cc4866b data/c/tags/item/flat_nose_bullets/bras
 9b794f1dfdb0a0d8c0d842299f9b43ca75abbcfc data/c/tags/item/flat_nose_bullets/breeder_rod.json
 f93c9cfd8aa7c78a4ed01e775e4d8d45441fdfa3 data/c/tags/item/flat_nose_bullets/bronze.json
 5625f771f8154c81cb1ac30e9182bde6fed4653a data/c/tags/item/flat_nose_bullets/cadmium.json
-d4228cbb2afd20a358c60eef9384d5b2d768dfcd data/c/tags/item/flat_nose_bullets/cast_iron.json
 b88500b1bab096904a3571da7ba13a8ecf8c8611 data/c/tags/item/flat_nose_bullets/cast_netherite.json
 5fcfd9de15f658fd2036d88c6074b98cf6e2ddf5 data/c/tags/item/flat_nose_bullets/cermet.json
 aad5ad9b56795ccf070663197e17d728f351ba69 data/c/tags/item/flat_nose_bullets/chromium.json
@@ -1793,7 +1792,7 @@ bb76b35b0f1457ce3b5e506b0ae6585ad570e507 data/c/tags/item/flat_nose_bullets/gali
 e6014012aedd0a6c48b7b4fbaf1e8a819f082639 data/c/tags/item/flat_nose_bullets/indium.json
 795ad57bfa2b159e40850984593d3b1194cfb8bf data/c/tags/item/flat_nose_bullets/invar.json
 60c3b481e0e55607f9645f7a19a8981edf8d096a data/c/tags/item/flat_nose_bullets/iridium.json
-f3c74d2d3bce6b38318fb254e8e69a196357e669 data/c/tags/item/flat_nose_bullets/iron.json
+d4228cbb2afd20a358c60eef9384d5b2d768dfcd data/c/tags/item/flat_nose_bullets/iron.json
 f1e6ec7405f0d69be200a16588100f870683b54b data/c/tags/item/flat_nose_bullets/iron_bloom.json
 8c3232c084919321206831cef2edb4cca8bb7c6d data/c/tags/item/flat_nose_bullets/lead.json
 23e9915ede85abdd0395f92045f6b260d7b689ea data/c/tags/item/flat_nose_bullets/lithium.json
@@ -1817,6 +1816,7 @@ f80ccf32fb8620d59c392585ab710454eca715ee data/c/tags/item/flat_nose_bullets/poly
 d8964e959a42fb4d302f2f3c68a5755ba586ed4e data/c/tags/item/flat_nose_bullets/polyethylene.json
 ac3a35e3f540b6931be105c8300fb6172c0209bf data/c/tags/item/flat_nose_bullets/polypropylene.json
 ccc7d9c5b4dcad3572d2298167f44a115b07076b data/c/tags/item/flat_nose_bullets/polytetrafluoroethylene.json
+f3c74d2d3bce6b38318fb254e8e69a196357e669 data/c/tags/item/flat_nose_bullets/pure_iron.json
 48c4676fc76e38a71d221d8da5e84a0a4536db99 data/c/tags/item/flat_nose_bullets/pvc.json
 7d2dba8492ad59c60ef7b5e5c82ecafe5f9ed0b5 data/c/tags/item/flat_nose_bullets/rare_earth_magnet.json
 a971a0805c52c45df455e70b2fffdf3cca30b0ff data/c/tags/item/flat_nose_bullets/redstone_chromium.json
@@ -1911,7 +1911,6 @@ b91f65da21e3c81e0dd068124d420b4a16105f4e data/c/tags/item/flechettes/black_steel
 4f8c8a0b483ecca31b2c7a314fb40d1729fff1b2 data/c/tags/item/flechettes/breeder_rod.json
 f380c842b1fbc41b4aa698ffa2b6a1a2f02102e9 data/c/tags/item/flechettes/bronze.json
 ed8f152ff025d83850265befdfb334ae2c065c80 data/c/tags/item/flechettes/cadmium.json
-427665b6dfd3a19831338b119651929de6eaf067 data/c/tags/item/flechettes/cast_iron.json
 061dc47bba1a945d32bf8874108e8136bb97eff3 data/c/tags/item/flechettes/cast_netherite.json
 104da88d27b272401f1c5be543c1d4a81658d467 data/c/tags/item/flechettes/cermet.json
 fe8a2343e3e7ecb9c2e5060dd662be89db8f1273 data/c/tags/item/flechettes/chromium.json
@@ -1935,7 +1934,7 @@ f360924355ca6ca9814f6a7a020b43fe451fe49d data/c/tags/item/flechettes/hardened_hi
 35e64cbbd3b36875d27803fe39eed53a020a193e data/c/tags/item/flechettes/indium.json
 ffc47eb386afbe347c0ded2ce01cf68fb8934403 data/c/tags/item/flechettes/invar.json
 6837ab6c6ca8dbdb1bb53bdf3edc1c6390b35e42 data/c/tags/item/flechettes/iridium.json
-7fe44c38f41c13c2aa41fe4dbc720e46d7a8ecd2 data/c/tags/item/flechettes/iron.json
+427665b6dfd3a19831338b119651929de6eaf067 data/c/tags/item/flechettes/iron.json
 602c3165a3b393b4caad255e1c03c3d28475b052 data/c/tags/item/flechettes/iron_bloom.json
 ebc96822e401fca1404c367e5fa3b4feefd2403f data/c/tags/item/flechettes/lead.json
 9a2bbff592fb34b7cb14ed60c6896b755f9cf58e data/c/tags/item/flechettes/lithium.json
@@ -1959,6 +1958,7 @@ bf7f4102db9e580a91a4e5f756c6a28cd581ca08 data/c/tags/item/flechettes/platinum.js
 fa29002582afc6b8bb478ac281dcc62cf1e5f107 data/c/tags/item/flechettes/polyethylene.json
 4046efd4c47a69f50d5c0d681e89564a71c0769b data/c/tags/item/flechettes/polypropylene.json
 c2d34acf4daba76031893fbd86f37d47a054f6ec data/c/tags/item/flechettes/polytetrafluoroethylene.json
+7fe44c38f41c13c2aa41fe4dbc720e46d7a8ecd2 data/c/tags/item/flechettes/pure_iron.json
 d6e75699769b86a3c7547f7572555cb6f61c2fbf data/c/tags/item/flechettes/pvc.json
 4bdc3f272829ed5248576da9e5a2074e9cbb16fa data/c/tags/item/flechettes/rare_earth_magnet.json
 a4d0eacc3a97b5c22f50bf5a4599f18af19c0dfd data/c/tags/item/flechettes/redstone_chromium.json
@@ -2071,7 +2071,6 @@ e524c9dcbb93290f23d4ba569597063fd1dc5d21 data/c/tags/item/foils/high_speed_steel
 6325f99b12df293b792c10cbcf8e70c34e1f8039 data/c/tags/item/foils/ignitium.json
 d896f271587716e70b8dc7533503fede3f06a80f data/c/tags/item/foils/indium.json
 8eac6d77389ee48d7ec0b5c88fa59d167034ec8e data/c/tags/item/foils/invar.json
-28ee607207606d0a08a570886e7ed4e1082257ba data/c/tags/item/foils/iron.json
 3bc05218a8c2c1a351a34fdc2433295bce9a35ff data/c/tags/item/foils/lead.json
 a0140e4eac495f3868d8fb5f55cf679588b12ce4 data/c/tags/item/foils/lithium.json
 73b0da3fc3585dbbecddd26eb5a4b24c9d82e59b data/c/tags/item/foils/magnesium.json
@@ -2086,6 +2085,7 @@ a32dfcd2d63d12d466a7de2f35217640aa9b1233 data/c/tags/item/foils/palladium.json
 2c6a8bbb7d2ea1e26a92950525b192b078e43bab data/c/tags/item/foils/pewter.json
 489c20860e833153daafddb40fece6977d689700 data/c/tags/item/foils/platinum.json
 4fd13e41dbaab70b41878378d974fa4cdee94ac6 data/c/tags/item/foils/plutonium.json
+28ee607207606d0a08a570886e7ed4e1082257ba data/c/tags/item/foils/pure_iron.json
 02defa35c95d3a263555d835eea81da493072f8f data/c/tags/item/foils/redstone_chromium.json
 e924eca98d68115fc40e8f11d23e3c6d87b0b5f5 data/c/tags/item/foils/shakudo.json
 165daa56e5444cea3434001c32ffb5ecbdb6fd08 data/c/tags/item/foils/silver.json
@@ -2183,7 +2183,6 @@ befa3256d9d2c020304b345755e737260bc872c1 data/c/tags/item/grips/brass.json
 71275166112c4f71bce1ca17aafb369b5fb21818 data/c/tags/item/grips/breeder_rod.json
 6a430c00157bc10b5a4a15bdccb112d662079546 data/c/tags/item/grips/bronze.json
 914b817f017385a7804c23aa384ec10b3f1125d5 data/c/tags/item/grips/cadmium.json
-347dec879cce40740bcd433375cd02127fd774c6 data/c/tags/item/grips/cast_iron.json
 10dc9b4b6f27000360f8787197bb5e5eadb3890e data/c/tags/item/grips/cast_netherite.json
 de9f87c70f25ee2606383e904fd36c44d1b7730b data/c/tags/item/grips/cermet.json
 52d6a6db199b1d546befcfef99bd2b20efb74c74 data/c/tags/item/grips/cherry.json
@@ -2209,7 +2208,7 @@ e1067293274ea437102b00e37fdeb15183d305da data/c/tags/item/grips/hardened_steel.j
 1443dac7d68ee42565dd4f7c8ff044ab4704f77b data/c/tags/item/grips/ignitium.json
 ee72c705e2cc5843aeb8bd2d695ec55ce0469cf7 data/c/tags/item/grips/indium.json
 7483925d3a96294315b2698741ee77dc83d95c7f data/c/tags/item/grips/invar.json
-30def84fb36e4f507f62541b5b1e231cfef3f1c3 data/c/tags/item/grips/iron.json
+347dec879cce40740bcd433375cd02127fd774c6 data/c/tags/item/grips/iron.json
 41dfca6442d5e0d646762286cb380985b080fdcc data/c/tags/item/grips/jungle.json
 1ca58e9bb7e01beada887cd61f1d14967cc38847 data/c/tags/item/grips/lead.json
 7b84dad75631673eaa897f86bb930ae4f73f631e data/c/tags/item/grips/lithium.json
@@ -2234,6 +2233,7 @@ d183efd06403e3dd5dd243b655deabf4e7b91a77 data/c/tags/item/grips/palladium.json
 10a483685e568844ecf7e28b80e2ddbed60d8782 data/c/tags/item/grips/polyethylene.json
 05500ed9ae77a1fbfa57f627c12fe6b2faa2cc6d data/c/tags/item/grips/polypropylene.json
 eb469a22f553466b424e6f24460cf0a7364c35d7 data/c/tags/item/grips/polytetrafluoroethylene.json
+30def84fb36e4f507f62541b5b1e231cfef3f1c3 data/c/tags/item/grips/pure_iron.json
 bdb682d8ef20ea2f95d25caee0b8a11fb7b665e5 data/c/tags/item/grips/pvc.json
 d8aede25397c2419fd7bfd4202817b3fcbfd9ab6 data/c/tags/item/grips/redstone_chromium.json
 978d3dc92ccd732138b070faa13d5e4bfa6cda69 data/c/tags/item/grips/shakudo.json
@@ -2321,7 +2321,6 @@ d15406e929299876958d265453a396cc45bd19a2 data/c/tags/item/ground_ingots/babbitt.
 3ebcf57404290497b599a9b4f3ac5a27de55c1d3 data/c/tags/item/ground_ingots/breeder_rod.json
 4be8291370ff2d67d904b88f0bbf727e94541ae6 data/c/tags/item/ground_ingots/bronze.json
 cd97d1c47a7d5bda134444b3075c2d8a0190ed92 data/c/tags/item/ground_ingots/cadmium.json
-5bef5ebe1143cadca310b060e7ec43fe6ec511d8 data/c/tags/item/ground_ingots/cast_iron.json
 7865912a5a71066337decb4f6cfce19ce0148741 data/c/tags/item/ground_ingots/cast_netherite.json
 8a519fc1016c8f2f13d96574d85754daf8118f47 data/c/tags/item/ground_ingots/cermet.json
 7140ae810a1a520cacc572ca1aa98197a2e85dc0 data/c/tags/item/ground_ingots/chromium.json
@@ -2344,7 +2343,7 @@ adcf212c6f28d8947ce19262e07251c1e1b92714 data/c/tags/item/ground_ingots/hardened
 909caa0a3b243b2ea4217d6c110396a4796edde9 data/c/tags/item/ground_ingots/ignitium.json
 fed645871f264c035e34020b072f8ef2a06cc37f data/c/tags/item/ground_ingots/indium.json
 600d49c5b2f1531f2940a33ab36a05d4f6537091 data/c/tags/item/ground_ingots/invar.json
-ad2ee725260c3d05bd4ec0d90aea81cfdbd4bc39 data/c/tags/item/ground_ingots/iron.json
+5bef5ebe1143cadca310b060e7ec43fe6ec511d8 data/c/tags/item/ground_ingots/iron.json
 059b0a082f3c2209b6c920cd38791fa38a1090b0 data/c/tags/item/ground_ingots/lead.json
 bf6c91ca232cb4c3d8392fcba7399b6d5264a441 data/c/tags/item/ground_ingots/lithium.json
 aa0a56cd6949e81d6734e65984fbecabab179edd data/c/tags/item/ground_ingots/magnesium.json
@@ -2361,6 +2360,7 @@ efff2b0af404f44c79dcad962ac07ccf8fcadaac data/c/tags/item/ground_ingots/palladiu
 ddbf42169d04f376679ee8e2911ab9d561089434 data/c/tags/item/ground_ingots/platinum.json
 a0562bc5b904d4209caf60232db7fe2e0e9ddd1e data/c/tags/item/ground_ingots/plutonium.json
 a9186a9a71c771165bc97b63645142f116c5cb2b data/c/tags/item/ground_ingots/plutonium_fuel_rod.json
+ad2ee725260c3d05bd4ec0d90aea81cfdbd4bc39 data/c/tags/item/ground_ingots/pure_iron.json
 cf2061c0c6779b7b18d2959df1eae1a9e07aeb15 data/c/tags/item/ground_ingots/redstone_chromium.json
 7e6a6aba475108281d30aebabfd1d84c1d40bc2c data/c/tags/item/ground_ingots/shakudo.json
 177f1746e9f9043f453962558e5c91ff02a42102 data/c/tags/item/ground_ingots/silver.json
@@ -2448,7 +2448,6 @@ f8fd2b8c292bf42852b0f79db7b34e18a06b9b40 data/c/tags/item/hollow_point_bullets/b
 21ed21446711acb2c8341f68eb5cfef32b432857 data/c/tags/item/hollow_point_bullets/breeder_rod.json
 a327058917f0d5a86bbc17ebe83a809dfa3ab0c1 data/c/tags/item/hollow_point_bullets/bronze.json
 48b40a5410c2cc19e1f5035e0e78e97c48621782 data/c/tags/item/hollow_point_bullets/cadmium.json
-216442eb628ba85b03fcd48f7805e8105617bdd3 data/c/tags/item/hollow_point_bullets/cast_iron.json
 9821dbf97dd63585540be643bd0e89544853a337 data/c/tags/item/hollow_point_bullets/cast_netherite.json
 7be429b5952a3b52c8aa5cfb4324d0b45bdeb324 data/c/tags/item/hollow_point_bullets/cermet.json
 3a59f65ce8f909f3bedba7852cb54b9409ee0365 data/c/tags/item/hollow_point_bullets/chromium.json
@@ -2472,7 +2471,7 @@ fb92cbe6d2c5b360a2a9ef476c15e3bcfafaa339 data/c/tags/item/hollow_point_bullets/h
 02365347afe2f3cefad355db0c141e6b95f1beb9 data/c/tags/item/hollow_point_bullets/indium.json
 29d5dce68091169aa5bdfd96d1eba171b367e24a data/c/tags/item/hollow_point_bullets/invar.json
 a58261c0f90a2202b5b008b68dc5fc95cd52e924 data/c/tags/item/hollow_point_bullets/iridium.json
-efe01eede106292b3bba812c239af673d7229b46 data/c/tags/item/hollow_point_bullets/iron.json
+216442eb628ba85b03fcd48f7805e8105617bdd3 data/c/tags/item/hollow_point_bullets/iron.json
 35bb314fb642981c97ab27b1a17a35b8ef977c20 data/c/tags/item/hollow_point_bullets/iron_bloom.json
 26e60ba72a5dc8ee8ce72d6cf9c907c28b51875a data/c/tags/item/hollow_point_bullets/lead.json
 2a514560f8b05c80cbe2001fd0c17d3ff32c8785 data/c/tags/item/hollow_point_bullets/lithium.json
@@ -2496,6 +2495,7 @@ dffb6c1444b4f1781fb38b878d4538c9993e2960 data/c/tags/item/hollow_point_bullets/p
 3a2acef25f5ce98be03f37e860897e091113b376 data/c/tags/item/hollow_point_bullets/polyethylene.json
 8b60d558e7ff3e118e41d12129c3238efbc68b8f data/c/tags/item/hollow_point_bullets/polypropylene.json
 d6d343f30715044eb14e6095d62cd9d659d965de data/c/tags/item/hollow_point_bullets/polytetrafluoroethylene.json
+efe01eede106292b3bba812c239af673d7229b46 data/c/tags/item/hollow_point_bullets/pure_iron.json
 b6f86116366112cec4085ec495f9df92dde666e0 data/c/tags/item/hollow_point_bullets/pvc.json
 7e1913f4e77dc9873cffb1a8630422e4233c7fa6 data/c/tags/item/hollow_point_bullets/rare_earth_magnet.json
 712ba26776f65cfa99c0bf241934ffc407155676 data/c/tags/item/hollow_point_bullets/redstone_chromium.json
@@ -2596,7 +2596,6 @@ f6d7d8f259bcbe05d911673566d46c0940989abb data/c/tags/item/ingots/cadmium.json
 edfe2f46b94899312ac91673995c5d6b383672c0 data/c/tags/item/ingots/carbon_carbon.json
 87ea926cc14fd658b95f24b46c64801eff87a350 data/c/tags/item/ingots/carbon_carbon_porous.json
 b533b67ea25548082ab1e49d14e4da27ac0a7695 data/c/tags/item/ingots/carbon_fibre.json
-8775b17928f81a4c18002e5442609c2c0bde5b29 data/c/tags/item/ingots/cast_iron.json
 029767a803c968bc50fbc17cc04d2b3ea8553e3c data/c/tags/item/ingots/cast_netherite.json
 82b42b840dc64118061fe048ee969ef3f2eb98a5 data/c/tags/item/ingots/ceramic_steel_armour.json
 9bd099147a9c64c7cef9e00763d6a3929f1df8f6 data/c/tags/item/ingots/cermet.json
@@ -2623,7 +2622,7 @@ d0e8632fdbf408b5977228d3a478b85b8194f438 data/c/tags/item/ingots/galinstan.json
 ddd006a7d2106b661ecb69256722dc3150d6cbe1 data/c/tags/item/ingots/ignitium.json
 2e97dba131c0a190f142359a9d9e7129abf2e23f data/c/tags/item/ingots/indium.json
 5d17320922b8b6826120f0e541e90ab4d6d55217 data/c/tags/item/ingots/invar.json
-74b38101f7040b07ccc84ff05c56cab2195d0c31 data/c/tags/item/ingots/iron.json
+8775b17928f81a4c18002e5442609c2c0bde5b29 data/c/tags/item/ingots/iron.json
 a4011869b1c43a30c3c350d822ef6764b690ffef data/c/tags/item/ingots/lead.json
 365698a75e05dbb356419fe89a539a41513432a0 data/c/tags/item/ingots/lithium.json
 0a4aa94801b441255df1e48014e847ef8a8dd8f4 data/c/tags/item/ingots/lumen_glass.json
@@ -2651,6 +2650,7 @@ c3e1d1969e93638cea4e56295ba6cd9c437bef39 data/c/tags/item/ingots/plywood.json
 7f838c3cf1f15786b3a91827b06f39813e099494 data/c/tags/item/ingots/polyethylene.json
 29a5de91b1d6cf345f6914e468dc9ae7217d91a3 data/c/tags/item/ingots/polypropylene.json
 6825568e4a351fb5ba5de0cb935c66a975d3ad5c data/c/tags/item/ingots/polytetrafluoroethylene.json
+74b38101f7040b07ccc84ff05c56cab2195d0c31 data/c/tags/item/ingots/pure_iron.json
 8b9e9ef788b58866e3873cb2846cb1284de6f341 data/c/tags/item/ingots/pvc.json
 20b80fd39876f78e988848b229d2731a7b2faef1 data/c/tags/item/ingots/quartz_glass.json
 1d13743f0940cd2795363002af899bd0e70fda20 data/c/tags/item/ingots/rare_earth_magnet.json
@@ -2766,7 +2766,6 @@ cc418ce414aed19af8de2bb2aa168646a7221fa4 data/c/tags/item/large_shots/black_stee
 1b5c25775d506acaa24df790f31aeafaaba439ea data/c/tags/item/large_shots/breeder_rod.json
 c385c4617d9e0da39ae9ff93d57b73a510cd9afa data/c/tags/item/large_shots/bronze.json
 e0bca66da559b2a779986d031dd5953437f153ec data/c/tags/item/large_shots/cadmium.json
-ef942bc5538c9b29dc86cd1d68d630f9d1b8eb25 data/c/tags/item/large_shots/cast_iron.json
 7681ac0138ded07d45e74192cfaf8d4fddd10099 data/c/tags/item/large_shots/cast_netherite.json
 4fde63a305e8dd0695213e343e3b81781b5c0f77 data/c/tags/item/large_shots/cermet.json
 063c1cf9099396d0eb68ab87b7a3da29b83a4336 data/c/tags/item/large_shots/chromium.json
@@ -2790,7 +2789,7 @@ a40fee083212dc54df7709ea5813bd3bb1b219a1 data/c/tags/item/large_shots/ignitium.j
 e3edd17d44b0dcefda2b7cf5e98d195e855998e6 data/c/tags/item/large_shots/indium.json
 05e25601360f82fa017b146a9e6ea95836d44da5 data/c/tags/item/large_shots/invar.json
 f4bd704594f1933261fc15ab365d6955e2c208bd data/c/tags/item/large_shots/iridium.json
-456738b030d942226dbeafe9e73cbce846277400 data/c/tags/item/large_shots/iron.json
+ef942bc5538c9b29dc86cd1d68d630f9d1b8eb25 data/c/tags/item/large_shots/iron.json
 98200e5880faf0a3fa95daf6eafb215c423a5aaa data/c/tags/item/large_shots/iron_bloom.json
 3d23a1ebbbcecacc9341dfb8cc01260926667bc4 data/c/tags/item/large_shots/lead.json
 743fd2c0ffe745cce434bdc11ae55998c90d6f42 data/c/tags/item/large_shots/lithium.json
@@ -2814,6 +2813,7 @@ b00b4dba7a7c7b1ce4cfac84acfa86e7f3ae1d9e data/c/tags/item/large_shots/polyester.
 2f0340cd5125027a134c00d636ef137ea0c72290 data/c/tags/item/large_shots/polyethylene.json
 29237888b76b65e99be0fb1e847c0b4103e354d2 data/c/tags/item/large_shots/polypropylene.json
 cf653491e58b6b4d831cb01525e33f689e108924 data/c/tags/item/large_shots/polytetrafluoroethylene.json
+456738b030d942226dbeafe9e73cbce846277400 data/c/tags/item/large_shots/pure_iron.json
 cfa3c76e41496433ad5911f4c889d1d0a32ef8fd data/c/tags/item/large_shots/pvc.json
 157aed1b4372bca0b08b7ebe7def51847bb0e2fe data/c/tags/item/large_shots/rare_earth_magnet.json
 a75a11f06e038a4085366c2ef0d4415fba6faa10 data/c/tags/item/large_shots/redstone_chromium.json
@@ -3005,7 +3005,6 @@ ebc3c7c70e8387811e8f2673e66e595175a4f9ee data/c/tags/item/machine_bolts/amethyst
 7608c3f5a4e1f62b2921eede6da2dc8596e1dc5c data/c/tags/item/machine_bolts/breeder_rod.json
 b4ffea5131cc9632e9d0974ee89f71314e9d9246 data/c/tags/item/machine_bolts/bronze.json
 e903e68b8c5741126b94b7990dcae21915167a94 data/c/tags/item/machine_bolts/cadmium.json
-0c779ef8e2fad77f2d8f2516978373334e2e5a3e data/c/tags/item/machine_bolts/cast_iron.json
 1dd5f31853979aae067a6ec34469be0c5e555a5f data/c/tags/item/machine_bolts/cast_netherite.json
 c47054fcea0b1ccb264e2c3e4eb39305ac08b19b data/c/tags/item/machine_bolts/cermet.json
 763ee9f0a664fae1573741f137f759623acc8ef1 data/c/tags/item/machine_bolts/chromium.json
@@ -3029,7 +3028,7 @@ a60cd05c3b0ed66104763bbabbdc61435501e589 data/c/tags/item/machine_bolts/high_spe
 bd6d50bf5e5ccbd43d840b8c2b9035933809bbae data/c/tags/item/machine_bolts/indium.json
 213b19764fd7899bf14ace8ac12bd9746e2da461 data/c/tags/item/machine_bolts/invar.json
 d5d270f2bad81e277d63485320229be34731cdd0 data/c/tags/item/machine_bolts/iridium.json
-997d2593457905d21c6f7f210e718eda84f9b9b0 data/c/tags/item/machine_bolts/iron.json
+0c779ef8e2fad77f2d8f2516978373334e2e5a3e data/c/tags/item/machine_bolts/iron.json
 6631397ed74b5be168dde6a921bc3e5a22656020 data/c/tags/item/machine_bolts/iron_bloom.json
 cea455bbb56e5db0dce3a6454fd97b111ac1ac1d data/c/tags/item/machine_bolts/lead.json
 677f87dc6db6f3c812de2668ec3ebb071404f2fe data/c/tags/item/machine_bolts/lithium.json
@@ -3048,6 +3047,7 @@ e2c1ddc5de33db7fc5d28e2a9636802d45888b80 data/c/tags/item/machine_bolts/palladiu
 b0694303b28e0e41c0c3ac60271555f2c66a9bc6 data/c/tags/item/machine_bolts/platinum.json
 5611d1d9b9bf8e494df24b90af0f8a2f07348777 data/c/tags/item/machine_bolts/plutonium.json
 569c556ac78e8ae8e7a6291c6a84f3d68fcee27b data/c/tags/item/machine_bolts/plutonium_fuel_rod.json
+997d2593457905d21c6f7f210e718eda84f9b9b0 data/c/tags/item/machine_bolts/pure_iron.json
 6aa62cd3e34c2f29f1160d99aa137c4ab2d82fd0 data/c/tags/item/machine_bolts/rare_earth_magnet.json
 2432aaf994737676ab3b5cf9576a2e1e6d139273 data/c/tags/item/machine_bolts/redstone_chromium.json
 32bd37177b6a07706ad097b2885cf4740d7e5d3c data/c/tags/item/machine_bolts/redstone_filament.json
@@ -3147,7 +3147,6 @@ e167fcb996da52769ce4a42270cbab08f70979f5 data/c/tags/item/nuggets/boron.json
 63560ea6aff4fbb531d9a02cbe170eb64c11bca4 data/c/tags/item/nuggets/brass.json
 46e114835c19a54cb52c2c9626b87b3da79e6f29 data/c/tags/item/nuggets/bronze.json
 bc42aac52e2f042057cb1b168f0e887c8b56fa7a data/c/tags/item/nuggets/cadmium.json
-14ce48a9f72491e118b44e75ec88e8a71a9f222b data/c/tags/item/nuggets/cast_iron.json
 b5706df6062927a7d058ef57d44ef3fa895fdaa3 data/c/tags/item/nuggets/cermet.json
 356d929eb90bd98d01901ea3abe7bcc54f43a156 data/c/tags/item/nuggets/chromium.json
 5b8d51a9521ded349abe9e31dcd0078882cd8874 data/c/tags/item/nuggets/cobalt.json
@@ -3165,7 +3164,7 @@ fbeb2cae0fa183dac58ed2e4077fa4af3166fa94 data/c/tags/item/nuggets/gold.json
 c5f4cf511751e7258bfc2c08d40ea79dbabd80d7 data/c/tags/item/nuggets/ignitium.json
 73cd98837bf3b44db34548cd77fcc151c9a08ef0 data/c/tags/item/nuggets/indium.json
 67d5a0d04b8bd446f2b68b95339ff858db17256d data/c/tags/item/nuggets/invar.json
-3250e05fe0f47fac6e70c975351a37c17aaf2470 data/c/tags/item/nuggets/iron.json
+14ce48a9f72491e118b44e75ec88e8a71a9f222b data/c/tags/item/nuggets/iron.json
 232fb2b2f43f01823a0bc4dce793937f7e91e088 data/c/tags/item/nuggets/lead.json
 13b829180c58837b38405ea23284b8e0d4ec4ae9 data/c/tags/item/nuggets/lithium.json
 730269de318f479b4bbc4db7f82193cee50df116 data/c/tags/item/nuggets/magnesium.json
@@ -3181,6 +3180,7 @@ bcd4b2daf631937bf767651f58ec7c58d2307703 data/c/tags/item/nuggets/palladium.json
 b70690654be68cfa2da7b9ce98d9cc3d8849a2f0 data/c/tags/item/nuggets/pewter.json
 566d0995c1129c10746a312365b874662cac9c79 data/c/tags/item/nuggets/platinum.json
 762b670256a51889c2f3f21931cbb92f5b14feab data/c/tags/item/nuggets/plutonium.json
+3250e05fe0f47fac6e70c975351a37c17aaf2470 data/c/tags/item/nuggets/pure_iron.json
 e31234590b4dcd96fb8fdef9816cafe9b02b022e data/c/tags/item/nuggets/redstone_chromium.json
 1af0acc64aac7b349c1f91cd453ca2f9698e5852 data/c/tags/item/nuggets/shakudo.json
 efcbb73dc63519e6f22e74e0be054c36870adcac data/c/tags/item/nuggets/silicon.json
@@ -3319,7 +3319,6 @@ eb6e5589a603b559239ec1ebd02ddc60c5539bb6 data/c/tags/item/pipes/bitumen.json
 05301ecd9978165ae50bbe34660eec00b33278d7 data/c/tags/item/pipes/breeder_rod.json
 39beabde80443dd059c170a7aaa62caee26362ed data/c/tags/item/pipes/bronze.json
 04605baa12ecaf9c4ec4a635f9902dda62c60ed5 data/c/tags/item/pipes/cadmium.json
-e6edcb0399d041f0c33735f7f4e23b519c4e4589 data/c/tags/item/pipes/cast_iron.json
 e2759b766a639e16318c6512063c390651da3213 data/c/tags/item/pipes/cast_netherite.json
 63b3136fe2eb97f3122cbb6e2cc658dc16711d5f data/c/tags/item/pipes/cermet.json
 68d9e17ec45c0b9c224ffcb4414807b5c6cbffbe data/c/tags/item/pipes/chromium.json
@@ -3342,7 +3341,7 @@ f2b634377c199eb865bd8e69ee02b81d4a7b299b data/c/tags/item/pipes/hardened_steel.j
 bd936711394356c4dd64a3882b00de5d27d65b8f data/c/tags/item/pipes/ignitium.json
 833b74a7f4cd71e3291a09a5b9c71674ddd2ac20 data/c/tags/item/pipes/indium.json
 97f7fb8d3878ed989aa2a3b1c330123ac3591884 data/c/tags/item/pipes/invar.json
-d5c5d7bd4eaf27e0f91489aab42e4317647cc6d2 data/c/tags/item/pipes/iron.json
+e6edcb0399d041f0c33735f7f4e23b519c4e4589 data/c/tags/item/pipes/iron.json
 ca9e2532941ffd0461599597363755669fbd4df0 data/c/tags/item/pipes/lead.json
 957650e22b5a687489c23e95ed3cd5d934990052 data/c/tags/item/pipes/lithium.json
 c775d7e694280de612d9a55c46355f9061a95467 data/c/tags/item/pipes/magnesium.json
@@ -3364,6 +3363,7 @@ ddc180dcaadd62eff0e6fc1d16947fb0d02d2494 data/c/tags/item/pipes/polyester.json
 959a4bb4df5f016f46415e5aecb78d6eff818311 data/c/tags/item/pipes/polyethylene.json
 5573682aafe3fa73a05b842ae298b843b89e617b data/c/tags/item/pipes/polypropylene.json
 6b244d31c1d8c3a5d93abd991bf272b14ad8cd93 data/c/tags/item/pipes/polytetrafluoroethylene.json
+d5c5d7bd4eaf27e0f91489aab42e4317647cc6d2 data/c/tags/item/pipes/pure_iron.json
 5692a9cd5f515c73d719404c08b9998f60f07c16 data/c/tags/item/pipes/pvc.json
 12693fe300a6a9ad2861ab17debfa00d19ee8ac9 data/c/tags/item/pipes/redstone_chromium.json
 f4084feffda0d2c576ec3d29d6b799fd47ea5035 data/c/tags/item/pipes/shakudo.json
@@ -3476,7 +3476,6 @@ dc952d5e3f43f3943427e2f22a1f29f6804fbc66 data/c/tags/item/plates/electrum.json
 bf250d0d1265f430660aff3ef16c15b770bbf462 data/c/tags/item/plates/ignitium.json
 0a8bcf4e2afa6fec9d75fa663ac24229aa09127b data/c/tags/item/plates/indium.json
 11deb5436aa653dafa63599e3c0d695dc522a16e data/c/tags/item/plates/invar.json
-059be8e4de58fb65ccd02bd2368769ed359c875d data/c/tags/item/plates/iron.json
 b0b3f2da2bf37f71a1eb9845f485e07d596f590e data/c/tags/item/plates/lead.json
 e39715b3eb2c3fd200d2929a1442f5850a15dc29 data/c/tags/item/plates/lithium.json
 52f7d573e1c0eaa6862236b348e6f000169a9b07 data/c/tags/item/plates/magnesium.json
@@ -3497,6 +3496,7 @@ d0cee2e7c8e35084fb23490c6c768849b024a791 data/c/tags/item/plates/palladium.json
 3966d92904b9c029ac92d2addeb134fb24f1945d data/c/tags/item/plates/platinum.json
 5b8c4c674632430e8e0141dddd12d2168dc7d8ea data/c/tags/item/plates/plutonium.json
 56a83aaa99eab8f44d7d61f0967102dd040808d7 data/c/tags/item/plates/plywood.json
+059be8e4de58fb65ccd02bd2368769ed359c875d data/c/tags/item/plates/pure_iron.json
 f9515bf9dcbc9df839e316eab0a5373978250734 data/c/tags/item/plates/quartz_glass.json
 0351fa23ebdba8e987313179507d6b8abbf5eda1 data/c/tags/item/plates/redstone_chromium.json
 29b212520fec512acbe234302c31627d3339cadc data/c/tags/item/plates/resonarium.json
@@ -3589,7 +3589,6 @@ e1efc9c8206ff64fe0938642aef276c6a31fbb50 data/c/tags/item/pointed_bullets/brass.
 b9cb42086632acfe9d8fb6401f7f50438e4d8388 data/c/tags/item/pointed_bullets/breeder_rod.json
 628e9178d41b79525c54b1f07858a65f5de3063d data/c/tags/item/pointed_bullets/bronze.json
 dea4b2794327c9e920fcfbc72c61f461213bd75c data/c/tags/item/pointed_bullets/cadmium.json
-e0dc4ae6e10e9cd0ab18acb096a1872dce4da474 data/c/tags/item/pointed_bullets/cast_iron.json
 9f4a22f3e61cd6b494a1fd5ba763028b2bd52cb8 data/c/tags/item/pointed_bullets/cast_netherite.json
 2e22eca12b429668696ef9031f5483fdefaa7045 data/c/tags/item/pointed_bullets/cermet.json
 8de69d655156ddc8a69a2e85f9afdac97414c32c data/c/tags/item/pointed_bullets/chromium.json
@@ -3613,7 +3612,7 @@ d2c23e456f7919435d4816e5741b31a4d238ee89 data/c/tags/item/pointed_bullets/harden
 86cca054ad3947e18d577abfc3af6496891a8496 data/c/tags/item/pointed_bullets/indium.json
 19a12abc588e082ab5e07facac8d636dc12655a5 data/c/tags/item/pointed_bullets/invar.json
 2decec4663c8f0c3f8dcd0c9699ae5342dddc4d1 data/c/tags/item/pointed_bullets/iridium.json
-8bd8b01d941e258c84abe5995fe8e71ee857b20e data/c/tags/item/pointed_bullets/iron.json
+e0dc4ae6e10e9cd0ab18acb096a1872dce4da474 data/c/tags/item/pointed_bullets/iron.json
 a5ccc9910348fa5e01c130f059f142d19717ef3b data/c/tags/item/pointed_bullets/iron_bloom.json
 1d78711f7e1ee7c3cddd76b8d2ae587013d48376 data/c/tags/item/pointed_bullets/lead.json
 f307902d08c608f12f0d86e3d84b17144d19ec69 data/c/tags/item/pointed_bullets/lithium.json
@@ -3637,6 +3636,7 @@ b981cb75fad8e12ff3c70e0f0b1e1897b8ec814d data/c/tags/item/pointed_bullets/pluton
 c518bf4620219572bb2e6f5e521d4265a11ba2ab data/c/tags/item/pointed_bullets/polyethylene.json
 5213f19e9d36398b96b91c7abfa896e1e05c0a51 data/c/tags/item/pointed_bullets/polypropylene.json
 3ac1690d5ac64ade0f0f84ec6cbaa471153a38dc data/c/tags/item/pointed_bullets/polytetrafluoroethylene.json
+8bd8b01d941e258c84abe5995fe8e71ee857b20e data/c/tags/item/pointed_bullets/pure_iron.json
 b0feb265dcd1e3019f4410d79c2e7f8cf96203c0 data/c/tags/item/pointed_bullets/pvc.json
 4d9d49c4269f4608547c6bc68ae8f54020264542 data/c/tags/item/pointed_bullets/rare_earth_magnet.json
 c1d8d218785c7c1a3f047f6fe29aca581e056af1 data/c/tags/item/pointed_bullets/redstone_chromium.json
@@ -3727,7 +3727,6 @@ eb505748025f81129fbb26c2e698da14ecf6da98 data/c/tags/item/rivets/brass.json
 e89cc27780502706174124ace9608caf77a318a7 data/c/tags/item/rivets/breeder_rod.json
 7a5c3a15992e1686fac0db25505abbc04010fb3f data/c/tags/item/rivets/bronze.json
 62191bffc6fd2c2006f3c82e924609d725057d73 data/c/tags/item/rivets/cadmium.json
-f3c0798702f26284eeb35a660f43c8f43e59ebed data/c/tags/item/rivets/cast_iron.json
 046f606cd2c1e917a5b478d76c80591c313ede3a data/c/tags/item/rivets/cast_netherite.json
 35f2e15a31ae71bf7b2170cad189faa5d403d33b data/c/tags/item/rivets/cermet.json
 3e49fc6db3d8d8e5a3b74a7883cc82447cfc2634 data/c/tags/item/rivets/chromium.json
@@ -3751,7 +3750,7 @@ f6627468cdd20d3759c7daba33032c8b5b3b6873 data/c/tags/item/rivets/ignitium.json
 82ccd18c7ebe0605ffeb8dd40e0d0e5f39aa5191 data/c/tags/item/rivets/indium.json
 b42f3d09b0daa035624fd51dbe799504fe0ba6b2 data/c/tags/item/rivets/invar.json
 4619e4a6736433442646dc966e60b00a287e18a5 data/c/tags/item/rivets/iridium.json
-8bd0cf493862e7e6e6937bef75833019f5fd4f6b data/c/tags/item/rivets/iron.json
+f3c0798702f26284eeb35a660f43c8f43e59ebed data/c/tags/item/rivets/iron.json
 c3b6037bc49151020ef0cfb69752369cb306851a data/c/tags/item/rivets/iron_bloom.json
 4c61e3230668be91a6227b470eaaceb768c2ed15 data/c/tags/item/rivets/lead.json
 0ab053f6ca0d4fcc95a5c3280492941b26e8f717 data/c/tags/item/rivets/lithium.json
@@ -3770,6 +3769,7 @@ d73dfc114865a3e535360fd2d42965ea425c68a3 data/c/tags/item/rivets/palladium.json
 7e26050e377f445f95a936cb4acb995b46966863 data/c/tags/item/rivets/platinum.json
 b2be6917ae617ae251c17566574238b60edb4a1f data/c/tags/item/rivets/plutonium.json
 4194a75b0e2d471d33dd42f1627b73244de46ab0 data/c/tags/item/rivets/plutonium_fuel_rod.json
+8bd0cf493862e7e6e6937bef75833019f5fd4f6b data/c/tags/item/rivets/pure_iron.json
 0155e32aa8cfb7e3b92e796473f3494b02065121 data/c/tags/item/rivets/rare_earth_magnet.json
 ab7393822a3e937269dc34673a7269012bb6c9dd data/c/tags/item/rivets/redstone_chromium.json
 2fa9d73102c057c22b87dc9b148809acc56ffd8a data/c/tags/item/rivets/redstone_filament.json
@@ -3891,7 +3891,6 @@ df7aa0fcf0d31094dc82a824a622b4784da4653b data/c/tags/item/rods/high_speed_steel.
 321c3634efa74618949dc4aea70feb473226038f data/c/tags/item/rods/ignitium.json
 6857be20d8479b22ff9d327ccf3a6cd5e2f2eb4b data/c/tags/item/rods/indium.json
 393e1f4c53e01181cb313a8ee6bc987f1a715eb8 data/c/tags/item/rods/invar.json
-93b2e06b06157f9bfcb8f96f27950c2dc44f6a0b data/c/tags/item/rods/iron.json
 7b0d7acad71706841c3a333026dfa9b6ad8c2f8d data/c/tags/item/rods/lead.json
 e784daa29338f81f802e8bb81f929a982cd5575d data/c/tags/item/rods/lithium.json
 6db313c2b08714aaa78fbbd94d4440c9f7ef4335 data/c/tags/item/rods/magnesium.json
@@ -3915,6 +3914,7 @@ bcd10ab8189beba09a948dfe4e89a94d69d78838 data/c/tags/item/rods/plutonium.json
 72a4325a3773e99a4da467fb29dab277b558b4e2 data/c/tags/item/rods/plywood.json
 b7f0c810479d1cf7ed3a60f6c43a2a4162c9d32b data/c/tags/item/rods/pork.json
 b5dd55031f5a00e6ae6472ac6d8ace807c4d15bd data/c/tags/item/rods/pufferfish.json
+93b2e06b06157f9bfcb8f96f27950c2dc44f6a0b data/c/tags/item/rods/pure_iron.json
 923a9b39e86de6a58f9bce9c352759b1a7fc9290 data/c/tags/item/rods/quartz_glass.json
 48501c1d23a427b5695da05bf8129b1150e52aaa data/c/tags/item/rods/rabbit.json
 7bf11d25fc410027338d1b274435fde63dfd7138 data/c/tags/item/rods/rabbit_hide.json
@@ -4007,7 +4007,6 @@ cfa004d746e062231acc75380519e3964b9f7f9b data/c/tags/item/rolled_machine_bolts/b
 86495fef0d4f72bf7588876be66325221c7ad04b data/c/tags/item/rolled_machine_bolts/breeder_rod.json
 75ecfad7f36aba3ea79cc5abc9d055134b4a32f4 data/c/tags/item/rolled_machine_bolts/bronze.json
 5b346736075bf2eab78101e29914198bb766ba0f data/c/tags/item/rolled_machine_bolts/cadmium.json
-a3f353889d49fecb9236739df08340bdbc7ffad4 data/c/tags/item/rolled_machine_bolts/cast_iron.json
 aaa89230c76d1f374b71856331a85ed188ce0f19 data/c/tags/item/rolled_machine_bolts/cast_netherite.json
 c3b278305a5dbcb5e67dc0824ec6f7c36d72b5ff data/c/tags/item/rolled_machine_bolts/cermet.json
 35f00c2b9966f39347a725122fd782a1e4c9cd1e data/c/tags/item/rolled_machine_bolts/chromium.json
@@ -4032,7 +4031,7 @@ a9c0436a1c63a31edcd84ee6f27a62c1ab9f5040 data/c/tags/item/rolled_machine_bolts/h
 ddcadccad9a92f7e810ac929b593c6c990fa7764 data/c/tags/item/rolled_machine_bolts/indium.json
 9b22c5d7a81cd16ff06951abcf51a0cf0537085d data/c/tags/item/rolled_machine_bolts/invar.json
 e7c6ca3ea7f8e879b8bfccc7c5f3b3b73e598577 data/c/tags/item/rolled_machine_bolts/iridium.json
-549d4b012c78d3bcd83f85447ae254be7623e18a data/c/tags/item/rolled_machine_bolts/iron.json
+a3f353889d49fecb9236739df08340bdbc7ffad4 data/c/tags/item/rolled_machine_bolts/iron.json
 2709cff45ab7a2a7e7a3c37538fd72b91ecca303 data/c/tags/item/rolled_machine_bolts/iron_bloom.json
 61e3ebdc0993fa2b248c99b9bd0f616f11268da0 data/c/tags/item/rolled_machine_bolts/lead.json
 e81a03e000782599fea37498f29e898eb7f5b39c data/c/tags/item/rolled_machine_bolts/lithium.json
@@ -4051,6 +4050,7 @@ a5f55220ebf8333716b9cb267ace15ee1cc5c134 data/c/tags/item/rolled_machine_bolts/o
 7e1db76d453063e3fd8d4ac040d6071e1c34b4d0 data/c/tags/item/rolled_machine_bolts/platinum.json
 18e78e8eba815375c6ba201400a6ca2c14b57390 data/c/tags/item/rolled_machine_bolts/plutonium.json
 f119bea0cec5d6f919290af854835f3105163c73 data/c/tags/item/rolled_machine_bolts/plutonium_fuel_rod.json
+549d4b012c78d3bcd83f85447ae254be7623e18a data/c/tags/item/rolled_machine_bolts/pure_iron.json
 4f8be40dd38aaf69157088450d4044bfb23459c8 data/c/tags/item/rolled_machine_bolts/rare_earth_magnet.json
 1f242cb84b1e7fcce263bb0380cd28df72c5f217 data/c/tags/item/rolled_machine_bolts/redstone_chromium.json
 b34ebf9b1a8f4f430623636889e18f870db88ef8 data/c/tags/item/rolled_machine_bolts/redstone_filament.json
@@ -4142,7 +4142,6 @@ a8411faf968cec717aeaf6b4abd49da622f4872c data/c/tags/item/rolled_screws/black_st
 5cca881baef9d05985cac01ef7fbcbe4e1b829bc data/c/tags/item/rolled_screws/breeder_rod.json
 83fceb097ed28b1bb871549781307d51189edcb0 data/c/tags/item/rolled_screws/bronze.json
 365b41542ef89543da26d59dd24cd605c9ec7605 data/c/tags/item/rolled_screws/cadmium.json
-c5dea5b3b4bb8c9c526b920de25bca383e8d2ab2 data/c/tags/item/rolled_screws/cast_iron.json
 cc1e8dc0d5acfb88ca1541d6e155aecb342305bb data/c/tags/item/rolled_screws/cast_netherite.json
 9457e1b185b267b6431410277d3c1ba5168a77c6 data/c/tags/item/rolled_screws/cermet.json
 6d9e4d37c341c31a228cbff373c523b43a2dc8f6 data/c/tags/item/rolled_screws/chromium.json
@@ -4167,7 +4166,7 @@ ce04a7943ca1373f6e81491f1e2b82ba0a3f0666 data/c/tags/item/rolled_screws/high_spe
 8e5cb857c9b09632780422931ee1ec191dc25a1b data/c/tags/item/rolled_screws/indium.json
 2c61f5dbb0c83265498b46fab5301c7c3bfa0dec data/c/tags/item/rolled_screws/invar.json
 2618e2d3d75742c6e671a5bc334c3d58b8787203 data/c/tags/item/rolled_screws/iridium.json
-b887dcae5da2a09b96bbd1cd64abfc7ff785a361 data/c/tags/item/rolled_screws/iron.json
+c5dea5b3b4bb8c9c526b920de25bca383e8d2ab2 data/c/tags/item/rolled_screws/iron.json
 e7411310c687b2163a06c2fe9427bd557634e782 data/c/tags/item/rolled_screws/iron_bloom.json
 560e1e7e2b272543dcf39ae518c0305c0e4040b1 data/c/tags/item/rolled_screws/lead.json
 0f90cd265f005c3a2eeaac40d18edd4fa9143b14 data/c/tags/item/rolled_screws/lithium.json
@@ -4186,6 +4185,7 @@ f2f38ac86a20745399c719ea5a1dfc76b46a6389 data/c/tags/item/rolled_screws/molybden
 c16d722cd0d918a78a742ee0ab311552a0e972fa data/c/tags/item/rolled_screws/platinum.json
 d67694802df91032c0e3aa61da192d8f44f44a12 data/c/tags/item/rolled_screws/plutonium.json
 8dc63b6590e063f92b9d24441cd28cbab9751e92 data/c/tags/item/rolled_screws/plutonium_fuel_rod.json
+b887dcae5da2a09b96bbd1cd64abfc7ff785a361 data/c/tags/item/rolled_screws/pure_iron.json
 4e0321416ebe3003ba455333e684c2195ca9e75c data/c/tags/item/rolled_screws/rare_earth_magnet.json
 2544bb95fce9793395630d12649f6be1d8979f9f data/c/tags/item/rolled_screws/redstone_chromium.json
 a1a300d0c1be966aee9ed952a7e5394e56e8c045 data/c/tags/item/rolled_screws/redstone_filament.json
@@ -4277,7 +4277,6 @@ cb3b42b5b576ab16fa09b7a175816e68b8814ef6 data/c/tags/item/rolled_thread_rods/bis
 aec9279f4f239e897418ddf658aac89a0bae0cd0 data/c/tags/item/rolled_thread_rods/breeder_rod.json
 1dd92a7b07a2d31717845ca330be9e322dc6dc2a data/c/tags/item/rolled_thread_rods/bronze.json
 0c3c88ea914e8585ed0aada2afee9e93ba814806 data/c/tags/item/rolled_thread_rods/cadmium.json
-8a33ee255a0188bcc7c6f14543d0dd625d03fdb5 data/c/tags/item/rolled_thread_rods/cast_iron.json
 1b2aff16ce4f8a70aa4ebd70b12a0481c408c883 data/c/tags/item/rolled_thread_rods/cast_netherite.json
 36b97451cd2935438687d22caa3c135045ced8fb data/c/tags/item/rolled_thread_rods/cermet.json
 e665919ff4a15a399ba0b2147b37898f74559d8a data/c/tags/item/rolled_thread_rods/chromium.json
@@ -4302,7 +4301,7 @@ f9f4b495ec05b8a99b67ff1ab96b5f162a0d8d4c data/c/tags/item/rolled_thread_rods/ign
 0367d52e4aba3379a38246f76997d7a513a63372 data/c/tags/item/rolled_thread_rods/indium.json
 5ed3bc0b6913dcbedc786d4fc61bc1dd7bf15bf8 data/c/tags/item/rolled_thread_rods/invar.json
 c52b1070e405cd0ce8ce974508f90b86299ce6ec data/c/tags/item/rolled_thread_rods/iridium.json
-40add38ac861e511aaad67bb2190a98297b63e84 data/c/tags/item/rolled_thread_rods/iron.json
+8a33ee255a0188bcc7c6f14543d0dd625d03fdb5 data/c/tags/item/rolled_thread_rods/iron.json
 e99884e047a4cdb90f9efda5ed201cba1b72bfbf data/c/tags/item/rolled_thread_rods/iron_bloom.json
 085ef95f2cccfeae56a174ac573054a49c337d16 data/c/tags/item/rolled_thread_rods/lead.json
 7700a1112a0541ab63770248826feaf4d5a5a61b data/c/tags/item/rolled_thread_rods/lithium.json
@@ -4321,6 +4320,7 @@ d597a26604c5219b30a19bdda814ce6d72bd63d5 data/c/tags/item/rolled_thread_rods/pew
 5a8e8242e763b0494b62ab0a9349455d50e84e65 data/c/tags/item/rolled_thread_rods/platinum.json
 102048ca7d25d65ef503c002e80e78d9521ac0e4 data/c/tags/item/rolled_thread_rods/plutonium.json
 19bafb2da257bca3f0bad1ad415a67df1e9003cc data/c/tags/item/rolled_thread_rods/plutonium_fuel_rod.json
+40add38ac861e511aaad67bb2190a98297b63e84 data/c/tags/item/rolled_thread_rods/pure_iron.json
 e9e5d5f7ce75f8fce05ede5da3b4b7bc0b2310ed data/c/tags/item/rolled_thread_rods/rare_earth_magnet.json
 10d052a776f14f5b1b1f3b8dc80d949e093f9cb5 data/c/tags/item/rolled_thread_rods/redstone_chromium.json
 18be4a990755248e270716f8c2476331afe6a990 data/c/tags/item/rolled_thread_rods/redstone_filament.json
@@ -4416,7 +4416,6 @@ da4aa18f99ed3d908ab5bca709197da2f6c4beef data/c/tags/item/round_balls/brass.json
 57481c4bdfdfe891a121062002b907bc9cdda275 data/c/tags/item/round_balls/breeder_rod.json
 bf5158ddd2992219f6a0092f57b5cb43a3b4c370 data/c/tags/item/round_balls/bronze.json
 42aa26929fdc00fdf637c5aaae26e61b9052a636 data/c/tags/item/round_balls/cadmium.json
-6c012accb5fc1f0974fbafced74446f923236fc4 data/c/tags/item/round_balls/cast_iron.json
 9cbd3035afe09ed382ff915ecabc162625d81e62 data/c/tags/item/round_balls/cast_netherite.json
 07e105f23c5ebc1861ad6a3f58e0ba2a4db7471a data/c/tags/item/round_balls/cermet.json
 64b11aa49ee53ff624bb64167d93240934e9afc4 data/c/tags/item/round_balls/chromium.json
@@ -4440,7 +4439,7 @@ b97805b7c414567bf0841c6419c12d80dcb67a70 data/c/tags/item/round_balls/hardened_s
 be782fce52a1dd1c80a6658c9c84a6c4d0ee988b data/c/tags/item/round_balls/indium.json
 b3c521ac7f529fc96550a4390762511568f164ae data/c/tags/item/round_balls/invar.json
 7877b101e6b68b5400c9300a9f94d92c82b9bb24 data/c/tags/item/round_balls/iridium.json
-7fc720ef3d4ffc414d3d5eea356608202d82d397 data/c/tags/item/round_balls/iron.json
+6c012accb5fc1f0974fbafced74446f923236fc4 data/c/tags/item/round_balls/iron.json
 a4baab6df5ecd51f9ce3b4610c6f1864201bdcd5 data/c/tags/item/round_balls/iron_bloom.json
 29bcc23d347ce934ad48f46db7bb2f1905197be7 data/c/tags/item/round_balls/lead.json
 32326120428af6a038dd21d769ab306978c00280 data/c/tags/item/round_balls/lithium.json
@@ -4464,6 +4463,7 @@ b5c8d61c3fad0ebbd208ab216c43c30d2804ccb7 data/c/tags/item/round_balls/polyester.
 ce265ffc517cf5fe21ab73aa14486dfb8a6f5314 data/c/tags/item/round_balls/polyethylene.json
 d0b4e068f239317fe1c8a4b0a9aba32a4c1364ae data/c/tags/item/round_balls/polypropylene.json
 b34a53c629a63caa1da1127ff7715e3ee892a511 data/c/tags/item/round_balls/polytetrafluoroethylene.json
+7fc720ef3d4ffc414d3d5eea356608202d82d397 data/c/tags/item/round_balls/pure_iron.json
 73c0ebeeec0c8ffae67e08a4f943709e661b510b data/c/tags/item/round_balls/pvc.json
 5b750671a847f472863c0bc9fbfd88a202502db4 data/c/tags/item/round_balls/rare_earth_magnet.json
 f7067c856e0b1fa0d580d853b0e9ba38642e215a data/c/tags/item/round_balls/redstone_chromium.json
@@ -4570,7 +4570,6 @@ f687d5321d8a2e97807327be6289418f117be345 data/c/tags/item/scraps/gallium.json
 6f38198855f8a3dc0ce03260c6fea3c56b8da38f data/c/tags/item/scraps/ignitium.json
 5776a2e54da245a0b9c24ac6967dd4fcf9dd673a data/c/tags/item/scraps/indium.json
 fc1ef46aa8f0680eec47a06eb42dedd61658d413 data/c/tags/item/scraps/invar.json
-d07633a617703aa501e1982a301125dd25297282 data/c/tags/item/scraps/iron.json
 1f7db70d8a0e7500b7db722a3382f62e983717fe data/c/tags/item/scraps/lead.json
 731e0353bfb273b9650ad9596fdc845906fe0080 data/c/tags/item/scraps/lithium.json
 ebfd6da342cd48d58cb5ca71fb4428719fd81d6b data/c/tags/item/scraps/magnesium.json
@@ -4586,6 +4585,7 @@ fd1536557fc9f00aa449d0240667ef368aea1bbf data/c/tags/item/scraps/netherite_blend
 fa06f44b6b403c0e05e97bdd326598f55e64c2b1 data/c/tags/item/scraps/pewter.json
 417277939d9f4177066d6af03af734cc88ce8d2f data/c/tags/item/scraps/platinum.json
 99f750588e27b6b4315a12b406adfeba0f40b773 data/c/tags/item/scraps/plutonium.json
+d07633a617703aa501e1982a301125dd25297282 data/c/tags/item/scraps/pure_iron.json
 7e269e85e48dac94e439ba01ab6a53e84e72823f data/c/tags/item/scraps/redstone_chromium.json
 f7e4572cb6d146d98f9e12c8f74f2d7859e5f689 data/c/tags/item/scraps/shakudo.json
 b4616ea0ef2bc5e74e357d0cd650af898ebb8094 data/c/tags/item/scraps/silver.json
@@ -4665,7 +4665,6 @@ b3711fe54f0990cfa36ec483cfeb07b84d7f40ff data/c/tags/item/screws/bismuth.json
 71b2a7467998c68de6af16af16bc40fd273b9231 data/c/tags/item/screws/breeder_rod.json
 e79db64b8ccca1841cf38f444e57e9df7a85ad89 data/c/tags/item/screws/bronze.json
 8c286e713fec6eced636e61519dbc5b4493caf52 data/c/tags/item/screws/cadmium.json
-df7dbd5dfc60d4cf65927f8d93d2af8b11080ef7 data/c/tags/item/screws/cast_iron.json
 0e1d9daab43b6cf854285f8862746f09a7108590 data/c/tags/item/screws/cast_netherite.json
 33905498eae464df28e4377c58110dc78dfeaf24 data/c/tags/item/screws/cermet.json
 b648828ed207a7d81035b4a6a3eb3903c18b0055 data/c/tags/item/screws/chromium.json
@@ -4689,7 +4688,7 @@ ae09f7a91b5755e5fa2b57e1333999fae5d883db data/c/tags/item/screws/ignitium.json
 901320e4c4d93a5df0c5388bc3593f53c3797e6e data/c/tags/item/screws/indium.json
 7c4870248697580f1a798b9854b8e8c242fd3d0e data/c/tags/item/screws/invar.json
 b03421ca4497373d53263fc5c77bf1f7b0f76d6b data/c/tags/item/screws/iridium.json
-f4c5597cb285a56a3640c42cb815cee9ae10dd84 data/c/tags/item/screws/iron.json
+df7dbd5dfc60d4cf65927f8d93d2af8b11080ef7 data/c/tags/item/screws/iron.json
 aefd323070dd8abbde007265ce6aa9e93a968ddc data/c/tags/item/screws/iron_bloom.json
 373655648e487ddd22b20e6873fef44de8297ecb data/c/tags/item/screws/lead.json
 bdb02bab23f21f174a32efab602ef9ea63bb7916 data/c/tags/item/screws/lithium.json
@@ -4708,6 +4707,7 @@ c87297516242dfeda9a910e55507ab23a7d87d1b data/c/tags/item/screws/nickel.json
 08aef30b6b50f95fd863a85e9cc8dccc9c17ca10 data/c/tags/item/screws/platinum.json
 6b4f83a5640d810e564c031a4686b0fec71fb90f data/c/tags/item/screws/plutonium.json
 26739d7bf8565fa6f02badf5050111f1fae4abaf data/c/tags/item/screws/plutonium_fuel_rod.json
+f4c5597cb285a56a3640c42cb815cee9ae10dd84 data/c/tags/item/screws/pure_iron.json
 5d110778879db9298845927f5b4f3eab5b030681 data/c/tags/item/screws/rare_earth_magnet.json
 ae4f8a2a7c448a7e2c06a7bdde979db8ad5c79c4 data/c/tags/item/screws/redstone_chromium.json
 56d28becc6d5bc760b039f7a89da8fdcc1736023 data/c/tags/item/screws/redstone_filament.json
@@ -4847,7 +4847,6 @@ f5c0e15f51e6fc0658ba760deb01250ee8dd6506 data/c/tags/item/storage_blocks/cadmium
 f2142b251301087f8fc46135439e630fadf43018 data/c/tags/item/storage_blocks/carbon_carbon.json
 8f511767f76d768d7796505e044cda708379df7f data/c/tags/item/storage_blocks/carbon_carbon_porous.json
 9f8b4374fc1a261a5e36dbfb4064228530b0d44e data/c/tags/item/storage_blocks/carbon_fibre.json
-bc25e94ac1db7f5244adecf6ac0ff2275cbcd915 data/c/tags/item/storage_blocks/cast_iron.json
 c715cff39eea1ea11d0bdceb5aac6623ef0a294b data/c/tags/item/storage_blocks/ceramic_steel_armour.json
 59c2516d3288e39509c2c4d5cf080359bb3bf46d data/c/tags/item/storage_blocks/cermet.json
 e38f624eaffb0b8494ad00b84f32b0dd8b07e6c8 data/c/tags/item/storage_blocks/chicken.json
@@ -4887,7 +4886,7 @@ d3039b64e9260a208d77641b48e48f3e8e8ef13a data/c/tags/item/storage_blocks/granite
 65ec07a865a088a2e4073b83b4681c015d5ef1de data/c/tags/item/storage_blocks/ignitium.json
 f24939ce189418f599bcb589d34a013466e62906 data/c/tags/item/storage_blocks/indium.json
 e70e35d02ca4d1c7605273c0318bce42614e35ff data/c/tags/item/storage_blocks/invar.json
-29f6cb591cd56bcc8e210a463c7a330fa4d46369 data/c/tags/item/storage_blocks/iron.json
+bc25e94ac1db7f5244adecf6ac0ff2275cbcd915 data/c/tags/item/storage_blocks/iron.json
 b970d60e1a54880be41ea0e8e714917f2baadcd8 data/c/tags/item/storage_blocks/lapis.json
 e6b37ef122e81df2302b135a6ef129b21bb85d21 data/c/tags/item/storage_blocks/lead.json
 edd97b27ef06c2c267961a9614b3da79159b5c05 data/c/tags/item/storage_blocks/lithium.json
@@ -4924,6 +4923,7 @@ ef426ab66bb216126700687803941e970e1c6a8a data/c/tags/item/storage_blocks/polyeth
 419fa4c8817d0a8606f7c0f7d1aedf35c85cf45a data/c/tags/item/storage_blocks/pork.json
 60c77ce35e2b56290826415808e12e0745550eb1 data/c/tags/item/storage_blocks/prismarine.json
 91e1f45ddbad5393d628244730995d8694bee473 data/c/tags/item/storage_blocks/pufferfish.json
+29f6cb591cd56bcc8e210a463c7a330fa4d46369 data/c/tags/item/storage_blocks/pure_iron.json
 5ace18bbc6cfa4d9d0b51339637d6b350f601619 data/c/tags/item/storage_blocks/purpur.json
 3f217578ad47cf78c0b73ac8b81ff57e8237f6f4 data/c/tags/item/storage_blocks/pvc.json
 3919185ac9beadef5c7ee827707943bb562d42e3 data/c/tags/item/storage_blocks/quartz.json
@@ -5050,7 +5050,6 @@ db29e3addac6b190f7862c687496ad0276aceefd data/c/tags/item/swarfs/black_steel.jso
 327437baa459ac0fbf95ec3b997ce48fb02f4d62 data/c/tags/item/swarfs/breeder_rod.json
 ac861553935644e71c03ec9d7aa0688356117871 data/c/tags/item/swarfs/bronze.json
 107412c2dbf276d97d9a3b379e7ccf716577da01 data/c/tags/item/swarfs/cadmium.json
-ab35e3779d164a69bdeb11b4d56ea17161167f86 data/c/tags/item/swarfs/cast_iron.json
 8f0d556680020f383ad77137a61cfc8dc27db8f8 data/c/tags/item/swarfs/cast_netherite.json
 93ad6214d100b998e6516bf911d1177f2f67d9cc data/c/tags/item/swarfs/cermet.json
 5bd49a58433cd9b308206199446a95d70a58e47c data/c/tags/item/swarfs/chromium.json
@@ -5073,7 +5072,7 @@ d19050cf8ff811cbe590341c27ce0f87e960f248 data/c/tags/item/swarfs/hardened_steel.
 41352730d67ebc039cbd7b9959448571ec795ba0 data/c/tags/item/swarfs/ignitium.json
 61e264d3ede51641e86ca67c1448a08041ec3ead data/c/tags/item/swarfs/indium.json
 e055c11788613d0db536c6933ec014439d89cfc8 data/c/tags/item/swarfs/invar.json
-94b23d360578b279b56fe0dd6484486a977ec5b4 data/c/tags/item/swarfs/iron.json
+ab35e3779d164a69bdeb11b4d56ea17161167f86 data/c/tags/item/swarfs/iron.json
 5c4ac74772070612a4b8070143b17431fcefd81a data/c/tags/item/swarfs/lead.json
 6881044d05c46d2f07ac8f5bde2f191fcc2a4a7e data/c/tags/item/swarfs/lithium.json
 4f4c8fec6a5e1dd7c891a2dd78a91e4a8c25ebe6 data/c/tags/item/swarfs/magnesium.json
@@ -5090,6 +5089,7 @@ ba68fa854955c1b14a5bcd14b83f21068dc67e5d data/c/tags/item/swarfs/pewter.json
 85adc58a44b06b8145c2f3e82849a5bd1a812845 data/c/tags/item/swarfs/platinum.json
 bf87f1bbcad4fc8ddd89d2c5b4659ebf76d8a65e data/c/tags/item/swarfs/plutonium.json
 ec7244871224d1c2bb0fda85b9dac0cd9f632ebe data/c/tags/item/swarfs/plutonium_fuel_rod.json
+94b23d360578b279b56fe0dd6484486a977ec5b4 data/c/tags/item/swarfs/pure_iron.json
 d605ae351b6c20d13a7b98e3b0f5ba060f8b2fd6 data/c/tags/item/swarfs/redstone_chromium.json
 54e634bed727df33d17f5641716d64ae1b3d14fa data/c/tags/item/swarfs/shakudo.json
 c449c192a82e965c654df70d0d7d47ca4412e544 data/c/tags/item/swarfs/silver.json
@@ -5230,7 +5230,6 @@ d5b6efb1fc377e97d45baf3866b097ba5b4dd038 data/c/tags/item/turned_rods/high_speed
 b7d9f86f99ead84aa398b0d35258dbf51e2d99fc data/c/tags/item/turned_rods/ignitium.json
 de8d647bd3bbc05a1e1acb724f4824d62b128612 data/c/tags/item/turned_rods/indium.json
 d84b74cf9a076945f0b0d52b9ae9056f625ac046 data/c/tags/item/turned_rods/invar.json
-e67c6ddc99ccaf32a97c987067186883113a54a4 data/c/tags/item/turned_rods/iron.json
 b0ee835ec29b0bae0a7673c21480245d4ac4050a data/c/tags/item/turned_rods/lead.json
 64f9055f7d60d017f425b509efe17e287932efd3 data/c/tags/item/turned_rods/lithium.json
 b9c4e17cbce726abb581724c5dc58b4486af968d data/c/tags/item/turned_rods/magnesium.json
@@ -5246,6 +5245,7 @@ f0579a96c272a4aa17925ebbc02f2a5260a564eb data/c/tags/item/turned_rods/nichrome.j
 ec137445db36228f7e7d98b753b0893982ae3489 data/c/tags/item/turned_rods/pewter.json
 5f4d79d576dd8066ce2dc038a180d16095d5cea8 data/c/tags/item/turned_rods/platinum.json
 2e5e80fa759704429e448b7ac4a7b0d8da36108e data/c/tags/item/turned_rods/plutonium.json
+e67c6ddc99ccaf32a97c987067186883113a54a4 data/c/tags/item/turned_rods/pure_iron.json
 42bb8483e491c3f9eb9a2de12c91dbae201f0d5f data/c/tags/item/turned_rods/redstone_chromium.json
 69fd34a6ad9c3c7fbbd097852f1ebf9fa7f5ee75 data/c/tags/item/turned_rods/shakudo.json
 a3ccca7098092665c2cab7a71995ae2d3068c24c data/c/tags/item/turned_rods/silver.json
@@ -5326,7 +5326,6 @@ dfe6f32c50ef2e2fb9c0ad5fd7df7476733f763c data/c/tags/item/welding_rods/black_ste
 2bc680688524a682e93767ed9d415afaea00372c data/c/tags/item/welding_rods/breeder_rod.json
 27bad86208f8ed486f7792e021a2432e2c2cd39e data/c/tags/item/welding_rods/bronze.json
 b5c60977526901cacb81e97faa90879bcb33d9f0 data/c/tags/item/welding_rods/cadmium.json
-3338a8f927b2a1478f097d4adfc3f0ea455efe4d data/c/tags/item/welding_rods/cast_iron.json
 17dc69f76f3023bf07d826bbf1f63ad6192a5572 data/c/tags/item/welding_rods/cast_netherite.json
 f5f2f7178d9d01082af3507989becb64c42cce01 data/c/tags/item/welding_rods/cermet.json
 f87148ec50f113cf11a19c4df0875e4e7771ee7c data/c/tags/item/welding_rods/chromium.json
@@ -5350,7 +5349,7 @@ f517a75acc2ffd6d7ecce028f3415bcbc51870c2 data/c/tags/item/welding_rods/ignitium.
 6b022c0d3a5042ff585b03f326ccf9e05070d6f6 data/c/tags/item/welding_rods/indium.json
 4c8a35f0370c909ed2029a42fbcdffd945691af5 data/c/tags/item/welding_rods/invar.json
 c19f8014b39781912ec8a191a304dc2772e4a254 data/c/tags/item/welding_rods/iridium.json
-e5a8b7e8a3732fc40c16661f7e7c7c031168d522 data/c/tags/item/welding_rods/iron.json
+3338a8f927b2a1478f097d4adfc3f0ea455efe4d data/c/tags/item/welding_rods/iron.json
 0f4410bfc7f6042895800afbedd5863cf3fdad40 data/c/tags/item/welding_rods/iron_bloom.json
 e0bba68d802bd8a5c74a4556da422ec341491f3f data/c/tags/item/welding_rods/lead.json
 7df864c9571ac67343b59c638467aaae24a401f2 data/c/tags/item/welding_rods/lithium.json
@@ -5369,6 +5368,7 @@ f4126f236d94d0095378a62452a646633fa34f4c data/c/tags/item/welding_rods/osmium.js
 18571401fc684e442e79121eea9db1082e2ba4b1 data/c/tags/item/welding_rods/platinum.json
 248c759508a6d7716d8ebb9b2b2b1b5de18d2ccf data/c/tags/item/welding_rods/plutonium.json
 0a475161d8f6591f1f31248c7b27b398c58aa807 data/c/tags/item/welding_rods/plutonium_fuel_rod.json
+e5a8b7e8a3732fc40c16661f7e7c7c031168d522 data/c/tags/item/welding_rods/pure_iron.json
 d6d23e6b4f366c15ee9796fc1c20dafa6c3ee2d9 data/c/tags/item/welding_rods/rare_earth_magnet.json
 024556eaa2b78398ee06eefd57eec23c4f9f7a17 data/c/tags/item/welding_rods/redstone_chromium.json
 bb0ab7c3a23ef6484eca1c5b22e2170fe69c4e03 data/c/tags/item/welding_rods/redstone_filament.json
@@ -5475,7 +5475,6 @@ a6407689839de9daa0ee4ede71166faeb5e61848 data/c/tags/item/wires/gallium.json
 7f32d833f8175e17c54263d9c8340cb3d2e57924 data/c/tags/item/wires/ignitium.json
 32689d0d84b157dd40ab91482fc13dad859096e9 data/c/tags/item/wires/indium.json
 4ec7fe80325ee40016694e80b8cd5bf602bd263e data/c/tags/item/wires/invar.json
-d742035b07ebc89b223df058b95d30096c73cc05 data/c/tags/item/wires/iron.json
 99ed0674b46c64230ab794955d975ea198635db3 data/c/tags/item/wires/lead.json
 80fb705ab02b520102ec16e778057efbb5563e4d data/c/tags/item/wires/lithium.json
 4dee0745bc0f72c225eee110cdd6bffa839c5b4a data/c/tags/item/wires/magnesium.json
@@ -5490,6 +5489,7 @@ b630c28d107cde442b4dce85297c1693d9cf4d38 data/c/tags/item/wires/nichrome.json
 5801c9a9d0f07ba80bc74ecbd8986f6c8107d844 data/c/tags/item/wires/pewter.json
 93a8560e3d7aa6f8e9b5586e915a08d674135a54 data/c/tags/item/wires/platinum.json
 5f3e84079bf857666c5e8a2d2a88c738eac9d36b data/c/tags/item/wires/plutonium.json
+d742035b07ebc89b223df058b95d30096c73cc05 data/c/tags/item/wires/pure_iron.json
 abf075d8e8e8a704612e1382354c774d95886aaa data/c/tags/item/wires/redstone_chromium.json
 6423c5c2fb58107b950d2f61e5af5301a0c84e6f data/c/tags/item/wires/redstone_filament.json
 a01faa3cf81f0ebdc4ad58feef7915736d7fcd04 data/c/tags/item/wires/redstone_superconductor.json

@@ -2,13 +2,14 @@
   "fastener": 2,
   "color": "#d8d8d8",
   "kind": "metal",
+  "tag": "pure_iron",
   "abundance": 460,
   "hardness": 8,
   "min_temperature": 900,
   "max_temperature": 1500,
   "density": 7.87,
   "thermal": {
-    "expansion": 1.18e-5,
+    "expansion": 1.18e-05,
     "melting_point": 1538,
     "boiling_point": 2862,
     "cooling_rate": 1.5,
@@ -55,7 +56,9 @@
   "ampacity": 0.31,
   "corrosion_resistance": 0.37,
   "accepts": {
-    "cluster": ["thaumaturge:cluster_iron"]
+    "cluster": [
+      "thaumaturge:cluster_iron"
+    ]
   },
   "forms": {
     "ore": "feedback:iron_ore",

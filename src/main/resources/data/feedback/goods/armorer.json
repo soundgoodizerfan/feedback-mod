@@ -9,6 +9,12 @@
     },
     {
       "level": 1,
+      "item": "feedback:wrought_iron_ingot",
+      "price": 5,
+      "count": 2
+    },
+    {
+      "level": 1,
       "item": "feedback:helmet_plate",
       "material": "feedback:iron",
       "price": 5,
