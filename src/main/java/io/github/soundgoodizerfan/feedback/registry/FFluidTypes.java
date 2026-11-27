@@ -90,6 +90,9 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> ETHYLENE_GLYCOL = petroType("ethylene_glycol", 1110, 16000, 300);
     public static final DeferredHolder<FluidType, FluidType> POLYESTER_MELT = petroType("polyester_melt", 1200, 4000, 300);
     public static final DeferredHolder<FluidType, FluidType> ACETALDEHYDE = petroType("acetaldehyde", -2, 100, 300);
+    /** The solvents: ethanol (fermented from sugar) and acetone (fermented from grain starch). */
+    public static final DeferredHolder<FluidType, FluidType> ETHANOL = petroType("ethanol", 789, 1200, 300);
+    public static final DeferredHolder<FluidType, FluidType> ACETONE = petroType("acetone", 784, 310, 300);
     public static final DeferredHolder<FluidType, FluidType> WISP_GAS = petroType("wisp_gas", -2, 100, 300);
     public static final DeferredHolder<FluidType, FluidType> AIR = petroType("air", -1, 20, 300);
     public static final DeferredHolder<FluidType, FluidType> OXYGEN = petroType("oxygen", -1, 20, 300);

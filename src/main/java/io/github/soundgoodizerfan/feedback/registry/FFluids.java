@@ -201,6 +201,14 @@ public final class FFluids {
             FLUIDS.register("acetaldehyde", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.ACETALDEHYDE, FFluids.ACETALDEHYDE, FFluids.ACETALDEHYDE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> ACETALDEHYDE_FLOWING =
             FLUIDS.register("acetaldehyde_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.ACETALDEHYDE, FFluids.ACETALDEHYDE, FFluids.ACETALDEHYDE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ETHANOL =
+            FLUIDS.register("ethanol", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.ETHANOL, FFluids.ETHANOL, FFluids.ETHANOL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ETHANOL_FLOWING =
+            FLUIDS.register("ethanol_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.ETHANOL, FFluids.ETHANOL, FFluids.ETHANOL_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ACETONE =
+            FLUIDS.register("acetone", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.ACETONE, FFluids.ACETONE, FFluids.ACETONE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ACETONE_FLOWING =
+            FLUIDS.register("acetone_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.ACETONE, FFluids.ACETONE, FFluids.ACETONE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> WISP_GAS =
             FLUIDS.register("wisp_gas", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.WISP_GAS, FFluids.WISP_GAS, FFluids.WISP_GAS_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> WISP_GAS_FLOWING =

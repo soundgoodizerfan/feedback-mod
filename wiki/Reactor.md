@@ -57,6 +57,8 @@ Some reactions give off heat, which warms the reactor.
 | **Polymerization** | 100 mB ethylene, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 10 mB polyethylene melt, and some heat | 120 to 220 Tu, best 160 |
 | **Soul polymerization** | 100 mB soul oil, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 20 mB soul resin melt | 180 to 300 Tu, best 220 |
 | **Soul retort** | one Soul Sand or Soul Soil in the hopper | 60 mB soul oil, 20 mB wisp gas and a **Husk Sand** | 300 to 600 Tu, best 420 |
+| **Ferment sugar** | one Sugar in the hopper, 100 mB water | 30 mB [ethanol](Chemicals.md#ethanol-and-acetone) | 15 to 40 Tu, best 32 |
+| **Ferment wheat** | one Wheat in the hopper, 200 mB water | 20 mB [acetone](Chemicals.md#ethanol-and-acetone) and 10 mB ethanol | 25 to 42 Tu, best 35 |
 | **Magma settling** | 1000 mB [Magma Melt](Magma_Drill.md#settling-the-melt) | 500 mB molten iron, 60 mB molten nickel, 20 mB molten cobalt and 300 mB molten slag | 1550 Tu or more, best 1700 |
 | **Dissolve salt** | one Salt, 250 mB water | 250 mB [brine](Chemicals.md#brine) | 20 to 100 Tu, best 60 |
 | **Bayer (bauxite)** | any bauxite item, 250 mB [lye](Chemicals.md#lye) | 2 [alumina](Guide_Making_Aluminum.md) and 200 mB lye back | 150 to 250 Tu, best 200 |

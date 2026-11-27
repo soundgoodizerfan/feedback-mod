@@ -1,0 +1,30 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:wheat"
+    }
+  ],
+  "min_temperature": 25,
+  "optimal_temperature": 35,
+  "max_temperature": 42,
+  "required_tpu": 1200,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "minecraft:water",
+        "mb": 200
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:acetone",
+        "mb": 20
+      },
+      {
+        "fluid": "feedback:ethanol",
+        "mb": 10
+      }
+    ],
+    "heat": 0
+  }
+}

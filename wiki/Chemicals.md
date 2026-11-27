@@ -110,6 +110,10 @@ A pale powder, **Nitrocellulose Dust**: paper steeped in nitric and sulfuric aci
 
 A flammable, toxic liquid. A Creeper Charge steeped in naphtha in a warm Reactor gives it. Pipe and store it like any liquid fuel.
 
+## Ethanol and acetone
+
+Thin, clear, flammable liquids ([Fuels](Fuels.md)). Ethanol flashes at 13 Tu and acetone at -20 Tu, so a spill near a spark burns ([Hazards](Hazards.md)). Both come from fermenting in a [Reactor](Reactor.md#the-reactions) kept barely warm, no fire needed: sugar and water give ethanol, and wheat and water give acetone with some ethanol. Pipe and store them like any liquid fuel.
+
 ## Fluorine and PTFE
 
 **Hydrofluoric Acid** comes from Cryolite Ore and sulfuric acid in a Reactor. From there PTFE is a chain of [Reactor](Reactor.md#the-reactions) steps:
