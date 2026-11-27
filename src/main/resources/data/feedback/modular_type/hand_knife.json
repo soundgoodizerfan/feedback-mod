@@ -99,19 +99,20 @@
             "adjective": true
           },
           {
-            "name": "boning",
-            "rhythm": "t.t.tt.tt.t.",
-            "trait": "butcher",
+            "name": "bowie",
+            "rhythm": "t.t.h..t.t.h",
+            "trait": "line_cut",
             "params": {
-              "animal_mult": 1.5,
-              "extra_chance": 0.5,
-              "monster_mult": 0.7
+              "length": 2,
+              "line_mult": 0.6,
+              "main_mult": 0.9,
+              "wear": 1
             },
-            "reach": 0.02,
-            "centre": 0.0,
-            "section": 0.6,
-            "strike": 0.8,
-            "mass": 0.7,
+            "reach": 0.05,
+            "centre": 0.03,
+            "section": 1.0,
+            "strike": 1.0,
+            "mass": 1.0,
             "adjective": true
           },
           {
