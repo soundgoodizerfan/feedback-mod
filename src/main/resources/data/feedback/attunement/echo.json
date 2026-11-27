@@ -70,6 +70,9 @@
     "coil_element": {
       "kind": "echo_wear"
     },
+    "whip": {
+      "kind": "echo_wear"
+    },
     "noisemaker": {
       "kind": "echo_blow"
     },
@@ -193,6 +196,9 @@
       "kind": "lag_hit"
     },
     "coil_element": {
+      "kind": "lag_hit"
+    },
+    "whip": {
       "kind": "lag_hit"
     },
     "noisemaker": {

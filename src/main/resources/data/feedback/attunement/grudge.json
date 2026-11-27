@@ -122,6 +122,10 @@
       "kind": "grudge",
       "flaw": 1
     },
+    "whip": {
+      "kind": "grudge",
+      "flaw": 1
+    },
     "note_body": {
       "kind": "grudge"
     },
@@ -297,6 +301,9 @@
       "kind": "calm"
     },
     "coil_element": {
+      "kind": "calm"
+    },
+    "whip": {
       "kind": "calm"
     },
     "note_body": {

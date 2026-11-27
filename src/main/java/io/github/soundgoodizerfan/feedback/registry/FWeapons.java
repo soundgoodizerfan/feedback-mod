@@ -111,6 +111,13 @@ public class FWeapons {
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.VAR_INT)
                     .build());
 
+    /** The conductivity of the conductor a radio set's antenna is made of, copper 1; absent is copper (wire wound on). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> RADIO_ANTENNA_CONDUCTIVITY =
+            COMPONENTS.register("radio_antenna_conductivity", () -> DataComponentType.<Float>builder()
+                    .persistent(com.mojang.serialization.Codec.floatRange(0f, 100f))
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
+                    .build());
+
     /** A radio set's antenna length in mm of wire wound on; absent is none. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> RADIO_ANTENNA_MM =
             COMPONENTS.register("radio_antenna_mm", () -> DataComponentType.<Integer>builder()

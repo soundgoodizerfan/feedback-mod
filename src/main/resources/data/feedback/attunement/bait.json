@@ -92,6 +92,9 @@
     "coil_element": {
       "kind": "worn_lure"
     },
+    "whip": {
+      "kind": "worn_lure"
+    },
     "jet_nozzle": {
       "kind": "lure"
     },
@@ -239,6 +242,9 @@
       "kind": "worn_scare"
     },
     "coil_element": {
+      "kind": "worn_scare"
+    },
+    "whip": {
       "kind": "worn_scare"
     },
     "jet_nozzle": {

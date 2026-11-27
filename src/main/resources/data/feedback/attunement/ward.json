@@ -369,6 +369,9 @@
     "coil_element": {
       "kind": "soak"
     },
+    "whip": {
+      "kind": "soak"
+    },
     "motor_winding": {
       "kind": "soak"
     },

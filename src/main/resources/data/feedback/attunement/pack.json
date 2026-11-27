@@ -96,6 +96,10 @@
       "kind": "pack_guard",
       "flaw": 0
     },
+    "whip": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
     "noisemaker": {
       "kind": "pack",
       "flaw": 0
@@ -266,6 +270,10 @@
       "flaw": 0
     },
     "coil_element": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "whip": {
       "kind": "lone_guard",
       "flaw": 0
     },

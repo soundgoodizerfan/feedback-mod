@@ -97,6 +97,9 @@
     "coil_element": {
       "kind": "worn_glow"
     },
+    "whip": {
+      "kind": "worn_glow"
+    },
     "jet_nozzle": {
       "kind": "glow"
     },
@@ -265,6 +268,9 @@
       "kind": "worn_dim"
     },
     "coil_element": {
+      "kind": "worn_dim"
+    },
+    "whip": {
       "kind": "worn_dim"
     },
     "jet_nozzle": {

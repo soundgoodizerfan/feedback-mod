@@ -79,6 +79,9 @@
     "coil_element": {
       "kind": "worn_point_flammable"
     },
+    "whip": {
+      "kind": "worn_point_flammable"
+    },
     "lattice_frame": {
       "kind": "point_flammable"
     },
@@ -217,6 +220,9 @@
       "kind": "worn_away_flammable"
     },
     "coil_element": {
+      "kind": "worn_away_flammable"
+    },
+    "whip": {
       "kind": "worn_away_flammable"
     },
     "lattice_frame": {

@@ -111,6 +111,10 @@
       "kind": "bane_ward",
       "flaw": 0
     },
+    "whip": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
     "noisemaker": {
       "kind": "bane",
       "flaw": 0
@@ -292,6 +296,10 @@
       "flaw": 0
     },
     "coil_element": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "whip": {
       "kind": "kin_hide",
       "flaw": 0
     },

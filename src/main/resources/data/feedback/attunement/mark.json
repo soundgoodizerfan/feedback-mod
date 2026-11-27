@@ -142,6 +142,10 @@
       "kind": "taunt",
       "flaw": 2
     },
+    "whip": {
+      "kind": "taunt",
+      "flaw": 2
+    },
     "resonator_electrode": {
       "kind": "taunt",
       "flaw": 2

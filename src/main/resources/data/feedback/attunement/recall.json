@@ -83,6 +83,10 @@
       "kind": "rewind",
       "flaw": 1
     },
+    "whip": {
+      "kind": "rewind",
+      "flaw": 1
+    },
     "noisemaker": {
       "kind": "recall",
       "flaw": 1

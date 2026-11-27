@@ -23,16 +23,35 @@ public final class RadioSets {
         return set.getOrDefault(FWeapons.RADIO_ANTENNA_MM.get(), 0);
     }
 
+    /** The conductivity of the set's antenna conductor, copper 1. */
+    public static float antennaConductivity(ItemStack set) {
+        return set.getOrDefault(FWeapons.RADIO_ANTENNA_CONDUCTIVITY.get(), RadioTuning.ANTENNA_REF_CONDUCTIVITY);
+    }
+
+    /** Fits the antenna a made {@code antenna} item is (its baked length and loading, and its conductor) to the set, which it uses up. False if {@code antenna} is none. */
+    public static boolean attach(ItemStack set, ItemStack antenna) {
+        var figs = antenna.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.BLOCK_FIGURES.get());
+        if (figs == null || !figs.contains("Length"))
+            return false;
+        set.set(FWeapons.RADIO_ANTENNA_MM.get(), Math.round(figs.getFloat("Length") + figs.getFloat("Loading")));
+        set.set(FWeapons.RADIO_ANTENNA_CONDUCTIVITY.get(), figs.getFloat("Conductivity"));
+        return true;
+    }
+
     /** The antenna length a band wants, mm. */
     public static float quarterWaveMm(int band) {
         return RadioTuning.QUARTER_WAVE_MM_AT_BAND_ONE / (float) Math.max(1, band);
     }
 
-    /** How well the set's antenna hears its band: 1 when its length is the band's quarter wave, a bell around it, never under the floor. */
+    /**
+     * How well the set's antenna hears its band: the bell of its length around the band's quarter wave, scaled by how well its conductor conducts
+     * (against copper), between {@link RadioTuning#GAIN_FLOOR} (far off, or a conductor that does not) and 1 (tuned, copper or better).
+     */
     public static float gain(ItemStack set) {
         float want = quarterWaveMm(band(set));
         float off = (antennaMm(set) - want) / (want * RadioTuning.RESONANCE_WIDTH);
-        return Math.max(RadioTuning.GAIN_FLOOR, (float) Math.exp(-off * off));
+        float conduct = Math.min(1f, antennaConductivity(set) / RadioTuning.ANTENNA_REF_CONDUCTIVITY);
+        return RadioTuning.GAIN_FLOOR + (1f - RadioTuning.GAIN_FLOOR) * (float) Math.exp(-off * off) * conduct;
     }
 
     /** The radio set a person holds, in either hand, or empty. */

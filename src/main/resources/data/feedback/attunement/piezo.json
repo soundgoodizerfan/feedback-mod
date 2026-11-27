@@ -67,6 +67,9 @@
     "coil_element": {
       "kind": "arc"
     },
+    "whip": {
+      "kind": "arc"
+    },
     "resonator_electrode": {
       "kind": "arc"
     },
@@ -178,6 +181,9 @@
       "kind": "soak"
     },
     "coil_element": {
+      "kind": "soak"
+    },
+    "whip": {
       "kind": "soak"
     },
     "resonator_electrode": {

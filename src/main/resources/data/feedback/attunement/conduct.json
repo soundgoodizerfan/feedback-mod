@@ -116,6 +116,10 @@
       "kind": "shed",
       "flaw": -1
     },
+    "whip": {
+      "kind": "shed",
+      "flaw": -1
+    },
     "note_body": {
       "kind": "shed"
     },

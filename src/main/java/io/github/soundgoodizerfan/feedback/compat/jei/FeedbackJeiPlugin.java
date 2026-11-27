@@ -633,6 +633,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
             info(registration, head.get(), head.getId().getPath());
         info(registration, FModular.HAND_CRANK.get(), "hand_crank");
         info(registration, FModular.LEYDEN_JAR.get(), "leyden_jar");
+        info(registration, FModular.ANTENNA.get(), "antenna");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.OVERSPEED_TRIP.get().asItem(), "overspeed_trip");
         info(registration, FModular.PRESSURE_VESSEL.get(), "pressure_vessel");
         info(registration, FModular.PUMP.get(), "pump");

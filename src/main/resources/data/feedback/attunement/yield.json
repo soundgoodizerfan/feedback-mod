@@ -92,6 +92,10 @@
       "kind": "scavenge",
       "flaw": 0
     },
+    "whip": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
     "noisemaker": {
       "kind": "fortune",
       "flaw": 0

@@ -67,6 +67,9 @@
     "coil_element": {
       "kind": "gamble_ward"
     },
+    "whip": {
+      "kind": "gamble_ward"
+    },
     "noisemaker": {
       "kind": "gamble"
     },

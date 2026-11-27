@@ -92,6 +92,9 @@
     "coil_element": {
       "kind": "worn_ring"
     },
+    "whip": {
+      "kind": "worn_ring"
+    },
     "jet_compressor": {
       "kind": "ring"
     },
@@ -236,6 +239,9 @@
       "kind": "worn_hush"
     },
     "coil_element": {
+      "kind": "worn_hush"
+    },
+    "whip": {
       "kind": "worn_hush"
     },
     "jet_compressor": {

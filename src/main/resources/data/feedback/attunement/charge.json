@@ -113,6 +113,10 @@
       "kind": "capacitor",
       "flaw": 1
     },
+    "whip": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
     "jet_nozzle": {
       "kind": "blast_arc"
     },

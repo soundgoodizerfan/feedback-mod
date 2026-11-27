@@ -164,6 +164,9 @@
     "coil_element": {
       "kind": "worn_stance"
     },
+    "whip": {
+      "kind": "worn_stance"
+    },
     "noisemaker": {
       "kind": "brace",
       "flaw": 0

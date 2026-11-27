@@ -88,6 +88,10 @@
       "kind": "coil",
       "flaw": 1
     },
+    "whip": {
+      "kind": "coil",
+      "flaw": 1
+    },
     "note_body": {
       "kind": "coil"
     },

@@ -365,6 +365,9 @@
     "coil_element": {
       "kind": "mend"
     },
+    "whip": {
+      "kind": "mend"
+    },
     "motor_winding": {
       "kind": "mend"
     },
@@ -734,6 +737,9 @@
       "kind": "tithe"
     },
     "coil_element": {
+      "kind": "tithe"
+    },
+    "whip": {
       "kind": "tithe"
     },
     "noisemaker": {

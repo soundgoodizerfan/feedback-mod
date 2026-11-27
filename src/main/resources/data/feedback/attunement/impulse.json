@@ -112,6 +112,10 @@
       "kind": "reflect",
       "flaw": 1
     },
+    "whip": {
+      "kind": "reflect",
+      "flaw": 1
+    },
     "jet_nozzle": {
       "kind": "blast_shove"
     },
@@ -314,6 +318,10 @@
       "kind": "damp"
     },
     "coil_element": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "whip": {
       "kind": "damp",
       "flaw": 0
     },

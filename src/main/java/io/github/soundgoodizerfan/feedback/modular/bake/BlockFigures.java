@@ -7,6 +7,7 @@ import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.logistics.store.StoreTuning;
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
+import io.github.soundgoodizerfan.feedback.radio.RadioTuning;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,6 +49,7 @@ public final class BlockFigures {
                 case "thermal_store/F" -> material.density().muPerMb() > 0;
                 case "leyden_jar/F" -> material.ampacity().isPresent();
                 case "leyden_jar/W" -> material.electrical().insulation().isPresent();
+                case "antenna/L" -> material.electrical().conductivity().isPresent();
                 case "pallet_rack/D" -> material.density().muPerMb() > 0 && material.mechanical().yieldStrength().isPresent() && serviceTu(material) > 0f;
                 default -> true;
             };
@@ -76,6 +78,7 @@ public final class BlockFigures {
             case "thermal_store" -> material.thermal().conductivity().isPresent() && material.density().muPerMb() > 0;
             case "crucible" -> material.density().muPerMb() > 0 && material.failureTemperature().isPresent() && material.thermal().specificHeat().isPresent();
             case "leyden_jar" -> material.electrical().insulation().isPresent();
+            case "antenna" -> material.electrical().conductivity().isPresent();
             case "pallet_rack" -> material.density().muPerMb() > 0 && material.mechanical().yieldStrength().isPresent();
             default -> true;
         };
@@ -248,6 +251,16 @@ float mass = ModularBake.param(type, part, "mass", 1f) * ModularTuning.STORE_MAS
                         * (float) Math.pow(g, ModularTuning.RING_PUSH_GAUGE_EXP) * Math.min(1f, carries / draw));
             }
             // Charge held is plate area over glass thickness; thin glass leaks it away much faster (as the square).
+            // A whip resonates at its length; a loading coil of wire adds length by its turns (items of wire) times how well the wire conducts, so a
+            // short whip with a coil hears a low band. The set's gain scales with the whip's conductivity (RadioSets.gain).
+            case "antenna" -> {
+                out.putFloat("Length", role.axis(part, "length"));
+                out.putFloat("Conductivity", m.electrical().conductivity().get());
+                Part coil = design.part("L");
+                Material cm = coil == null ? null : materials.get(coil.material());
+                out.putFloat("Loading", cm == null || !suits(type, "L", cm) ? 0f
+                        : RadioTuning.ANTENNA_COIL_MM_PER_WIRE * type.roles().get("L").bulk() * Math.min(1f, cm.electrical().conductivity().get() / RadioTuning.ANTENNA_REF_CONDUCTIVITY));
+            }
             case "leyden_jar" -> {
                 float area = role.axis(part, "area") / ModularTuning.JAR_REF_AREA * ModularBake.param(type, part, "area", 1f);
                 float thin = ModularTuning.JAR_REF_WALL_MM / role.axis(part, "wall");

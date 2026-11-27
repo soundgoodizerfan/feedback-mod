@@ -14,6 +14,9 @@ public final class RadioTuning {
     public static final int QUARTER_WAVE_MM_AT_BAND_ONE = 2400;
     /** Antenna length one wire adds, mm, and the longest antenna a set holds. */
     public static final int ANTENNA_MM_PER_WIRE = 100, MAX_ANTENNA_MM = 2500;
+    /** A loading coil's length, mm, for each item of copper-grade wire in it (a poorer conductor adds less), and the conductivity a whip is measured against (copper's 1). */
+    public static final int ANTENNA_COIL_MM_PER_WIRE = 300;
+    public static final float ANTENNA_REF_CONDUCTIVITY = 1f;
     /** How wide a band's resonance is, as a share of its own quarter wave: the antenna's gain falls off as a bell of this width. */
     public static final float RESONANCE_WIDTH = 0.35f;
     /** The gain of an antenna far off its band (a stub still hears a little). */

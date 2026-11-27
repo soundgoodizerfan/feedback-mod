@@ -79,6 +79,9 @@
     "coil_element": {
       "kind": "worn_point_conductive"
     },
+    "whip": {
+      "kind": "worn_point_conductive"
+    },
     "lattice_frame": {
       "kind": "point_conductive"
     },
@@ -217,6 +220,9 @@
       "kind": "worn_away_conductive"
     },
     "coil_element": {
+      "kind": "worn_away_conductive"
+    },
+    "whip": {
       "kind": "worn_away_conductive"
     },
     "lattice_frame": {

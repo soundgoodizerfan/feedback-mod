@@ -169,6 +169,10 @@
       "kind": "deflect",
       "flaw": 1
     },
+    "whip": {
+      "kind": "deflect",
+      "flaw": 1
+    },
     "jet_compressor": {
       "kind": "pad"
     },

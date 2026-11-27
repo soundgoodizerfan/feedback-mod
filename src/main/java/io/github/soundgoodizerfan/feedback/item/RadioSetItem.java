@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * A hand-held radio set. Sneak-use steps its band; use with copper wire in the other hand winds a hundred millimetres more onto its antenna, up to
- * its limit; each band wants an antenna of its own length (a quarter wave), and the closer the length the better the set hears and is heard. Held to
+ * its limit, and a made antenna ({@code ModularAntenna}) used with the set, or clicked onto it, replaces the antenna with its own length and conductor; each band wants an antenna of its own length (a quarter wave), and the closer the length the better the set hears and is heard. Held to
  * talk, the voice chat compat ({@code compat/voicechat}) carries a speaker's voice to every set on the same band within reach.
  */
 public class RadioSetItem extends Item {
@@ -58,6 +58,12 @@ public class RadioSetItem extends Item {
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack set, ItemStack other, net.minecraft.world.inventory.Slot slot, net.minecraft.world.inventory.ClickAction action,
                                             Player player, net.minecraft.world.entity.SlotAccess access) {
+        if (other.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularAntenna && action == net.minecraft.world.inventory.ClickAction.SECONDARY
+                && slot.allowModification(player) && RadioSets.attach(set, other)) {
+            other.shrink(1);
+            player.displayClientMessage(Component.translatable("message.feedback.radio.antenna_fitted", RadioSets.antennaMm(set)), true);
+            return true;
+        }
         return io.github.soundgoodizerfan.feedback.radio.RadioCell.load(set, other, slot, action, player, access);
     }
 

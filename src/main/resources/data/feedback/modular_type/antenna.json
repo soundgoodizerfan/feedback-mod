@@ -1,0 +1,70 @@
+{
+  "family": "block",
+  "measures": {
+    "show": [
+      "block.Length",
+      "block.Conductivity",
+      "block.Loading"
+    ],
+    "addons": {
+      "L": [
+        "block.Loading"
+      ]
+    }
+  },
+  "required": [
+    "S"
+  ],
+  "slot": "mainhand",
+  "wear_litres": 0.1,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": false,
+  "roles": {
+    "S": {
+      "name": "whip",
+      "class": "working_face",
+      "forms": [
+        "antenna_whip"
+      ],
+      "litres": 0.05,
+      "layer": 0,
+      "part": {
+        "item": "feedback:antenna_whip",
+        "cells": 2,
+        "stock": [
+          "rod",
+          "wire"
+        ]
+      },
+      "axes": {
+        "length": {
+          "min": 100,
+          "max": 1500,
+          "unit": "mm",
+          "default": 600,
+          "step": 50
+        }
+      }
+    },
+    "L": {
+      "name": "loading_coil",
+      "class": "working_face",
+      "forms": [
+        "wire",
+        "fine_wire"
+      ],
+      "litres": 0.01,
+      "layer": 1,
+      "bulk": 3
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:copper"
+  }
+}

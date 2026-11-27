@@ -105,6 +105,9 @@
     "coil_element": {
       "kind": "ignite_attacker"
     },
+    "whip": {
+      "kind": "ignite_attacker"
+    },
     "motor_winding": {
       "kind": "ignite_target"
     },
@@ -255,6 +258,9 @@
       "kind": "freeze"
     },
     "coil_element": {
+      "kind": "insulate"
+    },
+    "whip": {
       "kind": "insulate"
     },
     "motor_winding": {
