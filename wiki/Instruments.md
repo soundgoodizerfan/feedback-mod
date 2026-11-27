@@ -91,7 +91,15 @@ The balance scale, the calipers and the [draw gauge](#draw-gauge) also stamp a r
 
 ## Draw Gauge
 
-A spring balance with a hook, made from a string, a stick and wrought iron plates. Held with a bow, a crossbow, a spring or a launcher in the other hand it stamps the weapon's draw time, launch speed and stored energy.
+A spring balance with a hook. Held with a bow, a crossbow, a spring or a launcher in the other hand it stamps the weapon's draw time, launch speed and stored energy.
+
+```
+  R
+P K P
+  R
+```
+
+R is a Wrought Iron Rod (the ring and the hook), P is a Wrought Iron Plate (the scale rails) and K is a [Coil Spring](Lathe.md#what-it-makes) of any metal. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 2 screws ([Fasteners](Fasteners.md)). It needs Mechanical Treatise I: Engines, Flywheels and Dynamotors ([Treatise](Treatise.md)).
 
 ## Scratch File Set
 

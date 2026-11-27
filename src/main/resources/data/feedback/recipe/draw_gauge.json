@@ -1,24 +1,13 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "type": "feedback:engineering",
   "key": {
-    "R": {
-      "item": "minecraft:stick"
-    },
-    "I": {
-      "item": "feedback:wrought_iron_plate"
-    },
-    "S": {
-      "item": "minecraft:string"
-    }
+    "R": { "item": "feedback:wrought_iron_rod" },
+    "P": { "item": "feedback:wrought_iron_plate" },
+    "K": { "type": "feedback:material", "form": "coil_spring" }
   },
-  "pattern": [
-    " S ",
-    " R ",
-    "III"
-  ],
-  "result": {
-    "count": 1,
-    "id": "feedback:draw_gauge"
-  }
+  "pattern": [ " R ", "PKP", " R " ],
+  "result": { "count": 1, "id": "feedback:draw_gauge" },
+  "tool": [ { "ability": "feedback:driver", "wear": 1 } ],
+  "fasteners": { "count": 2, "floor": 1, "forms": [ "screw" ] },
+  "school": "mechanical:1"
 }
