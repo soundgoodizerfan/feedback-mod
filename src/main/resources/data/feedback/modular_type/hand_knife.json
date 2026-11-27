@@ -50,6 +50,55 @@
           "@board",
           "@lump"
         ],
+        "variants": [
+          {
+            "name": "skinning",
+            "rhythm": "t.tt.t.tt.t.",
+            "trait": "butcher",
+            "params": {
+              "animal_mult": 1.3,
+              "extra_chance": 0.35,
+              "monster_mult": 0.9
+            },
+            "reach": 0.0,
+            "centre": 0.0,
+            "section": 0.85,
+            "strike": 1.0,
+            "mass": 0.9,
+            "adjective": true
+          },
+          {
+            "name": "utility",
+            "rhythm": "t.t.t..t.t.t",
+            "trait": "flurry",
+            "params": {
+              "window": 25,
+              "bonus": 0.1,
+              "max_stacks": 4
+            },
+            "reach": 0.04,
+            "centre": -0.05,
+            "section": 0.7,
+            "strike": 0.7,
+            "mass": 0.6,
+            "adjective": true
+          },
+          {
+            "name": "tanto",
+            "rhythm": "h..t.h..t.h.",
+            "trait": "pierce",
+            "params": {
+              "share": 0.3,
+              "dent_seconds": 3
+            },
+            "reach": -0.03,
+            "centre": 0.03,
+            "section": 1.1,
+            "strike": 1.1,
+            "mass": 1.1,
+            "adjective": true
+          }
+        ],
         "slots": [
           {
             "name": "body",

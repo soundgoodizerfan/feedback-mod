@@ -120,7 +120,7 @@ Some variants are not laid out in cells but **forged**, at the [Anvil](Anvil.md#
 
 The stock cools as you play. Notes struck while it is too cold (or still too hot) are dead and count against you. A sloppy run never ruins the part, but it leaves **flaws**: each one takes a share of the edge's toughness and durability (a ruined part starts at half), and the part reads "rough", "flawed" or "ruined" on its tooltip. A clean run leaves none, though even a good player is sometimes a hair off.
 
-**What you can forge:** a sword blade is forged **curved**, **tapered**, **serrated**, **fullered** or **leaf**-shaped; the plain blade is straight. A blade, a head or a limb also has **axes**: length, width and thickness of a blade, head size and edge length of a head, face size of a shield, limb length of a bow. Aim them at the bench before you make the part (see [Armor](Armor.md#axes-aiming-and-names) for how aiming works). More length reaches further, a wider blade hits harder, a thicker one resists chipping and a thinner one bites, and all of it is more stock and more weight. The range an axis sits in is a **band**, and a band can carry a signature: a **short** blade is a stabber (strike from behind), a **long** one a chopper (a heavy overhead blow), a **small** axe head is thrown, a **large** one fells trees, a large pickaxe head quarries, a large maul slams.
+**What you can forge:** a sword blade is forged **curved**, **tapered**, **serrated**, **fullered** or **leaf**-shaped; the plain blade is straight. A knife blade is forged **skinning**, **utility** or **tanto**; the plain blade is a standard knife blade. A blade, a head or a limb also has **axes**: length, width and thickness of a blade, head size and edge length of a head, face size of a shield, limb length of a bow. Aim them at the bench before you make the part (see [Armor](Armor.md#axes-aiming-and-names) for how aiming works). More length reaches further, a wider blade hits harder, a thicker one resists chipping and a thinner one bites, and all of it is more stock and more weight. The range an axis sits in is a **band**, and a band can carry a signature: a **short** blade is a stabber (strike from behind), a **long** one a chopper (a heavy overhead blow), a **small** axe head is thrown, a **large** one fells trees, a large pickaxe head quarries, a large maul slams.
 
 ### Names
 
@@ -134,6 +134,9 @@ A finished tool or weapon is named by rule from its blade, head, face or limb: i
 - **Tapered blade.** Keep hitting the same target without pause and each hit hurts more; getting hit or switching target resets it.
 - **Curved blade.** Wait before the first cut to land a heavy bleeding strike.
 - **Serrated blade.** Great against the unarmored and for clearing brush, poor against armor. It cuts foliage-type blocks, the ones a hoe clears, at half a hoe's speed.
+- **Skinning blade (knife).** Animals take 30% more from it and drop a second helping of food more often (about a third of the time); monsters take 10% less.
+- **Utility blade (knife).** Quick cuts build into a flurry: each hit within about a second of the last adds 10% damage, up to 4 stacks. Light, with a longer reach for its size, but it hits lightly and the fine edge chips.
+- **Tanto blade (knife).** Heavier and a little shorter, and it hits harder. Each hit goes through 30% of the target's armor and slows it for 3 seconds.
 - **Long blade.** Wait for a full swing and it hits everything around your target; mash it and it is weak.
 - **Short blade.** Strike from behind or at unaware mobs, especially while sneaking; face to face it is worse than a plain blade.
 - **Leaf blade.** A kill readies your next swing and speeds you up, and fighting a crowd hits harder.
