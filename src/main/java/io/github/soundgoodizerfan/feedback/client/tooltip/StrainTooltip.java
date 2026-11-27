@@ -5,6 +5,7 @@ package io.github.soundgoodizerfan.feedback.client.tooltip;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.WorkHardening;
+import io.github.soundgoodizerfan.feedback.process.WorkLedger;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -26,6 +27,9 @@ public final class StrainTooltip {
     public static void onTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
         int strain = WorkHardening.strain(stack), texture = WorkHardening.texture(stack);
+        float ledger = WorkLedger.of(stack);
+        if (ledger > 1f)
+            event.getToolTip().add(Component.translatable("gui.feedback.overworked").withStyle(ChatFormatting.GRAY));
         if (strain <= 0 && texture <= 0)
             return;
         var level = Minecraft.getInstance().level;

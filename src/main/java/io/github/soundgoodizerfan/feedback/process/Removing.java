@@ -108,11 +108,14 @@ public final class Removing {
 
         Removal stage = removal;
         for (int guard = 0; guard < MAX_CASCADE && worked >= stage.work(); guard++) {
+            int stageWork = stage.work(), stageWorked = worked;
             worked -= stage.work();
             // Cutting does not cool the part -- see Deforming's cascade for the same rule.
             Tu heat = ItemHeat.get(result, level);
             result = Machining.get().stamp(stage.finish(result));
             ItemHeat.set(result, heat, level);
+            if (WorkLedger.keeps(operation))
+                WorkLedger.stamp(result, stageWorked, stageWork);
 
             Optional<Removal> next = RemovalTable.get().find(result, operation);
             if (next.isEmpty()) {

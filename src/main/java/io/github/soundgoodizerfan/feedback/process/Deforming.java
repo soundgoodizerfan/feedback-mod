@@ -154,6 +154,7 @@ public final class Deforming {
                 break;
             if (hardening != null && !warm)
                 strain++;
+            int stageWork = stage.work(), stageWorked = worked;
             worked -= stage.work();
             if (!stage.byproduct().isEmpty()) {
                 if (driven.isEmpty())
@@ -171,6 +172,8 @@ public final class Deforming {
             if (texture > 0)
                 result.set(FDataComponents.TEXTURE.get(), texture);
             ItemHeat.set(result, carried, level);
+            if (WorkLedger.keeps(operation))
+                WorkLedger.stamp(result, stageWorked, stageWork);
 
             Optional<Deformation> next = DeformationTable.get().find(result, operation);
             if (next.isEmpty()) {

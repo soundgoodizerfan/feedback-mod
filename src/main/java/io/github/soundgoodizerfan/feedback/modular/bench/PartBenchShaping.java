@@ -13,6 +13,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.WorkLedger;
 import io.github.soundgoodizerfan.feedback.process.MaterialNeeds;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
@@ -182,10 +183,14 @@ public final class PartBenchShaping {
      * What a valid pile of stock is: the stuff, how many pieces, and the coldest piece's heat. {@code what} is the part's main slot;
      * {@code more} are the other slots filled from stock of their own (a lens, an edge), each spending its own pile.
      */
-    public record Stock(Material.Located what, int cells, int spent, float coldest, int mb, List<Extra> more) {
+    public record Stock(Material.Located what, int cells, int spent, float coldest, int mb, List<Extra> more, float work) {
 
         public Stock(Material.Located what, int cells, int spent, float coldest, int mb) {
-            this(what, cells, spent, coldest, mb, List.of());
+            this(what, cells, spent, coldest, mb, List.of(), 1f);
+        }
+
+        public Stock(Material.Located what, int cells, int spent, float coldest, int mb, float work) {
+            this(what, cells, spent, coldest, mb, List.of(), work);
         }
 
         /** One extra slot's pile: the slot's name and its stock slot beside the centre (0 for the first), its stuff, what the shape spends of it and its coldest piece's heat. */
@@ -312,7 +317,7 @@ public final class PartBenchShaping {
         if (mainNeed < ModularTuning.NUGGET_MB)
             return Optional.empty();
         Optional<Stock> main = checkMain(station, option, contents, materials, level, exact, mainNeed);
-        return main.map(m -> more.isEmpty() ? m : new Stock(m.what(), m.cells(), m.spent(), m.coldest(), m.mb(), more));
+        return main.map(m -> more.isEmpty() ? m : new Stock(m.what(), m.cells(), m.spent(), m.coldest(), m.mb(), more, m.work()));
     }
 
     private static Optional<Stock> checkMain(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level,
@@ -321,10 +326,13 @@ public final class PartBenchShaping {
             return Optional.empty();
         Material.Located what = null;
         int mb = 0;
-        float coldest = Float.MAX_VALUE;
+        float coldest = Float.MAX_VALUE, ledger = 0f;
+        int pieces = 0;
         for (ItemStack s : contents) {
             if (s.isEmpty())
                 continue;
+            ledger += WorkLedger.of(s) * s.getCount();
+            pieces += s.getCount();
             if (s.has(FDataComponents.MADE_OF.get()))
                 return Optional.empty();
             Optional<Material.Located> l = Material.find(materials, s);
@@ -342,7 +350,7 @@ public final class PartBenchShaping {
         if (!option.shaping().slots().isEmpty() && !option.shaping().slots().get(0).traits().isEmpty()
                 && !MaterialNeeds.hasAll(what.material(), option.shaping().slots().get(0).traits()))
             return Optional.empty();
-        return Optional.of(new Stock(what, option.cells(), need, coldest, mb));
+        return Optional.of(new Stock(what, option.cells(), need, coldest, mb, pieces == 0 ? 1f : ledger / pieces));
     }
 
     /**
@@ -396,8 +404,11 @@ public final class PartBenchShaping {
     }
 
     /** As above, with the as-built {@code axes} ({@link #asBuilt}) on the part. */
-    public static Optional<ItemStack> part(Option option, Stock stock, int flaw, float work, Map<String, Float> axes, Level level) {
+    public static Optional<ItemStack> part(Option option, Stock stock, int flaw, float workDone, Map<String, Float> axes, Level level) {
+        // shortcut: the axes' noise (spread) still reads the forge's ratio alone, not the stock's ledger; widen it if a pressed plate should come out rougher.
+        float fromStock = stock.work();
         return BuiltInRegistries.ITEM.getOptional(option.shaping().item()).map(item -> {
+            float work = Math.max(ForgeRhythm.MIN_WORK, Math.min(ForgeRhythm.MAX_WORK, workDone * fromStock));
             ItemStack out = new ItemStack(item);
             MadeOf made = new MadeOf(stock.what().id(), stock.what().form(), stock.cells(), option.variant().name(), flaw);
             if (work != 1f)

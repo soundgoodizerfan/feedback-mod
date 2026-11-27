@@ -180,6 +180,13 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
                     .build());
 
+    /** Work done over work required on a pressed or ground form ({@link io.github.soundgoodizerfan.feedback.process.WorkLedger}); absent means 1. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> WORK_RATIO =
+            COMPONENTS.register("work_ratio", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
     /** Cycles of draw-to-the-limit-then-anneal a textured filament has been through. Absent means none. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> TEXTURE =
             COMPONENTS.register("texture", () -> DataComponentType.<Integer>builder()
