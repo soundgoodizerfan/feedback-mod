@@ -1,26 +1,15 @@
 Feedback — asset licence
 ========================
 
-All original artwork, models, sounds and other non-code assets in this
-repository are Copyright (c) 2026 soundgoodizerfan. All Rights Reserved.
+All original artwork, models, sounds, translations and other non-code assets
+made for this project (under src/main/resources/assets) are dedicated to the
+public domain under CC0 1.0 Universal:
 
-They are NOT covered by the GPL that covers the code. You may not
-redistribute, modify or reuse them outside this mod without permission.
+  https://creativecommons.org/publicdomain/zero/1.0/
 
-Permitted without asking:
-  - Redistributing the mod's own jar unmodified, including in a modpack.
-  - Resource packs that replace these assets in a user's own game.
+Use them for anything, with no permission and no attribution.
 
-This is the same split Create uses, and for the same reason: the code is
-meant to be learned from and built on, and the art is not a commons.
-
-A NOTE ON THE CURRENT STATE
----------------------------
-As of this writing Feedback ships NO original textures. Every texture
-referenced by a model in src/main/resources/assets is a vanilla Minecraft
-path — placeholder art, pointed at Mojang's files rather than copied from
-them. Nothing in this repository is a copy of a Mojang asset, and this
-licence does not purport to cover Mojang's work.
-
-This notice stops applying to nothing and starts applying to something the
-day real art lands. See CLAUDE.md, "All art is placeholder."
+NOT covered: material taken from others. Those files keep the licence they came
+with, listed in THIRD-PARTY-LICENSES.md. That includes the CC BY 4.0 textures,
+the Silent Gear textures (MIT), anything derived from Mojang's textures (Mojang's,
+not ours to release), and sounds from soundza.

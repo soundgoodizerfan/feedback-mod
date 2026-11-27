@@ -3,7 +3,7 @@
 > The design documents (`feedback_philosophy.md`, `feedback_mechanics.md`, everything under `docs/`), `CLAUDE.md` and `TODO.md` are kept in a private repository and are not part of this one; names of them in this repository, including source comments, refer to those private files.
 
 
-## Feedback is GPL-3.0 (code) and All Rights Reserved (assets)
+## Feedback is GPL-3.0 (code) and CC0 (original assets)
 
 See `LICENSING.md` for why. The consequence for this file is that **the answer changed**:
 the earlier version of this table said no copyleft source could be used at all, because the
@@ -871,9 +871,9 @@ Copied or derived from Minecraft 1.21.1's textures (Mojang AB assets, reused by 
 - `item/mold_*_mold.png` for the axe, hammer, hoe, pickaxe, shovel, sickle, saw blade, glass pane and ingot molds are unmodified copies of `items/part_mould_*.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley); `mold_ball_mold`, `mold_bullet_mold`, `mold_glass_bottle_mold`, `mold_glass_block_mold` and `mold_atomising_mold` are `items/part_mould.png` with the product's silhouette carved into the pit.
 - `item/levitation_sleeve.png`: `items/part_diamond_bearing.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley), reduced to luminance (greyscale sprite tinted at runtime by the sleeve material).
 
-### Exception: Feedback's own art (All Rights Reserved)
+### Exception: Feedback's own art (CC0)
 
-Not from any source above. Rights: the project's, All Rights Reserved.
+Not from any source above. Rights: the project's, released under CC0 1.0.
 
 - Crops: `block/<crop>_crop_stage{0,1,2,3}.png` for `<crop>` in `cabbage`, `chile_pepper`, `corn`, `garlic`, `ginger`, `onion`, `pepper`, `rice`, `soybean`, `tomato`, `turnip`.
 - Crop items: `item/<crop>.png` and `item/<crop>_seed.png` for `cabbage`, `chile_pepper`, `corn`, `garlic`, `ginger`, `onion`, `pepper`, `rice`, `soybean`, `tomato`, `turnip`.

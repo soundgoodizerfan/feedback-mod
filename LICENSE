@@ -1,15 +1,15 @@
 Feedback — licensing summary
 ============================
 
-Feedback is licensed in two halves, deliberately, and they are not the same.
+Feedback is licensed in two halves.
 
   CODE    GNU General Public License, version 3 or later.
           Full text in COPYING. This covers everything under src/main/java,
           src/generated, and the build scripts.
 
-  ASSETS  All Rights Reserved.
-          Every original texture, model, sound and translation under
-          src/main/resources/assets — see LICENSE-ASSETS.
+  ASSETS  CC0 1.0 (public domain dedication). Every original texture, model, sound
+          and translation under src/main/resources/assets, except material taken
+          from others. See LICENSE-ASSETS.
 
 GPL rather than LGPL on purpose. Anything built on this code is free too.
 That is the point, not a side effect.

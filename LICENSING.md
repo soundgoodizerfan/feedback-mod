@@ -5,10 +5,10 @@ Two halves, and they are not the same licence.
 | | Licence | Covers |
 | :--- | :--- | :--- |
 | **Code** | GPL-3.0-or-later | `src/main/java`, `src/generated`, build scripts |
-| **Assets** | All Rights Reserved | original art, models, sounds under `src/main/resources/assets` |
+| **Assets** | CC0 1.0 | original art, models, sounds under `src/main/resources/assets`; not third-party material, which keeps its own licence |
 
-This is the split Create uses, for the reason Create uses it: the code is meant to be
-learned from and built on, and the art is not a commons.
+The code is meant to be learned from and built on under copyleft; the original art is
+given to the public domain (CC0). Material taken from others keeps its own licence.
 
 ---
 

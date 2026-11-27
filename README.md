@@ -46,7 +46,7 @@ platform is neoforge, minecraft 1.21.1.
 
 ## license
 
-code is GPL-3.0-or-later. assets are all rights reserved. see `LICENSING.md`.
+code is GPL-3.0-or-later. original assets are CC0. third-party material keeps its own licence. see `LICENSING.md`.
 
 ## ai usage
 
