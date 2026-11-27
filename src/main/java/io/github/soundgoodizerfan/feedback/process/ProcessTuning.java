@@ -306,6 +306,10 @@ public final class ProcessTuning {
     public static final int SOLDER_MAX_PADS = 64;
 
     public static final float CIRCUIT_DEFECT_NOISE = 0.05f;
+    /** Invented. The share of its limit a part can be held at without ageing; past it, short of cooking, the part is strained. */
+    public static final float PART_STRAIN_SHARE = 0.85f;
+    /** Invented. The noise a strained part adds before the average over the elements. */
+    public static final float CIRCUIT_STRAIN_NOISE = 0.08f;
 
     public static final float CIRCUIT_CLOCK_MIN_PIEZO = 0.5f;
 

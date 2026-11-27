@@ -4312,6 +4312,8 @@
   "feedback.circuit.dead": "Dead part: nothing switches",
   "feedback.circuit.lifted": "Traces lifted: the circuit is dead",
   "feedback.circuit.cooked": "%s part(s) cooked: they sit on the board and switch nothing",
+  "feedback.circuit.strained": "%s part(s) strained: kept hot, they still switch but add noise",
+  "tooltip.feedback.circuit.burnt": "%s burnt part(s) on the board",
   "feedback.circuit.lift.result": "Lifted %s part(s), %s came back whole",
   "feedback.circuit.lift.none": "Nothing lifted: a part comes free only when both its pads are wet",
   "feedback.circuit.lift.no_wick": "A wick in your pack is needed to lift a part",

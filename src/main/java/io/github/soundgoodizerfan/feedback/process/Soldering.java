@@ -116,8 +116,11 @@ public final class Soldering {
             float peak = 0f;
             for (int pad = 2 * i; pad <= 2 * i + 1 && pad < padPeakTu.length; pad++)
                 peak = Math.max(peak, padPeakTu[pad]);
-            if (!parts.get(i).dead() && peak > partLimit(parts.get(i).kind()))
+            float limit = partLimit(parts.get(i).kind());
+            if (!parts.get(i).dead() && peak > limit)
                 parts.set(i, parts.get(i).ruined());
+            else if (!parts.get(i).dead() && peak > limit * ProcessTuning.PART_STRAIN_SHARE)
+                parts.set(i, parts.get(i).strained());
         }
         return board.withParts(parts);
     }
@@ -140,7 +143,11 @@ public final class Soldering {
      * as the item that was mounted when its pads stayed under its kind's limit; a cooked one is lifted too but comes back as nothing.
      */
     public static Lift lift(Circuit circuit, Map<ResourceLocation, Material> materials, Pass pass) {
-        Board board = circuit.board().orElse(null);
+        return lift(circuit.board().orElse(null), materials, pass);
+    }
+
+    /** As above for a board still in paste: its parts sit in solder that has not set, so the same drag frees them. */
+    public static Lift lift(Board board, Map<ResourceLocation, Material> materials, Pass pass) {
         net.minecraft.world.item.ItemStack none = net.minecraft.world.item.ItemStack.EMPTY;
         if (board == null)
             return new Lift(none, java.util.List.of(), 0, false);

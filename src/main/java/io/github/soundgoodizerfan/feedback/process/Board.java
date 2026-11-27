@@ -67,40 +67,45 @@ public record Board(Trace trace, ResourceLocation traceMaterial, ResourceLocatio
      * One mounted part: its class and the material figure that sets how good it is (a crystal's
      * {@code rectifying}, a plate's {@code piezo_coupling}; 1 for the classes that have none). A tube carries its own figures.
      */
-    public record Part(Kind kind, float figure, Optional<Tube> tube, Optional<Circuit.Line> line, Optional<ItemStack> source, boolean dead) {
+    public record Part(Kind kind, float figure, Optional<Tube> tube, Optional<Circuit.Line> line, Optional<ItemStack> source, boolean dead, boolean stressed) {
         public Part(Kind kind, float figure) {
-            this(kind, figure, Optional.empty(), Optional.empty(), Optional.empty(), false);
+            this(kind, figure, Optional.empty(), Optional.empty(), Optional.empty(), false, false);
         }
 
         public Part(Kind kind, float figure, Optional<Tube> tube) {
-            this(kind, figure, tube, Optional.empty(), Optional.empty(), false);
+            this(kind, figure, tube, Optional.empty(), Optional.empty(), false, false);
         }
 
         public Part(Kind kind, float figure, Optional<Tube> tube, Optional<Circuit.Line> line) {
-            this(kind, figure, tube, line, Optional.empty(), false);
+            this(kind, figure, tube, line, Optional.empty(), false, false);
         }
 
         /** The same part remembering the item that was mounted, so a lift hands that exact item back. */
         public Part withSource(ItemStack stack) {
-            return new Part(kind, figure, tube, line, stack.isEmpty() ? Optional.empty() : Optional.of(stack.copyWithCount(1)), dead);
+            return new Part(kind, figure, tube, line, stack.isEmpty() ? Optional.empty() : Optional.of(stack.copyWithCount(1)), dead, stressed);
         }
 
         /** The same part cooked: still on the board, no longer an element, and nothing comes back when it is lifted. */
         public Part ruined() {
-            return new Part(kind, figure, tube, line, Optional.empty(), true);
+            return new Part(kind, figure, tube, line, Optional.empty(), true, stressed);
+        }
+
+        /** The same part kept hot enough, short of cooking, to have aged: it still switches, and adds noise. */
+        public Part strained() {
+            return new Part(kind, figure, tube, line, source, dead, true);
         }
 
         // An ItemStack compares by identity; a board must still stack with an equal one.
         @Override
         public boolean equals(Object o) {
-            return o instanceof Part p && kind == p.kind && Float.compare(figure, p.figure) == 0 && dead == p.dead && tube.equals(p.tube)
+            return o instanceof Part p && kind == p.kind && Float.compare(figure, p.figure) == 0 && dead == p.dead && stressed == p.stressed && tube.equals(p.tube)
                     && line.equals(p.line) && source.isPresent() == p.source.isPresent()
                     && (source.isEmpty() || ItemStack.matches(source.get(), p.source.get()));
         }
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(kind, figure, dead, tube, line, source.map(ItemStack::getItem).orElse(null));
+            return java.util.Objects.hash(kind, figure, dead, stressed, tube, line, source.map(ItemStack::getItem).orElse(null));
         }
 
         public static final Codec<Part> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -109,7 +114,8 @@ public record Board(Trace trace, ResourceLocation traceMaterial, ResourceLocatio
                 Tube.CODEC.optionalFieldOf("tube").forGetter(Part::tube),
                 Circuit.Line.CODEC.optionalFieldOf("line").forGetter(Part::line),
                 ItemStack.CODEC.optionalFieldOf("source").forGetter(Part::source),
-                Codec.BOOL.optionalFieldOf("dead", false).forGetter(Part::dead)).apply(i, Part::new));
+                Codec.BOOL.optionalFieldOf("dead", false).forGetter(Part::dead),
+                Codec.BOOL.optionalFieldOf("stressed", false).forGetter(Part::stressed)).apply(i, Part::new));
     }
 
     /** How the traces were laid. */

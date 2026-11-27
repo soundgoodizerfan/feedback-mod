@@ -87,6 +87,9 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
 
     /** The board a circuit was soldered from, when it still has solder to melt (a finished circuit that remembers its parts). */
     private static Board reworkable(ItemStack held) {
+        Board pasted = held.get(FDataComponents.BOARD.get());
+        if (pasted != null && pasted.solder().isPresent() && !pasted.parts().isEmpty())
+            return pasted;
         Circuit circuit = Circuit.of(held);
         Board board = circuit.board().orElse(null);
         return circuit.live() && board != null && board.solder().isPresent() && !board.parts().isEmpty() ? board : null;
@@ -108,7 +111,10 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         ItemStack held = boardIn(player, hand);
         Board board = held.get(FDataComponents.BOARD.get());
         boolean lift = false;
-        if (board == null || board.solder().isEmpty()) {
+        if (board != null && board.solder().isPresent() && !board.parts().isEmpty() && !wickIn(player).isEmpty()) {
+            // A wick in the pack makes the drag on a pasted board a rework: the parts sit in paste that has not set.
+            lift = true;
+        } else if (board == null || board.solder().isEmpty()) {
             // A finished circuit that remembers its board: the same drag, with a wick, lifts its parts off.
             board = reworkable(held);
             if (board == null)
@@ -201,10 +207,11 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
     private static void finishLift(ServerPlayer player, ItemStack held, ItemStack wick, Material solder,
                                    Map<ResourceLocation, Material> materials, Soldering.Pass pass) {
         Level level = player.level();
-        Soldering.Lift lift = Soldering.lift(Circuit.of(held), materials, pass);
+        Board board = reworkable(held);
+        Soldering.Lift lift = Soldering.lift(board, materials, pass);
         Fumes.release(level, player.position(), Fumes.level(solder));
         if (lift.traceLost()) {
-            player.displayClientMessage(Component.translatable("feedback.circuit.lifted"), true);
+            player.displayClientMessage(Component.translatable(held.has(FDataComponents.BOARD.get()) ? "feedback.board.lifted" : "feedback.circuit.lifted"), true);
             held.shrink(1);
             give(player, lift.board());
             return;

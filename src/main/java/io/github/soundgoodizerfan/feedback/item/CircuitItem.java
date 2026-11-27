@@ -4,6 +4,7 @@ package io.github.soundgoodizerfan.feedback.item;
 
 import java.util.List;
 
+import io.github.soundgoodizerfan.feedback.process.Board;
 import io.github.soundgoodizerfan.feedback.process.Circuit;
 
 import net.minecraft.network.chat.Component;
@@ -36,6 +37,9 @@ public class CircuitItem extends Item {
         Circuit c = Circuit.of(stack);
         tooltip.add(c.live() ? Component.translatable("feedback.circuit.elements", c.elements())
                 : Component.translatable("feedback.circuit.dead"));
+        long burnt = c.board().map(b -> b.parts().stream().filter(Board.Part::dead).count()).orElse(0L);
+        if (c.live() && burnt > 0)
+            tooltip.add(Component.translatable("tooltip.feedback.circuit.burnt", burnt).withStyle(net.minecraft.ChatFormatting.GRAY));
         if (c.live() && c.stability() > 0f)
             tooltip.add(Component.translatable("tooltip.feedback.circuit.has_resonator").withStyle(net.minecraft.ChatFormatting.GRAY));
         if (c.live() && c.memory() > 0)

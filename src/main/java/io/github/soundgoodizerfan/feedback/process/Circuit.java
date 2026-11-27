@@ -298,6 +298,8 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
             // A cooked part is still on the board but is no element.
             if (p.dead())
                 continue;
+            if (p.stressed())
+                noise += ProcessTuning.CIRCUIT_STRAIN_NOISE;
             switch (p.kind()) {
                 case TUBE -> {
                     Tube t = p.tube().orElse(null);
@@ -370,6 +372,9 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         long cooked = board.map(b -> b.parts().stream().filter(Board.Part::dead).count()).orElse(0L);
         if (cooked > 0)
             out.accept(Component.translatable("feedback.circuit.cooked", cooked));
+        long strained = board.map(b -> b.parts().stream().filter(x -> x.stressed() && !x.dead()).count()).orElse(0L);
+        if (strained > 0)
+            out.accept(Component.translatable("feedback.circuit.strained", strained));
         out.accept(Testable.response(tester, speed));
         out.accept(Testable.noise(tester, noise));
         if (line.selectivity() > 0 || line.bandwidth() > 0f || line.stability() > 0f) {

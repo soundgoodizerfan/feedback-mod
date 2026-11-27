@@ -8,7 +8,7 @@ Any item in the circuits tag counts as a circuit wherever a recipe asks for one:
 
 - **Switching elements**: how many parts on the board switch (crystals, [Relays](Relay.md), [Coherers](Redstone_Coherer.md), [Vacuum Tubes](Vacuum_Tube.md)). A circuit with none is a **dead part**.
 - **Speed**: the fastest element. A rectifying crystal is fast (galena most), a relay's contacts slow, a coherer's grains slowest.
-- **Noise**: the elements' own, the traces' (printed is grainier than etched), and a cold joint's. A ringing quartz plate on the board steadies it. Noise never reaches zero.
+- **Noise**: the elements' own, the traces' (printed is grainier than etched), and a cold joint's. A ringing quartz plate on the board steadies it. Parts that were held hot but not cooked (strained) add noise too. Noise never reaches zero.
 - **Resonator and lattice figures**: with a [Resonator](Resonator.md) on the board, **stability**, **channels** and **bandwidth**; with a [Lattice](Lattice.md), **memory**, **adaptation** and **retention**. Both elements add a little noise of their own.
 - **Joints**: good or cold, as graded by the [Solder](Materials.md#solders) rules.
 - **Gain** and a **heater**: only with a [Vacuum Tube](Vacuum_Tube.md) on the board. Gain is what the tubes add as amplifiers; the heater is the standing power they take to run.
@@ -33,7 +33,7 @@ The JEI page *Electronic circuit* shows these five steps on one card with each i
 2. In a crafting grid, put the board and **one part** to mount it. Up to 4 per board. A part is a **rectifying crystal** (galena, pyrite, quartz), a Relay, a Coherer, a **sealed [Vacuum Tube](Vacuum_Tube.md)**, a **quartz or amethyst plate** (the clock: it switches nothing, it steadies the rest), a [Resonator](Resonator.md) or a [Lattice](Lattice.md). A tube still open to the air mounts as nothing.
 3. Paste the board with solder, then solder it with the [Soldering Iron](Soldering_Iron.md) or the [Reflow Oven](Reflow_Oven.md).
 
-A good joint gives a good circuit. A **cold joint** gives a noisy one. If the traces **lift** the circuit comes out dead, and the parts with it. Nothing refuses to run.
+The tooltip counts any burnt (cooked) parts sitting on the board; they switch nothing. A good joint gives a good circuit. A **cold joint** gives a noisy one. If the traces **lift** the circuit comes out dead, and the parts with it. Nothing refuses to run.
 
 ## Warming up
 
