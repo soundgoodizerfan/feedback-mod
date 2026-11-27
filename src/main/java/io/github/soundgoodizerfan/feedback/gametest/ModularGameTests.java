@@ -154,7 +154,7 @@ public class ModularGameTests {
         // The limbs are one shaped part of three cells; the string is three of its own.
         ModularFigures wood = ModularStacks.figures(craft(helper, List.of(partOf(helper, "bow_limbs", Items.STICK, 3), w, w, w)));
         ModularFigures steel = ModularStacks.figures(craft(helper, List.of(partOf(helper, "bow_limbs", steelRod, 3), w, w, w)));
-        helper.assertTrue(wood.get(Fig.VELOCITY) > 0.9f && wood.get(Fig.VELOCITY) < 1.1f, "a wooden bow is vanilla's speed");
+        helper.assertTrue(wood.get(Fig.VELOCITY) > 0.9f && wood.get(Fig.VELOCITY) < 1.1f, "a wooden bow is vanilla's speed, got " + wood.get(Fig.VELOCITY));
         helper.assertTrue(steel.get(Fig.VELOCITY) > wood.get(Fig.VELOCITY), "steel limbs shoot faster");
         helper.assertTrue(steel.get(Fig.DRAW) > wood.get(Fig.DRAW), "steel limbs draw slower");
         helper.assertTrue(steel.get(Fig.JOINT) > 1, "a wool string is overloaded by steel limbs");

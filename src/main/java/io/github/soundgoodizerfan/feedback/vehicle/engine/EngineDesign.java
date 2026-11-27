@@ -76,7 +76,8 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
     /** A plain engine: the middle compression and no multipliers. */
     public EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material) {
         this(cylinders, boreMm, strokeMm, material, Compression.MEDIUM, 1f, 1f,
-                massMu(cylinders, boreMm, strokeMm, PLAIN_DENSITY, 1f), VehicleTuning.PLUG_LIFE_TICKS, 1f);
+                massMu(Mth.clamp(cylinders, MIN_CYLINDERS, MAX_CYLINDERS), Mth.clamp(boreMm, MIN_MM, MAX_MM),
+                        Mth.clamp(strokeMm, MIN_MM, MAX_MM), PLAIN_DENSITY, 1f), VehicleTuning.PLUG_LIFE_TICKS, 1f);
     }
 
 

@@ -146,7 +146,9 @@ public class HazardGameTests {
         float copper = tongsItem.handlesUpToTu(copperBone, level);
         helper.assertTrue(bone > wood, "a better grip holds hotter: bone " + bone + " wood " + wood);
         helper.assertTrue(wood > HazardTuning.CONTACT_BURN_TU.value(), "even wooden tongs hold what a bare hand cannot: " + wood);
-        helper.assertTrue(copper <= 1000f, "copper arms give out at copper's melt: " + copper);
+        float copperMelt = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()
+                .get(io.github.soundgoodizerfan.feedback.Feedback.id("copper")).thermal().meltingPoint().orElseThrow().value();
+        helper.assertTrue(copper <= copperMelt, "copper arms give out at copper's melt " + copperMelt + ": " + copper);
 
         var wool = io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.build(new io.github.soundgoodizerfan.feedback.modular.type.ModularDesign(
                 io.github.soundgoodizerfan.feedback.Feedback.id("glove"), java.util.List.of(
@@ -156,7 +158,7 @@ public class HazardGameTests {
         var gauntlet = (io.github.soundgoodizerfan.feedback.modular.item.ModularGlove) wool.getItem();
         float glove = gauntlet.handlesUpToTu(wool, level);
         helper.assertTrue(glove > wood,
-                "wool-lined gloves hold a lit furnace: " + glove);
+                "wool-lined gloves hold a lit furnace: glove " + glove + ", wooden tongs " + wood);
         helper.assertTrue(gauntlet.shockProofBand(wool, level) == io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.LV,
                 "dry wool insulates a conductor, rated the bottom band");
         helper.assertTrue(tongsItem.shockProofBand(ironBone, level) == null, "tongs are no use against a wire");

@@ -814,13 +814,14 @@ public class ElectricGameTests {
         var battery = (io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity) helper.getBlockEntity(batteryAt);
         var registries = helper.getLevel().registryAccess();
         net.minecraft.nbt.CompoundTag tag = battery.saveWithoutMetadata(registries);
-        float capacity = tag.getFloat("Capacity");
         tag.putInt("Cells", cells);
         tag.putFloat("Acid", cells * FTuning.BATTERY_ACID_MB_PER_CELL);
         tag.putFloat("Water", FTuning.BATTERY_WATER_TANK_MB);
-        tag.putFloat("Charge", capacity * share);
         tag.putBoolean("Supplying", false);
         tag.putString("CaseBand", VoltageBand.MV.getSerializedName());   // a built case has an insulation band; the default LV would count every line here as overvoltage
+        battery.loadCustomOnly(tag, registries);
+        // "Capacity" is one cell's Eu; the battery holds cells of them.
+        tag.putFloat("Charge", tag.getFloat("Capacity") * cells * share);
         battery.loadCustomOnly(tag, registries);
         return battery;
     }
