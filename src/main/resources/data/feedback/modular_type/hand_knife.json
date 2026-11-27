@@ -97,6 +97,54 @@
             "strike": 1.1,
             "mass": 1.1,
             "adjective": true
+          },
+          {
+            "name": "boning",
+            "rhythm": "t.t.tt.tt.t.",
+            "trait": "butcher",
+            "params": {
+              "animal_mult": 1.5,
+              "extra_chance": 0.5,
+              "monster_mult": 0.7
+            },
+            "reach": 0.02,
+            "centre": 0.0,
+            "section": 0.6,
+            "strike": 0.8,
+            "mass": 0.7,
+            "adjective": true
+          },
+          {
+            "name": "dirk",
+            "rhythm": "t...h.t...h.",
+            "trait": "backstab",
+            "params": {
+              "back_mult": 1.8,
+              "sneak_mult": 1.3,
+              "face_mult": 0.85,
+              "back_angle": 110
+            },
+            "reach": 0.0,
+            "centre": 0.02,
+            "section": 0.9,
+            "strike": 1.0,
+            "mass": 0.9,
+            "adjective": true
+          },
+          {
+            "name": "stiletto",
+            "rhythm": "h.t.t.h.t.t.",
+            "trait": "pierce",
+            "params": {
+              "share": 0.5,
+              "dent_seconds": 5
+            },
+            "reach": 0.03,
+            "centre": 0.0,
+            "section": 0.5,
+            "strike": 0.8,
+            "mass": 0.6,
+            "adjective": true
           }
         ],
         "slots": [
