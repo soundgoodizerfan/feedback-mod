@@ -227,7 +227,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         Blast.Packed shrapnel = made;
         server.removeBlockEntity(at);
         server.removeBlock(at, false);
-        if (power < FTuning.DEMO_POWER_MIN) {
+        if (power < FTuning.DEMO_POWER_MIN || Blast.damp(server, net.minecraft.world.phys.Vec3.atCenterOf(at), cased != null)) {
             server.sendParticles(ParticleTypes.LARGE_SMOKE, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 12, 0.3, 0.3, 0.3, 0.02);
             server.playSound(null, at, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1f, 0.8f);
             return;

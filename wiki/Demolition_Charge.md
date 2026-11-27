@@ -30,7 +30,7 @@ Right-click in the air to throw it. The throw lights the fuse. A wick fuse lets 
 
 ## The blast
 
-Power rises with the square root of the powder's burned energy, so twice the powder is not twice the blast. A stronger casing metal holds the gas in longer and adds power. A powder-poor, fuel-rich blend burns short and throws fire instead. A charge too weak to blast only smokes. A blast, placed or thrown, breaks blocks the way TNT does.
+Power rises with the square root of the powder's burned energy, so twice the powder is not twice the blast. A stronger casing metal holds the gas in longer and adds power. A powder-poor, fuel-rich blend burns short and throws fire instead. A charge too weak to blast only smokes. Bare powder with no casing round it is a dud under water: when it goes off in a block holding water, it smokes and fizzles instead of blasting. A casing keeps the powder dry, so a cased charge blasts under water, placed or thrown. A blast, placed or thrown, breaks blocks the way TNT does.
 
 A placed charge with a Shaped Casing bores straight into the block it is set against. It breaks 1 block of depth per point of power, through blocks up to 1.5 hardness per point of power, and stops at the first block that is too hard. The broken blocks drop as items. Around the charge it spills a blast of half its power that breaks no blocks but still hurts anyone close. Thrown, it blasts like any other charge.
 
