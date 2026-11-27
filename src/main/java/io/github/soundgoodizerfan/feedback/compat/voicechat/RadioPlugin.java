@@ -71,7 +71,7 @@ public class RadioPlugin implements VoicechatPlugin {
             ItemStack theirs = RadioSets.held(listener);
             if (theirs.isEmpty())
                 continue;
-            float quality = RadioSets.quality(set, theirs, speaker.distanceTo(listener));
+            float quality = RadioNet.link(speaker, set, listener, theirs);
             if (quality <= 0f || speaker.getRandom().nextFloat() < RadioSets.dropShare(quality))
                 continue;
             StaticAudioChannel channel = channelFor(listener);

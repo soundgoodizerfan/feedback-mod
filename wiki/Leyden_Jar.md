@@ -47,7 +47,7 @@ An addon is an optional extra part made from raw stock, added when you assemble 
 
 ## A burst, not a battery
 
-It always gives its own band, and its last packet tapers as the Eu run out: a strong start that ends in a short tail. It also **leaks** charge every tick, whether or not anything is connected: at the default wall about 0.2% a tick, which halves it in roughly 17 seconds.
+It always gives its own band, and its last packet tapers as the Eu run out: a strong start that ends in a short tail. It also **leaks** charge every tick, whether or not anything is connected: at the default wall about 0.2% a tick, which halves it in roughly 17 seconds. A radioactive glass such as uranium glass ionises the gas in the jar and leaks about 50% faster than plain glass.
 
 A jar smooths a pulse and carries you over a gap. For power that lasts, use a [Battery](Battery.md).
 

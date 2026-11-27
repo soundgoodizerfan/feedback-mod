@@ -44,6 +44,8 @@ public final class SightCell {
         for (var a : ModularTraits.actives(gun))
             if (a.id().equals(RANGEFINDER) || a.id().equals(LASER))
                 sum += a.params().get("draw_eu", 1f);
+        if (io.github.soundgoodizerfan.feedback.suit.ScopeThermal.fitted(gun))
+            sum += GunTuning.THERMAL_SCOPE_DRAW_EU;
         return sum;
     }
 
@@ -61,6 +63,12 @@ public final class SightCell {
             has |= a.id().equals(id);
         if (!has)
             return false;
+        CompoundTag state = BatteryStack.state(cell(gun));
+        return state != null && BatteryStack.charge(state) > 0f;
+    }
+
+    /** Whether the gun has a cell with charge in it. */
+    public static boolean charged(ItemStack gun) {
         CompoundTag state = BatteryStack.state(cell(gun));
         return state != null && BatteryStack.charge(state) > 0f;
     }

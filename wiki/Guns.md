@@ -132,6 +132,7 @@ Every gun and blueprint shows its spec sheet:
 - **Muzzle**: bullet speed and **energy**, in Work. Energy is what decides damage.
 - **Cycle**: the time between shots, and the spread in degrees.
 - **Mass**: the gun's weight, and the bullet's.
+- **Sight cell**: on a gun with a powered sight, how full the loaded battery is, as a word: none loaded, flat, low, about half, most of a charge or full. Shift shows the limits: low is under 20% of the cell, half under 50%, full from 90%.
 - The tooltip also lists the parts and what is fitted, part by part, and the Shift glossary.
 
 Those figures are for a standard round: the standard charge for the bore (four gunpowder at 9 mm) behind a lead bullet. What you actually load can push them up or down. JEI's material pages list each metal's own figures (hardness, density, melting point) to read against them.
@@ -166,7 +167,7 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why a shor
 | Rangefinder | as a reflex | as a reflex | 1 plate |
 | Laser sight | as a reflex | as a reflex | 1 plate |
 
-A **rangefinder** or **laser sight** is a reflex sight that runs on a [Battery](Battery.md) loaded into the gun. Charge the battery at the [Charger](Charger.md), then right-click the gun in your inventory with the battery on the cursor; right-click it with an empty cursor to take the battery out. While the gun is held the sight draws the battery down steadily. With the battery empty, or none loaded, both sights go dark. Neither changes any figure of the shot.
+A **rangefinder** or **laser sight** is a reflex sight that runs on a [Battery](Battery.md) loaded into the gun. Charge the battery at the [Charger](Charger.md), then right-click the gun in your inventory with the battery on the cursor; right-click it with an empty cursor to take the battery out. While the gun is held the sight draws the battery down steadily. A **scope with a thermal fitting** draws **3 Eu/s** from the same battery and shows its thermal view only while the battery has charge. With the battery empty, or none loaded, these sights go dark. Neither changes any figure of the shot.
 
 - The rangefinder prints the distance to what the muzzle points at under the crosshair in first person, in whole blocks, or *no return* past 300 blocks.
 - The laser sight throws a red beam from the muzzle to the point aimed at, with a red glowing mote where it lands. Other players see the beam.

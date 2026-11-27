@@ -29,11 +29,18 @@ public final class RadioNet {
 
     /** The key went down or up on {@code player}'s client; it only counts while they hold a radio set. */
     public static void key(ServerPlayer player, boolean down) {
-        boolean on = down && !RadioSets.held(player).isEmpty();
+        var set = RadioSets.held(player);
+        boolean on = down && !set.isEmpty() && RadioCell.charged(set);
         if (on)
             KEYED.add(player.getUUID());
         else if (KEYED.remove(player.getUUID()))
             RELEASED.forEach(c -> c.accept(player.getUUID()));
+    }
+
+    /** The link quality from one person's set to another's: the sets' own ({@link RadioSets#quality}) less what noise at each end takes ({@link RadioNoise#cut}). */
+    public static float link(ServerPlayer from, net.minecraft.world.item.ItemStack fromSet, ServerPlayer to, net.minecraft.world.item.ItemStack toSet) {
+        float q = RadioSets.quality(fromSet, toSet, from.distanceTo(to));
+        return q <= 0f ? q : q - RadioNoise.cut(from) - RadioNoise.cut(to);
     }
 
     /** A person left or lost their set: their transmission ends. */

@@ -267,6 +267,8 @@ float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK 
                 if (sl != null)
                     leak *= net.minecraft.util.Mth.lerp((float) sl.electrical().insulation().map(Enum::ordinal).orElse(0) / (VoltageBand.values().length - 1),
                             ModularTuning.JAR_SLEEVE_LEAK_POOR, ModularTuning.JAR_SLEEVE_LEAK);
+                // a radioactive glass ionises the gas in the jar, which carries charge across it
+                leak *= 1f + ModularTuning.JAR_IONISATION_LEAK * m.radioactivity().map(r -> r.value()).orElse(0f);
                 out.putFloat("Seep", leak);
                 out.putFloat("BurstAmps", burst);
             }

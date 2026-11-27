@@ -366,7 +366,7 @@ LSO's icon and its word states work as they do without Feedback. While you carry
 
 ## Other mods' foods
 
-Any food from another mod (an item that is edible and is not from Minecraft or Feedback) keeps, spoils and feeds through the [Food](Food.md) state model. Its keeping figures come from its nutrition: a heartier food is drier, and a sweeter food holds more fat. It has no compounds and no perks, and cooking it yields nothing. A material file for the item overrides these figures.
+Any food from another mod (an item that is edible and is not from Minecraft or Feedback) keeps, spoils and feeds through the [Food](Food.md) state model. Its keeping figures come from its nutrition: a heartier food is drier, and a sweeter food holds more fat. An item tagged as a fruit, vegetable, raw meat or grain also counts when it has no food value of its own: pots and skillets take it, a fruit carrying sugar and vitamins, a vegetable vitamins and a meat protein. It has no other compounds and no perks, and cooking it yields nothing. A material file for the item overrides these figures.
 
 ## Inventory Sorter and Inventory Profiles Next
 

@@ -88,23 +88,47 @@ public final class Cooking {
     private static final Map<Item, Entry> FOREIGN = new java.util.concurrent.ConcurrentHashMap<>();
 
     /**
-     * A food another mod added: any item with the food component that is neither ours nor vanilla's (both have materials) is a plain
-     * perishable, its figures taken from its nutrition. A heartier food (more nutrition) is denser and drier, a sweeter one (higher
+     * A food another mod added: any item with the food component, or tagged as a fruit, vegetable, raw meat or grain ({@code c:foods/*}), that is neither
+     * ours nor vanilla's (both have materials) is a perishable, its figures taken from its nutrition; the tags give it a fruit's sugar and vitamins, a vegetable's
+     * vitamins or a meat's protein. A heartier food (more nutrition) is denser and drier, a sweeter one (higher
      * saturation modifier) carries more fat; it has no compounds, perks or cooked form, so it only keeps, spoils and feeds. Cached
      * per item; read from the stack's component so the figures follow whatever that mod gave it. Taken from no mod's code.
      */
     private static Optional<Entry> foreign(ItemStack stack) {
         FoodProperties food = stack.get(DataComponents.FOOD);
-        if (food == null)
+        boolean tagged = isTagged(stack);
+        if (food == null && !tagged)
             return Optional.empty();
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         if (id.getNamespace().equals("minecraft") || id.getNamespace().equals(io.github.soundgoodizerfan.feedback.Feedback.MOD_ID))
             return Optional.empty();
         return Optional.of(FOREIGN.computeIfAbsent(stack.getItem(), item -> {
-            float moisture = Mth.clamp(0.8f - food.nutrition() * 0.04f, 0.25f, 0.8f);
-            float fat = Mth.clamp(food.saturation() * 0.1f, 0f, 0.5f);
-            return new Entry(new Material.Food(moisture, 0f, 0f, Optional.empty(), fat, 0.2f, Map.of(), Map.of(), 1f, 1f), FTuning.FOOD_CHAR_TU, Optional.empty());
+            int nutrition = food == null ? 2 : food.nutrition();
+            float saturation = food == null ? 0.3f : food.saturation();
+            float moisture = Mth.clamp(0.8f - nutrition * 0.04f, 0.25f, 0.8f);
+            float fat = Mth.clamp(saturation * 0.1f, 0f, 0.5f);
+            Map<String, Float> compounds = new java.util.HashMap<>();
+            if (stack.is(FRUIT))
+                compounds.put("sugar", 0.1f);
+            if (stack.is(FRUIT) || stack.is(VEGETABLE))
+                compounds.put("vitamin", 0.06f);
+            if (stack.is(MEAT))
+                compounds.put("protein", 0.12f);
+            return new Entry(new Material.Food(moisture, 0f, 0f, Optional.empty(), fat, 0.2f, Map.copyOf(compounds), Map.of(), 1f, 1f), FTuning.FOOD_CHAR_TU, Optional.empty());
         }));
+    }
+
+    /** The common food tags another mod puts on what it adds ({@code c:foods/*}): what a pot or a skillet takes by what the thing is, not by an id. */
+    private static final net.minecraft.tags.TagKey<Item> FRUIT = tag("foods/fruit"), VEGETABLE = tag("foods/vegetable"),
+            MEAT = tag("foods/raw_meat"), GRAIN = tag("foods/grain");
+
+    private static net.minecraft.tags.TagKey<Item> tag(String path) {
+        return net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", path));
+    }
+
+    /** Whether a food-tagged item with no food component of its own still counts as an ingredient. */
+    private static boolean isTagged(ItemStack stack) {
+        return stack.is(FRUIT) || stack.is(VEGETABLE) || stack.is(MEAT) || stack.is(GRAIN);
     }
 
     /**

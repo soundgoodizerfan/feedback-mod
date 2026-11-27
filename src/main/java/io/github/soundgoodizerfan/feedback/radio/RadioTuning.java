@@ -24,5 +24,10 @@ public final class RadioTuning {
     public static final float GARBLE_BELOW = 0.35f, DROP_AT_EDGE = 0.85f;
     /** The microphone's hearing, blocks; the loudness a relayed sound keeps and its pitch (a little flat: the band is narrow); the sounds relayed per speaker per tick. */
     public static final int HEAR_BLOCKS = 16, RELAY_PER_TICK = 4;
+    /** Invented. A noise block this near a person's set cuts their end of the link by this much quality; a keyed set draws this many Eu a second from its cell. */
+    public static final int NOISE_BLOCKS = 4;
+    public static final float NOISE_CUT = 0.35f, KEYED_DRAW_EU = 1f;
+    /** Invented. The most chance a marginal link (under {@link #GARBLE_BELOW}) lets a click of static through beside a relayed sound, and its volume. */
+    public static final float STATIC_CHANCE = 0.8f, STATIC_VOLUME = 0.25f;
     public static final float RELAY_VOLUME = 0.7f, RELAY_PITCH = 0.9f;
 }

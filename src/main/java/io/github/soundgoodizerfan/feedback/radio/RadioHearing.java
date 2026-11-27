@@ -54,14 +54,28 @@ public final class RadioHearing {
                 ItemStack theirs = RadioSets.held(listener);
                 if (theirs.isEmpty())
                     continue;
-                float quality = RadioSets.quality(set, theirs, speaker.distanceTo(listener));
-                if (quality <= 0f || level.random.nextFloat() < RadioSets.dropShare(quality))
+                float quality = RadioNet.link(speaker, set, listener, theirs);
+                if (quality <= 0f || level.random.nextFloat() < RadioSets.dropShare(quality)) {
+                    if (quality > -0.5f)
+                        static_(level, listener, quality);
                     continue;
+                }
+                static_(level, listener, quality);
                 listener.connection.send(new ClientboundSoundPacket(event.getSound(), SoundSource.PLAYERS, listener.getX(), listener.getY(), listener.getZ(),
                         Math.min(1f, event.getNewVolume() * RadioTuning.RELAY_VOLUME * quality), event.getNewPitch() * RadioTuning.RELAY_PITCH,
                         level.random.nextLong()));
             }
         }
+    }
+
+    /** A marginal link lets a click of static through (a placeholder vanilla sound), more of it the nearer the edge. */
+    private static void static_(ServerLevel level, ServerPlayer listener, float quality) {
+        if (quality >= RadioTuning.GARBLE_BELOW)
+            return;
+        float share = (RadioTuning.GARBLE_BELOW - Math.max(0f, quality)) / RadioTuning.GARBLE_BELOW;
+        if (level.random.nextFloat() < share * RadioTuning.STATIC_CHANCE)
+            listener.connection.send(new ClientboundSoundPacket(net.minecraft.core.Holder.direct(net.minecraft.sounds.SoundEvents.SCULK_CLICKING), SoundSource.PLAYERS,
+                    listener.getX(), listener.getY(), listener.getZ(), RadioTuning.STATIC_VOLUME, 1.4f, level.random.nextLong()));
     }
 
     /** Spends one of the speaker's relays for this tick; false once they are all spent. */

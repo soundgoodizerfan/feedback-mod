@@ -15,9 +15,10 @@ W is [Copper Wire](Wire_Drawer.md), C is a [circuit](Basic_Electronic_Circuit.md
 
 - **Sneak and use** steps the band, 1 to 8, and back to 1 after 8. The band shows above the hotbar.
 - **Use with Copper Wire in the other hand** winds 100 mm of antenna onto the set and spends one wire. An antenna holds up to 2500 mm.
-- **Hold the talk key** (**.** (period) by default, rebindable under the *Feedback* category in Controls) while a set is in either hand to transmit. While you talk the set's microphone also picks up the room (see [Room sound](#room-sound)).
+- **Right-click the set with a charged [Battery](Battery.md) on the cursor** loads it; right-click with an empty cursor takes the battery out. A set with no charge only listens.
+- **Hold the talk key** (**.** (period) by default, rebindable under the *Feedback* category in Controls) while a set is in either hand to transmit; a keyed set draws **1 Eu/s** from its battery, and stops transmitting when the battery runs flat. Listening costs nothing. While you talk the set's microphone also picks up the room (see [Room sound](#room-sound)).
 
-The tooltip shows the set's band and its antenna length in mm.
+The tooltip shows the set's band, its antenna length in mm and whether a charged battery is loaded.
 
 ## Tuning
 
@@ -41,6 +42,12 @@ The closer the antenna's length is to the band's, the better the set hears and i
 Only sets on the same band, in the same dimension, hear each other. A listener must hold a set in either hand.
 
 Two well-tuned sets reach about 160 blocks. A badly tuned antenna at either end shortens the reach for both directions. Out to about two thirds of the reach the voice is clean; beyond that packets drop, more and more toward the edge, and the voice breaks up. Past the edge it is silent.
+
+## Noise
+
+An [Arc Head](Arc_Furnace.md#the-arc-head) or Arc Hearth within **4 blocks** of a person drowns that end of the link: the link is much poorer, so the reach shortens and the voice breaks up sooner. A person with Lead Chests on four or more of the six sides of the block they stand in is shielded and hears no such loss.
+
+On a marginal link, sounds relayed from a distant set arrive with clicks of static between them, more of it nearer the edge of reach.
 
 ## Room sound
 

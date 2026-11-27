@@ -65,7 +65,7 @@ public final class ScopeThermal {
             AIMING.remove(p.getUUID());
             return;
         }
-        if (p.tickCount % SuitTuning.THERMAL_SCAN_TICKS == 0)
+        if (p.tickCount % SuitTuning.THERMAL_SCAN_TICKS == 0 && io.github.soundgoodizerfan.feedback.weapon.SightCell.charged(gun))
             ThermalScan.scan(p, range(gun));
     }
 

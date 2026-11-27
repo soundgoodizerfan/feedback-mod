@@ -106,11 +106,7 @@ public class RobotMastBlockEntity extends ElectricNode implements ChannelSource,
 
     /** Whether four or more of a base block's neighbours shield it from noise (shared with the job board). */
     static boolean shielded(net.minecraft.world.level.Level level, BlockPos pos) {
-        int shields = 0;
-        for (Direction d : Direction.values())
-            if (level.getBlockState(pos.relative(d)).is(FTags.RADIO_SHIELDS))
-                shields++;
-        return shields >= 4;
+        return io.github.soundgoodizerfan.feedback.radio.RadioNoise.shielded(level, pos);
     }
 
     /** Whether a noise block stands within {@link RobotTuning#RADIO_NOISE_RANGE} of {@code at}; {@code scan} is the caller's scratch position. */

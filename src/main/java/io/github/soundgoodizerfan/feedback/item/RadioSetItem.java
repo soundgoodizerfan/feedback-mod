@@ -54,10 +54,18 @@ public class RadioSetItem extends Item {
         return InteractionResultHolder.pass(set);
     }
 
+    /** A battery on the cursor is loaded into the set to transmit on ({@link io.github.soundgoodizerfan.feedback.radio.RadioCell}). */
+    @Override
+    public boolean overrideOtherStackedOnMe(ItemStack set, ItemStack other, net.minecraft.world.inventory.Slot slot, net.minecraft.world.inventory.ClickAction action,
+                                            Player player, net.minecraft.world.entity.SlotAccess access) {
+        return io.github.soundgoodizerfan.feedback.radio.RadioCell.load(set, other, slot, action, player, access);
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.feedback.radio.band", RadioSets.band(stack)));
         tooltip.add(Component.translatable("tooltip.feedback.radio.antenna", RadioSets.antennaMm(stack)));
+        tooltip.add(Component.translatable(io.github.soundgoodizerfan.feedback.radio.RadioCell.charged(stack) ? "tooltip.feedback.radio.cell" : "tooltip.feedback.radio.no_cell"));
     }
 
     /** InteractionResultHolder shortcuts. */

@@ -442,6 +442,8 @@ public final class GunTuning {
     public static final float GUN_ROCKET_GRAIN_KG = 0.0005f, GUN_ROCKET_BURN_PER_GRAIN = 10f, GUN_ROCKET_EXHAUST = 3f, GUN_ROCKET_EJECT_SPEED = 0.6f,
             GUN_PROXIMITY_RADIUS = 2.5f, GUN_PROXIMITY_REACH = 1.5f, GUN_CLUSTER_SPEED = 1.2f;
 
+    /** Invented. Eu a second a thermal scope draws from the gun's sight cell (the rangefinder is 2, the laser 5). */
+    public static final float THERMAL_SCOPE_DRAW_EU = 3f;
     /**
      * Fire control and the smart fuse (placeholders, tuned in play). A fire-control circuit cuts spread by {@code FIRE_CONTROL_CUT x (1 - noise)}, the stick
      * machines' pattern ({@code CIRCUIT_ACCURACY_CUT}); its rangefinder reaches {@code FIRE_CONTROL_REACH} blocks, longer by {@code 1 + FIRE_CONTROL_GAIN x gain/(gain + 1)}

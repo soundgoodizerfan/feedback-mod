@@ -904,6 +904,8 @@ public final class ModularTuning {
     public static final float LAMP_LIGHT_EXP = 0.5f, RING_PUSH_GAUGE_EXP = 1f;
     public static final float STORE_REF_CM = 20f, STORE_MASS = 1800f, STORE_LEAK = 0.05f, STORE_REF_DENSITY = 1.9f, STORE_REF_CONDUCTIVITY = 0.000175f;
     /** Leyden jar: the plate area (percent) and glass wall (mm) the fixed jar stands for, and its capacitance, leak per tick and burst amps. */
+    /** Invented. A radioactive glass ionises the air in a jar: its leak rises by this much per Ru the glass gives (uranium glass, 0.012 Ru, leaks about half as much again). */
+    public static final float JAR_IONISATION_LEAK = 40f;
     public static final float JAR_REF_AREA = 50f, JAR_REF_WALL_MM = 4f, JAR_CAPACITY_PACKETS = 10f, JAR_LEAK = 0.002f, JAR_BURST_AMPS = 8f;
 
     /** Pressure shell addons: how much the bands raise the danger line at best, and the share of the room a relief valve vents per tick. */
