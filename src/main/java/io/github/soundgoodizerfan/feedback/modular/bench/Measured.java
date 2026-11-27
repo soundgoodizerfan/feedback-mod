@@ -75,10 +75,10 @@ public final class Measured {
             case CALIPERS -> {
                 ModularType type = ModularTypes.known(design.type());
                 for (Part p : design.parts()) {
-                    ModularType.Role role = type == null ? null : type.roles().get(p.role());
-                    if (role == null)
+                    if (type == null || !type.roles().containsKey(p.role()))
                         continue;
-                    p.measures().axes().forEach((name, v) -> out.put("axis." + role.name() + "." + name, v));
+                    // Keyed by the role id (the roles map key, unique per type); Role.name() is a display name two roles can share.
+                    p.measures().axes().forEach((name, v) -> out.put("axis." + p.role() + "." + name, v));
                 }
                 ModularFit.Fit fit = ModularFit.of(item);
                 if (fit != null)
