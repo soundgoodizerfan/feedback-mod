@@ -175,7 +175,7 @@ Six professions also sell **treatises**, one of each volume per day, at a high t
 
 Blueprints for tools and armor carry the type's default design. Gun blueprints carry that gun's design. A recipe card carries a dish layout: open it to read the layout and the predicted figures.
 
-The wandering trader sells a small fixed list with a daily stock and no standing. On market day it sets up at a [Market Cross](Villages.md#market-cross).
+The wandering trader draws its goods from a wide pool: faraway vanilla goods, steel, tin and bronze ingots, steel heads and binding, treatises, gems and redstone, rare-material pickaxe and axe heads (titanium, tungsten carbide, cobalt), crossbow, self-loading pistol and bolt rifle blueprints, netherite scrap, ancient debris, an echo shard, a heart of the sea and the six reference instruments of the [Standards stall](#standards-stall). Each trader shows 6 to 8 lines a day, twice as many on market day, and the lines change from day to day. Cheap goods turn up often and dear ones rarely. The expensive lines are sold once a week. There is no standing to earn. On market day it sets up at a [Market Cross](Villages.md#market-cross).
 
 ### Standards stall
 

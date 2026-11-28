@@ -26,6 +26,8 @@ public final class VillageTuning {
     public static final int GOSSIP_GOOD = 3, GOSSIP_EXCEPTIONAL = 8, GOSSIP_REJECTED = 2;
     /** Things a villager wants to buy on a day: least and most lines drawn from its pools. */
     public static final int WANTS_MIN = 4, WANTS_MAX = 6;
+    /** Lines a wandering trader carries a day (doubled on market day) and the price share of the draw weight: line weight is WANDERER_WEIGHT / price. */
+    public static final int WANDERER_PICK_MIN = 6, WANDERER_PICK_MAX = 8, WANDERER_WEIGHT = 48;
     /** Villager experience a purchase or sale gives. */
     public static final int BUY_XP = 1;
     /** Invented. Player XP points a Trade Tap is paid per point of villager experience a Counter transaction earns. */

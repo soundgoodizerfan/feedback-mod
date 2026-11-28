@@ -2,28 +2,332 @@
   "profession": "feedback:wanderer",
   "goods": [
     {
-      "level": 1,
       "item": "minecraft:lead",
       "price": 2,
-      "count": 2
+      "count": 2,
+      "stock": 4
     },
     {
-      "level": 1,
       "item": "minecraft:name_tag",
       "price": 5,
       "stock": 2
     },
     {
-      "level": 1,
       "item": "minecraft:podzol",
       "price": 2,
-      "count": 2
+      "count": 2,
+      "stock": 4
     },
     {
-      "level": 1,
       "item": "minecraft:blue_ice",
       "price": 6,
       "stock": 2
+    },
+    {
+      "item": "minecraft:red_sand",
+      "price": 2,
+      "count": 8,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:cactus",
+      "price": 2,
+      "count": 4,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:cocoa_beans",
+      "price": 2,
+      "count": 4,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:sweet_berries",
+      "price": 1,
+      "count": 8,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:slime_ball",
+      "price": 3,
+      "count": 4,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:lily_pad",
+      "price": 1,
+      "count": 8,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:glow_berries",
+      "price": 2,
+      "count": 8,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:dried_kelp_block",
+      "price": 2,
+      "count": 2,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:mycelium",
+      "price": 4,
+      "count": 2,
+      "stock": 2
+    },
+    {
+      "item": "minecraft:sea_pickle",
+      "price": 2,
+      "count": 2,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:pointed_dripstone",
+      "price": 2,
+      "count": 4,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:moss_block",
+      "price": 3,
+      "count": 4,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:brain_coral",
+      "price": 4,
+      "stock": 2
+    },
+    {
+      "item": "minecraft:ink_sac",
+      "price": 2,
+      "count": 4,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:glow_ink_sac",
+      "price": 4,
+      "count": 2,
+      "stock": 2
+    },
+    {
+      "item": "minecraft:lapis_lazuli",
+      "price": 3,
+      "count": 4,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "price": 1,
+      "count": 8,
+      "stock": 3
+    },
+    {
+      "item": "minecraft:saddle",
+      "price": 8,
+      "stock": 1
+    },
+    {
+      "item": "minecraft:nautilus_shell",
+      "price": 8,
+      "stock": 1
+    },
+    {
+      "item": "minecraft:flint_and_steel",
+      "price": 3,
+      "stock": 2
+    },
+    {
+      "item": "minecraft:spyglass",
+      "price": 6,
+      "stock": 1
+    },
+    {
+      "item": "minecraft:tropical_fish_bucket",
+      "price": 5,
+      "stock": 1
+    },
+    {
+      "item": "feedback:tool_binding",
+      "price": 4,
+      "stock": 3,
+      "material": "feedback:steel"
+    },
+    {
+      "item": "feedback:steel_ingot",
+      "price": 8,
+      "stock": 3
+    },
+    {
+      "item": "feedback:tin_ingot",
+      "price": 5,
+      "stock": 3
+    },
+    {
+      "item": "feedback:bronze_ingot",
+      "price": 6,
+      "stock": 3
+    },
+    {
+      "item": "feedback:axe_head",
+      "price": 10,
+      "stock": 2,
+      "material": "feedback:steel"
+    },
+    {
+      "item": "feedback:pickaxe_head",
+      "price": 10,
+      "stock": 2,
+      "material": "feedback:steel"
+    },
+    {
+      "item": "feedback:shovel_head",
+      "price": 9,
+      "stock": 2,
+      "material": "feedback:steel"
+    },
+    {
+      "item": "feedback:treatise_mechanical_1",
+      "price": 12,
+      "stock": 1
+    },
+    {
+      "item": "feedback:treatise_mechanical_2",
+      "price": 18,
+      "stock": 1
+    },
+    {
+      "item": "minecraft:diamond",
+      "price": 16,
+      "stock": 2
+    },
+    {
+      "item": "minecraft:amethyst_shard",
+      "price": 6,
+      "count": 2,
+      "stock": 2
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "price": 4,
+      "count": 4,
+      "stock": 2
+    },
+    {
+      "item": "minecraft:redstone",
+      "price": 3,
+      "count": 8,
+      "stock": 3
+    },
+    {
+      "item": "feedback:calipers",
+      "price": 32,
+      "stock": 1,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "item": "feedback:thermometer",
+      "price": 32,
+      "stock": 1,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "item": "feedback:balance_scale",
+      "price": 32,
+      "stock": 1,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "item": "feedback:pressure_gauge",
+      "price": 36,
+      "stock": 1,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "item": "feedback:hydrometer",
+      "price": 32,
+      "stock": 1,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "item": "feedback:survey_meter",
+      "price": 40,
+      "stock": 1,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "item": "feedback:pickaxe_head",
+      "price": 48,
+      "stock": 1,
+      "material": "feedback:titanium",
+      "weekly": true
+    },
+    {
+      "item": "feedback:pickaxe_head",
+      "price": 56,
+      "stock": 1,
+      "material": "feedback:tungsten_carbide",
+      "weekly": true
+    },
+    {
+      "item": "feedback:axe_head",
+      "price": 44,
+      "stock": 1,
+      "material": "feedback:cobalt",
+      "weekly": true
+    },
+    {
+      "item": "feedback:modular_blueprint",
+      "price": 40,
+      "stock": 1,
+      "blueprint": "feedback:crossbow",
+      "weekly": true
+    },
+    {
+      "item": "feedback:modular_blueprint",
+      "price": 56,
+      "stock": 1,
+      "blueprint": "feedback:self_loading_pistol",
+      "weekly": true
+    },
+    {
+      "item": "feedback:modular_blueprint",
+      "price": 60,
+      "stock": 1,
+      "blueprint": "feedback:bolt_rifle",
+      "weekly": true
+    },
+    {
+      "item": "minecraft:netherite_scrap",
+      "price": 48,
+      "stock": 1,
+      "weekly": true
+    },
+    {
+      "item": "minecraft:ancient_debris",
+      "price": 60,
+      "stock": 1,
+      "weekly": true
+    },
+    {
+      "item": "minecraft:echo_shard",
+      "price": 44,
+      "stock": 1,
+      "weekly": true
+    },
+    {
+      "item": "minecraft:heart_of_the_sea",
+      "price": 50,
+      "stock": 1,
+      "weekly": true
     }
   ]
 }

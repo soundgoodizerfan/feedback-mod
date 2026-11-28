@@ -165,7 +165,22 @@ public final class VillageEconomy {
                     && g.built().map(b -> !built(b).isEmpty()).orElse(true))
                 out.add(i);
         }
-        return out;
+        return m instanceof Villager ? out : travellersPick(m, all, out);
+    }
+
+    /**
+     * A wandering trader carries a few lines of its big pool, drawn from its UUID and the day. Cheap lines are common and dear ones rare:
+     * each line's weight is {@code WANDERER_WEIGHT / price}, drawn without replacement (key {@code u^(1/w)}), kept in file order.
+     */
+    private static List<Integer> travellersPick(AbstractVillager m, List<Good> all, List<Integer> pool) {
+        RandomSource rnd = RandomSource.create(m.getUUID().getMostSignificantBits() * 31L + m.getUUID().getLeastSignificantBits() + today(m) * 0x9E3779B97F4A7C15L + 7);
+        int n = Math.min(pool.size(), (VillageTuning.WANDERER_PICK_MIN + rnd.nextInt(VillageTuning.WANDERER_PICK_MAX - VillageTuning.WANDERER_PICK_MIN + 1)) * (MarketDay.feels(m) ? 2 : 1));
+        java.util.Map<Integer, Double> key = new java.util.HashMap<>();
+        for (int idx : pool)
+            key.put(idx, Math.pow(rnd.nextDouble(), Math.max(1, all.get(idx).price()) / (double) VillageTuning.WANDERER_WEIGHT));
+        List<Integer> picked = new ArrayList<>(pool.stream().sorted((a, b) -> Double.compare(key.get(b), key.get(a))).limit(n).toList());
+        java.util.Collections.sort(picked);
+        return picked;
     }
 
     /** Indices into the buys table of what this merchant wants today: four to six lines of the shared and profession pools. */
