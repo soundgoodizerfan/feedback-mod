@@ -416,6 +416,10 @@ public class FCreativeTabs {
                     out.accept(cog);
                 }
         });
+        // One of each relic part: a part that is its own thing, in no stock form, so no per-material loop above reaches it.
+        io.github.soundgoodizerfan.feedback.process.ClientMaterials.known().forEach((id, m) -> m.relic().ifPresent(form ->
+                FModular.PARTS.stream().filter(p -> p.getId().getPath().equals(form)).findFirst()
+                        .ifPresent(item -> out.accept(madeOf(item, id, "ingot")))));
         // One saw head per material hard enough to be one, then a plasma head for those that carry current.
         forMaterials((id, m) -> {
             if (isHard(m))

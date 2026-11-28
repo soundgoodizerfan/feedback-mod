@@ -39,7 +39,12 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
         generation++;
         TreeMap<ResourceLocation, Material> loaded = new TreeMap<>();
-        resolved(json).forEach((id, element) -> Material.CODEC.parse(JsonOps.INSTANCE, element)
+        Map<ResourceLocation, JsonElement> all = new TreeMap<>(json);
+        relics(resources).forEach((id, element) -> {
+            if (all.putIfAbsent(id, element) != null)
+                Feedback.LOGGER.error("Relic {} has the id of a material and is skipped", id);
+        });
+        resolved(all).forEach((id, element) -> Material.CODEC.parse(JsonOps.INSTANCE, element)
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad material {}: {}", id, error))
                 .ifPresent(material -> loaded.put(id, material)));
         materials = java.util.Collections.unmodifiableSortedMap(loaded);
@@ -47,6 +52,33 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
         FormTable.get().invalidate();
         ThermalProcessTable.get().invalidate();
         CastingTable.get().invalidate();
+    }
+
+    /** The folder relic files live in: {@code data/<namespace>/relic/<id>.json}, each a material file that also names its {@code relic} form. */
+    public static final String RELIC_DIRECTORY = "relic";
+
+    /**
+     * The relic files, by id. A relic is a material file with a {@code relic} key, kept in its own folder so it is never mistaken for stock; one
+     * without the key is logged and left out.
+     */
+    private static Map<ResourceLocation, JsonElement> relics(ResourceManager resources) {
+        Map<ResourceLocation, JsonElement> out = new TreeMap<>();
+        resources.listResources(RELIC_DIRECTORY, file -> file.getPath().endsWith(".json")).forEach((file, resource) -> {
+            String path = file.getPath();
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(file.getNamespace(),
+                    path.substring(RELIC_DIRECTORY.length() + 1, path.length() - ".json".length()));
+            try (var reader = resource.openAsReader()) {
+                JsonElement element = com.google.gson.JsonParser.parseReader(reader);
+                if (!element.isJsonObject() || !element.getAsJsonObject().has("relic") && !element.getAsJsonObject().has("parent")
+                        && !element.getAsJsonObject().has("template"))
+                    Feedback.LOGGER.error("Relic {} names no relic form", id);
+                else
+                    out.put(id, element);
+            } catch (Exception e) {
+                Feedback.LOGGER.error("Bad relic {}: {}", id, e.toString());
+            }
+        });
+        return out;
     }
 
     /**

@@ -133,7 +133,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron, Optional<Integer> fastener,
                        Optional<Float> toxicity, Optional<Float> corrosivity, Optional<Float> abundance, Optional<Float> ph, Optional<Float> attenuation,
                        Optional<Float> transition, Optional<Float> refractiveIndex,
-                       Map<String, List<String>> accepts, Optional<String> tag) {
+                       Map<String, List<String>> accepts, Optional<String> tag, Optional<String> relic) {
 
     /**
      * The name this material goes by in the common {@code c:<form>s/<name>} tags: its own {@code tag} when the file states one, else the end of its id.
@@ -841,12 +841,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.neutron(), new Extras(m.luminance(), m.phosphor(), m.fastener(), m.toxicity(), m.corrosivity(), m.abundance(), m.ph(), m.attenuation(), m.transition(), m.refractiveIndex(), m.accepts(), m.tag())))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.neutron(), new Extras(m.luminance(), m.phosphor(), m.fastener(), m.toxicity(), m.corrosivity(), m.abundance(), m.ph(), m.attenuation(), m.transition(), m.refractiveIndex(), m.accepts(), m.tag(), m.relic())))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food().map(f -> f.heated(thermal.specificHeat())), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron(), tail.fastener(), tail.toxicity(), tail.corrosivity(), tail.abundance(), tail.ph(), tail.attenuation(), tail.transition(), tail.refractiveIndex(), tail.accepts(), tail.tag())));
+            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food().map(f -> f.heated(thermal.specificHeat())), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron(), tail.fastener(), tail.toxicity(), tail.corrosivity(), tail.abundance(), tail.ph(), tail.attenuation(), tail.transition(), tail.refractiveIndex(), tail.accepts(), tail.tag(), tail.relic())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -876,6 +876,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         Optional<Float> refractiveIndex() { return extras.refractiveIndex(); }
         Map<String, List<String>> accepts() { return extras.accepts(); }
         Optional<String> tag() { return extras.tag(); }
+        Optional<String> relic() { return extras.relic(); }
 
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
@@ -916,6 +917,10 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                {@code #tag}, or an item told apart by a component, {@code item[component={"field":"id"}]} ({@link ComponentItem}), for another
      *                mod's one item that holds many stuffs (an essentia crystal of each aspect). Only {@link #find}, a derived crystal melt and the recipe browser read it; nothing is generated from it and no step outputs
      *                it, so it is the compat key for another mod's mercury, cluster or finished gear. An id or tag nothing registers is ignored.
+     * @param relic the form of the shaped part this is (for example {@code sword_blade}) when the file is a relic, loaded from a {@code relic} folder
+     *             instead of {@code material/}: a modular part that is its own thing, not a shape cut from a stock material. It carries the full figure
+     *             set like any material, but has no stock forms, so no picker lists it and no item is generated; the part is found through its {@code MadeOf}.
+     *             Absent for every ordinary material. See {@code docs/specs/relic_parts_spec.md}.
      * @param abundance how much of the crust is this stuff, in parts per million by mass (Earth's crust, bent for play where
      *                  the game's rock differs). Only on a material a vein yields: it sets the default weight of that
      *                  material's deposits ({@code worldgen/OreVein}), so a common ore is common and a rare one rare without a
@@ -924,7 +929,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     private record Extras(Optional<Integer> luminance, boolean phosphor, Optional<Integer> fastener, Optional<Float> toxicity,
                           Optional<Float> corrosivity, Optional<Float> abundance, Optional<Float> ph, Optional<Float> attenuation,
                           Optional<Float> transition, Optional<Float> refractiveIndex,
-                          Map<String, List<String>> accepts, Optional<String> tag) {
+                          Map<String, List<String>> accepts, Optional<String> tag, Optional<String> relic) {
         static final com.mojang.serialization.MapCodec<Extras> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.intRange(0, 15).optionalFieldOf("luminance").forGetter(Extras::luminance),
                 Codec.BOOL.optionalFieldOf("phosphor", false).forGetter(Extras::phosphor),
@@ -937,7 +942,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.floatRange(-273f, Float.MAX_VALUE).optionalFieldOf("transition").forGetter(Extras::transition),
                 Codec.floatRange(1f, 10f).optionalFieldOf("refractive_index").forGetter(Extras::refractiveIndex),
                 Codec.unboundedMap(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("accepts", Map.of()).forGetter(Extras::accepts),
-                Codec.STRING.optionalFieldOf("tag").forGetter(Extras::tag)
+                Codec.STRING.optionalFieldOf("tag").forGetter(Extras::tag),
+                Codec.STRING.optionalFieldOf("relic").forGetter(Extras::relic)
         ).apply(instance, Extras::new));
     }
 
