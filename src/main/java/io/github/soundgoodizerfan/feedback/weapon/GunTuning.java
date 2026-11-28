@@ -211,6 +211,19 @@ public final class GunTuning {
     /** The projectile's hardness when a shot names no material: lead's (0.5 St, real Vickers 0.04 GPa). */
     public static final float GUN_DEFAULT_PROJECTILE_HARDNESS = 0.5f;
 
+    /**
+     * A brittle slug (one whose toughness and yield would shatter it as a block, {@code GunShots.breakCost}) that
+     * meets a face harder than itself breaks into this many fragments, thrown back off the face at this share of its
+     * speed. Placeholders.
+     */
+    public static final int GUN_SHATTER_FRAGMENTS = 6;
+
+    public static final float GUN_SHATTER_SPEED = 0.35f;
+
+    /** Material of a body tagged {@code feedback:body_bone} or {@code feedback:body_metal}: its hardness is what a bullet meets with no armour on. */
+    public static final net.minecraft.resources.ResourceLocation BODY_BONE = io.github.soundgoodizerfan.feedback.Feedback.id("bone"),
+            BODY_METAL = io.github.soundgoodizerfan.feedback.Feedback.id("cast_iron");
+
     /** Anchor round: ticks and Slowness level that glue a body in place. Tether round: reel speed cap, blocks per tick. Bounce: launch per level of the payload's bounce perk, and how close the shooter must be. Placeholders. */
     public static final int GUN_ANCHOR_TICKS = 100, GUN_ANCHOR_AMPLIFIER = 7;
 

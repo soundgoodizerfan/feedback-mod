@@ -372,6 +372,16 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
         return h * shape.pierce() * (sabot(materials) ? GunTuning.GUN_SABOT_PIERCE : 1f);
     }
 
+    /** Whether the slug is brittle: its toughness and yield are ones that shatter a block (the core's, where there is one). */
+    public boolean brittle(Map<ResourceLocation, Material> materials) {
+        Material m = materials.get(core.orElse(projectile));
+        if (m == null)
+            return false;
+        float t = m.mechanical().toughness().map(St -> St.value()).orElse(Float.NaN);
+        float y = m.mechanical().yieldStrength().map(St -> St.value()).orElse(Float.NaN);
+        return !Float.isNaN(GunShots.breakCost(t, y));
+    }
+
     /** Air drag against a round nose's: the shape's, and a sabot's is less. */
     public float drag(Map<ResourceLocation, Material> materials) {
         return shape.drag() * (sabot(materials) ? GunTuning.GUN_SABOT_DRAG : 1f);

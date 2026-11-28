@@ -40,7 +40,7 @@ S   S
 
 D is a Wrought Iron Drilled Plate, R is a Wrought Iron Rod and S is a Stick. Craft it in the plain [Crafting Table](Crafting_Table.md).
 
-**Lead** is the usual bullet metal because it's dense (11.3, against iron's 7.9): heavy bullets keep their energy. But lead is soft. A **harder** bullet goes through armor and breaks less on hard faces: see [What bullets do](Guns.md#hardness-glass-glancing-armor).
+**Lead** is the usual bullet metal because it's dense (11.3, against iron's 7.9): heavy bullets keep their energy. But lead is soft. A **harder** bullet goes through armor and breaks less on hard faces; a brittle one shatters on a face harder than itself: see [What bullets do](Guns.md#hardness-glass-glancing-armor).
 
 ### Bullet shapes
 

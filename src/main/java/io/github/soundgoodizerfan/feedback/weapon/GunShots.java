@@ -154,18 +154,19 @@ public final class GunShots {
      * @param glance how readily it glances off a block (the turning angle is multiplied by this).
      * @param traits what the payload material is (sticky glues, fibrous tethers); {@code seed} is a seed it plants on farmland.
      * @param vial   a potion the round carries, let go where it lands, or null.
+     * @param brittle the slug shatters on a harder face (see {@code Cartridge.brittle}).
      * @param perks  what the payload does to a living thing struck ({@link io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks#affect}).
      */
     public record Flight(float drag, float damage, float ease, float glance, java.util.Map<io.github.soundgoodizerfan.feedback.process.Material.Perk, Integer> perks,
                          io.github.soundgoodizerfan.feedback.potion.PotionState vial,
                          java.util.Set<io.github.soundgoodizerfan.feedback.process.Material.Trait> traits,
                          net.minecraft.resources.ResourceLocation seed, Cartridge.Fuse fuse, float motorKgPerTick, float exhaust, int burn, int pellets,
-                         float proximity) {
-        public static final Flight PLAIN = new Flight(1f, 1f, 1f, 1f, java.util.Map.of(), null, java.util.Set.of(), null, null, 0f, 0f, 0, 1, 0f);
+                         float proximity, boolean brittle) {
+        public static final Flight PLAIN = new Flight(1f, 1f, 1f, 1f, java.util.Map.of(), null, java.util.Set.of(), null, null, 0f, 0f, 0, 1, 0f, false);
 
         /** This flight with a launcher's fuse control setting: its fuse and, for a proximity one, the radius the circuit senses to (0 keeps the base radius). */
         public Flight withFuse(Cartridge.Fuse set, float radius) {
-            return new Flight(drag, damage, ease, glance, perks, vial, traits, seed, set, motorKgPerTick, exhaust, burn, pellets, radius);
+            return new Flight(drag, damage, ease, glance, perks, vial, traits, seed, set, motorKgPerTick, exhaust, burn, pellets, radius, brittle);
         }
 
         /** The flight of {@code round} in {@code materials}. */
@@ -183,7 +184,7 @@ public final class GunShots {
             }
             return new Flight(round.drag(materials), round.shape().damage(), round.shape().ease(), round.shape().glance(),
                     round.payloadPerks(materials), round.vial().orElse(null), round.payloadTraits(materials), round.seed().orElse(null),
-                    round.fuse().orElse(null), kgPerTick, exhaust, burn, round.fuse().isPresent() && round.shot() ? round.pellets() : 1, 0f);
+                    round.fuse().orElse(null), kgPerTick, exhaust, burn, round.fuse().isPresent() && round.shot() ? round.pellets() : 1, 0f, round.brittle(materials));
         }
     }
 
@@ -991,7 +992,18 @@ public final class GunShots {
                     : ARMOUR.computeIfAbsent(piece.getItem(), GunShots::hardnessOf);
             hardest = Math.max(hardest, Float.isNaN(h) ? Float.MAX_VALUE : h);
         }
-        return hardest;
+        return Math.max(hardest, bodyHardness(target));
+    }
+
+    /** The hardness of a body's own tissue: bone for the skeletons, metal for the iron golem, by entity tag; soft otherwise. */
+    private static float bodyHardness(net.minecraft.world.entity.LivingEntity target) {
+        var type = target.getType();
+        net.minecraft.resources.ResourceLocation id = type.is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Feedback.id("body_metal"))) ? GunTuning.BODY_METAL
+                : type.is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Feedback.id("body_bone"))) ? GunTuning.BODY_BONE : null;
+        if (id == null)
+            return 0f;
+        var m = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(id);
+        return m == null ? 0f : m.hardness().value();
     }
 
     /**
@@ -1137,11 +1149,24 @@ public final class GunShots {
         return true;
     }
 
+    /** A brittle slug striking a face harder than itself breaks into fragments thrown back off it; the round is spent. */
+    private static boolean shatter(ServerLevel level, Shot s, Vec3 at, float faceHardness, Vec3 normal) {
+        if (!s.flight.brittle() || s.scattered || faceHardness <= s.hardness)
+            return false;
+        s.scattered = true;
+        scatter(level, s, at, GunTuning.GUN_SHATTER_FRAGMENTS, (float) s.velocity.length() * GunTuning.GUN_SHATTER_SPEED, normal);
+        s.stopAt = at;
+        return true;
+    }
+
     /** A cluster shell bursts into its pellets: each a swept shot of its share of the mass, thrown out from where it burst at the cluster speed. */
     private static void scatter(ServerLevel level, Shot s, Vec3 at) {
-        int n = s.cluster;
+        scatter(level, s, at, s.cluster, GunTuning.GUN_CLUSTER_SPEED, null);
+    }
+
+    /** {@code n} fragments thrown from {@code at} at {@code speed}; with a {@code normal}, only into the half space it faces (off a face). */
+    private static void scatter(ServerLevel level, Shot s, Vec3 at, int n, float speed, Vec3 normal) {
         float each = s.massMu / n;
-        float speed = GunTuning.GUN_CLUSTER_SPEED;
         float mps = speed * FTuning.TICKS_PER_SECOND;
         GunFigures pellet = new GunFigures(new io.github.soundgoodizerfan.feedback.core.unit.Pu(0f), new io.github.soundgoodizerfan.feedback.core.unit.Pu(0f),
                 speed, 0.5f * each * mps * mps, new io.github.soundgoodizerfan.feedback.core.unit.Mu(each), new io.github.soundgoodizerfan.feedback.core.unit.Mu(0f),
@@ -1149,6 +1174,8 @@ public final class GunShots {
         List<Shot> live = BORN.computeIfAbsent(level, l -> new ArrayList<>());
         for (int k = 0; k < n; k++) {
             Vec3 dir = new Vec3(level.random.nextGaussian(), level.random.nextGaussian(), level.random.nextGaussian()).normalize();
+            if (normal != null && dir.dot(normal) < 0)
+                dir = dir.scale(-1);
             Shot p = new Shot(s.shooter, at.add(dir.scale(0.3)), dir.scale(speed), pellet);
             p.hardness = s.hardness;
             p.gun = s.gun;
@@ -1392,6 +1419,8 @@ public final class GunShots {
                     target instanceof LivingEntity dead && dead.isDeadOrDying());
             if ((fused == null || fused.kind() == Cartridge.Kind.INERTIA || damage <= health) && detonate(level, s, hit.getLocation()))
                 return false;
+            if (target instanceof LivingEntity hard && shatter(level, s, hit.getLocation(), armourHardness(hard), null))
+                return false;
             if (damage <= health || !s.spend(health / (GunTuning.GUN_DAMAGE_PER_WORK * s.flight.damage())))
                 return false;
             s.pierced.add(target.getId());
@@ -1424,6 +1453,10 @@ public final class GunShots {
                 GunImpacts.ricochet(level, p, s.velocity);
                 io.github.soundgoodizerfan.feedback.net.GunTracerPayload.send(level, s.id, false, s.pos, s.velocity, s.argb, s.dragMult);
                 return true;
+            }
+            if (shatter(level, s, p, hardnessOf(hitBlock), normal)) {
+                GunImpacts.block(level, at, block.getDirection(), p, (float) Math.sqrt(Math.min(1f, s.energy() / s.muzzleEnergy)));
+                return false;
             }
             s.stopAt = p;
             GunImpacts.block(level, at, block.getDirection(), p, (float) Math.sqrt(Math.min(1f, s.energy() / s.muzzleEnergy)));
