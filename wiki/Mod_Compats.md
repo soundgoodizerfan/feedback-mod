@@ -29,6 +29,7 @@ The mods Feedback works with, and what each one gives you. Some are required, so
 | [Born in Chaos](#born-in-chaos) | Optional | Dark Metal counts as a material |
 | [Thaumic Bases](#thaumic-bases) | Optional | Thauminite counts as a material |
 | [Deeper and Darker](#deeper-and-darker) | Optional | Resonarium and Soul Crystal count as materials |
+| [Aether](#aether) | Optional | Zanite, Ambrosium and Gravitite count as materials; four relic sword blades; the Aether's air and temperature |
 | [Other mods](#other-mods) | Optional | Fluid tags, shared biome and stone tags, and Feedback blocks accepted in place of vanilla ones |
 
 ## Sable, Dimensional Sable and Sable Scaling
@@ -460,7 +461,7 @@ Night Vision Goggles, the Universal Attractor, the Helium Flamingo and the Warp 
 
 ## Materials from other mods
 
-[Cataclysm](#cataclysm), [Born in Chaos](#born-in-chaos), [Thaumic Bases](#thaumic-bases) and [Deeper and Darker](#deeper-and-darker) each bring materials that exist only with that mod installed.
+[Cataclysm](#cataclysm), [Born in Chaos](#born-in-chaos), [Thaumic Bases](#thaumic-bases), [Deeper and Darker](#deeper-and-darker) and [Aether](#aether) each bring materials that exist only with that mod installed.
 
 - The mod's own ingots, nuggets, blocks, plates, gems and dusts of a material, where it has them, count as that material in every process. Using one opens the material's stats card in JEI, whose item box lists it.
 - Feedback adds other forms of the material. Each metal gets the [forms](Materials.md#forms) the mod lacks, such as wire, rods and machined parts.
@@ -524,6 +525,23 @@ Both insulate to **HV**.
 ## Energy Fitting
 
 The [Energy Fitting](Energy_Fitting.md) is the one place Forge Energy (FE) leaves a Feedback electrical line. Placed against another mod's machine that takes FE, it hands that machine FE made from the line's current, at a loss. Nothing else in Feedback gives or takes FE.
+
+## Aether
+
+**Optional.** With the Aether installed, three materials exist:
+
+| Material | Kind | Hardness | Toughness | Yield strength | Density | Melts at (Tu) | Enchantability |
+|---|---|---|---|---|---|---|---|
+| **Zanite** | gem | 200 | 3 | 10 | 3.95 | 2050 | 14 |
+| **Ambrosium** | crystal | 30 | 2 | 3 | 2.1 | 420 | 12 |
+| **Gravitite** | metal | 12 | 40 | 6 | 6.2 | 980 | 16 |
+
+- Zanite and Ambrosium are transparent crystals; Zanite is a gemstone.
+- Gravitite is **diamagnetic**: it floats over an [Electromagnet](Electromagnet.md).
+- The Aether's own ores, blocks, gems and shards count as these materials in every process.
+- Zanite and Gravitite tools and armor (swords, pickaxes, axes, shovels, hoes, helmets, chestplates, leggings and boots) are converted on the spot into the modular item of that kind in that material, like vanilla tools (see [Old vanilla tools](Tools_and_Weapons.md#old-vanilla-tools)).
+- The Holy, Flaming, Lightning and Candy Cane swords convert to a modular sword with the matching [relic](Relics.md) blade.
+- The Aether has its own air and warmth: the air is thinner than the Overworld's and thins further with height, and the room temperature is cool at **8 Tu**.
 
 ## Other mods
 

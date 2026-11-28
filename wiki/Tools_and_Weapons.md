@@ -106,6 +106,8 @@ Vanilla tools, weapons and armor that turn up (in chests, on mobs, or in your po
 
 **Diamond is the exception.** A diamond tool becomes a **steel** one with a **diamond tip** ("Diamond-tipped Steel Pickaxe"); diamond armor becomes steel with four diamond **studs**. A whole diamond head would be brittle and poor. The converted pick lasts about half as long as vanilla's diamond did and, as in vanilla, netherite remains the best tool in the game.
 
+With the Aether installed, its four named swords become modular swords with a fixed [relic](Relics.md) blade.
+
 ## Plating
 
 A tool or armor piece whose main part is metal can be plated three ways: hung in an [Electrolytic Cell](Electrolytic_Cell.md#electroplating), dipped in a molten zinc, tin or glass bath ([Casting](Casting.md#hot-dipping)), or made from a plate clad at the [Rolling Mill](Rolling_Mill.md). A good coat adds the coat metal's corrosion resistance (a tool used wet rusts by how little its metal resists water). On **armor** a harder coat also hardens the plate a little. On a **tool** the edge is ground bare, so a coat protects the flats and changes neither bite nor hardness. Re-forging the main part removes the coat. On a [Breaker](Breaker.md#plated-contacts) the coat changes the loss across its contacts.
