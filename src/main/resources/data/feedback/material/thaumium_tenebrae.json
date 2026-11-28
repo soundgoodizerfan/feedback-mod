@@ -66,5 +66,8 @@
     "loop_width": 0.39,
     "lag": 2
   },
-  "toxicity": 0.1
+  "toxicity": 0.1,
+  "perks": {
+    "shroud": 1
+  }
 }

@@ -25,6 +25,52 @@ A weapon's tooltip lists its perks in gold. All numbers are per level.
 
 Not every material suits every part role.
 
+## Aspect alloy perks
+
+Each of the thirty-seven [aspect alloys](Mod_Compats.md#aspect-alloy-names) gives one perk, always at level 1. A part of the alloy gives it when the part is on a held modular tool or weapon, on worn modular armor, or as the head of a [Pivot Mast](Pivot_Mast.md). The item's tooltip lists it. Perks marked with a cooldown work once per wielder in that time. Blow perks also apply when a Pivot Mast head of that alloy strikes a creature. Thrown weapons and guns read only the perks in the table above.
+
+A worn plate also hits back at whoever strikes the wearer with Fire aspect, Chill, Cling and Toxic.
+
+| Alloy | Perk | What it does |
+| --- | --- | --- |
+| Aerialite | **Featherlight** | the swing feels lighter, as in the table above |
+| Chthonium | **Anchor** | worn: no knockback |
+| Cindersteel | **Fire aspect** | sets the target alight; burns a bare hand as in the table above |
+| Thalassium | **Drench** | the target's fire goes out; water-shy mobs such as blazes and endermen are hurt |
+| Eunomium | **Exact** | a swing that is not fully charged lands as a full one |
+| Lysium | **Dispel** | strips one good effect from the target |
+| Xenium | **Blink** | a kill steps you into its place |
+| Azoth | **Etch** | the blow ignores 40% of the target's armor |
+| Halcyon | **Placate** | the struck mob forgets you for about 5 seconds |
+| Fangsteel | **Dread** | the struck mob flees for about 4 seconds |
+| Ferinium | **Rend** | the target bleeds: 4 pulses of 1 damage |
+| Noetium | **Insight** | the blow shows, in words, how hurt and how armored the target is |
+| Tantalus' Metal | **Covet** | a kill rolls the victim's loot table once more |
+| Wiedergang | **Relentless** | a kill leaves the next swing fully charged |
+| Daedalium | **Salvage** | a block broken with it drops itself, whole, if it has no block entity |
+| Rimeiron | **Chill** | builds freezing on the target |
+| Briarsteel | **Verdant** | a kill acts like bone meal where the victim fell |
+| Anthropium | **Rapport** | held or worn: villagers sell cheaper, as if your standing were 40 higher; prices only |
+| Organon | **Versatile** | the tool digs every block a pickaxe, axe, shovel or hoe would, at its best speed; hardness still decides what drops |
+| Dawnsteel | **Dazzle** | blinds the target for 3 seconds |
+| Rotium | **Ratchet** | blows in quick succession on one target hit up to 40% harder |
+| Adamantium | **Yank** | drags the target toward you, harder the more armor it wears |
+| Necrium | **Wither** | the Wither effect for 3 seconds |
+| Kinesis | **Swift** | a landed blow gives Speed II for 2.5 seconds; 3 second cooldown |
+| Allagium | **Exchange** | swaps places with the target; 5 second cooldown |
+| Stormsteel | **Arc** | the blow jumps to up to 2 creatures within 4 blocks for 40% of its damage; 2 second cooldown |
+| Goetium | **Hex** | Weakness for 7 seconds |
+| Aegis | **Brace** | a landed blow, or worn: a hit taken, gives 3 seconds of Resistance; 4 second cooldown |
+| Aesthium | **Echo** | outlines the target; sculk hears |
+| Eidolon | **Phase** | the blow ignores a raised shield |
+| Skotium | **Shroud** | worn: mobs see you at 40% range in light level 7 or below |
+| Kenium | **Stifle** | the target cannot shoot or cast and its projectiles are cancelled, for 5 seconds |
+| Quickblood | **Leech** | heals you for 25% of the blow; 2 second cooldown |
+| Desmos | **Cling** | slows the target |
+| Miasma | **Contagion** | a struck target's harmful effects spread to creatures within 3 blocks |
+| Hyalium | **Shard** | a kill bursts into glass that cuts creatures within 2.5 blocks for 25% of the victim's max health |
+| Pteron | **Glide** | worn: sneak in the air to fall at a slow drift |
+
 ## Why fire aspect burns you
 
 A blaze rod is a fire that does not go out. The mod's hot-contact rules already say what a hot thing does to a bare hand ([Hazards](Hazards.md)), so a flaming weapon uses them: a consequence of holding it, never a lock. Rated [gloves or tongs](Hazards.md#protection) make it safe.

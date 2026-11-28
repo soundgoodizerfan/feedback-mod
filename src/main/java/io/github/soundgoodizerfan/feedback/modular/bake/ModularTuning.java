@@ -680,6 +680,64 @@ public final class ModularTuning {
     /** Farthest a blinking kill carries the wielder, in blocks. */
     public static final double PERK_BLINK_MAX_BLOCKS = 6.0;
 
+    // --- perks a material grants as traits (modular/trait/perk): one level, each a switch with its own size --------------------
+    /** Damage a drenching blow does a water-shy target (blaze, enderman, snow golem). */
+    public static final float PERK_DRENCH_DAMAGE = 3f;
+    /** Share of the target's armour a blow with etch ignores. */
+    public static final float PERK_ETCH_ARMOUR_SHARE = 0.4f;
+    /** Ticks a struck mob forgets whoever placated it, and flees whoever dreaded it, and cannot shoot or cast when stifled. */
+    public static final int PERK_PLACATE_TICKS = 100;
+    public static final int PERK_DREAD_TICKS = 80;
+    public static final int PERK_STIFLE_TICKS = 100;
+    /** Ticks of Weakness, Blindness and Wither a hex, a dazzle and a wither blow give. */
+    public static final int PERK_HEX_TICKS = 140;
+    public static final int PERK_DAZZLE_TICKS = 60;
+    public static final int PERK_WITHER_TICKS = 60;
+    /** A bleed: damage per pulse, pulses, and ticks between them. */
+    public static final float PERK_REND_DAMAGE = 1f;
+    public static final int PERK_REND_PULSES = 4;
+    public static final int PERK_REND_GAP_TICKS = 20;
+    /** Blocks around a contagious target the effects spread within. */
+    public static final double PERK_CONTAGION_BLOCKS = 3.0;
+    /** Pull toward the wielder per point of the target's armour, in blocks per tick (capped), and the cap. */
+    public static final double PERK_YANK_PER_ARMOUR = 0.04;
+    public static final double PERK_YANK_MAX = 0.9;
+    /** Share of the blow's damage a leeching blow heals the wielder, and the ticks before it can again. */
+    public static final float PERK_LEECH_SHARE = 0.25f;
+    public static final int PERK_LEECH_COOLDOWN_TICKS = 40;
+    /** Farthest an exchange reaches, in blocks, and the ticks before it can again. */
+    public static final double PERK_EXCHANGE_MAX_BLOCKS = 6.0;
+    public static final int PERK_EXCHANGE_COOLDOWN_TICKS = 100;
+    /** An arc: blocks it reaches from the target, creatures it hits, the share of the blow each takes and ticks before it can again. */
+    public static final double PERK_ARC_BLOCKS = 4.0;
+    public static final int PERK_ARC_TARGETS = 2;
+    public static final float PERK_ARC_SHARE = 0.4f;
+    public static final int PERK_ARC_COOLDOWN_TICKS = 40;
+    /** Ticks of Resistance a brace gives (struck when worn), and the ticks before it can again. */
+    public static final int PERK_BRACE_TICKS = 60;
+    public static final int PERK_BRACE_COOLDOWN_TICKS = 80;
+    /** Ticks of Speed a swift blow gives, and the ticks before it can again. */
+    public static final int PERK_SWIFT_TICKS = 50;
+    public static final int PERK_SWIFT_COOLDOWN_TICKS = 60;
+    /** A ratchet: share of damage each earlier blow on the same target adds, the most it stacks, and ticks without a blow before it resets. */
+    public static final float PERK_RATCHET_PER_STACK = 0.1f;
+    public static final int PERK_RATCHET_MAX = 4;
+    public static final int PERK_RATCHET_WINDOW_TICKS = 40;
+    /** Blocks a shard burst reaches and the share of the victim's maximum health it deals. */
+    public static final double PERK_SHARD_BLOCKS = 2.5;
+    public static final float PERK_SHARD_HEALTH_SHARE = 0.25f;
+    /** Insight's words: a target above the first share of its health is sound, under the second failing; armor from this many points is heavy. */
+    public static final float PERK_INSIGHT_SOUND_HEALTH = 0.75f;
+    public static final float PERK_INSIGHT_FAILING_HEALTH = 0.4f;
+    public static final int PERK_INSIGHT_HEAVY_ARMOR = 8;
+    /** Standing a rapport adds to a villager's price, as if the holder were that well known. */
+    public static final int PERK_RAPPORT_STANDING = 40;
+    /** Light level at or under which a shroud hides its wearer, and the share of sight left there. */
+    public static final int PERK_SHROUD_LIGHT = 7;
+    public static final double PERK_SHROUD_VISIBILITY = 0.4;
+    /** Downward speed a glide holds the wearer to, in blocks per tick, and the fall it forgives. */
+    public static final double PERK_GLIDE_FALL_SPEED = 0.08;
+
     // --- swept melee volume (combat/hit, plan 2.4 spike) --------------------------------------------
     /** Whether a melee swing also hits what its swept volume covers beyond vanilla's one picked target. The spike's one switch. */
     public static final boolean MELEE_SWEEP = true;

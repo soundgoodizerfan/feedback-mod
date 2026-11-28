@@ -66,5 +66,8 @@
     "loop_width": 0.45,
     "lag": 6
   },
-  "toxicity": 0.45
+  "toxicity": 0.45,
+  "perks": {
+    "dread": 1
+  }
 }

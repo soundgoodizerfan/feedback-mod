@@ -388,8 +388,11 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
             if (e instanceof FakePlayer)
                 continue;
             float damage = Math.min(ElectricMachineTuning.PIVOT_STRIKE_MAX_DAMAGE, ceiling * ElectricMachineTuning.PIVOT_STRIKE_DAMAGE_PER_ST);
-            if (damage > 0f && e.hurt(sl.damageSources().generic(), damage))
+            if (damage > 0f && e.hurt(sl.damageSources().generic(), damage)) {
                 wear(damage / ElectricMachineTuning.PIVOT_STRIKE_DAMAGE_PER_ST * 0.1f);
+                // What the head is made of acts as it does in a hand: its blow perks and traits that need no wielder.
+                io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits.machineHit(sl, head.get(), (LivingEntity) e);
+            }
         }
     }
 

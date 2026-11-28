@@ -452,6 +452,15 @@ public final class ModularStacks {
                 hardness = headFigure(f, i, Fig.HARDNESS);
                 toughness = headFigure(f, i, Fig.EDGE_TOUGHNESS);
             }
+        // A versatile material's part digs every tool's blocks at the best speed the tool has anywhere; the classes below still gate what drops.
+        if (!speed.isEmpty() && design.parts().stream().anyMatch(p -> {
+            Material m = MaterialTable.get().materials().get(p.material());
+            return m != null && m.perks().containsKey(Material.Perk.VERSATILE);
+        })) {
+            float best = speed.values().stream().max(Float::compare).get();
+            for (String mined : List.of("pickaxe", "axe", "shovel", "hoe"))
+                speed.merge(ResourceLocation.withDefaultNamespace("mineable/" + mined), best, Math::max);
+        }
         List<Tool.Rule> rules = new ArrayList<>();
         if (hardness < ModularTuning.DIAMOND_CLASS_HARDNESS)
             rules.add(Tool.Rule.deniesDrops(blocks("minecraft:needs_diamond_tool")));

@@ -66,5 +66,8 @@
     "loop_width": 0.3675,
     "lag": 7
   },
-  "toxicity": 0.1
+  "toxicity": 0.1,
+  "perks": {
+    "salvage": 1
+  }
 }

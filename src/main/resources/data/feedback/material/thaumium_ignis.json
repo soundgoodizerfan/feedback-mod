@@ -67,5 +67,8 @@
     "lag": 2
   },
   "toxicity": 0.0,
-  "luminance": 6
+  "luminance": 6,
+  "perks": {
+    "fire_aspect": 1
+  }
 }

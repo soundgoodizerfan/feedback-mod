@@ -67,5 +67,8 @@
     "lag": 5
   },
   "toxicity": 0.0,
-  "luminance": 5
+  "luminance": 5,
+  "perks": {
+    "arc": 1
+  }
 }

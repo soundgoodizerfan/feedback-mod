@@ -66,5 +66,8 @@
     "loop_width": 0.3488,
     "lag": 4
   },
-  "toxicity": 0.0
+  "toxicity": 0.0,
+  "perks": {
+    "etch": 1
+  }
 }

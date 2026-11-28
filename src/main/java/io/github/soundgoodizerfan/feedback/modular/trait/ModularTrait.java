@@ -46,6 +46,10 @@ public interface ModularTrait {
                              ItemStack weapon, Params params) {
     }
 
+    /** A machine head made of this lands a blow on {@code target} (a pivot mast's strike): no wielder, so a trait that needs one does nothing here. */
+    default void onMachineHit(net.minecraft.server.level.ServerLevel level, LivingEntity target, Params params) {
+    }
+
     /** The wielder killed something with the item held. */
     default void onKill(LivingDeathEvent event, LivingEntity attacker, ItemStack weapon, Params params) {
     }

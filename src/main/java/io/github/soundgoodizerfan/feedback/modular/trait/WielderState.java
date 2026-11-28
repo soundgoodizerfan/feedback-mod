@@ -44,6 +44,11 @@ public final class WielderState<T> {
         map.remove(id);
     }
 
+    /** Drops every entry {@code gone} says is finished (marks that ran out). */
+    public void removeIf(java.util.function.Predicate<T> gone) {
+        map.values().removeIf(gone);
+    }
+
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         ALL.forEach(s -> s.map.remove(event.getEntity().getUUID()));

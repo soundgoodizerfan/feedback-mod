@@ -66,5 +66,8 @@
     "loop_width": 0.48,
     "lag": 30
   },
-  "toxicity": 0.72
+  "toxicity": 0.72,
+  "perks": {
+    "relentless": 1
+  }
 }

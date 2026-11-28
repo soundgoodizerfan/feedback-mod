@@ -112,9 +112,10 @@ public final class VillageEconomy {
             }
         }
         List<GoodView> goods = new ArrayList<>();
+        int pricing = rep + io.github.soundgoodizerfan.feedback.modular.trait.PerkEffects.rapport(p);
         for (int idx : shop(m)) {
             Good g = GoodsTable.get().entries().get(idx);
-            goods.add(new GoodView(stackFor(m, g, idx, day), price(g, rep), g.weekly() && !weeklyReady(ledger, idx, day) ? 0 : Math.max(0, stock(m, g) - ledger.sold(idx)), rep < g.standing(), idx));
+            goods.add(new GoodView(stackFor(m, g, idx, day), price(g, pricing), g.weekly() && !weeklyReady(ledger, idx, day) ? 0 : Math.max(0, stock(m, g) - ledger.sold(idx)), rep < g.standing(), idx));
         }
         List<VillagerView.WantView> wants = new ArrayList<>();
         for (int idx : wants(m, day)) {
@@ -558,7 +559,7 @@ public final class VillageEconomy {
             send(p, menu, view(p, m).withResult(VillagerView.SOLD, -1, false, 0));
             return;
         }
-        int cost = price(g, rep);
+        int cost = price(g, rep + io.github.soundgoodizerfan.feedback.modular.trait.PerkEffects.rapport(p));
         if (!takeEmeralds(p, cost)) {
             send(p, menu, view(p, m).withResult(VillagerView.POOR_PURSE, -1, false, 0));
             return;

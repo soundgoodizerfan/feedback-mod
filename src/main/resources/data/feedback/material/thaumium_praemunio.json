@@ -66,5 +66,8 @@
     "loop_width": 0.27,
     "lag": 10
   },
-  "toxicity": 0.25
+  "toxicity": 0.25,
+  "perks": {
+    "brace": 1
+  }
 }

@@ -66,5 +66,8 @@
     "loop_width": 0.24,
     "lag": 10
   },
-  "toxicity": 0.0
+  "toxicity": 0.0,
+  "perks": {
+    "verdant": 1
+  }
 }

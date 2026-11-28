@@ -66,5 +66,8 @@
     "loop_width": 0.225,
     "lag": 1
   },
-  "toxicity": 0.0
+  "toxicity": 0.0,
+  "perks": {
+    "swift": 1
+  }
 }

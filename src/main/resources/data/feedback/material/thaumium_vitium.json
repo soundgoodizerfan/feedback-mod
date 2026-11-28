@@ -66,5 +66,8 @@
     "loop_width": 0.4088,
     "lag": 3
   },
-  "toxicity": 1.4
+  "toxicity": 1.4,
+  "perks": {
+    "contagion": 1
+  }
 }

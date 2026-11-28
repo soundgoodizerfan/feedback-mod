@@ -67,5 +67,8 @@
     "lag": 40
   },
   "toxicity": 0.25,
-  "luminance": 3
+  "luminance": 3,
+  "perks": {
+    "insight": 1
+  }
 }

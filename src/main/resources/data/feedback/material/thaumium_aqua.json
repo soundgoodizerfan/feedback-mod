@@ -66,5 +66,8 @@
     "loop_width": 0.42,
     "lag": 6
   },
-  "toxicity": 0.0
+  "toxicity": 0.0,
+  "perks": {
+    "drench": 1
+  }
 }

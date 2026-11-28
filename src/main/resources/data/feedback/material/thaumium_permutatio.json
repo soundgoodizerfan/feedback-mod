@@ -66,5 +66,8 @@
     "loop_width": 0.57,
     "lag": 6
   },
-  "toxicity": 0.2
+  "toxicity": 0.2,
+  "perks": {
+    "exchange": 1
+  }
 }

@@ -136,6 +136,59 @@ public final class ModularTraits {
         register("stabiliser", new io.github.soundgoodizerfan.feedback.modular.trait.Stabiliser());
         register("lanyard", new io.github.soundgoodizerfan.feedback.modular.trait.Lanyard());
         register("boss", new io.github.soundgoodizerfan.feedback.modular.trait.Boss());
+        // perks a material grants (Material.Perk from DRENCH on): the id is the perk's serialized name
+        register("drench", new StrikePerk(PerkEffects::drench));
+        register("dispel", new StrikePerk(PerkEffects::dispel));
+        register("placate", new StrikePerk(PerkEffects::placate));
+        register("dread", new StrikePerk(PerkEffects::dread));
+        register("rend", new StrikePerk(PerkEffects::rend));
+        register("wither", new StrikePerk(PerkEffects::wither));
+        register("stifle", new StrikePerk(PerkEffects::stifle));
+        register("hex", new StrikePerk(PerkEffects::hex));
+        register("dazzle", new StrikePerk(PerkEffects::dazzle));
+        register("contagion", new StrikePerk(PerkEffects::contagion));
+        register("yank", new StrikePerk(PerkEffects::yank));
+        register("insight", new StrikePerk(PerkEffects::insight));
+        register("etch", new BlowPerks.Etch());
+        register("leech", new BlowPerks.Leech());
+        register("exchange", new BlowPerks.Exchange());
+        register("arc", new BlowPerks.Arc());
+        register("brace", new BlowPerks.Brace());
+        register("swift", new BlowPerks.Swift());
+        register("exact", new BlowPerks.Exact());
+        register("ratchet", new BlowPerks.Ratchet());
+        register("covet", new StancePerks.Covet());
+        register("relentless", new StancePerks.Relentless());
+        register("verdant", new StancePerks.Verdant());
+        register("shard", new StancePerks.Shard());
+        register("anchor", new StancePerks.Anchor());
+        register("glide", new StancePerks.Glide());
+        register("shroud", new StancePerks.Shroud());
+        register("phase", StancePerks.MARKER_PHASE);
+        register("salvage", StancePerks.MARKER_SALVAGE);
+        register("versatile", StancePerks.MARKER_VERSATILE);
+        register("rapport", StancePerks.MARKER_RAPPORT);
+    }
+
+    /**
+     * The perks of the materials {@code design}'s parts are made of that are traits, as actives: a material grants a trait as a variant would
+     * (author 2026-11-27). Each id once, with no numbers (a perk's sizes are {@code ModularTuning}'s).
+     */
+    private static void perks(ModularDesign design, List<Active> out) {
+        for (ModularDesign.Part part : design.parts()) {
+            io.github.soundgoodizerfan.feedback.process.Material m = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(part.material());
+            if (m == null)
+                continue;
+            for (io.github.soundgoodizerfan.feedback.process.Material.Perk perk : m.perks().keySet())
+                if (perk.isTrait() && out.stream().noneMatch(o -> o.id().equals(perk.getSerializedName())))
+                    out.add(new Active(perk.getSerializedName(), REGISTRY.get(perk.getSerializedName()), new ModularTrait.Params(Map.of())));
+        }
+    }
+
+    /** A machine head made of a perk's material strikes {@code target}: the blow perks, then the traits that have no wielder. */
+    public static void machineHit(net.minecraft.server.level.ServerLevel level, ItemStack head, LivingEntity target) {
+        io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.affect(io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.of(head), target);
+        actives(head).forEach(a -> a.trait().onMachineHit(level, target, a.params()));
     }
 
     private static void register(String id, ModularTrait trait) {
@@ -244,6 +297,7 @@ public final class ModularTraits {
         for (Active a : more)
             if (out.stream().noneMatch(o -> o.id().equals(a.id())))
                 out.add(a);
+        perks(design, out);
         return out;
     }
 
@@ -400,7 +454,9 @@ public final class ModularTraits {
 
     /** Whether {@code stack} has the trait {@code id} (a gun's, usually). */
     public static boolean has(ItemStack stack, String id) {
-        return allOf(stack).stream().anyMatch(a -> a.id().equals(id));
+        return allOf(stack).stream().anyMatch(a -> a.id().equals(id))
+                || io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.of(stack).keySet().stream()
+                        .anyMatch(p -> p.isTrait() && p.getSerializedName().equals(id));
     }
 
     // --- item hooks, forwarded by the item classes ---------------------------------------------

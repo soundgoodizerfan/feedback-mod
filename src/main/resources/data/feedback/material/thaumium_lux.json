@@ -67,5 +67,8 @@
     "lag": 2
   },
   "toxicity": 0.0,
-  "luminance": 7
+  "luminance": 7,
+  "perks": {
+    "dazzle": 1
+  }
 }

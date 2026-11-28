@@ -187,10 +187,22 @@ public final class MaterialPerks {
     public static void onWornHit(LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker) || event.getEntity().level().isClientSide)
             return;
-        for (ItemStack worn : GearKinds.worn(event.getEntity()))
+        for (ItemStack worn : GearKinds.worn(event.getEntity())) {
             for (Attunement attunement : attunements(worn))
                 AttunementKinds.struck(attacker, attunement);
+            // A worn plate answers a blow with the perks that only need a target: it burns, chills, clings, poisons whoever struck.
+            Map<Perk, Integer> answer = new EnumMap<>(Perk.class);
+            of(worn).forEach((perk, level) -> {
+                if (HIT_BACK.contains(perk))
+                    answer.put(perk, level);
+            });
+            if (!answer.isEmpty() && event.getSource().getDirectEntity() == attacker)
+                affect(answer, attacker, event.getEntity());
+        }
     }
+
+    /** The existing blow perks a worn plate gives back to whoever strikes its wearer. */
+    private static final java.util.Set<Perk> HIT_BACK = java.util.EnumSet.of(Perk.FIRE_ASPECT, Perk.CHILL, Perk.CLING, Perk.TOXIC);
 
     /** Extra damage a blow with {@code perks} deals {@code target}. */
     public static float bonus(Map<Perk, Integer> perks, LivingEntity target) {

@@ -259,6 +259,8 @@ Thaumium and some of the aspect alloys, the primals first:
 | Necrium | 8 | 79 | 6 | Lowest enchantability |
 | Miasma | 7 | 25 | 22 | Most toxic, corrodes fastest |
 
+Each aspect alloy also gives a perk to parts made of it; see [Aspect alloy perks](Material_Perks.md#aspect-alloy-perks).
+
 ### Foods
 
 Every [food](Food.md) carries Victus (life) and Herba (plant), plus an aspect for what it does to the eater:

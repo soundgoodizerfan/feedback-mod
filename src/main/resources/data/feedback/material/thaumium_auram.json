@@ -67,5 +67,8 @@
     "lag": 2
   },
   "toxicity": 0.0,
-  "luminance": 4
+  "luminance": 4,
+  "perks": {
+    "placate": 1
+  }
 }

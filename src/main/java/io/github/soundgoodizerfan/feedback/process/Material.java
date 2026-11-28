@@ -329,8 +329,10 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
-     * A qualitative thing a part of this material does to a blow (spec 2.4), read by
-     * {@code MaterialPerks} from whatever parts a modular weapon is made of. The level is the
+     * A trait a material grants, where a variant or an axis would grant it otherwise (author 2026-11-27): a qualitative thing a part of
+     * this material does, in the hand, worn, or in a machine head. Not only a blow: a perk may be a stance (anchor), a sense (shroud) or a
+     * price (rapport). The first fourteen are read by {@code MaterialPerks}; the rest each have a {@code ModularTrait} registered under
+     * their serialized name, which {@code ModularTraits.actives} adds for any part of a material that lists the perk. The level is the
      * vanilla enchantment's, applied free; a perk is never a number the material was missing.
      */
     public enum Perk implements StringRepresentable {
@@ -361,9 +363,78 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** What a part of it holds stays warm: a dish on it is held above the warm point wherever it is. */
         WARMING,
         /** A struck target rings: it is slowed by the sound, and hostile mobs near it turn on the one who struck. */
-        RING;
+        RING,
+        // Traits a material grants (each a ModularTrait of the same id). Blow perks: held, hit back when worn, and in a machine head.
+        /** A struck target is soaked: its fire goes out, and a water-shy one (blaze, enderman) is hurt. */
+        DRENCH,
+        /** A blow strips one beneficial effect from the target. */
+        DISPEL,
+        /** A blow ignores a share of the target's armour. */
+        ETCH,
+        /** A struck mob forgets its attacker for a while. */
+        PLACATE,
+        /** A struck mob flees from its attacker. */
+        DREAD,
+        /** A struck target bleeds: damage over a few seconds. */
+        REND,
+        /** A struck target is withered. */
+        WITHER,
+        /** A struck target cannot shoot or cast for a few seconds. */
+        STIFLE,
+        /** A struck target is weakened, dealing less damage. */
+        HEX,
+        /** A struck target is blinded. */
+        DAZZLE,
+        /** A struck target's harmful effects spread to the mobs around it. */
+        CONTAGION,
+        /** A struck target is dragged toward the wielder, harder the more armour it wears. */
+        YANK,
+        /** The wielder reads the target's health and armour on a hit. */
+        INSIGHT,
+        /** A blow heals the wielder a little. */
+        LEECH,
+        /** A blow swaps the wielder's place with the target's. */
+        EXCHANGE,
+        /** A blow arcs to creatures beside the target. */
+        ARC,
+        /** A blow gives a moment of resistance (worn: when struck). */
+        BRACE,
+        /** A blow gives a burst of speed. */
+        SWIFT,
+        /** A swing at less than full charge lands at full strength. */
+        EXACT,
+        /** Blows on the same target in quick succession hit harder. */
+        RATCHET,
+        /** A blow passes through a raised shield. */
+        PHASE,
+        // Kill, break and stance perks.
+        /** A kill rolls the victim's loot once more. */
+        COVET,
+        /** A kill resets the attack cooldown. */
+        RELENTLESS,
+        /** A kill sprouts plants where the victim fell. */
+        VERDANT,
+        /** A kill bursts into shards that cut the creatures beside it. */
+        SHARD,
+        /** A block broken with it drops itself, whole. */
+        SALVAGE,
+        /** The tool digs every block a pickaxe, axe, shovel or hoe would. */
+        VERSATILE,
+        /** Worn: no knockback. */
+        ANCHOR,
+        /** Worn: sneak in the air to fall slowly. */
+        GLIDE,
+        /** Worn: creatures notice the wearer less in the dark. */
+        SHROUD,
+        /** Held or worn: villagers sell at a lower price. */
+        RAPPORT;
 
         public static final Codec<Perk> CODEC = StringRepresentable.fromEnum(Perk::values);
+
+        /** Whether a {@code ModularTrait} of this perk's id carries it (the perks from DRENCH on) rather than {@code MaterialPerks}. */
+        public boolean isTrait() {
+            return ordinal() >= DRENCH.ordinal();
+        }
 
         @Override
         public String getSerializedName() {

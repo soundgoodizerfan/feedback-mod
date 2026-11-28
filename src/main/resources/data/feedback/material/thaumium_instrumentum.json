@@ -67,5 +67,8 @@
     "lag": 8
   },
   "toxicity": 0.0,
-  "luminance": 3
+  "luminance": 3,
+  "perks": {
+    "versatile": 1
+  }
 }

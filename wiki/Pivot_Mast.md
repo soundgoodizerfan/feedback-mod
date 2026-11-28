@@ -41,7 +41,7 @@ The arm turns slowly. A longer arm and a heavier head ask more of the drive, and
 
 ## Misuse
 
-A tip knows nothing about what it works on. A Cutting tip cuts green crop as readily as ripe, so switch the drive with a [Ripeness Probe](Sensors.md): seat it as the sensing head, link the mast to a Controller, and stop the arm while the crop is unripe. A Breaking tip on a block too hard for the head does not break it and wears the head by the difference. A Striking tip hurts anything living, a player included.
+A tip knows nothing about what it works on. A Cutting tip cuts green crop as readily as ripe, so switch the drive with a [Ripeness Probe](Sensors.md): seat it as the sensing head, link the mast to a Controller, and stop the arm while the crop is unripe. A Breaking tip on a block too hard for the head does not break it and wears the head by the difference. A Striking tip hurts anything living, a player included, and the head's [blow perks](Material_Perks.md#aspect-alloy-perks) apply to what it strikes.
 
 ## Attunements
 

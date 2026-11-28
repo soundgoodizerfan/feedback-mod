@@ -66,5 +66,8 @@
     "loop_width": 0.42,
     "lag": 2
   },
-  "toxicity": 0.15
+  "toxicity": 0.15,
+  "perks": {
+    "blink": 1
+  }
 }

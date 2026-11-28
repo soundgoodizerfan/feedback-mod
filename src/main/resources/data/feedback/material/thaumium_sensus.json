@@ -66,5 +66,8 @@
     "loop_width": 0.36,
     "lag": 4
   },
-  "toxicity": 0.25
+  "toxicity": 0.25,
+  "perks": {
+    "echo": 1
+  }
 }

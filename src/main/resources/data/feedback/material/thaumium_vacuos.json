@@ -66,5 +66,8 @@
     "loop_width": 0.45,
     "lag": 2
   },
-  "toxicity": 0.2
+  "toxicity": 0.2,
+  "perks": {
+    "stifle": 1
+  }
 }

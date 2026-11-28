@@ -66,5 +66,8 @@
     "loop_width": 0.405,
     "lag": 5
   },
-  "toxicity": 0.35
+  "toxicity": 0.35,
+  "perks": {
+    "covet": 1
+  }
 }

@@ -66,5 +66,8 @@
     "loop_width": 0.36,
     "lag": 8
   },
-  "toxicity": 0.5
+  "toxicity": 0.5,
+  "perks": {
+    "phase": 1
+  }
 }
