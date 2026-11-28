@@ -147,42 +147,71 @@ public final class ToolDesigns {
     }
 
     private static List<Material.Located> scanMaterials(ModularType.Role role, PartBenchShaping.Option shape, Map<ResourceLocation, Material> materials) {
-        List<Material.Located> out = new ArrayList<>();
-        materials.forEach((id, m) -> {
-            // The smallest piece that fits: ingots before a block, which only fills a shape that is a whole number of blocks.
-            Material.Located best = null;
-            for (String form : m.stockForms(id)) {
-                Material.Located l = new Material.Located(id, m, form);
-                boolean fits = shape != null
-                        ? ModularType.fits(shape.shaping().stock(), form) && MaterialNeeds.hasAll(m, role.traits())
-                                && (shape.shaping().kinds().isEmpty() || m.kind().filter(shape.shaping().kinds()::contains).isPresent())
-                                && shape.stockMb(1f) % io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form) == 0
-                        : role.accepts(l);
-                if (fits && (best == null || io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)
-                        < io.github.soundgoodizerfan.feedback.registry.FormItems.volume(best.form())))
-                    best = l;
-            }
-            if (best != null)
-                out.add(best);
-        });
-        return out;
+        if (shape == null)
+            return scan(materials, form -> ModularType.fits(role.forms(), form), role::accepts);
+        int stockMb = shape.stockMb(1f);
+        return scan(materials, form -> ModularType.fits(shape.shaping().stock(), form) && stockMb % io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form) == 0,
+                l -> MaterialNeeds.hasAll(l.material(), role.traits())
+                        && (shape.shaping().kinds().isEmpty() || l.material().kind().filter(shape.shaping().kinds()::contains).isPresent()));
     }
 
     /** The materials a part's {@code slot} can be drawn in: the smallest piece of each that the slot's forms and traits take, and that the slot's share of the part uses whole. */
     public static List<Material.Located> slotMaterials(ModularType.PartSlot slot, ModularType.Shaping shaping, Map<ResourceLocation, Material> materials) {
-        List<Material.Located> out = new ArrayList<>();
-        materials.forEach((id, m) -> {
-            Material.Located best = null;
-            for (String form : m.stockForms(id)) {
-                Material.Located l = new Material.Located(id, m, form);
-                if (slot.accepts(l, shaping.stock()) && (best == null || io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)
-                        < io.github.soundgoodizerfan.feedback.registry.FormItems.volume(best.form())))
-                    best = l;
-            }
-            if (best != null)
-                out.add(best);
+        return scan(materials, form -> true, l -> slot.accepts(l, shaping.stock()));
+    }
+
+    /**
+     * Each material in the smallest stock form that passes {@code formFits} and {@code ok}, in id order (ingots before a block, which only fills a
+     * shape that is a whole number of blocks; a tie keeps the material's own first form). Walks the {@link FormIndex}, so a role that takes one form
+     * looks at the materials that come in it, not at every material.
+     */
+    private static List<Material.Located> scan(Map<ResourceLocation, Material> materials, java.util.function.Predicate<String> formFits,
+                                               java.util.function.Predicate<Material.Located> ok) {
+        java.util.TreeMap<ResourceLocation, FormIndex.Entry> best = new java.util.TreeMap<>();
+        FormIndex.of(materials).byForm.forEach((form, entries) -> {
+            if (!formFits.test(form))
+                return;
+            int volume = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form);
+            for (FormIndex.Entry e : entries)
+                if (ok.test(e.at))
+                    best.merge(e.at.id(), e, (a, b) -> {
+                        int va = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(a.at.form());
+                        return volume < va || volume == va && b.rank < a.rank ? b : a;
+                    });
         });
+        List<Material.Located> out = new ArrayList<>(best.size());
+        best.values().forEach(e -> out.add(e.at));
         return out;
+    }
+
+    /**
+     * Every material under each stock form it can be, worked out once per loaded table: the editor's lists ask "who comes in this form" many times
+     * per open, and walking all materials for each answer grew with every material added. A material with no stock form (a relic, a fluid) is in none.
+     */
+    private static final class FormIndex {
+        record Entry(Material.Located at, int rank) {}
+
+        private static final Map<Map<ResourceLocation, Material>, FormIndex> BY_TABLE = new java.util.IdentityHashMap<>();
+
+        final Map<String, List<Entry>> byForm = new HashMap<>();
+
+        static synchronized FormIndex of(Map<ResourceLocation, Material> materials) {
+            FormIndex index = BY_TABLE.get(materials);
+            if (index == null) {
+                // Two tables at most are live (server and client copy); an older one is a reload's leftover.
+                if (BY_TABLE.size() > 3)
+                    BY_TABLE.clear();
+                index = new FormIndex();
+                FormIndex built = index;
+                materials.forEach((id, m) -> {
+                    int rank = 0;
+                    for (String form : m.stockForms(id))
+                        built.byForm.computeIfAbsent(form, f -> new ArrayList<>()).add(new Entry(new Material.Located(id, m, form), rank++));
+                });
+                BY_TABLE.put(materials, index);
+            }
+            return index;
+        }
     }
 
     /** As {@link #materials(ModularType.Role, PartBenchShaping.Option, Map)}, keeping only materials the type can bake with in role {@code roleKey} ({@link ModularBake#suits}). */
