@@ -28,7 +28,7 @@ Most other parts carry a slot whose material is fixed: the lining of a boiler, v
 
 ## Axes in place of variants
 
-Counts and sizes are **axes**, set with a stepper on the Blueprint Table, rather than separate shapes: engine cylinders and compression, propeller blades and pitch, transmission gears, dynamotor size and turns, vial volume, backpack capacity, binding wraps, pommel weight, tip thickness, hand crank arm length, fuse delay, flywheel rim mass, shield rim width, beam lens count, battery cell size and cell count, knife length and width, the tines and barb of a spear head, and the one setting of each suit module attachment (see [Exosuit](Exosuit.md#upgrade-modules)). See [Armor](Armor.md#axes-aiming-and-names) for how aiming works. The [Telescope](Telescope.md) is three parts put together in a crafting grid, each with its own axes.
+Counts and sizes are **axes**, set with a stepper on the Blueprint Table, rather than separate shapes: engine cylinders and compression, propeller blades and pitch, transmission gears, dynamotor size and turns, vial volume, backpack capacity, binding wraps, pommel weight, tip thickness, hand crank arm length, fuse delay, flywheel rim mass, shield rim width, beam lens count, battery cell size and cell count, knife length, width and thickness, the tines and barb of a spear head, and the one setting of each suit module attachment (see [Exosuit](Exosuit.md#upgrade-modules)). See [Armor](Armor.md#axes-aiming-and-names) for how aiming works. The [Telescope](Telescope.md) is three parts put together in a crafting grid, each with its own axes.
 
 ## How a part looks
 

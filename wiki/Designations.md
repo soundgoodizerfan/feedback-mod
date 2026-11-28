@@ -25,6 +25,7 @@ A **band** is a range an axis sits in. Armor and weapon parts have axes you aim 
 | Sword blade | Length | short up to 65 cm, normal up to 105 cm, long over 105 cm |
 |  | Thickness | thin up to 3.5 mm, normal up to 6.5 mm, thick over 6.5 mm |
 |  | Width | narrow up to 3 cm, normal up to 5.5 cm, wide over 5.5 cm |
+| Knife blade | Thickness | thin up to 2.5 mm, normal up to 4 mm, thick over 4 mm |
 | Axe head | Edge length | short up to 7.5 cm, normal up to 12.5 cm, long over 12.5 cm |
 |  | Head size | small up to 10.5 cm, normal up to 17.5 cm, large over 17.5 cm |
 | Spear head | Edge length | short up to 15 cm, normal up to 25 cm, long over 25 cm |
