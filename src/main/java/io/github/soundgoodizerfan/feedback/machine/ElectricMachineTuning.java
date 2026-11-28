@@ -550,6 +550,9 @@ public final class ElectricMachineTuning {
     /** Placeholder. Amps of a heard spark past which the grains fuse solid and stay welded until refilled. */
     public static final float COHERER_FUSE_SPARK_AMPS = 6f;
 
+    /** Placeholder. Amps of a spark, after it has thinned with distance, the grains need to weld at all: a faint spark far off welds nothing (three classes: unheard, weld, fuse). */
+    public static final float COHERER_WELD_SPARK_AMPS = 1.5f;
+
     /** Placeholder. Cat's whisker: spots on a crystal; hold ticks after a heard spark; spots below this sensitivity hear nothing; amps that fuse the spot under the whisker. */
     public static final int WHISKER_SPOTS = 8;
 

@@ -1,0 +1,10 @@
+{
+  "from": "ingot",
+  "to": "substrate",
+  "operation": "blow",
+  "base": 4,
+  "slope": 0.5,
+  "kinds": [
+    "polymer"
+  ]
+}

@@ -1,6 +1,7 @@
 {
   "kinds": [
-    "ceramic"
+    "ceramic",
+    "polymer"
   ],
   "mb": 36
 }

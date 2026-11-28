@@ -28,7 +28,7 @@ A spark is the flash you get when current is cut off while it is flowing: the li
 - a [Relay](Relay.md) opening its contacts with at least **1 A** flowing,
 - one turn of an [Electrostatic Generator](Electrostatic_Generator.md), which needs no power at all: right-click it and it sparks.
 
-A spark is not carried along the wire. It is a flash in the air, and anything that listens for it within **16 blocks** hears it, wired to the source or not. That is what makes the coherer a detector with no wire running to the thing it watches. A switch opened with nothing flowing makes no spark, so only a switch that was doing work is heard. Your own breakers count: a coherer beside one that opens under load will weld itself.
+A spark is not carried along the wire. It is a flash in the air, and anything that listens for it within **16 blocks** hears it, wired to the source or not. A spark thins with distance: the farther the coherer is, the weaker the spark it feels. That is what makes the coherer a detector with no wire running to the thing it watches. A switch opened with nothing flowing makes no spark, so only a switch that was doing work is heard. Your own breakers count: a coherer beside one that opens under load will weld itself.
 
 ## Your first test
 
@@ -60,7 +60,7 @@ A welded coherer passes everything, like any wire. Without a clapper, forgetting
 
 Each weld wears the grains a little, so the coherer's condition falls with use and a tap frees it less often. Wear from welding alone never takes it below 20%, where one tap in five works. A [Component Tester](Instruments.md#component-tester) reads the condition.
 
-A spark with more than **6 A** behind it fuses the grains into one solid lump. A fused coherer stays welded, hears nothing and shrugs off every tap (*"Coherer: grains fused into one lump, a tap does nothing"*; the tester reads *Fused*). Fresh grains from a conducting dust are the only cure.
+A spark that feels weaker than **1.5 A** at the coherer welds nothing. A spark that feels stronger than **6 A** fuses the grains into one solid lump. A fused coherer stays welded, hears nothing and shrugs off every tap (*"Coherer: grains fused into one lump, a tap does nothing"*; the tester reads *Fused*). Fresh grains from a conducting dust are the only cure.
 
 ## Overrun
 

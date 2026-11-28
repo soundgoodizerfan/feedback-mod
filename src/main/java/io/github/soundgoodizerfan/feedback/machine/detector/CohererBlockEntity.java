@@ -88,7 +88,12 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
     protected void hear(double distance) {
         if (fused)
             return;
-        if (io.github.soundgoodizerfan.feedback.core.electric.Sparks.heardAmps() > ElectricMachineTuning.COHERER_FUSE_SPARK_AMPS) {
+        // A spark thins with distance: what the grains feel is its amps less the share the range has taken.
+        float felt = io.github.soundgoodizerfan.feedback.core.electric.Sparks.heardAmps()
+                * (1f - (float) Math.min(1d, distance / io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning.SPARK_RANGE_BLOCKS));
+        if (felt < ElectricMachineTuning.COHERER_WELD_SPARK_AMPS)
+            return;
+        if (felt > ElectricMachineTuning.COHERER_FUSE_SPARK_AMPS) {
             fused = true;
             condition = ElectricMachineTuning.COHERER_CONDITION_FLOOR;
             if (welded)
