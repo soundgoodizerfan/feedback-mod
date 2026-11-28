@@ -17,7 +17,7 @@
     "latent_heat_vaporisation": 501
   },
   "combustion": {
-    "flame_temperature": 1400,
+    "flame_temperature": 1950,
     "burn_ticks": 300,
     "spread": 0.06,
     "flash_point": -20
@@ -26,10 +26,10 @@
     "viscosity": 0.31,
     "shear_thickening": 0
   },
-  "toxicity": 0.15,
+  "toxicity": 0.24,
   "corrosivity": 0,
   "separation": {
-    "reflectivity": 0.02
+    "reflectivity": 0.0232
   },
   "corrosion_resistance": 1.0
 }

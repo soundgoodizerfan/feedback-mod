@@ -82,7 +82,7 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     private void explode(ServerLevel server) {
         var packed = Blast.packed(getItem());
         discard();
-        if (packed.isEmpty() || packed.get().power() < FTuning.DEMO_POWER_MIN || Blast.damp(server, position(), packed.get().casing() != null)) {
+        if (packed.isEmpty() || packed.get().power() < FTuning.DEMO_POWER_MIN || Blast.damp(server, position(), packed.get().casing())) {
             server.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY(), getZ(), 12, 0.3, 0.3, 0.3, 0.02);
             server.playSound(null, blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1f, 0.8f);
             return;

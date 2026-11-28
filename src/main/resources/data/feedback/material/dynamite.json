@@ -34,7 +34,7 @@
     }
   },
   "corrosion_resistance": 0.4,
-  "toxicity": 0.4,
+  "toxicity": 1.0,
   "molten": {
     "viscosity": 100,
     "density": 1.53,

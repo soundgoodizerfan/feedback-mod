@@ -29,11 +29,12 @@ public final class Blast {
     }
 
     /**
-     * Whether a charge going up at {@code at} is a dud for being wet: powder with no casing round it, under water (a fluid in the
-     * {@code minecraft:water} tag), will not burn. A casing keeps it dry, so a cased charge goes off under water.
+     * Whether a charge going up at {@code at} is a dud for being wet: powder under water (a fluid in the {@code minecraft:water} tag) will not
+     * burn unless its casing keeps the water out. No casing, or a casing of a {@link Material.Trait#POROUS} material (paper, cob), lets it in.
      */
-    public static boolean damp(net.minecraft.world.level.Level level, net.minecraft.world.phys.Vec3 at, boolean cased) {
-        return !cased && level.getFluidState(net.minecraft.core.BlockPos.containing(at)).is(net.minecraft.tags.FluidTags.WATER);
+    public static boolean damp(net.minecraft.world.level.Level level, net.minecraft.world.phys.Vec3 at, @org.jetbrains.annotations.Nullable Material casing) {
+        boolean sealed = casing != null && !casing.traits().contains(Material.Trait.POROUS);
+        return !sealed && level.getFluidState(net.minecraft.core.BlockPos.containing(at)).is(net.minecraft.tags.FluidTags.WATER);
     }
 
     /** Explosion power: the square root of the burned potential, times the casing's confinement, capped. */
