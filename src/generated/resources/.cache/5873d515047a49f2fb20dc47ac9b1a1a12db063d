@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-27T13:58:00.973938094	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-27T20:38:53.368976085	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
@@ -1468,6 +1468,7 @@ b186cbfa861414dd4acc191409756629a0027261 data/c/tags/item/dusts/diorite.json
 be8c1ba692834cc7f3e7a0044360e1f987fa9b74 data/c/tags/item/dusts/dolomite.json
 32dd0e69b1094847a11d6ca0d646718d48ac1261 data/c/tags/item/dusts/dripstone.json
 5c094b543f39d61bc507d6ae82038327c93deeff data/c/tags/item/dusts/duralumin.json
+05f5d85900b271518093b85037f4e02854d392e8 data/c/tags/item/dusts/dynamite.json
 1a159f97a94a6fee31d147272cb56f193802c1ce data/c/tags/item/dusts/electrum.json
 76dd992c35010bcb80bdb83dbf6aa95a7d08eab3 data/c/tags/item/dusts/emerald.json
 104cf6624643eb05388d18fca8b57a0bde32ad65 data/c/tags/item/dusts/end_stone.json
@@ -5047,10 +5048,22 @@ d199743f08aa7232ef77bac34e36c499f69c0780 data/c/tags/item/strings/bitumen.json
 69f1fac1ff1077fb50f04e91b7270564590c6c4b data/c/tags/item/strings/synthetic_rubber.json
 2f8a10a84451eab4fed6699155664eb1614247b7 data/c/tags/item/strings/wool.json
 d42e8c1e111c9ba5ea5fb6a4489bf5d15be298ce data/c/tags/item/substrates/alumina.json
+109539e3dd2913d5d01fdbe52b2dfbb804e88611 data/c/tags/item/substrates/amber.json
+f272cc94c06b1dc64e181eb1d52d6c560797352a data/c/tags/item/substrates/aramid.json
+b744e911b7ec359cef4e4317de371c9e67b14e49 data/c/tags/item/substrates/bakelite.json
+4df6e0a977a20ad59b742ff24cb220271bfa82e5 data/c/tags/item/substrates/bitumen.json
 67cc1d903bc1c2fb621e82dc930c4e823e58537e data/c/tags/item/substrates/brick.json
 93652515611eb2a35db4e8d2cd038e91129e2d41 data/c/tags/item/substrates/concrete.json
 6f0f2d998eec8ce9a4f64919641d4a20a4a29249 data/c/tags/item/substrates/mud_brick.json
+bbcce1a447841ffebb1367dadabfc290815f55a3 data/c/tags/item/substrates/natural_rubber.json
 f6413023dae3744791297308ff93dcd96507ba27 data/c/tags/item/substrates/nether_brick.json
+f1adec0d623a80defe70225c68ae47204455a8f7 data/c/tags/item/substrates/polyester.json
+a0b27992ee8f61fd60a55ae745b4a659a1d99059 data/c/tags/item/substrates/polyethylene.json
+01388db89b61518569394f3ac502ea5631288a9b data/c/tags/item/substrates/polypropylene.json
+bc66b219b93eef093e3fa7acc30b4a1981a878f1 data/c/tags/item/substrates/polytetrafluoroethylene.json
+b624a09b0995aa2546891e8b5fb3fc241fc48201 data/c/tags/item/substrates/pvc.json
+b919584cd95ab134b1482d084f4fa400f700271c data/c/tags/item/substrates/soul_resin.json
+59a1fab4dde6015772541bba4c4d6176783773ee data/c/tags/item/substrates/synthetic_rubber.json
 2edb5471b59b39a2e5a7e056903f6af4e9ba33db data/c/tags/item/substrates/terracotta.json
 9ab2fea621da92feec6e9779c8cc630cd4f2c8dd data/c/tags/item/swarfs/alnico.json
 991ecc2803e7d30021d269d6946e9cb564ee733c data/c/tags/item/swarfs/aluminium.json

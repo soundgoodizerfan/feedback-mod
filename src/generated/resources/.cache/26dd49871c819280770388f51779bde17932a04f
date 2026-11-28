@@ -1,5 +1,6 @@
-// 1.21.1	2026-11-27T13:58:00.971713665	Tags for minecraft:fluid mod id feedback
+// 1.21.1	2026-11-27T20:38:53.367299985	Tags for minecraft:fluid mod id feedback
 5ae7af34ed7ee675d2dc65d80ea3c8397e250dfd data/c/tags/fluid/acetaldehyde.json
+570e68693c83d3e22175bf66c07dfa94c4dc28a4 data/c/tags/fluid/acetone.json
 c203a55f68fcb3630c88c0f962262cf2dc8345a3 data/c/tags/fluid/air.json
 1902902e70065592c2e3734fc2d5ce39c1036b7e data/c/tags/fluid/alkaline_water.json
 a0ea84e211996a9fa6e3168ec1d4c08b731123a2 data/c/tags/fluid/ammonia.json
@@ -36,10 +37,12 @@ ba95f5eebabb2f13b2b356913903d257969d48c3 data/c/tags/fluid/dye_red.json
 06c5bf71defb37ffdad6212b040e34c6b275c0ce data/c/tags/fluid/dye_yellow.json
 79561d1b4e2560574fc5a0b4d1a56e9bc90331b9 data/c/tags/fluid/echo_crude.json
 74191241a9ec1c3124615355c78f2ba999443d47 data/c/tags/fluid/enriched_water.json
+79a99638e7c1a062b694234749c9e835a8591913 data/c/tags/fluid/ethanol.json
 7e6f9913ac2671a2a7e38961dcc9164f89b9c4ca data/c/tags/fluid/ethylene.json
 c6502bc407d288d166cdf64402be0295f393307f data/c/tags/fluid/ethylene_glycol.json
 2c6c3121b05e1d6bafd13790b7a1ee6d2f64a532 data/c/tags/fluid/ethylene_oxide.json
 0a28277ab16bb1ed5dbd338bd84208edb374ed28 data/c/tags/fluid/gaseous.json
+602292ab1bc67f1b34e334b806627b010affadb4 data/c/tags/fluid/glycerol.json
 baeecaf3b3fb0ddf14a17f10fafa5c0fd4c35223 data/c/tags/fluid/gold_chloride.json
 6c4db96d64ccafde3002cf3e62a5b71d24da29b3 data/c/tags/fluid/heavy_oil.json
 29c30975857405de2e3d7e8930f39bff18d92e10 data/c/tags/fluid/heavy_water.json
@@ -216,6 +219,7 @@ e28cc5fc2f4c246ee9ec057ca780aecc56a6d27c data/c/tags/fluid/molten_zinc.json
 14459ac75d180f7d0444b3c6e6ff7f91a802630e data/c/tags/fluid/nickel_sulfate.json
 90eb1e882563a58d4ad383409a2e2531d80e2700 data/c/tags/fluid/nitric_acid.json
 4df618fe46891ee4252c0bcb716b7b5ab5a99df4 data/c/tags/fluid/nitrogen.json
+0cddf828c8cb935f445738fcd3df2f780f8e14ca data/c/tags/fluid/nitroglycerin.json
 19de4a30f56ec021dfeef7a64e68d7f791507282 data/c/tags/fluid/osmium_tetroxide.json
 49ea320345cc25846596232ed3568a696841db12 data/c/tags/fluid/oxygen.json
 7522e24328e2c023823ec66653b5a62de07a923b data/c/tags/fluid/phenolic_resin.json

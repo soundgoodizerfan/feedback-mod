@@ -2354,6 +2354,20 @@
         "aspect": "thaumaturge:praemunio"
       }
     ],
+    "feedback:amber_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
     "feedback:amethyst_bronze_birdshot": [
       {
         "amount": 5,
@@ -3858,6 +3872,16 @@
         "aspect": "thaumaturge:praemunio"
       }
     ],
+    "feedback:aramid_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
     "feedback:arc_electrode": [
       {
         "amount": 5,
@@ -4645,6 +4669,16 @@
       },
       {
         "amount": 3,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
+    "feedback:bakelite_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:praemunio"
       }
     ],
@@ -7399,6 +7433,16 @@
       },
       {
         "amount": 2,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
+    "feedback:bitumen_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:praemunio"
       }
     ],
@@ -18162,6 +18206,24 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:dynamite_dust": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:terra"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:ignis"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:mortuus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:perditio"
       }
     ],
     "feedback:dynamotor": [
@@ -33430,6 +33492,20 @@
         "aspect": "thaumaturge:motus"
       }
     ],
+    "feedback:natural_rubber_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:praemunio"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
     "feedback:natural_rubber_tire": [
       {
         "amount": 3,
@@ -39026,6 +39102,16 @@
         "aspect": "thaumaturge:praemunio"
       }
     ],
+    "feedback:polyester_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
     "feedback:polyethylene_birdshot": [
       {
         "amount": 3,
@@ -39193,6 +39279,16 @@
       },
       {
         "amount": 2,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
+    "feedback:polyethylene_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:praemunio"
       }
     ],
@@ -39366,6 +39462,16 @@
         "aspect": "thaumaturge:praemunio"
       }
     ],
+    "feedback:polypropylene_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
     "feedback:polytetrafluoroethylene_birdshot": [
       {
         "amount": 3,
@@ -39533,6 +39639,16 @@
       },
       {
         "amount": 2,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
+    "feedback:polytetrafluoroethylene_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:praemunio"
       }
     ],
@@ -40123,6 +40239,16 @@
       },
       {
         "amount": 2,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
+    "feedback:pvc_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:praemunio"
       }
     ],
@@ -47412,6 +47538,16 @@
         "aspect": "thaumaturge:praemunio"
       }
     ],
+    "feedback:soul_resin_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:praemunio"
+      }
+    ],
     "feedback:soul_sand_dust": [
       {
         "amount": 3,
@@ -50307,6 +50443,20 @@
       },
       {
         "amount": 4,
+        "aspect": "thaumaturge:motus"
+      }
+    ],
+    "feedback:synthetic_rubber_substrate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:fabrico"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:praemunio"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:motus"
       }
     ],
