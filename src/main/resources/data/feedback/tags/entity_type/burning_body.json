@@ -5,6 +5,14 @@
     "minecraft:magma_cube",
     "minecraft:strider",
     "minecraft:ghast",
-    "minecraft:wither"
+    "minecraft:wither",
+    {
+      "id": "aether:fire_minion",
+      "required": false
+    },
+    {
+      "id": "aether:sun_spirit",
+      "required": false
+    }
   ]
 }

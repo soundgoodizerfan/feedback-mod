@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-27T20:38:53.368976085	Tags for minecraft:item mod id feedback
+// 1.21.1	2026-11-27T23:26:32.699320058	Tags for minecraft:item mod id feedback
 3073a61ba898ee96262dfccbc399f1d5818039eb data/c/tags/item/birdshots/alnico.json
 574ad0a0f2ff288ea1128b7267ecde3cdd2af387 data/c/tags/item/birdshots/aluminium.json
 3b858b2b1f82950d60df7edc28f511d16bcaa4d0 data/c/tags/item/birdshots/aluminium_foam.json
@@ -36,6 +36,7 @@ eb286b09371c4aa91fbecb28e56fb2d19aa3cdcd data/c/tags/item/birdshots/fuel_rod.jso
 3fcea004c07919a7e472cf55b1e8aa12ba91eeec data/c/tags/item/birdshots/galinstan.json
 5be19bb6244692817c2552efb7464b5c561824d1 data/c/tags/item/birdshots/gallium.json
 5a22ee44d4de4b5355e989218e20f4702c8c6464 data/c/tags/item/birdshots/gold.json
+b4f5cf09e596bff2cfccab5166f9c6268d1f6061 data/c/tags/item/birdshots/gravitite.json
 b0f430940612cfada8baf1771493b7c7b04f8ad4 data/c/tags/item/birdshots/hardened_high_speed_steel.json
 259a6fa9880752c0e08b853201e98e03ec9e1375 data/c/tags/item/birdshots/hardened_steel.json
 1c13415037bc1ebb25cc6c8cc755db30411ad4f4 data/c/tags/item/birdshots/high_speed_steel.json
@@ -179,6 +180,7 @@ df34470795c4094406ea29937a4b93f49e169d3f data/c/tags/item/bullets/fuel_rod.json
 f7912b612eb465032a26057f8c12378ce7278179 data/c/tags/item/bullets/galinstan.json
 28b88497153a9d78d6ea5da9267e74b14caacdf8 data/c/tags/item/bullets/gallium.json
 d37bcef375cf1f8abd58821d681d01ca7665a318 data/c/tags/item/bullets/gold.json
+b8293e9708f22ea87ddeee280ea744b29247dcd0 data/c/tags/item/bullets/gravitite.json
 c6bb8833d64781b8667918b9602afc0dd9479304 data/c/tags/item/bullets/hardened_high_speed_steel.json
 32c774dd8f888b3c4d708b60c49b2ce000cb5e87 data/c/tags/item/bullets/hardened_steel.json
 3c155e1b682e6d7de011ed197f41d175cf0e7c4d data/c/tags/item/bullets/high_speed_steel.json
@@ -353,6 +355,7 @@ c1c5894c57adae350718564f1ab4a3a190d358d7 data/c/tags/item/cases/enriched_fuel_ro
 f4c0e5ac456541d20f76c440df51da4f0eae2fa8 data/c/tags/item/cases/galinstan.json
 6eae5ce94c166916d9156ea51de4af3eb5f637f4 data/c/tags/item/cases/gallium.json
 0f0b81294fbe8419876e13bcacccdd2864e33381 data/c/tags/item/cases/gold.json
+f9d4b728dce653b3ba130d346adc9600abf8d686 data/c/tags/item/cases/gravitite.json
 78c09a40ac6e5eba6f501ef346846efe5f472dda data/c/tags/item/cases/hardened_high_speed_steel.json
 b3711fd4416615523d654095c64b3e48263926ba data/c/tags/item/cases/hardened_steel.json
 0c6528635cb264b32137ac84977b11527fc463f9 data/c/tags/item/cases/high_speed_steel.json
@@ -476,6 +479,7 @@ e5e01b18e03e11a806009eb95946edc85ba84ce9 data/c/tags/item/coil_springs/enriched_
 26765be5f0cd54447795f6f1b6dedc9c074c130d data/c/tags/item/coil_springs/galinstan.json
 b245807653b406111c6884d3ac23f266616573ef data/c/tags/item/coil_springs/gallium.json
 cf7a5da8a098bc8071f2fef00d40ffab2e6e5b7c data/c/tags/item/coil_springs/gold.json
+86574eb0e7d9485fccd49ca560d42b9fdee5bb37 data/c/tags/item/coil_springs/gravitite.json
 3110c7c8fd30b375adc2ce966d921731818f4469 data/c/tags/item/coil_springs/hardened_high_speed_steel.json
 c78dd3402645028802c35d9bdc0348107d80b284 data/c/tags/item/coil_springs/hardened_steel.json
 32680d4dcca2429727b828da08f8ee217590eb79 data/c/tags/item/coil_springs/high_speed_steel.json
@@ -609,6 +613,7 @@ c9e8cf4466e9ee481e4802b2bbf168be293cab96 data/c/tags/item/coins/enriched_fuel_ro
 024090dccbfeab0d9a5e05f5d0beb5e2d8e33104 data/c/tags/item/coins/galinstan.json
 75ebea0d42e0ce2b9e6e760eb2b3b256ded53937 data/c/tags/item/coins/gallium.json
 2e978267b0b33658ff6bcfae92c50b13c537368f data/c/tags/item/coins/gold.json
+caf3494e3ab6d1904deeb1923ba872cd95daf927 data/c/tags/item/coins/gravitite.json
 abf5e8dfda34e0a62aa22f32d1c46ad03e68c543 data/c/tags/item/coins/hardened_high_speed_steel.json
 5d9811fd5443cfd1d8e5fa37e404b2142ea3d94d data/c/tags/item/coins/hardened_steel.json
 403d866c42fd0c5df07350e1371faa1954caa597 data/c/tags/item/coins/high_speed_steel.json
@@ -782,6 +787,7 @@ ab0c174de52cbdde50e4886a67ec282ae66b8280 data/c/tags/item/crushed/uraninite.json
 73ac804647ce168936a23fecf9f59b6d3e93fbe5 data/c/tags/item/crushed/vanadinite.json
 b80a9acb48db275b5119282e0c3aff8c8d50a54e data/c/tags/item/crushed/wolframite.json
 d54432e34f5908b486e6f4dc84e241fa784596df data/c/tags/item/crushed/zinc.json
+965e0d30408d14cba400a43d2ba2569ec1ba7643 data/c/tags/item/crystal_plates/ambrosium.json
 d0533cad0932f7611f14832adff23b135c0fd8d0 data/c/tags/item/crystal_plates/amethyst.json
 0c04a3e455707d80c1d4aa4b286e4aa51d54d32f data/c/tags/item/crystal_plates/beryl.json
 5e20097d753f0efc055e0055cd3d9916deecce65 data/c/tags/item/crystal_plates/certus_quartz.json
@@ -840,6 +846,7 @@ f12275caf94ea2eaaffef20d4b962fe77aaeab63 data/c/tags/item/crystal_plates/spodume
 ceb89a77424271a9b04a39bb59b71cfbfc0b518d data/c/tags/item/crystal_plates/thorianite.json
 4329c772984c3671335bbefbd23fb7d171678250 data/c/tags/item/crystal_plates/tourmaline.json
 3eeb5f3b76be225707adc267f82ee59353c0268f data/c/tags/item/crystal_plates/vanadinite.json
+239603dda6ddc9f710bc664434690a38853ee06e data/c/tags/item/crystal_plates/zanite.json
 d94ca810462dfa97c404afd29e9b4b47e5f06eac data/c/tags/item/cut_machine_bolts/alnico.json
 265b4981da15f03463518eee2e95b161115a5bc0 data/c/tags/item/cut_machine_bolts/aluminium.json
 e907ee86794ebe55c52922278fa09b37f8d2ba94 data/c/tags/item/cut_machine_bolts/aluminium_foam.json
@@ -874,6 +881,7 @@ ba45c72d7c39c5ac332aa77611460bc85901199e data/c/tags/item/cut_machine_bolts/fuel
 db9bdc83f6f667f976d77b8f1ea7d1ea6398bded data/c/tags/item/cut_machine_bolts/gallium.json
 84e162883cae8826f49a34cf692e6d6227ae9f88 data/c/tags/item/cut_machine_bolts/gold.json
 4488eaf78ff101423c95305ef107ed4020288fea data/c/tags/item/cut_machine_bolts/gold_amalgam.json
+10008af512f1d18075982d765d626c0c50fa4102 data/c/tags/item/cut_machine_bolts/gravitite.json
 ca2b5f9c64807d72910700bef8dced097cb75fd3 data/c/tags/item/cut_machine_bolts/hardened_high_speed_steel.json
 6c92ee0ba4a54a2c9451322b86ba4ba1188adce8 data/c/tags/item/cut_machine_bolts/hardened_steel.json
 162cda2d8adaa6aac6e285165ff908b9fca93d39 data/c/tags/item/cut_machine_bolts/high_speed_steel.json
@@ -1009,6 +1017,7 @@ e0cc6689cb42dd03f8cdc2e202e005ae6ff1e629 data/c/tags/item/cut_screws/enriched_fu
 7eef2bda477789e9616f1cea5a92115979c8385e data/c/tags/item/cut_screws/gallium.json
 08bbb67009637d124cbf73bac78423c1c354a723 data/c/tags/item/cut_screws/gold.json
 c33ccc8e3594eae99925f4f18b30a027dd1063de data/c/tags/item/cut_screws/gold_amalgam.json
+93a8fee8aab6c85c65878aeb22b41556566a969e data/c/tags/item/cut_screws/gravitite.json
 c7ebf2400258090e611bce775255296be800a89e data/c/tags/item/cut_screws/hardened_high_speed_steel.json
 8b7f8682e6f5aafd24f6eec556092408aa61d5fb data/c/tags/item/cut_screws/hardened_steel.json
 018a4d7d60569a5ad48cf8b70f8312ad0737a401 data/c/tags/item/cut_screws/high_speed_steel.json
@@ -1144,6 +1153,7 @@ fa5c2766ea1e4f590bc93fa6ad65561822ab9797 data/c/tags/item/cut_thread_rods/galins
 8166117195d527255a16493f9f6d164a55beebb9 data/c/tags/item/cut_thread_rods/gallium.json
 020bb63a66141df8a3a00a5936ab25348adafdd1 data/c/tags/item/cut_thread_rods/gold.json
 62b8ce37e38dd5fff2bcf4f4a7dd31f1e6fbcd55 data/c/tags/item/cut_thread_rods/gold_amalgam.json
+cf8d314e82c2c22bf0ad96d3d6673fb5d6e8e6c4 data/c/tags/item/cut_thread_rods/gravitite.json
 ed312886e324bf143c7ae5bacda9ca8adc4c0809 data/c/tags/item/cut_thread_rods/hardened_high_speed_steel.json
 eda67c4d6798d801f562889c8daf7775cc3a5e47 data/c/tags/item/cut_thread_rods/hardened_steel.json
 95dd948095b16af36037031a3ea495cec5044061 data/c/tags/item/cut_thread_rods/high_speed_steel.json
@@ -1324,6 +1334,7 @@ ee08ab01730e6890334115795f537e345acdfe36 data/c/tags/item/drilled_plates/electru
 b0ed7f010424e786b54fd10631c1fc7f98c06d18 data/c/tags/item/drilled_plates/galinstan.json
 6dc8aba5e68f36086347b2879bdd324640ef3360 data/c/tags/item/drilled_plates/gallium.json
 657150e1cfb4930a0cf4c37e7b88b639f1c777e6 data/c/tags/item/drilled_plates/gold.json
+5c4c211d475815bf19d60307fa2c28db307230ac data/c/tags/item/drilled_plates/gravitite.json
 52854d06c56d29b6dfe0c5925d4e9c0140519510 data/c/tags/item/drilled_plates/high_speed_steel.json
 98a4e0a495e2ce3b8a2357312f8ebb57ca26e7b0 data/c/tags/item/drilled_plates/ignitium.json
 1e7a84a36efc8d59c1f6f3e30e90332cec60608e data/c/tags/item/drilled_plates/indium.json
@@ -1412,6 +1423,7 @@ ed947d96aafd833d273ee2985a28887bb1a88f9d data/c/tags/item/dusts/alnico.json
 0a722e4fc9e1724ea3378d716af9938c31fa90b8 data/c/tags/item/dusts/aluminium.json
 38ab6e0f0c390095a3497e9842bfcbb160b574ad data/c/tags/item/dusts/aluminium_foam.json
 671ea4f65a91e84d02b9a35dd062d80b2013195b data/c/tags/item/dusts/aluminium_lead.json
+d800b04bbb7497c301b6652c7138967c56d1f351 data/c/tags/item/dusts/ambrosium.json
 c2d926e70942593d2aaf781598dd01b80fb57c61 data/c/tags/item/dusts/amethyst.json
 e3107a7e522347a71f868b60ea702566024647c3 data/c/tags/item/dusts/amethyst_bronze.json
 1a91926f1ed83508fa37edea2651abc0767a394d data/c/tags/item/dusts/ancient_metal.json
@@ -1487,6 +1499,7 @@ d31ba13b65726810f1fd5a1ed7b32ff26463104d data/c/tags/item/dusts/gold.json
 3a23e8726095a31c225a059fe9f5c156a2891076 data/c/tags/item/dusts/granite.json
 ebfc2269e926415d234b02fdf5c89cf3c5661623 data/c/tags/item/dusts/graphite.json
 fe1245fb45fd908a524f8416fb7c657010c304a2 data/c/tags/item/dusts/gravel.json
+7ef59ad09b9e866943239f630094ce19f0737645 data/c/tags/item/dusts/gravitite.json
 5f3a5c2f10abd63ae7a0c9aa8e46e8d164594f80 data/c/tags/item/dusts/gunpowder.json
 8ebbb14d28c0ea6b696b7daa1d135e9fac080ed5 data/c/tags/item/dusts/hardened_high_speed_steel.json
 05c9fcb1782feb641d0984f845c15a8e3ff6930e data/c/tags/item/dusts/hardened_steel.json
@@ -1642,6 +1655,7 @@ dbb2f85ee7597787b8f0dcfb99abf7a1d7ffd8bc data/c/tags/item/dusts/witherite.json
 41b2f8e97a47b6e17b59bca091c5a607229b6ac9 data/c/tags/item/dusts/wolframite.json
 db2ccb5ea484badeaf505325691949c595cacbaf data/c/tags/item/dusts/woods_metal.json
 32d7862e786efff277ff8472c26b60c435336abd data/c/tags/item/dusts/wrought_iron.json
+4a6fcfe58b83778aa955d476ff538d5d463f8f58 data/c/tags/item/dusts/zanite.json
 0750408f26707b9116100a7883df13e9fb07c8db data/c/tags/item/dusts/zinc.json
 a6a915c86e8e60dcf986272f374d6259d696b6df data/c/tags/item/fibres/aramid.json
 982e4e680528e2a36cbbb6408c5c6225b0035472 data/c/tags/item/fibres/natural_rubber.json
@@ -1682,6 +1696,7 @@ c26c22935f71760213c1040de6357d6f2f98dcb8 data/c/tags/item/fine_wires/electrum.js
 39dd28d4a3861876c09462ed40e7ed1da8c63b60 data/c/tags/item/fine_wires/galinstan.json
 b46af245fbe4032719256da84ed2159b4ae655fc data/c/tags/item/fine_wires/gallium.json
 0b69238f7f19b95b63b0aa814d5b5cbadc90af77 data/c/tags/item/fine_wires/gold.json
+ebc3d502d2d6aec65f11865230fc51413cb5f796 data/c/tags/item/fine_wires/gravitite.json
 a728439aad5b84ab2a8055d34a0966cbc9c3f665 data/c/tags/item/fine_wires/high_speed_steel.json
 a2e7e4104dc6eb13bcf749e1257fa9013970b2df data/c/tags/item/fine_wires/ignitium.json
 c9e728376549a53144721bcd7ab869b21f55176e data/c/tags/item/fine_wires/indium.json
@@ -1799,6 +1814,7 @@ e6fc5567efe50099543af96d3c0c05a0790736e2 data/c/tags/item/flat_nose_bullets/elec
 bb76b35b0f1457ce3b5e506b0ae6585ad570e507 data/c/tags/item/flat_nose_bullets/galinstan.json
 102995caf07faa22d81aec9d375394a6e83a6aca data/c/tags/item/flat_nose_bullets/gallium.json
 5098d31f724f5628df931cd1c7f6c2fe9f904396 data/c/tags/item/flat_nose_bullets/gold.json
+efc46ca3f5bb8c0fc53391d62bff7f3a3c0088aa data/c/tags/item/flat_nose_bullets/gravitite.json
 1a841a4a12db0e4cf9af87670f1fd77baca05543 data/c/tags/item/flat_nose_bullets/hardened_high_speed_steel.json
 7968d2eaa6de8b17291515085ffb60f76bdcd7e7 data/c/tags/item/flat_nose_bullets/hardened_steel.json
 8097a5b65721f5940dfbf972b9444ea43f2f01fc data/c/tags/item/flat_nose_bullets/high_speed_steel.json
@@ -1941,6 +1957,7 @@ c9478415914febb8bd9ff676119a0cb9cfb7db73 data/c/tags/item/flechettes/enriched_fu
 65da3ad86542a2c530e2b150f83f2efdc031f741 data/c/tags/item/flechettes/galinstan.json
 ba883ec265c91f1c2e199607008a3d999595af47 data/c/tags/item/flechettes/gallium.json
 ebf448004f3d8a86c6bb27cda6c0a325bb661bd9 data/c/tags/item/flechettes/gold.json
+460e2b5026f6bdabe5dd526920aa772578306a13 data/c/tags/item/flechettes/gravitite.json
 f360924355ca6ca9814f6a7a020b43fe451fe49d data/c/tags/item/flechettes/hardened_high_speed_steel.json
 227c6b5d96874d123918877e6fa741074512a90b data/c/tags/item/flechettes/hardened_steel.json
 75797e8cf62bf45269cfc49ea899a5e5f1101b36 data/c/tags/item/flechettes/high_speed_steel.json
@@ -2081,6 +2098,7 @@ e57ade9f4fd288bfd796360bf1b832c1637a724c data/c/tags/item/foils/duralumin.json
 42c4ce7cc7bf485816095782e67e5c45f422555e data/c/tags/item/foils/galinstan.json
 0242c96824d3ed69916124ca45349bf01f8a1c38 data/c/tags/item/foils/gallium.json
 24f063cc76493b13567af8c00f7b627ccc9e3365 data/c/tags/item/foils/gold.json
+56cf46d02c15edcd510e070ebe315b21500ee895 data/c/tags/item/foils/gravitite.json
 e524c9dcbb93290f23d4ba569597063fd1dc5d21 data/c/tags/item/foils/high_speed_steel.json
 6325f99b12df293b792c10cbcf8e70c34e1f8039 data/c/tags/item/foils/ignitium.json
 d896f271587716e70b8dc7533503fede3f06a80f data/c/tags/item/foils/indium.json
@@ -2171,6 +2189,7 @@ ee37755de8ec9976b8dc77a07061a809a095ea74 data/c/tags/item/gems/quartz.json
 e45ac2f5e3b4bfc222d0b3db435fe023e367f708 data/c/tags/item/gems/ruby.json
 ffc6ee1480bdda5ed2aa45dde6eae2ef19e3e119 data/c/tags/item/gems/soul_crystal.json
 8688bb42ca29029b495bed0c0c2ef9afb931116e data/c/tags/item/gems/tourmaline.json
+b3d5bd87cc20e4f6a39f331a575350af129f3bc7 data/c/tags/item/gems/zanite.json
 c8deab958359fb4552abbe3db4c6f3d2220543f5 data/c/tags/item/glues/collagen.json
 d77d60cd7d09cca955e8e16eaf20ed344bb5ac78 data/c/tags/item/grips/acacia.json
 ae08a12335ce6aaef8a1f9d2a9c9eba52b1343af data/c/tags/item/grips/alnico.json
@@ -2215,6 +2234,7 @@ c6463866fb3e5cbbdfb6143f7163e30d90923fc0 data/c/tags/item/grips/fuel_rod.json
 62832c19334cde044cf3c7a342f539a1ebc22795 data/c/tags/item/grips/galinstan.json
 8ae0a39a7650b0b29fe82e6f3cc580bb83ca44aa data/c/tags/item/grips/gallium.json
 d380a47ece596dd856c5e589249435e792d4035e data/c/tags/item/grips/gold.json
+99a227ad310b868db47f2ff88aab31aa96b6de17 data/c/tags/item/grips/gravitite.json
 dd977e3b6265f80df33fa4a20d04c51832182de8 data/c/tags/item/grips/greatwood.json
 f5342c8c4879c5550547744f83283e379d805efc data/c/tags/item/grips/hardened_high_speed_steel.json
 e1067293274ea437102b00e37fdeb15183d305da data/c/tags/item/grips/hardened_steel.json
@@ -2351,6 +2371,7 @@ c7b101d2636b327c8b3b9ad76ff53dcf889dcb15 data/c/tags/item/ground_ingots/enriched
 cdebb34c16118592be69e71af91d3489f23ac69b data/c/tags/item/ground_ingots/galinstan.json
 588cd36faf35366e0642a02b4ee0bca59ffa44d3 data/c/tags/item/ground_ingots/gallium.json
 b5aff18452b7d6b26708711a6b86b5d8df9fc3d9 data/c/tags/item/ground_ingots/gold.json
+eaeea8354a8760bfad4c7e91df7f04edcdc89a31 data/c/tags/item/ground_ingots/gravitite.json
 adcf212c6f28d8947ce19262e07251c1e1b92714 data/c/tags/item/ground_ingots/hardened_high_speed_steel.json
 449e1f6a37a55fb6a0cf2e1869133c8e72d34453 data/c/tags/item/ground_ingots/hardened_steel.json
 0263cfa3fa1d9b73eaa8b2558ebfb7cd2ca10814 data/c/tags/item/ground_ingots/high_speed_steel.json
@@ -2478,6 +2499,7 @@ d087c256904b250d544edc54cff7be4cedcd44f1 data/c/tags/item/hollow_point_bullets/e
 4d4360b19230ba8dc8e3997bfd2b50a7ebe02371 data/c/tags/item/hollow_point_bullets/galinstan.json
 b85db80e76a60706adf958ef3ff432bc42ff1f3c data/c/tags/item/hollow_point_bullets/gallium.json
 dd86b2256c96bc4e9d4b2b563e39d8895f674160 data/c/tags/item/hollow_point_bullets/gold.json
+133f003a551d613ab89559b1b3590c9d7c2344a1 data/c/tags/item/hollow_point_bullets/gravitite.json
 50cb9ad7454ba6bf7529c07476b3294f6dec923a data/c/tags/item/hollow_point_bullets/hardened_high_speed_steel.json
 fb92cbe6d2c5b360a2a9ef476c15e3bcfafaa339 data/c/tags/item/hollow_point_bullets/hardened_steel.json
 4cdb0d8a3565590385d99bb1e40094504ed6f03b data/c/tags/item/hollow_point_bullets/high_speed_steel.json
@@ -2630,6 +2652,7 @@ d0e8632fdbf408b5977228d3a478b85b8194f438 data/c/tags/item/ingots/galinstan.json
 5d37e9d1d32849ad35d031f4e2f995ebe962166c data/c/tags/item/ingots/gallium.json
 9b9e3acf272432440038617c952c5f05136f8267 data/c/tags/item/ingots/glass.json
 2e548bf5712310a58dd07f6c8182c8fa8baeacaf data/c/tags/item/ingots/gold.json
+574dccd7acba2e9903f0ec4c84ef0058b6ba07b3 data/c/tags/item/ingots/gravitite.json
 4954fb5b8a264fbe4a98b8bd8c3581cb632ed105 data/c/tags/item/ingots/hardened_high_speed_steel.json
 6304746e41300554305d6a106063a4c6d08df53a data/c/tags/item/ingots/hardened_steel.json
 9b042877409a7102675714009ec675e16cb46268 data/c/tags/item/ingots/high_speed_steel.json
@@ -2796,6 +2819,7 @@ e9a43cddd881a71658211c11dab7b2cb196a74f6 data/c/tags/item/large_shots/enriched_f
 9874b18eaf0795dea9ede7473a121b17ea825ab6 data/c/tags/item/large_shots/galinstan.json
 0b438b3dcc9aff4b947465954a21c1286c760b90 data/c/tags/item/large_shots/gallium.json
 2694b52c8bd1d1bf48f0a51fe0aa0ecf661d8fc5 data/c/tags/item/large_shots/gold.json
+6923ca78f8db7d4365634b299d2ef07bb031f4d5 data/c/tags/item/large_shots/gravitite.json
 cfd11a3c8982c1a74922df09139f1afcbc2e6845 data/c/tags/item/large_shots/hardened_high_speed_steel.json
 0940ab83509445fbe37d59e459d872bacc6d14ab data/c/tags/item/large_shots/hardened_steel.json
 8aa93e3c698a087e8e183bb001f0a59afec26c02 data/c/tags/item/large_shots/high_speed_steel.json
@@ -2905,6 +2929,7 @@ de686fc92ef1412d0be24ef5fa4f3c775fc6ab31 data/c/tags/item/large_shots/zinc.json
 5bcb715524f46bf5a01a1ed9ebdf9b47387ab191 data/c/tags/item/lens/quartz_glass.json
 381a5779470b6c6c377f2ebb06c8c512122843f6 data/c/tags/item/lens/silica_glass.json
 56b715596ff673b7f2af07557e33cf745fb30f86 data/c/tags/item/loose_rocks/alumina.json
+99b308332fc4cb0cc90ae338eea1109683c8a193 data/c/tags/item/loose_rocks/ambrosium.json
 c9216fd1491d453038e11780ab90cb8e330f740a data/c/tags/item/loose_rocks/argentite.json
 8ae0398fbd6d16377cc63dc6e6949b8b6d1a2f63 data/c/tags/item/loose_rocks/bauxite.json
 32a5538c68fdfc5169ce4b7209d194b4e400f847 data/c/tags/item/loose_rocks/beryl.json
@@ -2925,6 +2950,7 @@ e85799e76eb09350c5d05368251eb589d8762af0 data/c/tags/item/loose_rocks/galena.jso
 cf3e8a925e242bcd599fd19a01f4b859db4bc3b6 data/c/tags/item/loose_rocks/garnet.json
 b05d146fa9ac7cd09c7514f6af305e9705bfcc78 data/c/tags/item/loose_rocks/gold.json
 ca8231400d28d64c2b88973dd150c0fc8aaf2511 data/c/tags/item/loose_rocks/graphite.json
+a12c1c4ea95b5d5947da272864b8cab648d223c7 data/c/tags/item/loose_rocks/gravitite.json
 5ed15e230a68059c34237958dc05bb66fc5cb9e0 data/c/tags/item/loose_rocks/hematite.json
 ab2e16a1fd4632c7ad60ea51f97c579f9fbb7225 data/c/tags/item/loose_rocks/ilmenite.json
 9c8721cb8a981c091188ff66fb021471cc325210 data/c/tags/item/loose_rocks/iron.json
@@ -2956,6 +2982,7 @@ c8ed267cfc71260d6173babd86625edabea42eee data/c/tags/item/loose_rocks/sulfur.jso
 2e3fa1d048377b93b26e20a2c1ca6a6ee5fd93de data/c/tags/item/loose_rocks/uraninite.json
 d181f4e2cccf9cef013cdb8aa9e684b6db05ebc1 data/c/tags/item/loose_rocks/vanadinite.json
 2a857f48a6e29385a571d1be31dffbd1b2b84381 data/c/tags/item/loose_rocks/wolframite.json
+4a5f46865d597c2969f3ae62f932a037bb38220a data/c/tags/item/loose_rocks/zanite.json
 32e28512c91d3d7ab91d7b6f219dbd5da63654ad data/c/tags/item/loose_rocks/zinc.json
 b6e93dada3826e25b7692efbbb8128cd3f756023 data/c/tags/item/lumps/alumina.json
 70e11a646666d1d7d359ad8a48bdf1fcae754519 data/c/tags/item/lumps/argentite.json
@@ -3039,6 +3066,7 @@ e5dc8a8d009b85f3b9af95c143c360a1e015f330 data/c/tags/item/machine_bolts/fuel_rod
 5182e243af81e6a96e3018c04e8f301b192a2b2e data/c/tags/item/machine_bolts/galinstan.json
 30faacd3e1cbb6c122218bb90dbed896a9b632db data/c/tags/item/machine_bolts/gallium.json
 4cd8d0b143433e2bab566acb20b19246b8bf42be data/c/tags/item/machine_bolts/gold.json
+dba2e51161b525f9da50d7bff83faaf99bcada43 data/c/tags/item/machine_bolts/gravitite.json
 f0d96f84834d73923454226fb8e5399ef526b003 data/c/tags/item/machine_bolts/hardened_high_speed_steel.json
 5e16eda9e1a2db2e843f5eacfae4503ef209787d data/c/tags/item/machine_bolts/hardened_steel.json
 a60cd05c3b0ed66104763bbabbdc61435501e589 data/c/tags/item/machine_bolts/high_speed_steel.json
@@ -3178,6 +3206,7 @@ c7eba2059f2850ec691791e7afc6d557a6dd6bd5 data/c/tags/item/nuggets/duralumin.json
 5ce2f50257251f2bbf1fc5329cf1c256719a2150 data/c/tags/item/nuggets/galinstan.json
 ab890c444887323daf1744567b87bb1788544e2e data/c/tags/item/nuggets/gallium.json
 fbeb2cae0fa183dac58ed2e4077fa4af3166fa94 data/c/tags/item/nuggets/gold.json
+ed819a4bf1daae2115386a295a2acc5b5f5604b8 data/c/tags/item/nuggets/gravitite.json
 0e5149c6240df5c7addebf5aa1572e2a3003305c data/c/tags/item/nuggets/high_speed_steel.json
 c5f4cf511751e7258bfc2c08d40ea79dbabd80d7 data/c/tags/item/nuggets/ignitium.json
 73cd98837bf3b44db34548cd77fcc151c9a08ef0 data/c/tags/item/nuggets/indium.json
@@ -3265,6 +3294,7 @@ c4a0650b10a451f72025d1bb030cbb05ad2ed43a data/c/tags/item/nuggets/witherite.json
 4c5de8f8c1e4338f9c0bf642c9610a1365f57079 data/c/tags/item/nuggets/wrought_iron.json
 e47bdb7bb7997bb6c62e0c86b469c3222c777df1 data/c/tags/item/nuggets/zinc.json
 35b1bc8d435c581a85001ba42a2bd4d9d99daccc data/c/tags/item/ores/alumina.json
+61e7f673c901265d21da4d75bc0c1de1e12bdea9 data/c/tags/item/ores/ambrosium.json
 eff38d86e41cb6a657da04d366a61091921cddd4 data/c/tags/item/ores/argentite.json
 853e8786b8c8563da9edc9aee62a91fb2ad75fa1 data/c/tags/item/ores/bauxite.json
 6e60e7ece2e6ba970c3b88a35e98f9f25fb39841 data/c/tags/item/ores/beryl.json
@@ -3285,6 +3315,7 @@ d8f2918f1d5f42ce28ea4ae9c871d42b4416edb1 data/c/tags/item/ores/end_stone.json
 43083774237352f8b413d11b9cb61c443cd67c50 data/c/tags/item/ores/garnet.json
 643a7cc6d3e8ed76cd69fc4aa97dc8296b3cae1b data/c/tags/item/ores/gold.json
 2f4c01639c98deefe5c9bc082c1c336ac7fcd318 data/c/tags/item/ores/graphite.json
+9eb3da0870e1ff97bfe6cc73a0abd13b8f22f596 data/c/tags/item/ores/gravitite.json
 ce3daf6a8e7867436a94540392a2b2e90fe1b4ae data/c/tags/item/ores/hematite.json
 b350387c3db06bf644164771d0ebc80662d1e109 data/c/tags/item/ores/ilmenite.json
 ab648c3f627ec87562d598eb4b42aaa70c5ba47e data/c/tags/item/ores/iron.json
@@ -3316,6 +3347,7 @@ a3e3b0a9f30c6e7cd6b2d4e7ec2bdbd4b7787409 data/c/tags/item/ores/thorianite.json
 959692c7e737f98c1bfa5a62692b8111b17452ef data/c/tags/item/ores/uraninite.json
 0d0eb5cc4a8f3124a76069f901cd455c8bf220fa data/c/tags/item/ores/vanadinite.json
 d4a420c9b9da1af8c1637f8ad6de8f4893483f72 data/c/tags/item/ores/wolframite.json
+a1d728c46edcbc76b20ab7fd37c9f4f69f399f91 data/c/tags/item/ores/zanite.json
 91b2a7fd44495ad1588b2008c2066ae266cd88fc data/c/tags/item/ores/zinc.json
 4a91598ae60f47a7982af63ba987c6e05f73b4a5 data/c/tags/item/paper_cases/paper.json
 3e82d091e2edfe0198d3b7a9d3dcebf4b114ee04 data/c/tags/item/pipes/alnico.json
@@ -3355,6 +3387,7 @@ ff623052353f3b70731562c7fd44cc8c49dd0374 data/c/tags/item/pipes/enriched_fuel_ro
 6780e95627fca4401783750dce14a880b3af9fec data/c/tags/item/pipes/galinstan.json
 68fb0656a3da849fb195b472ec1c49ce229f9e36 data/c/tags/item/pipes/gallium.json
 466f4e9f37457c41778109d6289629eaaaabcb3a data/c/tags/item/pipes/gold.json
+2ffce08f2b1b595400c5da4127eae65221a823cc data/c/tags/item/pipes/gravitite.json
 73d2735187cbc68c1294c1c7afadfe417338b40d data/c/tags/item/pipes/hardened_high_speed_steel.json
 f2b634377c199eb865bd8e69ee02b81d4a7b299b data/c/tags/item/pipes/hardened_steel.json
 0a1bb2b32c9a5aa8df368d45a461155ffe96ae1f data/c/tags/item/pipes/high_speed_steel.json
@@ -3492,6 +3525,7 @@ dc952d5e3f43f3943427e2f22a1f29f6804fbc66 data/c/tags/item/plates/electrum.json
 51012a1ea1bc3f7ae8612e195bad458af937ff28 data/c/tags/item/plates/gallium.json
 48de0b9f026e158619f68732439cc342cd89b3f0 data/c/tags/item/plates/gold.json
 4686fa3f491e33bbbd8dbf6aa41c35d31a741fed data/c/tags/item/plates/graphite.json
+31fc131c204b39d032f2f7bf589fa0d07ee2a164 data/c/tags/item/plates/gravitite.json
 49bdabebc8fe85638407a66fe316cbbacccd84ed data/c/tags/item/plates/high_speed_steel.json
 bf250d0d1265f430660aff3ef16c15b770bbf462 data/c/tags/item/plates/ignitium.json
 0a8bcf4e2afa6fec9d75fa663ac24229aa09127b data/c/tags/item/plates/indium.json
@@ -3625,6 +3659,7 @@ ed58b9414d31c69697f499398fbd7a3473c43705 data/c/tags/item/pointed_bullets/electr
 e04b11704693327d9b2d9fb1624f1c723bf13869 data/c/tags/item/pointed_bullets/galinstan.json
 8786317ba020843dbf5b919b571c8a3fcc67d8b1 data/c/tags/item/pointed_bullets/gallium.json
 d48449fc46bffd395e208e26d6cb1690f6b85932 data/c/tags/item/pointed_bullets/gold.json
+98efddb3c20d58bd6b39043a4088e6e112eb168d data/c/tags/item/pointed_bullets/gravitite.json
 ccf689b5a594e7ba4f453094a3ecfd9d4a959913 data/c/tags/item/pointed_bullets/hardened_high_speed_steel.json
 d2c23e456f7919435d4816e5741b31a4d238ee89 data/c/tags/item/pointed_bullets/hardened_steel.json
 32f1cccdaea1fc336191d153c5d42809fe4f3e64 data/c/tags/item/pointed_bullets/high_speed_steel.json
@@ -3763,6 +3798,7 @@ afe9ee8f71c0fbe2ca67af6eff197512e122022c data/c/tags/item/rivets/duralumin.json
 7da2f70ce38241b11ee9e0c28014e894ec203f2a data/c/tags/item/rivets/galinstan.json
 ae7b3572eda33bfdb108ff34c42e1bb4a90f06bb data/c/tags/item/rivets/gallium.json
 23acc5a83922a367a9d205f6c3da39f4360a6ec9 data/c/tags/item/rivets/gold.json
+8da5f233e282bc078860daae3457050edc1fad5d data/c/tags/item/rivets/gravitite.json
 f6d93b00a07aaf6b6d19407c661ef4f112f95b82 data/c/tags/item/rivets/hardened_high_speed_steel.json
 c185379080d8b6470f52b2129f5588d49621159d data/c/tags/item/rivets/hardened_steel.json
 387f15dfa3c8ef1fb6e55fd86d152dc3941dc255 data/c/tags/item/rivets/high_speed_steel.json
@@ -3907,6 +3943,7 @@ d82246d178b513a6834655642f77d562547a8d30 data/c/tags/item/rods/fibreglass.json
 7dcf34415195b8de9f9f73527899e246ae7519e8 data/c/tags/item/rods/galinstan.json
 2d6bab6558c4cf6c97d4cea7be70a56786e497da data/c/tags/item/rods/gallium.json
 5cf253adc455ff57a059605eeefd75b390f53dea data/c/tags/item/rods/gold.json
+c5def40f458fc2f78e2e922980a27f2d44a7c58a data/c/tags/item/rods/gravitite.json
 df7aa0fcf0d31094dc82a824a622b4784da4653b data/c/tags/item/rods/high_speed_steel.json
 321c3634efa74618949dc4aea70feb473226038f data/c/tags/item/rods/ignitium.json
 6857be20d8479b22ff9d327ccf3a6cd5e2f2eb4b data/c/tags/item/rods/indium.json
@@ -4044,6 +4081,7 @@ e8ac3a94d6450442ee06b1d133444c820f634dbd data/c/tags/item/rolled_machine_bolts/g
 124d7dc91de714c5ac7052e7fa9804cabeab52fe data/c/tags/item/rolled_machine_bolts/gallium.json
 9df6a978506d990b3a813f5932d88e37eeb528db data/c/tags/item/rolled_machine_bolts/gold.json
 2d3f1983e288971001366a63681ed99df4e26b62 data/c/tags/item/rolled_machine_bolts/gold_amalgam.json
+26fd166a72070d54ef3d10a2b611e42abb3b6179 data/c/tags/item/rolled_machine_bolts/gravitite.json
 805cac170344dc68a948fb7ab4ef8991e4bd9a46 data/c/tags/item/rolled_machine_bolts/hardened_high_speed_steel.json
 8e76bb1bc5266c37427739d04269c39826c09179 data/c/tags/item/rolled_machine_bolts/hardened_steel.json
 a9c0436a1c63a31edcd84ee6f27a62c1ab9f5040 data/c/tags/item/rolled_machine_bolts/high_speed_steel.json
@@ -4179,6 +4217,7 @@ b7c886e7f16ad3ed84a0828e6ca95ab4d1585881 data/c/tags/item/rolled_screws/galinsta
 e2b648b6039b4c1cd3f1415d9e4cd7ad53fce85d data/c/tags/item/rolled_screws/gallium.json
 0134249329c933439d609605638aecd339e67aa1 data/c/tags/item/rolled_screws/gold.json
 6e9abbf4a196244289be1c9f3919478aa4d37cc0 data/c/tags/item/rolled_screws/gold_amalgam.json
+d7c97cca32e23a3202731813fc059c9b3167b802 data/c/tags/item/rolled_screws/gravitite.json
 8e70716984d719346910153f6f614686ba7535ac data/c/tags/item/rolled_screws/hardened_high_speed_steel.json
 bcfd399962444a29d7519ecf019ff8b8ef7c7caf data/c/tags/item/rolled_screws/hardened_steel.json
 ce04a7943ca1373f6e81491f1e2b82ba0a3f0666 data/c/tags/item/rolled_screws/high_speed_steel.json
@@ -4314,6 +4353,7 @@ c78d002d557b718e516353b2ad8585335cc4f5e0 data/c/tags/item/rolled_thread_rods/enr
 0f1c79db09f51a70ca1cc2b6a38e89d195253e19 data/c/tags/item/rolled_thread_rods/gallium.json
 a3c6dee962d9d2c7183ae6a595fe6ab685379e85 data/c/tags/item/rolled_thread_rods/gold.json
 b62691840aec021d1d3599898231218d89374af1 data/c/tags/item/rolled_thread_rods/gold_amalgam.json
+cdf4e1566dd4781082ca4754d750c76177d35981 data/c/tags/item/rolled_thread_rods/gravitite.json
 8708de70ff4af0282c835c384227bca5e5dc5950 data/c/tags/item/rolled_thread_rods/hardened_high_speed_steel.json
 1be5f09dc9f9b25d1fb36c1221fcbe260d228580 data/c/tags/item/rolled_thread_rods/hardened_steel.json
 48f57507633336f89b32220d016f2a1589f6887a data/c/tags/item/rolled_thread_rods/high_speed_steel.json
@@ -4452,6 +4492,7 @@ d37f708c80169457c208a3bf87f7c9beaadef3a9 data/c/tags/item/round_balls/duralumin.
 38e4e164b9d8e9cb4eba1d040a618e25f482bd61 data/c/tags/item/round_balls/galinstan.json
 f8d590155c0e5c1f04031f7faf79513df7ae5c7a data/c/tags/item/round_balls/gallium.json
 af50f75bd8c1ec26265bd918f9b0295eeb88851f data/c/tags/item/round_balls/gold.json
+94e0774366804ba25ab261836e62c2a46a81d638 data/c/tags/item/round_balls/gravitite.json
 8a157a7cf103596f94bfd2b489d5c3ea3879adbb data/c/tags/item/round_balls/hardened_high_speed_steel.json
 b97805b7c414567bf0841c6419c12d80dcb67a70 data/c/tags/item/round_balls/hardened_steel.json
 4adc63121cc7346f57f8a98a18d84e4902672d0a data/c/tags/item/round_balls/high_speed_steel.json
@@ -4586,6 +4627,7 @@ db592ca498cdae654b36b9f6bd206f9d810f8dd1 data/c/tags/item/scraps/electrum.json
 b61666d425276b4fcfa3b3504aa62270e7e184fb data/c/tags/item/scraps/galinstan.json
 f687d5321d8a2e97807327be6289418f117be345 data/c/tags/item/scraps/gallium.json
 3a6308b5b70bea53d83ec02b236965b1c240f551 data/c/tags/item/scraps/gold.json
+6ab2a9947b7d8e3949db495113deab057f77b8ea data/c/tags/item/scraps/gravitite.json
 3455922e292bdeef96e29ad81416d8741e360276 data/c/tags/item/scraps/high_speed_steel.json
 6f38198855f8a3dc0ce03260c6fea3c56b8da38f data/c/tags/item/scraps/ignitium.json
 5776a2e54da245a0b9c24ac6967dd4fcf9dd673a data/c/tags/item/scraps/indium.json
@@ -4701,6 +4743,7 @@ f3e0d9bf35864c331c4fb8b8f5019ef0aee4018d data/c/tags/item/screws/fuel_rod.json
 4f13cec316de933679565661d5bfe3a002fec765 data/c/tags/item/screws/galinstan.json
 5b064cc25df7b82406f76a54e3140174d234c693 data/c/tags/item/screws/gallium.json
 bdf96744eadc5d42da21c62d9adb45ec0336ab32 data/c/tags/item/screws/gold.json
+8b2d4661bed2ff417e1a6e2a285fe0abfe77c73e data/c/tags/item/screws/gravitite.json
 1287d267de94a5911bb03853b337bfbb0ef6f42e data/c/tags/item/screws/hardened_high_speed_steel.json
 2f9a6fd05231180c00d09e4294c2867d2609e956 data/c/tags/item/screws/hardened_steel.json
 8cb5d751ce2550355c32ffd02614bdcab9a0a54d data/c/tags/item/screws/high_speed_steel.json
@@ -4803,6 +4846,7 @@ fe954425c0bb2581efc6e7f3b2f43bdb4134a0be data/c/tags/item/screws/woods_metal.jso
 58773a85e23ac994025abeb441446a624f481d85 data/c/tags/item/screws/wrought_iron.json
 0f76965fd737e97dbaea6c7479cc01691f90bd3b data/c/tags/item/screws/zinc.json
 dec176cec1c3c26b09b5613c6b8bebf85eacdd2b data/c/tags/item/shards/alumina.json
+5126153fc8c856a3a60f8223b0f84ad19d6a0dab data/c/tags/item/shards/ambrosium.json
 b8671934ffb1d62b1acc0804034cc10bc62318d0 data/c/tags/item/shards/amethyst.json
 1b687730cfaa34cfb8b69c8fc6460ee979c9c9ec data/c/tags/item/shards/ceramic.json
 e589200c9aada01dfc1aa20f4a0fadbb033a3ace data/c/tags/item/shards/concrete.json
@@ -4834,6 +4878,7 @@ ea479b6935828ece76c68316722b04918a70fe0b data/c/tags/item/storage_blocks/alumini
 55edd955ce0f4762d61b8754fc580aeb06c26ab1 data/c/tags/item/storage_blocks/aluminium_foam.json
 03abbbfbe6ecda9c2a578e40ba67feeb796f0484 data/c/tags/item/storage_blocks/aluminium_lead.json
 08160006b051e6d0b9c5378b9b0eeeb33fee80f3 data/c/tags/item/storage_blocks/amber.json
+3e224918c014db13acb064ac7c4106f759a65980 data/c/tags/item/storage_blocks/ambrosium.json
 205d1f7b0de7d264990b84ddb1b896e878244232 data/c/tags/item/storage_blocks/amethyst.json
 20f2ef141f382d38526fb661324b80e9d8bb6591 data/c/tags/item/storage_blocks/amethyst_bronze.json
 9322a9d4bc237c537c1a7ba46c49d37fa3bcefc2 data/c/tags/item/storage_blocks/ancient_debris.json
@@ -4900,6 +4945,7 @@ f083c6a19e44f35a799acdb90b66e4bec30ab733 data/c/tags/item/storage_blocks/gold.js
 3a598af3e79ed3e5251f639f5f035a06b75937a3 data/c/tags/item/storage_blocks/gossan_rubble.json
 d3039b64e9260a208d77641b48e48f3e8e8ef13a data/c/tags/item/storage_blocks/granite.json
 64a6127986a6c91eb1b2efaa3b3bdb0c5f3f2962 data/c/tags/item/storage_blocks/gravel.json
+a8d075b0065e714d94ccf3f4156592d9ca7c743a data/c/tags/item/storage_blocks/gravitite.json
 201aa8e9a13490e2e052bddc7091e2a430ab6ac5 data/c/tags/item/storage_blocks/high_speed_steel.json
 9d60833fe29c9d6be25ae108a8b482d3871def57 data/c/tags/item/storage_blocks/honey.json
 7fe3e47060f8dfc77c9dda19b63e58a175b81acb data/c/tags/item/storage_blocks/ice.json
@@ -5033,6 +5079,7 @@ ffcca44642f456f3e6f9535ad08e673534afa467 data/c/tags/item/storage_blocks/void_me
 e68b8115434c4fac38622b6b744b32254efabbc0 data/c/tags/item/storage_blocks/witherite.json
 350c36a1d855833cea93ab644457a37e66f2641b data/c/tags/item/storage_blocks/woods_metal.json
 89fa0cca950999bcaf5dd691cce2a22c56fe2f51 data/c/tags/item/storage_blocks/wrought_iron.json
+40f456112db335e4185dce1e3c0da18df891ab69 data/c/tags/item/storage_blocks/zanite.json
 5d3ada3fbceaf4e9e91cdb9532b2abd36bcabd9d data/c/tags/item/storage_blocks/zinc.json
 fbbf5e4d19510dacec2f88c78756c7a1f8d7d204 data/c/tags/item/strings/amber.json
 336a407b5932e2c209ba043099aaad6db9e8e16c data/c/tags/item/strings/aramid.json
@@ -5098,6 +5145,7 @@ a927c03a3a1748af10e3383b5cd374bd2f15dfcc data/c/tags/item/swarfs/fuel_rod.json
 6cc8cd6549fd7d5548766388f5c4727c927efb66 data/c/tags/item/swarfs/galinstan.json
 af175df812c9f6cea4088d26b1df8fdebe0bcf94 data/c/tags/item/swarfs/gallium.json
 6ddaf854d848cf6c773b0192a6a20014eeb81757 data/c/tags/item/swarfs/gold.json
+e9b98fcb8a9d9e0a3af993887496ffc84214d693 data/c/tags/item/swarfs/gravitite.json
 3a46a8f2abf215124a1f5f4354ef7691c554de17 data/c/tags/item/swarfs/hardened_high_speed_steel.json
 d19050cf8ff811cbe590341c27ce0f87e960f248 data/c/tags/item/swarfs/hardened_steel.json
 6ac5b517d7a008f4d66201468497270077414ec1 data/c/tags/item/swarfs/high_speed_steel.json
@@ -5260,6 +5308,7 @@ c2bf3097ec66a50934d2f4b328bdf41ff13c9b74 data/c/tags/item/turned_rods/electrum.j
 a2df952793236d0b73c8d0aa0e0a591a94a6bb54 data/c/tags/item/turned_rods/galinstan.json
 1ada91695d85f30eaddd23146daa6082cdf3f615 data/c/tags/item/turned_rods/gallium.json
 a3da552733f6e47985aaf798c518ed9d38e7e091 data/c/tags/item/turned_rods/gold.json
+fde6ed32ab136a1247d93bdc2033f1043dcc0c65 data/c/tags/item/turned_rods/gravitite.json
 d5b6efb1fc377e97d45baf3866b097ba5b4dd038 data/c/tags/item/turned_rods/high_speed_steel.json
 b7d9f86f99ead84aa398b0d35258dbf51e2d99fc data/c/tags/item/turned_rods/ignitium.json
 de8d647bd3bbc05a1e1acb724f4824d62b128612 data/c/tags/item/turned_rods/indium.json
@@ -5376,6 +5425,7 @@ c4eacf7d92ae6e3a2a9c80287f97c3fc704099da data/c/tags/item/welding_rods/enriched_
 aee5e2761444c654ed76bad0562604531895fa0f data/c/tags/item/welding_rods/galinstan.json
 acdbd9f77a92433127b244d99d4e75213ec9a401 data/c/tags/item/welding_rods/gallium.json
 724c8d6fceca24641e112910ed2c92ba67731c3b data/c/tags/item/welding_rods/gold.json
+1755d95a5a825eb126a242447b16c62e93fa5a8e data/c/tags/item/welding_rods/gravitite.json
 0ecb2fcfa566be6102187037222ae03f2e0e430b data/c/tags/item/welding_rods/hardened_high_speed_steel.json
 d92ee92ebe4c386528883e94219f6914eea30ee2 data/c/tags/item/welding_rods/hardened_steel.json
 8b115ef564f3f5710d93cb44c448898c510a9928 data/c/tags/item/welding_rods/high_speed_steel.json
@@ -5505,6 +5555,7 @@ a0f1c62f87705e5295e93dae509e83e12c206b23 data/c/tags/item/wires/dark_metal.json
 a85106000a9762a8dad10bca8970c0e139e0ab05 data/c/tags/item/wires/galinstan.json
 a6407689839de9daa0ee4ede71166faeb5e61848 data/c/tags/item/wires/gallium.json
 2ab1df72c7167fb8358c197974a66b46fd2af462 data/c/tags/item/wires/gold.json
+eab240896861bb77268bdccf35dafbcb7b941abc data/c/tags/item/wires/gravitite.json
 09bcee5f431dd176efa1a17b5ec2cf28d2d26da8 data/c/tags/item/wires/high_speed_steel.json
 7f32d833f8175e17c54263d9c8340cb3d2e57924 data/c/tags/item/wires/ignitium.json
 32689d0d84b157dd40ab91482fc13dad859096e9 data/c/tags/item/wires/indium.json

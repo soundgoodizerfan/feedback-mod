@@ -8,6 +8,46 @@
     "minecraft:ender_dragon",
     "minecraft:enderman",
     "minecraft:vex",
-    "minecraft:breeze"
+    "minecraft:breeze",
+    {
+      "id": "aether:sentry",
+      "required": false
+    },
+    {
+      "id": "aether:slider",
+      "required": false
+    },
+    {
+      "id": "aether:mimic",
+      "required": false
+    },
+    {
+      "id": "aether:whirlwind",
+      "required": false
+    },
+    {
+      "id": "aether:evil_whirlwind",
+      "required": false
+    },
+    {
+      "id": "aether:cloud_minion",
+      "required": false
+    },
+    {
+      "id": "aether:zephyr",
+      "required": false
+    },
+    {
+      "id": "aether:aechor_plant",
+      "required": false
+    },
+    {
+      "id": "aether:blue_swet",
+      "required": false
+    },
+    {
+      "id": "aether:golden_swet",
+      "required": false
+    }
   ]
 }

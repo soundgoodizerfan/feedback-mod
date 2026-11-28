@@ -13,6 +13,10 @@
     "feedback:aluminium_lead_pipe",
     "feedback:amber_block",
     "feedback:amber_pipe",
+    {
+      "id": "feedback:ambrosium_loose_rock",
+      "required": false
+    },
     "feedback:amethyst_bronze_block",
     "feedback:amethyst_bronze_pipe",
     {
@@ -136,6 +140,14 @@
     "feedback:gold_loose_rock",
     "feedback:gold_pipe",
     "feedback:graphite_loose_rock",
+    {
+      "id": "feedback:gravitite_loose_rock",
+      "required": false
+    },
+    {
+      "id": "feedback:gravitite_pipe",
+      "required": false
+    },
     "feedback:hardened_high_speed_steel_pipe",
     "feedback:hardened_steel_pipe",
     "feedback:hematite_deepslate_ore",
@@ -640,6 +652,10 @@
     "feedback:woods_metal_pipe",
     "feedback:wrought_iron_block",
     "feedback:wrought_iron_pipe",
+    {
+      "id": "feedback:zanite_loose_rock",
+      "required": false
+    },
     "feedback:zinc_block",
     "feedback:zinc_loose_rock",
     "feedback:zinc_pipe",
@@ -663,6 +679,10 @@
     "feedback:aluminium_pipe",
     "feedback:amber_block",
     "feedback:amber_pipe",
+    {
+      "id": "feedback:ambrosium_loose_rock",
+      "required": false
+    },
     "feedback:amethyst_bronze_block",
     "feedback:amethyst_bronze_pipe",
     {
@@ -923,6 +943,14 @@
     "feedback:graphite_loose_rock",
     "feedback:graphite_moderator",
     "feedback:graphite_ore",
+    {
+      "id": "feedback:gravitite_loose_rock",
+      "required": false
+    },
+    {
+      "id": "feedback:gravitite_pipe",
+      "required": false
+    },
     "feedback:grinding_wheel",
     "feedback:hand_crank",
     "feedback:hardened_high_speed_steel_pipe",
@@ -1595,6 +1623,10 @@
     "feedback:wrought_iron_block",
     "feedback:wrought_iron_pipe",
     "feedback:xp_wire",
+    {
+      "id": "feedback:zanite_loose_rock",
+      "required": false
+    },
     "feedback:zinc_block",
     "feedback:zinc_loose_rock",
     "feedback:zinc_ore",

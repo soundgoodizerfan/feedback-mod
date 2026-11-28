@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-27T13:58:00.969564768	Loot Tables
+// 1.21.1	2026-11-27T23:26:32.694037771	Loot Tables
 3ec2d8235a145e9ecd4bc49404e31bff70407cfb data/feedback/loot_table/blocks/alnico_block.json
 7ceaa2b8bfe1b647eb0a2c985f24c7b8138994b8 data/feedback/loot_table/blocks/alnico_pipe.json
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
@@ -12,6 +12,7 @@ ef5f65e3cbcba84cac89d3a22d8a239e4f62f1bb data/feedback/loot_table/blocks/alumini
 880c2102f080509ad6175c6fe1aabd07e461c2fe data/feedback/loot_table/blocks/aluminium_pipe.json
 7094741af6c13f6cfb2f9c956d88b3e8080b1d5d data/feedback/loot_table/blocks/amber_block.json
 e91469d10d9428c2259fc48e8f78ffa83b8f74a6 data/feedback/loot_table/blocks/amber_pipe.json
+e5436990f2747773e212b4537d270f1421038526 data/feedback/loot_table/blocks/ambrosium_loose_rock.json
 2ab4349a612853bfb1904e303bca90a4f7462379 data/feedback/loot_table/blocks/amethyst_bronze_block.json
 54171540faeaacff503e0dbbac04ef2890e4a39e data/feedback/loot_table/blocks/amethyst_bronze_pipe.json
 7573f401205cafa5288aa907be16758fea3c38a0 data/feedback/loot_table/blocks/ancient_metal_pipe.json
@@ -126,6 +127,8 @@ fd1e603679e201e1cbd88d45762a98f64ea39421 data/feedback/loot_table/blocks/garnet_
 ebabf5a0703cf0eb882ea2b32cacd862a0d35063 data/feedback/loot_table/blocks/gold_loose_rock.json
 c82166f24ab9a71c953014dd7df8c52bae7aa1a0 data/feedback/loot_table/blocks/gold_pipe.json
 9ebee40f9087fb0a7a01480a4f52a18b6ab31f7f data/feedback/loot_table/blocks/graphite_loose_rock.json
+9cd715e1c825f7b655eeb8ece10e4efe105fe8a6 data/feedback/loot_table/blocks/gravitite_loose_rock.json
+67bd2f4bc9a77e50e41f3395116713b0845ef6f5 data/feedback/loot_table/blocks/gravitite_pipe.json
 230c6b78257bd388a92bd5e99ac65008c1a7dade data/feedback/loot_table/blocks/hardened_high_speed_steel_pipe.json
 bd2ee844e8c9e4ef5c8f2adf3e80584053bfaba6 data/feedback/loot_table/blocks/hardened_steel_pipe.json
 55a67cb7e3d62aefd82d873017dc76c6c603bea7 data/feedback/loot_table/blocks/hematite_deepslate_ore.json
@@ -401,6 +404,7 @@ ddae798d12a949903024415c36f536b95fa4f0d5 data/feedback/loot_table/blocks/wolfram
 224d155a7e26b552f1598ba0d21d7c5af150f739 data/feedback/loot_table/blocks/woods_metal_pipe.json
 27b414e78ee13e9a534b5a901b8c35c5b56f3dfb data/feedback/loot_table/blocks/wrought_iron_block.json
 e81a518800fbac9170b613f08aad5a0ef9e3a32e data/feedback/loot_table/blocks/wrought_iron_pipe.json
+84546ded121d35887e03480629fdb78b83a321e6 data/feedback/loot_table/blocks/zanite_loose_rock.json
 7095510c9e9c9d1e6fe479dfdb6f3754449e2032 data/feedback/loot_table/blocks/zinc_block.json
 080a1457bc60631c44efc85d6d63426f6ea60652 data/feedback/loot_table/blocks/zinc_loose_rock.json
 6db8174d42b7b96456672219b8ecf2fe626b17b5 data/feedback/loot_table/blocks/zinc_pipe.json

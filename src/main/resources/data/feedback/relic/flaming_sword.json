@@ -1,0 +1,72 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "aether"
+    }
+  ],
+  "relic": "sword_blade",
+  "fastener": 3,
+  "color": "#e8742a",
+  "kind": "metal",
+  "traits": [
+    "alloy"
+  ],
+  "hardness": 15,
+  "density": 7.5,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 1450,
+    "boiling_point": 2700,
+    "cooling_rate": 1.4,
+    "conductivity": 0.012,
+    "oxidation_temperature": 900,
+    "anneal_temperature": 720,
+    "service_temperature": 900,
+    "specific_heat": 0.46,
+    "latent_heat_fusion": 240,
+    "latent_heat_vaporisation": 6000
+  },
+  "mechanical": {
+    "toughness": 70,
+    "ductility": 6,
+    "work_hardening": 1,
+    "yield_strength": 12,
+    "friction": 0.5,
+    "abrasiveness": 0.3
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 6.6,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 770,
+    "reflectivity": 0.5
+  },
+  "electrical": {
+    "conductivity": 0.1,
+    "drop": 0.5,
+    "electrode_potential": 0.2
+  },
+  "ampacity": 0.3,
+  "corrosion_resistance": 0.9,
+  "enchantability": 20,
+  "perks": {
+    "fire_aspect": 3
+  },
+  "attuning": {
+    "temperature": 700,
+    "lock": 520,
+    "coercive": 0.3,
+    "loop_width": 0.2,
+    "lag": 8
+  },
+  "toxicity": 0,
+  "accepts": {
+    "sword": [
+      "aether:flaming_sword"
+    ]
+  }
+}

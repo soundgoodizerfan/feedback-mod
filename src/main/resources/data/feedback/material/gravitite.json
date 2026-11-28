@@ -1,0 +1,94 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "aether"
+    }
+  ],
+  "fastener": 3,
+  "color": "#c9a8ff",
+  "kind": "metal",
+  "traits": [],
+  "hardness": 12,
+  "density": 6.2,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 980,
+    "boiling_point": 2300,
+    "cooling_rate": 1.4,
+    "conductivity": 0.004,
+    "oxidation_temperature": 600,
+    "anneal_temperature": 600,
+    "service_temperature": 500,
+    "specific_heat": 0.2,
+    "latent_heat_fusion": 50,
+    "latent_heat_vaporisation": 6090
+  },
+  "mechanical": {
+    "toughness": 40,
+    "ductility": 8,
+    "work_hardening": 0.5,
+    "yield_strength": 6,
+    "friction": 0.6,
+    "abrasiveness": 0.36
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 7.11,
+    "shear_thickening": 0
+  },
+  "separation": {
+    "magnetic": false,
+    "reflectivity": 0.7,
+    "diamagnetism": 1.0
+  },
+  "electrical": {
+    "conductivity": 0.01,
+    "drop": 0.3,
+    "electrode_potential": 0.5
+  },
+  "ampacity": 0.35,
+  "corrosion_resistance": 1,
+  "enchantability": 16,
+  "attuning": {
+    "temperature": 720,
+    "lock": 518,
+    "coercive": 0.35,
+    "loop_width": 0.2,
+    "lag": 9
+  },
+  "toxicity": 0,
+  "forms": {
+    "ore": "aether:gravitite_ore",
+    "block": "aether:enchanted_gravitite"
+  },
+  "accepts": {
+    "pickaxe": [
+      "aether:gravitite_pickaxe"
+    ],
+    "axe": [
+      "aether:gravitite_axe"
+    ],
+    "shovel": [
+      "aether:gravitite_shovel"
+    ],
+    "hoe": [
+      "aether:gravitite_hoe"
+    ],
+    "sword": [
+      "aether:gravitite_sword"
+    ],
+    "helmet": [
+      "aether:gravitite_helmet"
+    ],
+    "chestplate": [
+      "aether:gravitite_chestplate"
+    ],
+    "leggings": [
+      "aether:gravitite_leggings"
+    ],
+    "boots": [
+      "aether:gravitite_boots"
+    ]
+  }
+}

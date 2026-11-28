@@ -1,0 +1,54 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "aether"
+    }
+  ],
+  "color": "#ff5a6a",
+  "kind": "crystal",
+  "traits": [],
+  "hardness": 8,
+  "density": 1.55,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 160,
+    "cooling_rate": 2.62,
+    "conductivity": 0.0003,
+    "specific_heat": 1.25,
+    "latent_heat_fusion": 45,
+    "boiling_point": 300,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 180,
+    "service_temperature": 120
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.3,
+    "yield_strength": 2
+  },
+  "separation": {
+    "reflectivity": 0.4
+  },
+  "enchantability": 5,
+  "electrical": {
+    "piezo_coupling": 0.8
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 2000,
+    "density": 1.4,
+    "shear_thickening": 0
+  },
+  "relic": "sword_blade",
+  "perks": {
+    "cling": 2
+  },
+  "accepts": {
+    "sword": [
+      "aether:candy_cane_sword"
+    ]
+  }
+}

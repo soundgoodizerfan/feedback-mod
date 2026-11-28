@@ -1,0 +1,83 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "aether"
+    }
+  ],
+  "color": "#b04fe0",
+  "kind": "crystal",
+  "refractive_index": 1.76,
+  "traits": [
+    "transparent",
+    "gemstone"
+  ],
+  "hardness": 200,
+  "density": 3.95,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 2050,
+    "cooling_rate": 2.62,
+    "conductivity": 0.0058,
+    "specific_heat": 0.78,
+    "latent_heat_fusion": 1100,
+    "boiling_point": 3250,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 2050,
+    "service_temperature": 1500
+  },
+  "mechanical": {
+    "toughness": 3,
+    "friction": 0.4,
+    "abrasiveness": 0.9,
+    "yield_strength": 10
+  },
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "forms": {
+    "gem": "aether:zanite_gemstone",
+    "block": "aether:zanite_block",
+    "ore": "aether:zanite_ore"
+  },
+  "enchantability": 14,
+  "electrical": {
+    "piezo_coupling": 0.8
+  },
+  "corrosion_resistance": 1,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 120,
+    "density": 3.0,
+    "shear_thickening": 0
+  },
+  "accepts": {
+    "pickaxe": [
+      "aether:zanite_pickaxe"
+    ],
+    "axe": [
+      "aether:zanite_axe"
+    ],
+    "shovel": [
+      "aether:zanite_shovel"
+    ],
+    "hoe": [
+      "aether:zanite_hoe"
+    ],
+    "sword": [
+      "aether:zanite_sword"
+    ],
+    "helmet": [
+      "aether:zanite_helmet"
+    ],
+    "chestplate": [
+      "aether:zanite_chestplate"
+    ],
+    "leggings": [
+      "aether:zanite_leggings"
+    ],
+    "boots": [
+      "aether:zanite_boots"
+    ]
+  }
+}

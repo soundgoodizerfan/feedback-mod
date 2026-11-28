@@ -156,6 +156,10 @@
     "feedback:gear_cutter",
     "feedback:gearbox",
     "feedback:gold_pipe",
+    {
+      "id": "feedback:gravitite_pipe",
+      "required": false
+    },
     "feedback:grinding_wheel",
     "feedback:hand_crank",
     "feedback:hardened_high_speed_steel_pipe",

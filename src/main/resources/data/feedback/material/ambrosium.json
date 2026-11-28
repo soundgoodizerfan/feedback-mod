@@ -1,0 +1,53 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "aether"
+    }
+  ],
+  "color": "#f2d34a",
+  "kind": "crystal",
+  "refractive_index": 1.5,
+  "traits": [
+    "transparent"
+  ],
+  "hardness": 30,
+  "density": 2.1,
+  "thermal": {
+    "expansion": 1.2e-05,
+    "melting_point": 420,
+    "cooling_rate": 2.62,
+    "conductivity": 0.0004,
+    "specific_heat": 1.2,
+    "latent_heat_fusion": 120,
+    "boiling_point": 900,
+    "latent_heat_vaporisation": 5000,
+    "oxidation_temperature": 380,
+    "service_temperature": 300
+  },
+  "mechanical": {
+    "toughness": 2,
+    "friction": 0.4,
+    "abrasiveness": 0.2,
+    "yield_strength": 3
+  },
+  "separation": {
+    "reflectivity": 0.1
+  },
+  "forms": {
+    "shard": "aether:ambrosium_shard",
+    "block": "aether:ambrosium_block",
+    "ore": "aether:ambrosium_ore"
+  },
+  "enchantability": 12,
+  "electrical": {
+    "piezo_coupling": 0.8
+  },
+  "corrosion_resistance": 0.6,
+  "toxicity": 0,
+  "molten": {
+    "viscosity": 300,
+    "density": 1.9,
+    "shear_thickening": 0
+  }
+}

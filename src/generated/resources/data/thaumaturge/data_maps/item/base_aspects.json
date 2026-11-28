@@ -2368,6 +2368,40 @@
         "aspect": "thaumaturge:praemunio"
       }
     ],
+    "feedback:ambrosium_crystal_plate": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 2,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:ambrosium_dust": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:ambrosium_loose_rock": [
+      {
+        "amount": 6,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
     "feedback:amethyst_bronze_birdshot": [
       {
         "amount": 5,
@@ -23070,6 +23104,380 @@
       {
         "amount": 3,
         "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:gravitite_birdshot": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_bullet": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_case": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_coil_spring": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_coin": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_cut_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_cut_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_cut_thread_rod": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_drilled_plate": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_dust": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:gravitite_fine_wire": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_flat_nose_bullet": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_flechette": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_foil": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_grip": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_ground_ingot": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_hollow_point_bullet": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_ingot": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_large_shot": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_loose_rock": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_nugget": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_pipe": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_plate": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_pointed_bullet": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_rivet": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_rod": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_rolled_machine_bolt": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_rolled_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_rolled_thread_rod": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_round_ball": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_scrap": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_screw": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_swarf": [
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 1,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_turned_rod": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_welding_rod": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:gravitite_wire": [
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 5,
+        "aspect": "thaumaturge:ordo"
       }
     ],
     "feedback:greatwood_grip": [
@@ -64638,6 +65046,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64650,6 +65062,10 @@
       {
         "amount": 43,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 36,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 47,
@@ -64666,6 +65082,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64680,6 +65100,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64692,6 +65116,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64709,6 +65137,10 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:ordo"
       },
       {
@@ -64720,6 +65152,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64736,6 +65172,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64748,6 +65188,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64764,6 +65208,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64776,6 +65224,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64796,6 +65248,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64808,6 +65264,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64824,6 +65284,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64836,6 +65300,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64852,6 +65320,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64864,6 +65336,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64880,6 +65356,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64892,6 +65372,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64908,6 +65392,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64920,6 +65408,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64937,6 +65429,10 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:ordo"
       },
       {
@@ -64948,6 +65444,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64964,6 +65464,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -64976,6 +65480,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -64992,6 +65500,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -65004,6 +65516,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -65020,6 +65536,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -65032,6 +65552,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -65048,6 +65572,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -65060,6 +65588,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -65077,6 +65609,10 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:ordo"
       },
       {
@@ -65088,6 +65624,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -65105,6 +65645,10 @@
       },
       {
         "amount": 1,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
+        "amount": 1,
         "aspect": "thaumaturge:ordo"
       },
       {
@@ -65116,6 +65660,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -65132,6 +65680,10 @@
         "aspect": "thaumaturge:metallum"
       },
       {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
+      },
+      {
         "amount": 5,
         "aspect": "thaumaturge:ordo"
       },
@@ -65144,6 +65696,10 @@
       {
         "amount": 5,
         "aspect": "thaumaturge:metallum"
+      },
+      {
+        "amount": 4,
+        "aspect": "thaumaturge:potentia"
       },
       {
         "amount": 5,
@@ -81514,6 +82070,40 @@
       {
         "amount": 2,
         "aspect": "thaumaturge:vinculum"
+      }
+    ],
+    "feedback:zanite_crystal_plate": [
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 3,
+        "aspect": "thaumaturge:ordo"
+      }
+    ],
+    "feedback:zanite_dust": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:perditio"
+      }
+    ],
+    "feedback:zanite_loose_rock": [
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:vitreus"
+      },
+      {
+        "amount": 10,
+        "aspect": "thaumaturge:ordo"
       }
     ],
     "feedback:zinc_birdshot": [

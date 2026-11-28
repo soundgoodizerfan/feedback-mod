@@ -1,0 +1,51 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "aether"
+    }
+  ],
+  "type": "feedback:engineering",
+  "key": {
+    "R": {
+      "item": "minecraft:blaze_rod"
+    },
+    "S": {
+      "type": "feedback:material",
+      "form": "plate",
+      "property": "hardness",
+      "min": 14
+    }
+  },
+  "pattern": [
+    " S ",
+    "SRS",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:sword_blade",
+    "components": {
+      "feedback:made_of": {
+        "material": "feedback:flaming_sword",
+        "stock": "ingot",
+        "cells": 1
+      }
+    }
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    },
+    {
+      "ability": "feedback:file",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "weapons:1"
+}
