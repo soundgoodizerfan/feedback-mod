@@ -121,6 +121,20 @@ public final class Radiation {
         return sum / 6f;
     }
 
+    /** Whether any material is radioactive: asked of the loaded table once, not on every dose lookup. */
+    private static boolean anyRadioactive(Map<ResourceLocation, Material> materials) {
+        RadioactiveSeen seen = radioactiveSeen;
+        if (seen == null || seen.table != materials) {
+            seen = new RadioactiveSeen(materials, materials.values().stream().anyMatch(m -> m.radioactivity().isPresent()));
+            radioactiveSeen = seen;
+        }
+        return seen.any;
+    }
+
+    private record RadioactiveSeen(Map<ResourceLocation, Material> table, boolean any) {}
+
+    private static volatile RadioactiveSeen radioactiveSeen;
+
     /** What a container lined with {@code lining} lets out, 0 to 1. */
     public static float containerShield(Material lining) {
         return 1f / (1f + HazardTuning.RAD_CONTAINER_GAIN * lining.density().muPerMb() / 10f);
@@ -149,7 +163,7 @@ public final class Radiation {
      */
     public static float rateAt(Level level, BlockPos centre, Map<ResourceLocation, Material> materials) {
         PerItem table = sources(materials);
-        if (materials.values().stream().noneMatch(m -> m.radioactivity().isPresent()))
+        if (!anyRadioactive(materials))
             return 0f;
         PerItem density = densities(materials);
         float total = 0f;

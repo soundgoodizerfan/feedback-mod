@@ -67,6 +67,9 @@ public final class ModularNest {
      * circuit is comes off the stack ({@code Circuit.of}).
      */
     private static Optional<Map.Entry<ResourceLocation, Material>> placeholder(Map<ResourceLocation, Material> materials) {
+        // The loaded table is sorted by id: its first key is the minimum without a walk over every material.
+        if (materials instanceof java.util.SortedMap<ResourceLocation, Material> sorted)
+            return sorted.isEmpty() ? Optional.empty() : Optional.of(Map.entry(sorted.firstKey(), sorted.get(sorted.firstKey())));
         return materials.entrySet().stream().min(Map.Entry.comparingByKey());
     }
 

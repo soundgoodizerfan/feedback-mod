@@ -103,20 +103,46 @@ public final class Researching {
         OptionalDouble mine = figure(key, found.get().material());
         if (mine.isEmpty())
             return -1f;
-        int below = 0, all = 0;
-        for (var m : materials.values()) {
-            // an offering is a solid thing in hand: fluids (water, hydrogen) would crowd the top of heat capacity and leave every solid low
-            if (m.kind().filter(k -> k == io.github.soundgoodizerfan.feedback.process.Material.Kind.FLUID).isPresent())
-                continue;
-            OptionalDouble v = figure(key, m);
-            if (v.isEmpty())
-                continue;
-            all++;
-            if (v.getAsDouble() <= mine.getAsDouble())
-                below++;
+        double[] sorted = solidFigures(materials, key);
+        if (sorted.length == 0)
+            return -1f;
+        // upper bound: how many figures are at or below mine
+        int lo = 0, hi = sorted.length;
+        while (lo < hi) {
+            int mid = (lo + hi) >>> 1;
+            if (sorted[mid] <= mine.getAsDouble())
+                lo = mid + 1;
+            else
+                hi = mid;
         }
-        return all == 0 ? -1f : below / (float) all;
+        return lo / (float) sorted.length;
     }
+
+    /** The sorted figures of every solid material that states {@code key}, worked out once per loaded table: a rank is then one binary search, not a walk over every material. */
+    private static double[] solidFigures(java.util.Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials, String key) {
+        SolidFigures cache = solids;
+        if (cache == null || cache.table != materials) {
+            cache = new SolidFigures(materials, new java.util.concurrent.ConcurrentHashMap<>());
+            solids = cache;
+        }
+        return cache.byKey.computeIfAbsent(key, k -> {
+            var out = new java.util.ArrayList<Double>();
+            for (var m : materials.values()) {
+                // an offering is a solid thing in hand: fluids (water, hydrogen) would crowd the top of heat capacity and leave every solid low
+                if (m.kind().filter(kind -> kind == io.github.soundgoodizerfan.feedback.process.Material.Kind.FLUID).isPresent())
+                    continue;
+                OptionalDouble v = figure(k, m);
+                if (v.isPresent())
+                    out.add(v.getAsDouble());
+            }
+            return out.stream().mapToDouble(Double::doubleValue).sorted().toArray();
+        });
+    }
+
+    private record SolidFigures(java.util.Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> table,
+                                java.util.Map<String, double[]> byKey) {}
+
+    private static volatile SolidFigures solids;
 
     /** The ink an offering earns for {@code effect}: -1 when it does not clear the bar, else 0 to {@link ModularTuning#RESEARCH_OFFER_INK} by how far over it is. */
     public static int offeringInk(Attunements.Effect effect, ItemStack offering) {
