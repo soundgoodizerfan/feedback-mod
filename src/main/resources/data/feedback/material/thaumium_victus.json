@@ -53,7 +53,7 @@
     "electrode_potential": -0.44
   },
   "ampacity": 0.29,
-  "corrosion_resistance": 0.2917,
+  "corrosion_resistance": 0.9,
   "composition": {
     "feedback:iron": 0.94,
     "feedback:essentia_victus": 0.06

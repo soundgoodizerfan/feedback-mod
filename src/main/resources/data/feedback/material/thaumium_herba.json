@@ -29,7 +29,7 @@
     "latent_heat_vaporisation": 6090
   },
   "mechanical": {
-    "toughness": 110.7,
+    "toughness": 110,
     "ductility": 10,
     "work_hardening": 1,
     "yield_strength": 11.16,

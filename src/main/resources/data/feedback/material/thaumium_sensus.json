@@ -49,7 +49,7 @@
   "electrical": {
     "conductivity": 0.07614,
     "drop": 0.657,
-    "core_loss": 0.06,
+    "core_loss": 0.01,
     "electrode_potential": -0.44
   },
   "ampacity": 0.29,

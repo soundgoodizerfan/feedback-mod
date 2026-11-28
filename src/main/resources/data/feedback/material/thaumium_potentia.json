@@ -47,12 +47,12 @@
     "reflectivity": 0.5375
   },
   "electrical": {
-    "conductivity": 0.2241,
-    "drop": 0.223,
+    "conductivity": 0.4,
+    "drop": 0.125,
     "core_loss": 0.06,
     "electrode_potential": -0.44
   },
-  "ampacity": 0.29,
+  "ampacity": 0.4,
   "corrosion_resistance": 0.3774,
   "composition": {
     "feedback:iron": 0.94,

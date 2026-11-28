@@ -244,10 +244,10 @@ Thaumium and some of the aspect alloys, the primals first:
 | Chthonium | 18 | 83 | 14 | Highest melting point and service temperature |
 | Cindersteel | 10 | 27 | 20 | Glows |
 | Thalassium | 5 | 36 | 18 | Soft, low friction |
-| Eunomium | 16 | 51 | 30 | High enchantability |
+| Eunomium | 16 | 51 | 30 | High enchantability, lowest thermal expansion: holds its size with temperature |
 | Lysium | 5 | 17 | 8 | Soft, brittle, corrodes easily |
 | Organon | 21 | 93 | 24 | Hardest |
-| Adamantium | 17 | 135 | 22 | Best electrical conductor, very tough |
+| Adamantium | 17 | 135 | 22 | Very tough, second-best electrical conductor |
 | Ferinium | 12 | 140 | 26 | Joint toughest |
 | Aegis | 14 | 140 | 14 | Joint toughest, high yield strength |
 | Rotium | 16 | 68 | 25 | Highest yield strength, low friction |
@@ -258,6 +258,13 @@ Thaumium and some of the aspect alloys, the primals first:
 | Rimeiron | 8 | 22 | 14 | Lowest melting point and service temperature |
 | Necrium | 8 | 79 | 6 | Lowest enchantability |
 | Miasma | 7 | 25 | 22 | Most toxic, corrodes fastest |
+| Halcyon | 8 | 27 | 34 | Narrowest hysteresis loop; an enchantment locks in at a lower heat |
+| Daedalium | 16 | 111 | 21 | Easiest to work: workable from 600 Tu, hardens little under the hammer |
+| Briarsteel | 6 | 110 | 19 | Tough and soft, like green wood |
+| Anthropium | 11 | 113 | 26 | Barely conducts heat, comfortable in the hand |
+| Stormsteel | 13 | 40 | 25 | Best electrical conductor, carries the most current |
+| Aesthium | 8 | 68 | 20 | Lowest core loss |
+| Quickblood | 12 | 123 | 24 | Most corrosion-resistant, inert |
 
 Each aspect alloy also gives a perk to parts made of it; see [Aspect alloy perks](Material_Perks.md#aspect-alloy-perks).
 

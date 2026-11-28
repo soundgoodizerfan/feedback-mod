@@ -20,7 +20,7 @@
     "melting_point": 1475,
     "boiling_point": 2862,
     "cooling_rate": 1.62,
-    "conductivity": 0.01173,
+    "conductivity": 0.0055,
     "oxidation_temperature": 570,
     "anneal_temperature": 657,
     "service_temperature": 435,

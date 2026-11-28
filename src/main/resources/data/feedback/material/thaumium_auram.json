@@ -61,10 +61,10 @@
   "enchantability": 34,
   "attuning": {
     "temperature": 700,
-    "lock": 520,
+    "lock": 400,
     "coercive": 0.225,
-    "loop_width": 0.12,
-    "lag": 2
+    "loop_width": 0.05,
+    "lag": 1
   },
   "toxicity": 0.0,
   "luminance": 4,
