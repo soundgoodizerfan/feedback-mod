@@ -123,17 +123,20 @@ public final class Radiation {
 
     /** Whether any material is radioactive: asked of the loaded table once, not on every dose lookup. */
     private static boolean anyRadioactive(Map<ResourceLocation, Material> materials) {
-        RadioactiveSeen seen = radioactiveSeen;
-        if (seen == null || seen.table != materials) {
-            seen = new RadioactiveSeen(materials, materials.values().stream().anyMatch(m -> m.radioactivity().isPresent()));
-            radioactiveSeen = seen;
+        synchronized (RADIOACTIVE_SEEN) {
+            Boolean seen = RADIOACTIVE_SEEN.get(materials);
+            if (seen == null) {
+                if (RADIOACTIVE_SEEN.size() > 3)
+                    RADIOACTIVE_SEEN.clear();
+                seen = materials.values().stream().anyMatch(m -> m.radioactivity().isPresent());
+                RADIOACTIVE_SEEN.put(materials, seen);
+            }
+            return seen;
         }
-        return seen.any;
     }
 
-    private record RadioactiveSeen(Map<ResourceLocation, Material> table, boolean any) {}
-
-    private static volatile RadioactiveSeen radioactiveSeen;
+    /** Per table, by identity: single player holds the server's and the client's. */
+    private static final Map<Map<ResourceLocation, Material>, Boolean> RADIOACTIVE_SEEN = new java.util.IdentityHashMap<>();
 
     /** What a container lined with {@code lining} lets out, 0 to 1. */
     public static float containerShield(Material lining) {

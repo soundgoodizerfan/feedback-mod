@@ -16,7 +16,7 @@
       "type": "feedback:material",
       "form": "plate",
       "property": "hardness",
-      "min": 14
+      "min": 10
     }
   },
   "pattern": [

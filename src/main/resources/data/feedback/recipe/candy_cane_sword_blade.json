@@ -5,11 +5,12 @@
       "modid": "aether"
     }
   ],
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "type": "feedback:engineering",
   "key": {
     "S": {
-      "item": "minecraft:sugar"
+      "type": "feedback:material",
+      "form": "raw",
+      "material": "feedback:sugar"
     }
   },
   "pattern": [
@@ -27,5 +28,16 @@
         "cells": 1
       }
     }
-  }
+  },
+  "tool": [
+    {
+      "ability": "feedback:file",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "weapons:1"
 }

@@ -8,13 +8,15 @@
   "type": "feedback:engineering",
   "key": {
     "R": {
-      "item": "minecraft:blaze_rod"
+      "type": "feedback:material",
+      "form": "rod",
+      "material": "feedback:blaze_rod"
     },
     "S": {
       "type": "feedback:material",
       "form": "plate",
       "property": "hardness",
-      "min": 14
+      "min": 10
     }
   },
   "pattern": [

@@ -120,10 +120,16 @@ public final class Researching {
 
     /** The sorted figures of every solid material that states {@code key}, worked out once per loaded table: a rank is then one binary search, not a walk over every material. */
     private static double[] solidFigures(java.util.Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials, String key) {
-        SolidFigures cache = solids;
-        if (cache == null || cache.table != materials) {
-            cache = new SolidFigures(materials, new java.util.concurrent.ConcurrentHashMap<>());
-            solids = cache;
+        SolidFigures cache;
+        synchronized (SOLIDS) {
+            cache = SOLIDS.get(materials);
+            if (cache == null) {
+                // Server and client each hold a table in single player; a leftover from a reload is dropped past a few.
+                if (SOLIDS.size() > 3)
+                    SOLIDS.clear();
+                cache = new SolidFigures(materials, new java.util.concurrent.ConcurrentHashMap<>());
+                SOLIDS.put(materials, cache);
+            }
         }
         return cache.byKey.computeIfAbsent(key, k -> {
             var out = new java.util.ArrayList<Double>();
@@ -142,7 +148,7 @@ public final class Researching {
     private record SolidFigures(java.util.Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> table,
                                 java.util.Map<String, double[]> byKey) {}
 
-    private static volatile SolidFigures solids;
+    private static final java.util.Map<java.util.Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material>, SolidFigures> SOLIDS = new java.util.IdentityHashMap<>();
 
     /** The ink an offering earns for {@code effect}: -1 when it does not clear the bar, else 0 to {@link ModularTuning#RESEARCH_OFFER_INK} by how far over it is. */
     public static int offeringInk(Attunements.Effect effect, ItemStack offering) {
