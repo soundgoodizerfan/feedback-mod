@@ -7549,6 +7549,7 @@
   "feedback.jei.info.dropper": "A spring pushes the item out, not the signal: a redstone signal only releases a cocked spring, and the spring stays spent afterwards. Cock it again by sneaking and using it with an empty hand, or by touching a turning shaft. A signal on a spent spring only clicks.",
   "feedback.jei.info.dispenser": "A dropper with a fitting that uses the item: arrows are fired, buckets emptied, fire charges lit, as in vanilla. Like the dropper, a signal only releases a cocked spring. Cock it by hand (sneak and use with an empty hand) or with a turning shaft.",
   "feedback.jei.info.hopper": "Carries one item at a time from the container above (or an item lying on it) into the block it faces, and holds nothing itself: if the block it faces cannot take the item, nothing moves. A chain of hoppers is a conveyor, not a store or a sorter. A redstone signal switches it off.",
+  "feedback.jei.info.fertiliser": "Right-click a crop to feed it. A fed crop grows faster and, harvested ripe, gives more, until it is harvested. A second dose on a crop that is still fed scorches it and nothing is harvested. Bone meal is the quick, safe nudge; this is the lasting boost.",
   "feedback.jei.info.observer": "Reads high for half a second after the block in front of it changes state, such as a crop growing a stage or a door opening. It reports the change a tick late.",
   "feedback.sensor.reads": "Reads %s%%",
   "block.feedback.pivot_mast": "Pivot Mast",

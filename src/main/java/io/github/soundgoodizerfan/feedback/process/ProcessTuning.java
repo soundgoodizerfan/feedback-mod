@@ -486,4 +486,8 @@ public final class ProcessTuning {
 
     /** Placeholder. The work ledger on a pressed or ground form ({@link WorkLedger}): the ratio is kept in steps of {@code STEP} so stacks stack, within {@code DEADBAND} of 1 it is dropped, and {@code MAX} caps it (the forge's own ceiling). */
     public static final float LEDGER_STEP = 0.1f, LEDGER_DEADBAND = 0.1f, LEDGER_MAX = 2f;
+
+    /** Placeholder. Fertilised crops ({@link CropFeed}): ticks between passes, the growth speed of a fed crop against an unfed one, the share of each drop added to a ripe fed crop's harvest, and one in this many passes sparkles. */
+    public static final int FEED_EVERY = 20, FEED_SPARKLE_ONE_IN = 12;
+    public static final float FEED_SPEEDUP = 3f, FEED_YIELD = 0.5f;
 }

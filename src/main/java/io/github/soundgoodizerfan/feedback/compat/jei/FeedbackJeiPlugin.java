@@ -309,6 +309,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.fastener"));
         }
         registration.addIngredientInfo(FItems.HOPPER.get(), Component.translatable("feedback.jei.info.hopper"));
+        registration.addIngredientInfo(FItems.FERTILISER.get(), Component.translatable("feedback.jei.info.fertiliser"));
         registration.addIngredientInfo(FModular.PISTON.get(), Component.translatable("feedback.jei.info.piston_block"));
         registration.addIngredientInfo(FModular.NOTE_BLOCK.get(), Component.translatable("feedback.jei.info.note_block"));
         registration.addIngredientInfo(FItems.DROPPER.get(), Component.translatable("feedback.jei.info.dropper"));
