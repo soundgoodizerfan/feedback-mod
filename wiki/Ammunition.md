@@ -107,7 +107,7 @@ A smokeless propellant made from paper and acids ([Chemicals](Chemicals.md#nitro
 
 ### Dynamite Dust
 
-A powder made from clay and nitroglycerin ([Chemicals](Chemicals.md#glycerol-nitroglycerin-and-dynamite)). Its peak pressure is **9 Pu**, above nitrocellulose's 5 and below the creeper charge's 12, and it burns faster than nitrocellulose. Cooks off at **200 Tu**, between gunpowder and blaze powder.
+A powder made from clay or charcoal soaked in nitroglycerin ([Chemicals](Chemicals.md#glycerol-nitroglycerin-and-dynamite)). Its peak pressure is **9 Pu**, above nitrocellulose's 5 and below the creeper charge's 12, and it burns faster than nitrocellulose. Cooks off at **200 Tu**.
 
 ### Blaze Powder
 

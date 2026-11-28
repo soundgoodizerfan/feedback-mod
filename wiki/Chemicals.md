@@ -118,9 +118,9 @@ Thin, clear, flammable liquids ([Fuels](Fuels.md)). Ethanol flashes at 13 Tu and
 
 **Glycerol** is a thick, flammable liquid ([Fuels](Fuels.md)). Ferment a Sugar with water and a little [lye](#lye) in a [Reactor](Reactor.md#the-reactions) kept barely warm and it gives a small amount.
 
-**Nitroglycerin** is a shock-sensitive, flammable, toxic oil. Glycerol steeped in nitric and sulfuric acid in a Reactor held cold gives it, and most of the sulfuric acid is handed back (100 mB goes in, 60 mB comes out). Past 35 Tu the batch is lost, so keep the Reactor cold ([Hazards](Hazards.md)). Pipe and store it with care.
+**Nitroglycerin** is a flammable, toxic oil. Glycerol steeped in nitric and sulfuric acid in a Reactor held cold gives it, and most of the sulfuric acid is handed back (100 mB goes in, 60 mB comes out). Past 35 Tu the batch is lost, so keep the Reactor cold ([Hazards](Hazards.md)).
 
-**Dynamite Dust** is a clay ball soaked in nitroglycerin in a cool Reactor. It is a powder that burns hotter and faster than [nitrocellulose](#nitrocellulose): its peak pressure is **9 Pu** against nitrocellulose's 5. Use it as a filler in a [Demolition Charge](Demolition_Charge.md) or as a powder in the [Reloading Press](Ammunition.md#dynamite-dust).
+**Dynamite Dust** is a clay ball or a piece of charcoal soaked in nitroglycerin in a cool Reactor. It is a powder that burns hotter and faster than [nitrocellulose](#nitrocellulose): its peak pressure is **9 Pu** against nitrocellulose's 5. Use it as a filler in a [Demolition Charge](Demolition_Charge.md) or as a powder in the [Reloading Press](Ammunition.md#dynamite-dust).
 
 ## Fluorine and PTFE
 
